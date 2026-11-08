@@ -1,18 +1,16 @@
 {
   "schema": 1,
-  "date_beijing": "2026-11-08T18:21:31.943188+08:00",
+  "timestamp_utc": "2026-11-08T15:57:12.066456+00:00",
   "status": "BLOCKED",
   "manufacturing_release_authorized": false,
   "automated_tool_is_not_release_authority": true,
   "checks": [
     {
       "name": "schematic_footprint_selection",
-      "passed": false,
+      "passed": true,
       "detail": {
-        "unresolved": [
-          "J4"
-        ],
-        "bom_positions": 126
+        "unresolved": [],
+        "bom_positions": 130
       }
     },
     {
@@ -37,67 +35,71 @@
           "Y1",
           "U14",
           "D4",
-          "D5"
+          "D5",
+          "NTC1/J6",
+          "C1",
+          "L1",
+          "U15"
         ],
         "note": "EVT selection is not production approval"
       }
     },
     {
       "name": "erc_zero_errors_and_unresolved_warnings",
-      "passed": false,
+      "passed": true,
       "detail": {
         "errors": 0,
-        "warnings": 1
+        "warnings": 0
       }
     },
     {
       "name": "release_manifest_present",
-      "passed": false,
+      "passed": true,
       "detail": "Explicit artifact paths and SHA-256 hashes required"
     },
     {
       "name": "artifact_board_source",
-      "passed": false,
+      "passed": true,
       "detail": {
-        "path": "hardware/r03/kicad/OpenKeys.kicad_pcb",
-        "exists": false,
-        "hash_verified": false
+        "path": "hardware/r04/kicad/OpenKeys.kicad_pcb",
+        "exists": true,
+        "hash_verified": true
       }
     },
     {
       "name": "artifact_drc_report",
-      "passed": false,
+      "passed": true,
       "detail": {
-        "path": "manufacturing/evidence/pcb-drc.json",
-        "exists": false,
-        "hash_verified": false
+        "path": "hardware/r04/review/routed-drc.json",
+        "exists": true,
+        "hash_verified": true
       }
     },
     {
       "name": "artifact_fabrication_zip",
-      "passed": false,
+      "passed": true,
       "detail": {
-        "path": "manufacturing/release/gerber-and-drill.zip",
-        "exists": false,
-        "hash_verified": false
+        "path": "hardware/r04/exports/OpenKeys-fabrication.zip",
+        "exists": true,
+        "hash_verified": true
       }
     },
     {
       "name": "artifact_assembly_drawing",
-      "passed": false,
+      "passed": true,
       "detail": {
-        "path": "manufacturing/release/assembly.pdf",
-        "exists": false,
-        "hash_verified": false
+        "path": "hardware/r04/exports/OpenKeys-dimensions.pdf",
+        "exists": true,
+        "hash_verified": true
       }
     },
     {
       "name": "artifact_placements",
-      "passed": false,
+      "passed": true,
       "detail": {
-        "path": "manufacturing/release/placements.csv",
-        "exists": false,
-        "hash_verified": false
+        "path": "hardware/r04/exports/OpenKeys-SMD-position.csv",
+        "exists": true,
+        "hash_verified": true
       }
     },
     {
@@ -128,10 +130,10 @@
       }
     },
     {
-      "name": "artifact_bootloader",
+      "name": "artifact_boot_configuration",
       "passed": false,
       "detail": {
-        "path": "firmware/dist/bootloader.bin",
+        "path": "firmware/production/boot-profile.json",
         "exists": false,
         "hash_verified": false
       }
@@ -192,8 +194,12 @@
     },
     {
       "name": "pcb_contains_complete_placement_and_tracks",
-      "passed": false,
-      "detail": "Only an explicitly unrouted floorplan is currently provided"
+      "passed": true,
+      "detail": {
+        "footprints": 134,
+        "minimum": 129,
+        "segments": 1430
+      }
     },
     {
       "name": "firmware_is_arm_elf",
@@ -224,6 +230,6 @@
       }
     }
   ],
-  "blocker_count": 22,
+  "blocker_count": 13,
   "limits": "Checks inventory and declared hashes, not the truth of lab reports or security certification. Human signoff and actual qualification are mandatory."
 }

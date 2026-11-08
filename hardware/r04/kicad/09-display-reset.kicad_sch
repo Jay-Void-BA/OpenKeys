@@ -1,0 +1,939 @@
+(kicad_sch
+  (version 20250114)
+  (generator "eeschema")
+  (uuid "9425aada-69e5-549c-8b6b-ab81fec374a9")
+  (paper "A3")
+  (title_block
+    (title "OpenKeys R0.4 - 09-display-reset")
+    (date "2026-11-08")
+    (rev "0.4-board-review")
+    (company "Jay-Void-BA")
+    (comment 1 "ENGINEERING BOARD CANDIDATE - qualify before use")
+  )
+  (lib_symbols
+    (symbol "OpenKeys:74LVC1G07"
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "U"
+        (at 0 7.62 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+        )
+      )
+      (property "Value" "74LVC1G07"
+        (at 3.81 -7.62 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+        )
+      )
+      (property "Footprint" ""
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g07.pdf"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Description" "Single Buffer Gate, Open Drain, Low-Voltage CMOS"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_keywords" "Single Gate Buff LVC CMOS Open Drain"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_fp_filters" "SOT?23* Texas?R-PDSO-G5?DCK* Texas?R-PDSO-N5?DRL* Texas?X2SON*0.8x0.8mm*P0.48mm*"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "74LVC1G07_0_1"
+        (polyline
+          (pts
+            (xy -7.62 6.35)
+            (xy -7.62 -6.35)
+            (xy 5.08 0)
+            (xy -7.62 6.35)
+          )
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+        (polyline
+          (pts
+            (xy -3.81 -1.27)
+            (xy -1.27 -1.27)
+          )
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+        (polyline
+          (pts
+            (xy -2.54 1.27)
+            (xy -3.81 0)
+            (xy -2.54 -1.27)
+            (xy -1.27 0)
+            (xy -2.54 1.27)
+          )
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+      )
+      (symbol "74LVC1G07_1_1"
+        (pin input line
+          (at -15.24 0 0)
+          (length 7.62)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -5.08 10.16 270)
+          (length 5.08)
+          (name "VCC"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -5.08 -10.16 90)
+          (length 5.08)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin free line
+          (at -2.54 -10.16 90)
+          (length 6.35)
+          (name "NC"
+            (effects
+              (font
+                (size 0.762 0.762)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin open_collector line
+          (at 12.7 0 180)
+          (length 7.62)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+      (embedded_fonts no)
+    )
+    (symbol "OpenKeys:R"
+      (pin_numbers
+        (hide yes)
+      )
+      (pin_names
+        (offset 0)
+      )
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+        )
+      )
+      (property "Value" "R"
+        (at 0 0 90)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+        )
+      )
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" "~"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type none)
+          )
+        )
+      )
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+      (embedded_fonts no)
+    )
+    (symbol "OpenKeys:C"
+      (pin_numbers
+        (hide yes)
+      )
+      (pin_names
+        (offset 0.254)
+      )
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" "~"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762)
+          )
+          (stroke
+            (width 0.508)
+            (type default)
+          )
+          (fill
+            (type none)
+          )
+        )
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762)
+          )
+          (stroke
+            (width 0.508)
+            (type default)
+          )
+          (fill
+            (type none)
+          )
+        )
+      )
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+      (embedded_fonts no)
+    )
+  )
+  (text "Independent physical LCD clearing and level-safe reset"
+    (at 205 16 0)
+    (effects
+      (font
+        (size 2.5 2.5)
+      )
+    )
+    (uuid "112ccf74-3856-52ea-8f21-be280b3528fd")
+  )
+  (wire
+    (pts
+      (xy 91.44 91.44)
+      (xy 86.36 91.44)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "9215f953-dd73-56a8-a7dd-68abf5944458")
+  )
+  (global_label "NRST"
+    (shape input)
+    (at 86.36 91.44 180)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify right)
+    )
+    (uuid "86197600-a5c2-5aec-83fd-a3a26be8b9b8")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 86.36 91.44 180)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (wire
+    (pts
+      (xy 101.6 81.28)
+      (xy 101.6 76.2)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "fa4cd057-0dbb-5de3-afb9-c038b14e69db")
+  )
+  (global_label "+3V3"
+    (shape input)
+    (at 101.6 76.2 90)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify left)
+    )
+    (uuid "c842f992-9bc1-5a96-803b-b19020ad0cee")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 101.6 76.2 90)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (wire
+    (pts
+      (xy 101.6 101.6)
+      (xy 101.6 106.68)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "2185d834-6604-5645-8b49-3f99f07dc451")
+  )
+  (global_label "GND"
+    (shape input)
+    (at 101.6 106.68 270)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify right)
+    )
+    (uuid "1bb52345-1bf7-5919-804d-76d2e5235478")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 101.6 106.68 270)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (no_connect
+    (at 104.14 101.6)
+    (uuid "ae96b20e-983c-52f7-b4c1-586d44988bd4")
+  )
+  (wire
+    (pts
+      (xy 119.38 91.44)
+      (xy 124.46 91.44)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "a9bc9a98-55b6-5c17-9f3e-c508c79e6c0a")
+  )
+  (global_label "LCD_RESET_N"
+    (shape input)
+    (at 124.46 91.44 0)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify left)
+    )
+    (uuid "eb04af80-853a-54ab-a5f4-09486619a62a")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 124.46 91.44 0)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (symbol
+    (lib_id "OpenKeys:74LVC1G07")
+    (at 106.68 91.44 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "0fd3618b-e854-52bc-9ad2-bdcade16a5bd")
+    (property "Reference" "U15"
+      (at 106.68 77.28 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+      )
+    )
+    (property "Value" "SN74LVC1G07DCKR"
+      (at 106.68 79.28 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+      )
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+      (at 106.68 91.44 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g07.pdf"
+      (at 106.68 91.44 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (hide yes)
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2/9425aada-69e5-549c-8b6b-ab81fec374a9"
+          (reference "U15")
+          (unit 1)
+        )
+      )
+    )
+    (pin "2"
+      (uuid "5d7fe876-3b97-5e4c-84de-28a32880887f")
+    )
+    (pin "5"
+      (uuid "30942614-c83d-554e-99d2-d3a23167b675")
+    )
+    (pin "3"
+      (uuid "1f2b9a17-bfe5-5b3e-bd37-b19cd44f7849")
+    )
+    (pin "1"
+      (uuid "22cd0607-0197-5e5e-bac5-263cddeb4d8d")
+    )
+    (pin "4"
+      (uuid "08de5e21-cbdf-5313-aa8e-36a616abec4d")
+    )
+  )
+  (wire
+    (pts
+      (xy 236.22 87.63)
+      (xy 236.22 82.55)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "bf345042-5fc2-541a-a1c8-fce9795d37f1")
+  )
+  (global_label "LCD_3V0"
+    (shape input)
+    (at 236.22 82.55 90)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify left)
+    )
+    (uuid "39063f7b-34c2-5b74-9852-5551c8f1a2c8")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 236.22 82.55 90)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (wire
+    (pts
+      (xy 236.22 95.25)
+      (xy 236.22 100.33)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "175986d5-0a02-54f2-9c02-fb20c2cddfe3")
+  )
+  (global_label "LCD_RESET_N"
+    (shape input)
+    (at 236.22 100.33 270)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify right)
+    )
+    (uuid "e0535bd2-91a8-5b5f-bb7b-0bbbed5044ee")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 236.22 100.33 270)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (symbol
+    (lib_id "OpenKeys:R")
+    (at 236.22 91.44 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "078a8089-139d-5cbb-a1a4-0f6034d73374")
+    (property "Reference" "R43"
+      (at 240.22 89.94 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "10k"
+      (at 240.22 92.94 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 240.22 91.44 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 240.22 91.44 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (hide yes)
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2/9425aada-69e5-549c-8b6b-ab81fec374a9"
+          (reference "R43")
+          (unit 1)
+        )
+      )
+    )
+    (pin "1"
+      (uuid "d51327e1-b9e5-50cc-81b9-9fab4a02eca1")
+    )
+    (pin "2"
+      (uuid "72fa480d-97d7-5e21-979e-41f576d47224")
+    )
+  )
+  (wire
+    (pts
+      (xy 106.68 153.67)
+      (xy 106.68 148.59)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "29e5445f-5c86-55f8-b330-3bf579262e0b")
+  )
+  (global_label "+3V3"
+    (shape input)
+    (at 106.68 148.59 90)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify left)
+    )
+    (uuid "6cc5db47-d685-51a7-8423-ee9300558cd9")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 106.68 148.59 90)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (wire
+    (pts
+      (xy 106.68 161.29)
+      (xy 106.68 166.37)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "55726b7b-6068-579d-9fec-05e51e43f1b0")
+  )
+  (global_label "GND"
+    (shape input)
+    (at 106.68 166.37 270)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify right)
+    )
+    (uuid "47d4351f-b67a-58ab-8892-5d4404da6230")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 106.68 166.37 270)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (symbol
+    (lib_id "OpenKeys:C")
+    (at 106.68 157.48 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "d1e27562-fac1-5b30-a698-30a1443c72a1")
+    (property "Reference" "C47"
+      (at 110.68 155.98 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 110.68 158.98 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 110.68 157.48 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 110.68 157.48 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (hide yes)
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2/9425aada-69e5-549c-8b6b-ab81fec374a9"
+          (reference "C47")
+          (unit 1)
+        )
+      )
+    )
+    (pin "1"
+      (uuid "16399a1e-7358-5fa4-a6b1-ecdd44ec6606")
+    )
+    (pin "2"
+      (uuid "eddea8cb-1490-56f5-b583-9238e4ba4c7f")
+    )
+  )
+  (text "NRST asserts from supervisor, case-open buffer or MCU reset.\nU15 drives LCD_RESET_N low without waiting for firmware startup.\nPC3 can also pull low on lock, expiry, cancel or display fault.\nPC3 open-drain; SCL/SDA open-drain on3.0V pull-ups.\nNo host raw-display command. Hardware reset is not a substitute for\nfingerprint gating of display content and authenticated transactions.\nValidate reset minimum width and complete physical LCD clearing."
+    (at 225 220 0)
+    (effects
+      (font
+        (size 1.3 1.3)
+      )
+    )
+    (uuid "4acb8755-1b13-5298-bbe9-687b89711e38")
+  )
+)

@@ -1,4 +1,4 @@
-> **R0.2 历史硬件资料**：当前设计已迁移到 [hardware/r03](r03/README.md)。下文 USB-A、OLED、OTP 和 PIN 备用不再属于当前需求。
+> **R0.2 历史硬件资料**：当前电气PCB及制造数据位于 [hardware/r04](r04/README.md)。下文 USB-A、OLED、OTP 和 PIN 备用不再属于当前需求。
 
 # OpenKeys R0 硬件交付
 

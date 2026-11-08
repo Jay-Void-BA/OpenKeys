@@ -1,6 +1,6 @@
-# R0.3 安全边界与实现状态
+# R0.4 安全边界与实现状态
 
-这是设计约束，实际已实现范围见 README 和 SECURITY_REVIEW_R03。目标主控为 STM32H573RIT6；旧 U585/OLED/OTP/双 USB 方案已被 R0.3 取代。
+这是设计约束，实际已实现范围见 README 和 SECURITY_REVIEW_R04。目标主控为 STM32H573RIT6；旧 U585/OLED/OTP/双 USB 方案已被 R0.4 取代。
 
 ```mermaid
 flowchart LR

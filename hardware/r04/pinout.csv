@@ -1,0 +1,56 @@
+pin,gpio,net,function
+1,VBAT,TAMP_3V0,power / GPIO / dedicated
+2,PC13,CASE_CLOSED,TAMP_IN1 dedicated/VBAT
+3,PC14,LSE_IN,power / GPIO / dedicated
+4,PC15,LSE_OUT,power / GPIO / dedicated
+7,NRST,NRST,power / GPIO / dedicated
+8,PC0,USB_GUARD_FAULT_N,power / GPIO / dedicated
+9,PC1,NRST,TAMP_IN3 dedicated
+10,PC2,FLASH_MISO,SPI2_MISO AF5
+11,PC3,LCD_RESET_N,power / GPIO / dedicated
+12,VSSA,GND,power / GPIO / dedicated
+13,VDDA,VDDA,power / GPIO / dedicated
+16,PA2,CHG_STAT1_N,power / GPIO / dedicated
+17,PA3,CHG_STAT2_N,power / GPIO / dedicated
+18,VSS,GND,power / GPIO / dedicated
+19,VDD,+3V3,power / GPIO / dedicated
+20,PA4,NFC_CS_N,power / GPIO / dedicated
+21,PA5,NFC_SCK,SPI1_SCK AF5
+22,PA6,NFC_MISO,SPI1_MISO AF5
+23,PA7,NFC_MOSI,SPI1_MOSI AF5
+24,PC4,LCD_BACKLIGHT,power / GPIO / dedicated
+25,PC5,VBUS_PRESENT_N,power / GPIO / dedicated
+26,PB0,BTN1_N,power / GPIO / dedicated
+27,PB1,BTN2_N,power / GPIO / dedicated
+28,PB2,BTN3_N,power / GPIO / dedicated
+29,PB10,NFC_IRQ_N,power / GPIO / dedicated
+30,VCAP,VCAP1,power / GPIO / dedicated
+31,VSS,GND,power / GPIO / dedicated
+32,VDD,+3V3,power / GPIO / dedicated
+33,PB12,FLASH_CS_N,power / GPIO / dedicated
+34,PB13,FLASH_SCK,SPI2_SCK AF5
+36,PB15,FLASH_MOSI,SPI2_MOSI AF5
+37,PC6,FP_IRQ,power / GPIO / dedicated
+38,PC7,FP_RESET_N,power / GPIO / dedicated
+39,PC8,SE_ENABLE_REQUEST,power / GPIO / dedicated
+40,PC9,LCD_SDA,I2C3_SDA AF4
+41,PA8,LCD_SCL,I2C3_SCL AF4
+44,PA11,USB_DM,USB_DM AF10
+45,PA12,USB_DP,USB_DP AF10
+46,PA13,SWDIO,power / GPIO / dedicated
+47,VSS,GND,power / GPIO / dedicated
+48,VDD,+3V3,power / GPIO / dedicated
+49,PA14,SWCLK,power / GPIO / dedicated
+50,PA15,FP_CS_N,power / GPIO / dedicated
+51,PC10,FP_SCK,SPI3_SCK AF6
+52,PC11,FP_MISO,SPI3_MISO AF6
+53,PC12,FP_MOSI,SPI3_MOSI AF6
+55,PB3,SWO,power / GPIO / dedicated
+56,PB4,CHARGE_ENABLE,power / GPIO / dedicated
+57,PB5,BTN4_N,power / GPIO / dedicated
+58,PB6,SE_SCL,I2C1_SCL AF4
+59,PB7,SE_SDA,I2C1_SDA AF4
+60,BOOT0,BOOT0,power / GPIO / dedicated
+62,VCAP,VCAP2,power / GPIO / dedicated
+63,VSS,GND,power / GPIO / dedicated
+64,VDD,+3V3,power / GPIO / dedicated

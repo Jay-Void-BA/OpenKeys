@@ -1,39 +1,42 @@
-# OpenKeys R0.3
+# OpenKeys R0.4
 
-开源认证器研发工程：**设备指纹必需、PIN 仅作附加验证、双行白背光 LCD、四个场景按键、单个 USB-C 母口兼数据/充电、NFC**。英文产品界面。已取消动态验证码和 USB-A。
+开源认证器工程：**设备指纹必需、PIN仅附加、白背光16×2英文字符LCD、四个场景按键、一个USB-C母口兼USB2数据/5V充电、NFC**。已取消动态验证码和USB-A。
 
-**当前是可审查的工程设计和软件部分实现，尚未达到可制造、可存放真实秘密的成品标准。** 未布线 PCB、缺少设备驱动的策略库、保持锁定的桌面管理器均不冒充已完成产品。尚无侧信道/故障注入/整机认证通过报告。
+**实际电气PCB已经画完**：10页原理图、130个BOM位置、四层68×92×1mm板，1430段走线、216个过孔；KiCad ERC/DRC均0错误0警告、0未连接，624项独立封装/引脚/网络检查通过。已导出Gerber、钻孔、贴片坐标及结构加工源。电路/被动模拟与连通检查通过，不表示完成整机安全资格；**完整设备固件和真实管理通道仍在开发，当前不可存放真实账户秘密**。
 
-![R0.3 structural illustration, not a photograph](hardware/r03/exports/OpenKeys-assembly.png)
+![R04 CAD rendering, not a photograph](hardware/r04/exports/OpenKeys-assembly.png)
 
-| 交付内容 | 入口与实际状态 |
+| 交付 | 入口与实际状态 |
 |---|---|
-| 新版电路 | [9 页 PDF](hardware/r03/exports/OpenKeys-schematic.pdf)、[KiCad 源文件](hardware/r03/kicad/OpenKeys.kicad_sch)、[BOM](hardware/r03/BOM.csv)、[引脚表](hardware/r03/pinout.csv) |
-| 实物结构设计 | [尺寸 PDF](hardware/r03/exports/OpenKeys-dimensions.pdf)、[SVG](hardware/r03/exports/OpenKeys-dimensions.svg)、[OpenSCAD](hardware/r03/mechanical/OpenKeys.scad)、[STL](hardware/r03/exports)、[Blender 源文件](hardware/r03/mechanical/OpenKeys-assembly.blend)；尺寸 74 × 98 × 20 mm，仍需样件配合检查 |
-| PCB | [四层放置研究](hardware/r03/kicad/OpenKeys-floorplan.kicad_pcb)，**没有电气走线或完整元件放置，不是制造板** |
-| 固件部分 | [no_std Rust 授权/指纹/PIN/LCD 核心](crates/device-policy/src/lib.rs)、[目标与缺口](firmware/README.md)；可作 Cortex-M33 编译检查，尚无可烧录 FIDO 固件 |
-| 桌面软件 | [AuthDesk](apps/manager)、[三平台开发版ZIP](docs/NATIVE_BUILDS.md)，Rust 原生 macOS/Linux/Windows GUI；设备认证通道未完成，故拒绝真实解锁/写入 |
-| 移动端 | [Android/iOS NFC 可行性及前置条件](apps/mobile/README.md)；尚无可用 APK/IPA，不把手机指纹算作设备指纹 |
-| 安全复查 | [R0.3 发现、修复与未解决风险](docs/SECURITY_REVIEW_R03.md)、[发布阻断检查](manufacturing/readiness-report.json) |
+| 电路图 | [10页PDF](hardware/r04/exports/OpenKeys-schematic.pdf)、[可编辑KiCad](hardware/r04/kicad/OpenKeys.kicad_sch)、[BOM](hardware/r04/BOM.csv)、[实际引脚](hardware/r04/pinout.csv) |
+| 实际PCB与制造数据 | [KiCad电气板](hardware/r04/kicad/OpenKeys.kicad_pcb)、[Gerber/钻孔ZIP](hardware/r04/exports/OpenKeys-fabrication.zip)、[贴片坐标](hardware/r04/exports/OpenKeys-SMD-position.csv)、[最终DRC](hardware/r04/review/routed-drc.json) |
+| 实物设计图 | [尺寸PDF](hardware/r04/exports/OpenKeys-dimensions.pdf)、[SVG](hardware/r04/exports/OpenKeys-dimensions.svg)、[OpenSCAD](hardware/r04/mechanical/enclosure.scad)、[STL/板体STEP](hardware/r04/exports)、[Blender](hardware/r04/mechanical/OpenKeys-assembly.blend)；外形74×98×20mm，须样件试装 |
+| 模拟与核对 | [被动网络/线圈估计](hardware/r04/review/simulation.json)、[电源DC角落](hardware/r04/review/protection-calculations.json)、[624项板网核对](hardware/r04/review/board-check.json)、[文件哈希](hardware/r04/review/cad-manifest.json) |
+| 固件 | [Rust授权/指纹/PIN/LCD策略](crates/device-policy)、[目标与当前缺口](firmware/README.md)；尚无可用于真实秘密的完整FIDO设备固件 |
+| 管理软件 | [AuthDesk源码](apps/manager)、[三平台开发构建](docs/NATIVE_BUILDS.md)；macOS/Linux/Windows原生GUI，真实设备认证通道未完成，保持锁定 |
+| Android/iOS NFC管理 | [实现前提](apps/mobile/README.md)；尚无可用APK/IPA，不把手机指纹等同于设备指纹 |
+| 安全测试与复查 | **[你可以照做的安全测试方法](docs/SECURITY_TEST_PLAN.md)**、[R04发现与修正](docs/SECURITY_REVIEW_R04.md)、[完整交付预检](manufacturing/readiness-report.json) |
 
-授权固定顺序为 **设备指纹 → 必要时设备 PIN → 完整请求显示与实体确认 → 单次操作**。导入、删除、恢复码读取、指纹管理、PIN 修改、配对、升级和擦除均要求附加 PIN。不存在 PIN 单独解锁路径；指纹故障或协议标签耗尽不会回退到 PIN。
+固定授权顺序：**设备指纹 → 必要时设备四键PIN → 完整请求与实体确认 → 单次操作**。导入、删除、恢复码读取、指纹管理、PIN修改、配对、升级和擦除要求附加PIN。PIN不能单独解锁。12次四符号PIN序列：短按1–4输入、长按4删除、长按2取消；菜单功能为Previous / Next / Confirm / Cancel。
 
-PIN 使用 12 次四符号序列：短按 1–4 输入，长按 4 删除一位、长按 2 取消；菜单中四键分别为 Previous / Next / Confirm / Cancel。固定长度不代表用户选择具备 24 位真实熵，必须有受保护的持久重试限制。
+PCB先冻结引脚和文件摘要，再写匹配固件。硬件已增加独立UV/OV、开盖复位、SE使能门控和LCD复位，**门控本身不能证明指纹通过**；必须配合真实认证传感器、可信启动、TrustZone/GTZC/DMA隔离和受保护执行路径。尚无实物侧信道、故障注入或整机认证通过报告。
 
-充电设计为 **5V、100mA 输入限流，约 0.5W 输入功率预算**；电池侧目标 100mA、4.2V 上限（约 0.42W，实际随电量和整机负载下降）。兼容 Apple 20W USB-C 适配器的 5V 档，使用合规 USB-C 线，不请求 9V，也不消耗 20W。充电需开启主电源运行后台充电服务；服务不要求解锁秘密。见[电源与电池说明](hardware/r03/README.md)。
+充电：**Apple20W USB-C适配器的5V档，输入预算约0.50W；电池侧100mA目标、4.2V上限，约0.42W上限**，随电量与系统负载下降；不请求9V、不使用20W。选500mAh受保护电池包、独立贴芯真实NTC；需开启设备运行充电服务，不要求解锁秘密。电芯及保护包寿命、温升和实际充电时间待实测。
 
-目标仍包括 FIDO2/WebAuthn/Passkey、U2F、hmac-secret、凭据管理、加密 notes/recovery codes。功能是否可用须看实物固件证据，不能由列表推断已实现。备份域低频时钟只用于防拆留痕与超时设计，不提供动态验证码。
+目标协议包括FIDO2/WebAuthn/Passkey、U2F、hmac-secret、凭据管理、加密notes/recovery codes，分别验证macOS/iOS及各扩展。功能列表不代表已经实现。三把FIDO密钥分别注册，恢复码另留独立离线备份。
 
 ```sh
 cargo test --workspace --locked
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo fmt --all -- --check
 cargo check -p device-policy --target thumbv8m.main-none-eabihf --locked
-cargo run -p authdesk --release --locked
+python3 hardware/r04/tools/manifest.py --check
+# KiCad9/pcbnew/OpenSCAD/CairoSVG环境；验证现存布线并导出，不重建PCB：
+sh hardware/r04/tools/export.sh
+# 当前应明确报告未完成的交付条件并返回2：
+python3 scripts/check-production-ready.py
 ```
 
-[构建与验证状态](docs/VALIDATION.md)记录本地检查和 GitHub Actions；CI 将编译器警告、Clippy 警告和依赖审计警告视为失败。电路 ERC 的一个天线封装警告公开保留，并阻止制造发布，未被隐藏成“硬件全通过”。
+[验证记录](docs/VALIDATION.md)区分原生软件CI与新硬件检查。[R04硬件说明](hardware/r04/README.md)含板层、天线、机械坐标、外接件、工具版本和模拟限制；[制造任务书](manufacturing/HANDOFF.md)含三档预算口径与大陆厂家入口。未代表用户联系厂商或下单。
 
-R0.3 活跃硬件位于 `hardware/r03/`；原 `hardware/kicad/`、`hardware/exports/` 及对应旧评审资料是保留的 R0.2 历史设计，不能混用。制造任务书与发布脚本以 R0.3 为准。
-
-自己的软件采用 [MIT](LICENSE)，硬件源文件采用 [CERN-OHL-S-2.0](hardware/LICENSE-CERN-OHL-S-2.0.txt)。第三方符号与上游参考保留原授权；[参考版本](references.lock.tsv)包括 Solo 2、OpenSK、Trussed/Nitrokey 与 Wasefire。未把上游认证或安全评价转移给本设计。
+运行源码采用[MIT](LICENSE)，硬件采用[CERN-OHL-S-2.0](hardware/LICENSE-CERN-OHL-S-2.0.txt)。第三方库/芯片ROM保留各自许可及信任边界。[参考锁定版本](references.lock.tsv)包含Solo2、Google OpenSK/Wasefire、Nitrokey/Trussed等，不把它们的认证转移给本设备。`hardware/r03/`和更早目录为历史资料，不能与R04混用。

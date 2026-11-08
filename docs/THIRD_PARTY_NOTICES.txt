@@ -27707,3 +27707,12 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+R04 CAD uses KiCad9 stock symbols/footprints under KiCad library CC-BY-SA4.0
+with the KiCad libraries exception. Source-derived custom LCD, FPC connector,
+SE050 SOT1969-1, FM11NC08S, BQ25185 and TPS25947 footprints are kept editable.
+Vendor datasheets/drawings are reference sources, not redistributed PDFs or
+photographs. R04 scripts and new mechanical/circuit/PCB work: CERN-OHL-S-2.0.
+Freerouting1.9.0 (GPLv3) was used as an external CAD tool; its executable is
+not distributed in this repository. The saved KiCad board and Gerber files
+are the reviewed outputs; CI does not execute the autorouter.

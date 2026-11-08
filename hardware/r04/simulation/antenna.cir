@@ -1,0 +1,19 @@
+OpenKeys integral antenna - LINEAR ESTIMATE ONLY
+* FM11NC08 specified nominal internal50pF; parasitic5pF is an assumption.
+Itest 0 rf DC 0 AC 1u
+Rloss rf lnode 2
+Lcoil lnode 0 1.19651484268e-06
+Cchip rf 0 50p
+Cmatch rf 0 56p
+Cparasitic rf 0 5p
+Rchip rf 0 5k
+.control
+set noaskquit
+set wr_singlescale
+set wr_vecnames
+ac dec 400 5Meg 30Meg
+let magnitude=mag(v(rf))
+wrdata antenna-ac.txt magnitude
+quit
+.endc
+.end

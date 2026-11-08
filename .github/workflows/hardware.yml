@@ -1,0 +1,44 @@
+name: R04 electrical CAD checks
+on:
+  workflow_dispatch:
+  push:
+    paths: ['hardware/r04/**', '.github/workflows/hardware.yml']
+  pull_request:
+    paths: ['hardware/r04/**', '.github/workflows/hardware.yml']
+permissions:
+  contents: read
+jobs:
+  cad:
+    runs-on: ubuntu-24.04
+    # INTI-CMNB/kicad9_auto:1.8.5 (KiCad9.0.7), registry manifest digest.
+    # This job checks saved CAD, and never reruns the nondeterministic router.
+    container:
+      image: ghcr.io/inti-cmnb/kicad9_auto@sha256:e79b9cc6f31074d788b8a9a5a364d24d90af47607460d41a7ede2273f7223090
+    env:
+      XDG_CONFIG_HOME: /tmp/openkeys-ci/config
+      XDG_CACHE_HOME: /tmp/openkeys-ci/cache
+      XDG_DATA_HOME: /tmp/openkeys-ci/data
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Verify delivered CAD hashes
+        run: python3 hardware/r04/tools/manifest.py --check
+      - name: Check all electrical rules and PCB to schematic parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME"
+          kicad-cli --version
+          kicad-cli sch erc --format json --severity-all --output hardware/r04/review/erc.json hardware/r04/kicad/OpenKeys.kicad_sch
+          kicad-cli sch export netlist --format kicadxml --output hardware/r04/exports/OpenKeys-netlist.xml hardware/r04/kicad/OpenKeys.kicad_sch
+          python3 hardware/r04/tools/check_netlist.py
+          kicad-cli pcb drc --format json --severity-all --output hardware/r04/review/routed-drc.json hardware/r04/kicad/OpenKeys.kicad_pcb
+          /usr/bin/python3 hardware/r04/tools/check_board.py
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: r04-electrical-checks
+          path: |
+            hardware/r04/review/erc.json
+            hardware/r04/review/netlist-check.json
+            hardware/r04/review/routed-drc.json
+            hardware/r04/review/board-check.json
+          if-no-files-found: error

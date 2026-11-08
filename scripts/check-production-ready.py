@@ -15,27 +15,27 @@ def local(name):
  p=(ROOT/name).resolve()
  if not p.is_relative_to(ROOT):raise ValueError('Artifact must remain within project')
  return p
-bom=list(csv.DictReader((ROOT/'hardware/r03/BOM.csv').open()))
+bom=list(csv.DictReader((ROOT/'hardware/r04/BOM.csv').open()))
 unresolved=[r['ref'] for r in bom if 'PENDING' in r['footprint'] or 'NOT SELECTED' in r['value']]
 check('schematic_footprint_selection',not unresolved,{'unresolved':unresolved,'bom_positions':len(bom)})
 critical=list(csv.DictReader((ROOT/'manufacturing/critical-parts.csv').open()))
 open_parts=[r['reference'] for r in critical if r['selection_status'] not in ('released','alternative_not_in_current_circuit')]
 check('critical_parts_frozen_for_production',not open_parts,{'not_released':open_parts,'note':'EVT selection is not production approval'})
-erc=json.loads((ROOT/'hardware/r03/review/erc.json').read_text())
+erc=json.loads((ROOT/'hardware/r04/review/erc.json').read_text())
 viol=[v for s in erc['sheets'] for v in s['violations']]
 check('erc_zero_errors_and_unresolved_warnings',not viol,{'errors':sum(v['severity']=='error' for v in viol),'warnings':sum(v['severity']=='warning' for v in viol)})
 try:manifest=json.loads((ROOT/'manufacturing/release-manifest.json').read_text())
 except (FileNotFoundError,json.JSONDecodeError):manifest={}
 required={
- 'board_source':'hardware/r03/kicad/OpenKeys.kicad_pcb',
- 'drc_report':'manufacturing/evidence/pcb-drc.json',
- 'fabrication_zip':'manufacturing/release/gerber-and-drill.zip',
- 'assembly_drawing':'manufacturing/release/assembly.pdf',
- 'placements':'manufacturing/release/placements.csv',
+ 'board_source':'hardware/r04/kicad/OpenKeys.kicad_pcb',
+ 'drc_report':'hardware/r04/review/routed-drc.json',
+ 'fabrication_zip':'hardware/r04/exports/OpenKeys-fabrication.zip',
+ 'assembly_drawing':'hardware/r04/exports/OpenKeys-dimensions.pdf',
+ 'placements':'hardware/r04/exports/OpenKeys-SMD-position.csv',
  'firmware_elf':'firmware/dist/openkeys.elf',
  'firmware_bin':'firmware/dist/openkeys.bin',
  'signed_update_bundle':'firmware/dist/openkeys-update.bin',
- 'bootloader':'firmware/dist/bootloader.bin',
+ 'boot_configuration':'firmware/production/boot-profile.json',
  'provisioning_instructions':'manufacturing/release/provisioning.md',
  'manager_macos':'dist/macos/AuthDesk.dmg',
  'manager_windows':'dist/windows/AuthDesk.msi',
@@ -83,7 +83,7 @@ for name in physical_tests:
  if not valid:missing_tests.append(name)
 check('physical_qualification_complete',not missing_tests and bool(qualification.get('board_revision')) and bool(qualification.get('firmware_sha256')),{'missing':missing_tests,'note':'Evidence authenticity and scope require independent human review'})
 complete=all(c['passed'] for c in checks)
-report={'schema':1,'date_beijing':datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).isoformat(),'status':'ELIGIBLE_FOR_MANUAL_RELEASE_REVIEW' if complete else 'BLOCKED','manufacturing_release_authorized':False,'automated_tool_is_not_release_authority':True,'checks':checks,'blocker_count':sum(not c['passed'] for c in checks),'limits':'Checks inventory and declared hashes, not the truth of lab reports or security certification. Human signoff and actual qualification are mandatory.'}
+report={'schema':1,'timestamp_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'ELIGIBLE_FOR_MANUAL_RELEASE_REVIEW' if complete else 'BLOCKED','manufacturing_release_authorized':False,'automated_tool_is_not_release_authority':True,'checks':checks,'blocker_count':sum(not c['passed'] for c in checks),'limits':'Checks inventory and declared hashes, not the truth of lab reports or security certification. Human signoff and actual qualification are mandatory.'}
 OUT.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
 print(report['status']+': '+str(report['blocker_count'])+' incomplete handoff conditions; see manufacturing/readiness-report.json')
 for c in checks:

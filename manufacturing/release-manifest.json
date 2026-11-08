@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "board_revision": "0.4",
+  "status": "INCOMPLETE_ENGINEERING_CANDIDATE",
+  "production_release": false,
+  "artifacts": {
+    "board_source": {
+      "path": "hardware/r04/kicad/OpenKeys.kicad_pcb",
+      "sha256": "6c2a93a63f343cf0401eae8c92dc1da6f5db145604ee9b0e8b9bd08b76f4bde4"
+    },
+    "drc_report": {
+      "path": "hardware/r04/review/routed-drc.json",
+      "sha256": "681b09b694b1b83a6dbdc8fa0bae9282278e733aa9665595c47b1adc03ebcfce"
+    },
+    "fabrication_zip": {
+      "path": "hardware/r04/exports/OpenKeys-fabrication.zip",
+      "sha256": "880c401ad76b383e54d83c7ad916c5c77d5f4f04a4cf7d4a6dbc4e3e8fa6e66e"
+    },
+    "assembly_drawing": {
+      "path": "hardware/r04/exports/OpenKeys-dimensions.pdf",
+      "sha256": "fa87d68990ee2e91e5cf8a4fb526b55385a32d1752a777796d46d0accb12ac36"
+    },
+    "placements": {
+      "path": "hardware/r04/exports/OpenKeys-SMD-position.csv",
+      "sha256": "118ba56b771c2b22b380439c7f2a4d9ef6ad9c7132fb34934d7dc9c69869b10a"
+    }
+  }
+}

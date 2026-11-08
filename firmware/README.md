@@ -1,8 +1,8 @@
-# Device firmware status — R0.3
+# Device firmware status — R0.4
 
 This directory defines the target integration. The implemented Rust firmware **library** is [`device-policy`](../crates/device-policy); there is no flashable authenticator ELF/BIN or signed update bundle yet. A host executable or an ARM `.rlib` is not device firmware delivery.
 
-Target: STM32H573RIT6, Cortex-M33, STiRoT immutable boot, TrustZone/GTZC isolation, SE050E, authenticated FPC2534AM, I2C 16x2 white LCD, four physical buttons, one USB-C USB2 FS port, FM11NC08S NFC card interface, encrypted external Flash. Exact pin assignments: [R0.3 pinout](../hardware/r03/pinout.csv).
+Target: STM32H573RIT6, Cortex-M33, STiRoT immutable boot, TrustZone/GTZC isolation, SE050E, authenticated FPC2534AM, I2C 16x2 white LCD, four physical buttons, one USB-C USB2 FS port, FM11NC08S NFC card interface, encrypted external Flash. Exact pin assignments: [R0.4 pinout](../hardware/r04/pinout.csv).
 
 Implemented and tested: request/channel/digest-bound one-shot authorization; mandatory authenticated biometric receipt; device-derived additional PIN policy; durable-attempt adapter contracts; FPC secure-frame parsing, replay/context/tag checks; bounded 12-symbol button PIN entry; English LCD identity pagination and cancellation clearing. Default hardware adapters deny access.
 

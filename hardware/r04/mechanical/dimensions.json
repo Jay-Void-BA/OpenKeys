@@ -1,0 +1,137 @@
+{
+  "revision": "0.4",
+  "units": "mm",
+  "case": [
+    74,
+    98,
+    20
+  ],
+  "wall": 1.8,
+  "floor": 1.6,
+  "lid": 1.6,
+  "pcb_offset": [
+    3,
+    3,
+    11
+  ],
+  "pcb_core": [
+    68,
+    92,
+    1
+  ],
+  "usb_tongue_y": -2.5,
+  "buttons": [
+    [
+      13.0,
+      41.5
+    ],
+    [
+      26.0,
+      41.5
+    ],
+    [
+      13.0,
+      62.0
+    ],
+    [
+      26.0,
+      62.0
+    ]
+  ],
+  "mount_holes": [
+    [
+      6.0,
+      6.0
+    ],
+    [
+      68.0,
+      6.0
+    ],
+    [
+      6.0,
+      70.0
+    ],
+    [
+      68.0,
+      70.0
+    ]
+  ],
+  "hole_diameter": 2.2,
+  "fingerprint": {
+    "center": [
+      52.3,
+      51.3
+    ],
+    "flange_diameter": 14.0,
+    "max_head_neck_width": 14.3,
+    "face_diameter": 12.1,
+    "opening_diameter": 12.4,
+    "seat_diameter": 14.6,
+    "max_thickness": 1.5,
+    "flex_total_length": 41,
+    "center_to_flex_tip": 34,
+    "flex_width": 6.5,
+    "connector": [
+      23.0,
+      51.3
+    ],
+    "orientation": "face up;tail left;contacts down;pin1 lower edge"
+  },
+  "lcd": {
+    "pin1": [
+      42.25,
+      36.35
+    ],
+    "overall_origin": [
+      11.35,
+      10
+    ],
+    "overall_width": 56.8,
+    "depth": [
+      5.0,
+      6.0
+    ],
+    "window": [
+      13.65,
+      11.5,
+      46.7,
+      15.3
+    ],
+    "cover_window": [
+      12.5,
+      10.35,
+      49,
+      17.6,
+      0.8
+    ]
+  },
+  "cell": {
+    "part": "Adafruit1578 protected500mAh",
+    "body": [
+      29,
+      36,
+      4.75
+    ],
+    "position": [
+      19.5,
+      37,
+      1.8
+    ],
+    "clearance_envelope": [
+      18,
+      36,
+      32.8,
+      38.8,
+      6.5
+    ],
+    "thermistor": "Semitec103AT-2;insulated contact to pouch"
+  },
+  "cad_3d_transform": {
+    "x": "drawing_x",
+    "y": "98-drawing_y",
+    "z": "height_from_case_back"
+  },
+  "rf_case_y_min": 76,
+  "assembly_qualified": false,
+  "security_qualified": false
+}
