@@ -12,7 +12,7 @@
 | 实物结构设计 | [尺寸 PDF](hardware/r03/exports/OpenKeys-dimensions.pdf)、[SVG](hardware/r03/exports/OpenKeys-dimensions.svg)、[OpenSCAD](hardware/r03/mechanical/OpenKeys.scad)、[STL](hardware/r03/exports)、[Blender 源文件](hardware/r03/mechanical/OpenKeys-assembly.blend)；尺寸 74 × 98 × 20 mm，仍需样件配合检查 |
 | PCB | [四层放置研究](hardware/r03/kicad/OpenKeys-floorplan.kicad_pcb)，**没有电气走线或完整元件放置，不是制造板** |
 | 固件部分 | [no_std Rust 授权/指纹/PIN/LCD 核心](crates/device-policy/src/lib.rs)、[目标与缺口](firmware/README.md)；可作 Cortex-M33 编译检查，尚无可烧录 FIDO 固件 |
-| 桌面软件 | [AuthDesk](apps/manager)，Rust 原生 macOS/Linux/Windows GUI；设备认证通道未完成，故拒绝真实解锁/写入 |
+| 桌面软件 | [AuthDesk](apps/manager)、[三平台开发版ZIP](docs/NATIVE_BUILDS.md)，Rust 原生 macOS/Linux/Windows GUI；设备认证通道未完成，故拒绝真实解锁/写入 |
 | 移动端 | [Android/iOS NFC 可行性及前置条件](apps/mobile/README.md)；尚无可用 APK/IPA，不把手机指纹算作设备指纹 |
 | 安全复查 | [R0.3 发现、修复与未解决风险](docs/SECURITY_REVIEW_R03.md)、[发布阻断检查](manufacturing/readiness-report.json) |
 

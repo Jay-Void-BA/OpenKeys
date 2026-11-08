@@ -8,14 +8,43 @@
   "clippy_deny_warnings_passed": true,
   "cortex_m33_policy_check": true,
   "known_vulnerabilities": 0,
-  "dependency_warnings": {},
+  "dependency_warnings": 0,
   "advisory_database": {
     "advisory-count": 1422,
     "last-commit": "309392b18f6b17022f82c701f300433126901068",
     "last-updated": "2026-11-06T16:34:32+01:00"
   },
   "cargo_lock_sha256": "c363f5d94361bea0c9267fce2fb4013c08c8bb2520e3cf855cab939636b61d63",
-  "native_ci_r03": "pending publication",
+  "native_ci_r03": {
+    "run_id": 42468485292,
+    "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42468485292",
+    "source_commit": "63e1e1672fc5484140cfbaeeb3297f133b239892",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "dependency-audit",
+        "conclusion": "success"
+      },
+      {
+        "name": "native (windows-2022)",
+        "conclusion": "success"
+      },
+      {
+        "name": "native (macos-15)",
+        "conclusion": "success"
+      },
+      {
+        "name": "native (ubuntu-24.04)",
+        "conclusion": "success"
+      }
+    ],
+    "logs_inspected_bytes": 375863,
+    "warning_lines": 0,
+    "warning_annotations": 0,
+    "notice_annotations": 1,
+    "notice_reason": "macOS arm64 runner capacity information"
+  },
   "real_device_integration": false,
   "flashable_authenticator_firmware": false,
   "biometric_hardware_backend_implemented": false,
@@ -26,5 +55,50 @@
   "hardware_erc_warnings": 2,
   "manufacturing_preflight": "../manufacturing/readiness-report.json",
   "linux_release_built": true,
-  "linux_local_binary_sha256": "12c48fdaae95a823ec97645a969cc54d15a6e87e41f99a397f038fd5a406f75d"
+  "linux_local_binary_sha256": "12c48fdaae95a823ec97645a969cc54d15a6e87e41f99a397f038fd5a406f75d",
+  "native_artifacts": [
+    {
+      "artifact_id": 13612945120,
+      "name": "authdesk-development-ubuntu-24.04",
+      "zip_sha256": "2035fc5885edc92b9acc7fca085af41ff61facb5679f9268e35599801091e07c",
+      "zip_bytes": 3094977,
+      "binary": "target/release/authdesk",
+      "binary_bytes": 7547528,
+      "binary_sha256": "ccda656621a59f43a815ea233e26e6930643a44dc86f62e5c2570c14646f2806",
+      "native_build_info": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1\n",
+      "inspected_without_execution": true
+    },
+    {
+      "artifact_id": 13612553052,
+      "name": "authdesk-development-windows-2022",
+      "zip_sha256": "cf2b7ce7c1eaa905a18f26fd32cd9c5af36f628ce192d7402e803eaf82d15859",
+      "zip_bytes": 2507974,
+      "binary": "target/release/authdesk.exe",
+      "binary_bytes": 5309440,
+      "binary_sha256": "011ffe5efde931555c32a52e81e7a4ddeec2fc3616eb4f1a0fbbbfd00d0f6d24",
+      "native_build_info": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-pc-windows-msvc\nrelease: 1.99.1\nLLVM version: 23.1.1\n",
+      "inspected_without_execution": true
+    },
+    {
+      "artifact_id": 13612254271,
+      "name": "authdesk-development-macos-15",
+      "zip_sha256": "fba7049d244f2f92785af2bee7e0f9e537ef10497df240e7bf43fe89593c1fe7",
+      "zip_bytes": 2422658,
+      "binary": "target/release/authdesk",
+      "binary_bytes": 5432144,
+      "binary_sha256": "536a3a959ddedc4670bcad402efab573ac8b99f47e260695de9b1a74c019160c",
+      "native_build_info": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1\n",
+      "inspected_without_execution": true
+    }
+  ],
+  "synthetic_notes_benchmark": {
+    "entries": 51200,
+    "parse_and_digest_ms": 16.477941,
+    "scope": "One optimized local run with public synthetic notes; not device or USB/NFC performance"
+  },
+  "cad_tools": {
+    "kicad": "9.0.2",
+    "openscad": "2021.01",
+    "blender": "4.3.2"
+  }
 }

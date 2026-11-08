@@ -26,3 +26,13 @@ python3 scripts/check-production-ready.py
 ```
 
 最后一项当前预期返回2并报告BLOCKED，不应篡改为成功。CI无编译/依赖警告不表示硬件无封装警告，更不代表整机安全认证。
+
+## 上传后的最终CI结果
+
+[运行42468485292](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42468485292)，输入提交`63e1e1672fc5484140cfbaeeb3297f133b239892`：Linux、macOS、Windows原生任务及依赖审计全部成功。31项测试在三个原生目标上通过；Linux任务还通过Cortex-M33策略库检查。完整日志375528字节已核对，warning行0、warning注释0；macOS有1条运行平台容量notice。
+
+较早运行42467886762曾有1条审计任务隐式安装Rust的warning，已改为显式安装/选择固定工具链，并由上述完整复跑确认消除。未通过删除历史日志来宣称没有发生过警告。
+
+三个开发版ZIP已下载并与GitHub公布的SHA256逐一相符，检查构建信息确认Linux x86_64、Windows x86_64 MSVC、macOS Apple Silicon。仅检查ZIP/二进制摘要及元信息，未在Mac/Windows执行或连接真实设备；不等于签名安装包/可用设备管理器。见[NATIVE_BUILDS](NATIVE_BUILDS.md)。
+
+公开合成notes基准一次结果：51200条解析并计算摘要约16.48ms；只代表该输入和容器的优化构建，不代表SE、USB/NFC、指纹或设备写入耗时。
