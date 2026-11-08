@@ -51,4 +51,38 @@ def lcd():
  fp.Reference().SetPosition(v(0,2.5));fp.Value().SetPosition(v(0,4));fp.Value().SetLayer(p.F_Fab)
  p.PCB_IO_MGR.PluginFind(p.PCB_IO_MGR.KICAD_SEXP).FootprintSave(str(LIB),fp)
  print('Generated candidate 16x2 white LCD footprint; physical fit not qualified')
-if __name__=='__main__':generate();lcd()
+def guard():
+ # Original transcription of TI RPW0010A land-pattern facts (SLVSFC9C,p73).
+ # No central grounded EP: long inner lands are IN5 and OUT6, not ground.
+ fp=p.FOOTPRINT(None);fp.SetFPID(p.LIB_ID('OpenKeys','TPS25947_RPW0010A'));fp.SetReference('REF**');fp.SetValue('TPS25947_RPW0010A');fp.SetAttributes(p.FP_SMD)
+ fp.SetLibDescription('TI RPW0010A 2x2mm HotRod10; 0.475/0.45 pitch; compound corner lands; IN5/OUT6 long lands. Sample/stencil/DFM qualification pending.')
+ def pad(n,x,y,w,h):
+  a=p.PAD(fp);a.SetNumber(str(n));a.SetAttribute(p.PAD_ATTRIB_SMD);a.SetShape(p.PAD_SHAPE_ROUNDRECT);a.SetPosition(v(x,y));a.SetSize(v(w,h));a.SetRoundRectRadiusRatio(.05/min(w,h));ls=p.LSET()
+  for ly in [p.F_Cu,p.F_Mask,p.F_Paste]:ls.AddLayer(ly)
+  a.SetLayerSet(ls);a.SetLocalSolderMaskMargin(p.FromMM(.05));fp.Add(a)
+ for n,x,y in [(1,-.9,-.7),(4,-.9,.7),(7,.9,.7),(10,.9,-.7)]:
+  pad(n,x,y,.6,.3);pad(n,-.725 if x<0 else .725,-.875 if y<0 else .875,.25,.65)
+ for n,x,y in [(2,-.9,-.225),(3,-.9,.225),(8,.9,.225),(9,.9,-.225)]:pad(n,x,y,.6,.25)
+ pad(5,-.25,0,.3,2.4);pad(6,.25,0,.3,2.4)
+ shape(fp,(-1,-1),(1,1),p.F_Fab);shape(fp,(-1.45,-1.45),(1.45,1.45),p.F_CrtYd)
+ fp.Reference().SetPosition(v(0,-2));fp.Value().SetPosition(v(0,2));fp.Value().SetLayer(p.F_Fab)
+ p.PCB_IO_MGR.PluginFind(p.PCB_IO_MGR.KICAD_SEXP).FootprintSave(str(LIB),fp)
+ print('Generated candidate RPW0010A footprint: ten electrical pins; IN/OUT are not a grounded EP')
+def nfc():
+ # Fudan FM11NC08 product specification v1.0 p9. Top-side footprint orientation
+ # rotated from the bottom-view package drawing: EP1.7x2.4, not2.4x1.7.
+ fp=p.FOOTPRINT(None);fp.SetFPID(p.LIB_ID('OpenKeys','FM11NC08S_DFN10_3x3_EP1.7x2.4'));fp.SetReference('REF**');fp.SetValue('FM11NC08S_DN_T_G');fp.SetAttributes(p.FP_SMD)
+ fp.SetLibDescription('Fudan v1.0 p9 package:3x3,pitch0.5,EP D1=2.3..2.5/E1=1.6..1.8. Original candidate land pattern rotated EP1.7x2.4;0.7x0.3 lands; assembly qualification pending.')
+ for n in range(1,11):
+  left=n<=5;y=-1+.5*(n-1) if left else 1-.5*(n-6)
+  a=p.PAD(fp);a.SetNumber(str(n));a.SetAttribute(p.PAD_ATTRIB_SMD);a.SetShape(p.PAD_SHAPE_ROUNDRECT);a.SetPosition(v(-1.4 if left else 1.4,y));a.SetSize(v(.7,.3));a.SetRoundRectRadiusRatio(.15);ls=p.LSET()
+  for ly in [p.F_Cu,p.F_Mask,p.F_Paste]:ls.AddLayer(ly)
+  a.SetLayerSet(ls);a.SetLocalSolderMaskMargin(p.FromMM(.05));fp.Add(a)
+ a=p.PAD(fp);a.SetNumber('11');a.SetAttribute(p.PAD_ATTRIB_SMD);a.SetShape(p.PAD_SHAPE_RECT);a.SetPosition(v(0,0));a.SetSize(v(1.7,2.4));ls=p.LSET();ls.AddLayer(p.F_Cu);ls.AddLayer(p.F_Mask);a.SetLayerSet(ls);a.SetLocalSolderMaskMargin(p.FromMM(.05));fp.Add(a)
+ for x in [-.425,.425]:
+  for y in [-.6,.6]:z=shape(fp,(x-.325,y-.45),(x+.325,y+.45),p.F_Paste,0);z.SetFilled(True)
+ shape(fp,(-1.5,-1.5),(1.5,1.5),p.F_Fab);shape(fp,(-2,-1.8),(2,1.8),p.F_CrtYd)
+ fp.Reference().SetPosition(v(0,-2.3));fp.Value().SetPosition(v(0,2.3));fp.Value().SetLayer(p.F_Fab)
+ p.PCB_IO_MGR.PluginFind(p.PCB_IO_MGR.KICAD_SEXP).FootprintSave(str(LIB),fp)
+ print('Generated Fudan-derived candidate NFC land pattern; no production qualification implied')
+if __name__=='__main__':generate();lcd();guard();nfc()

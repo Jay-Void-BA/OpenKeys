@@ -28,6 +28,22 @@
       "sha256": "3f1fb9255cfa9b220938447e903cc6d72eae2abe228393bcb8f1afcb4adb52c8",
       "bytes": 1274887,
       "pdf_redistributed": false
+    },
+    {
+      "name": "tps25947",
+      "url": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
+      "sha256": "8f96de389903091650d4f462dcfad3210071c3ae7093623a7978f34baf8a65b4",
+      "bytes": 5316794,
+      "pdf_redistributed": false,
+      "origin": "TI manufacturer"
+    },
+    {
+      "name": "fm11nc08",
+      "url": "https://wiki.nfc.im/attachments/7",
+      "sha256": "6771ba274a58977ce1cc431035184f5a3df2ec14d800b29fdd3487b753d9b674",
+      "bytes": 329543,
+      "pdf_redistributed": false,
+      "origin": "Manufacturer-authored document; Fudan PDF mirrored by NFC Wiki"
     }
   ],
   "other_primary_references": "See hardware/r03/README.md and docs/BIOMETRIC_PROTOCOL.md"

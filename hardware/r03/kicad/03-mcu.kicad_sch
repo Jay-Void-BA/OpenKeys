@@ -2925,9 +2925,36 @@
     (at 134.62 121.92)
     (uuid "c464a3cf-b2eb-5b43-b855-011a4b9a9041")
   )
-  (no_connect
-    (at 134.62 127.0)
-    (uuid "b4240040-41d3-5ceb-bf89-7bc814eca11f")
+  (wire
+    (pts
+      (xy 134.62 127.0)
+      (xy 129.54 127.0)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "e427a324-1c87-51a8-9551-a81f37315d1e")
+  )
+  (global_label "USB_GUARD_FAULT_N"
+    (shape input)
+    (at 129.54 127.0 180)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify right)
+    )
+    (uuid "c523b4ab-019b-52d6-9a44-1f86a444f23f")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 129.54 127.0 180)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
   )
   (wire
     (pts

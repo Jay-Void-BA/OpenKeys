@@ -2,10 +2,10 @@
 
 本目录是当前活跃的工程候选设计。原 `hardware/` 根目录下的 R0.2 文件保留作历史依据；不能混用其 USB-A/OLED/OTP 电路。当前文件可审查、可编辑和重生成，**尚不满足生产制造放行**。
 
-- [8 页电路 PDF](exports/OpenKeys-schematic.pdf)、[KiCad](kicad/OpenKeys.kicad_sch)、[BOM](BOM.csv)、[引脚表](pinout.csv)。115 个 BOM 位号。
+- [9 页电路 PDF](exports/OpenKeys-schematic.pdf)、[KiCad](kicad/OpenKeys.kicad_sch)、[BOM](BOM.csv)、[引脚表](pinout.csv)。126 个 BOM 位号。
 - [结构尺寸 PDF](exports/OpenKeys-dimensions.pdf)、[SVG](exports/OpenKeys-dimensions.svg)、[OpenSCAD](mechanical/OpenKeys.scad)、[3D 图](exports/OpenKeys-assembly.png)、[STL](exports)、[Blender](mechanical/OpenKeys-assembly.blend)。图是结构渲染，未拍摄实物。
 - [PCB 放置研究](kicad/OpenKeys-floorplan.kicad_pcb)：68×92×1mm、4 层、RF 隔离区域及部分关键封装；无完整放置、电气网络和布线，未提供冒充制造包的空 Gerber。
-- [ERC](review/erc.json)：0 电气错误、2 RF 封装警告；[32 项 XML 网表检查](review/netlist-check.json)。封装警告是制造阻断项，不是已解决的“允许警告”。
+- [ERC](review/erc.json)：0 电气错误、1 天线封装警告；[37 项 XML 网表检查](review/netlist-check.json)。封装警告是制造阻断项，不是已解决的“允许警告”。
 
 ## 核心与授权
 
@@ -31,7 +31,7 @@ TPS3702CX33 的 SET 高档标称欠压 3.17V、过压 3.43V，输出按原厂定
 
 MCP1700 独立 3.0V 供给 H573 VBAT 与触点，LSE 晶振提供备用域时钟。关主开关仍需保留 TAMP 配置/留痕；备用域完全丢失必须锁定，不能重新开放工厂初始化。需核对切换时序、Ioff/漏电、输入阈值和 TAMP 寄存器行为。简单触点仍可被短接，未实现经验证的主动防拆网格，也没有芯片开封级防护证明。
 
-RF 窗为壳体 y≥76mm / PCB y≥73mm，不能放电池、金属、螺丝或无关铜面。FM11NC08S 实际 EP 焊盘与天线均未冻结；最终装配的 L/Q/谐振、场强、手机兼容性需量测。NFC 的 LCD/指纹流程依赖电池，不能假定 RF 采能足够。
+RF 窗为壳体 y≥76mm / PCB y≥73mm，不能放电池、金属、螺丝或无关铜面。FM11NC08S 候选焊盘已按复旦v1.0第9页绘制，但实际采购修订/贴装尚未验收；天线尚未冻结；最终装配的 L/Q/谐振、场强、手机兼容性需量测。NFC 的 LCD/指纹流程依赖电池，不能假定 RF 采能足够。
 
 结构约 74×98×20mm，属于小型手持器，不是银行卡厚度。60–100g 仅为重量预算；实际模块、材料与装配后称重才是交付值。LCD/指纹排线、接口开孔和盖板触点行程尚需实物配合。
 
@@ -46,4 +46,8 @@ blender -b -t 2 -P hardware/r03/tools/render.py
 
 核对依据：[H573](https://www.st.com/resource/en/datasheet/stm32h573ri.pdf)、[STiRoT](https://wiki.st.com/stm32mcu/wiki/Security%3ASTiRoT_for_STM32H5)、[Newhaven LCD](https://newhavendisplay.com/content/specs/NHD-C0216CiZ-FSW-FBW-3V3.pdf)、[BQ25185](https://www.ti.com/lit/ds/symlink/bq25185.pdf)、[TPS3702](https://www.ti.com/lit/ds/symlink/tps3702.pdf)、[MCP1700](https://ww1.microchip.com/downloads/en/DeviceDoc/MCP1700-Data-Sheet-20001826F.pdf)、[FPC](https://www.fpc.com/media/legj15fr/spc27317-6-fpc2530-product-specification.pdf)。PDF 不重新分发；事实摘要、散列和链接保留在 review。
 
-输入防护补充：VBUS TVS、USB ESD的供电参考与VBUS感知均放在串联保险丝之后；当前仍无独立持续输入过压切断。TVS不能用作长期稳压器，保险丝/夹位/接口绝对最大值及失效温升必须验证，见安全复查B12。
+输入防护续更：F1后加入SMF16A输入浪涌TVS和TPS259470LRPWR独立eFuse，之后才是输出TVS、USB ESD参考、充电器与VBUS感知。采用374k/100k（均0.1%）OVLO分压，直流误差范围5.5612–5.8436V；使能脚有独立分压和5.1V钳位。6.49k限流电阻选在芯片允许范围内，约0.51A是故障保护阈值，**不是**充电/USB正常消耗；BQ输入限流仍为100mA档。1nF DVDT对应名义2V/ms软启动。
+
+[计算记录](review/protection-calculations.json)只覆盖指定直流误差；不包括瞬态过冲、使能钳位温度/漏电、TVS/PPTC I²t配合、反向漏电、CC/数据线攻击及系统电流实测。eFuse28V绝对最大值不是整机浪涌或任意高压防护保证。故障恢复按具体芯片机制验收，不把L后缀误解为所有过压事件都会永久锁存。
+
+新增来源：[TPS25947原厂数据手册](https://www.ti.com/lit/ds/symlink/tps25947.pdf)、[复旦原始规格的公开镜像](https://wiki.nfc.im/attachments/7)。FM11采用0.5mm间距、旋转后的1.7×2.4mm EP候选焊盘；板级贴装/射频资格仍未通过。

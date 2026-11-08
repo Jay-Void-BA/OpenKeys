@@ -63,7 +63,7 @@ C22,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
 C23,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
 C24,1uF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
 C25,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
-U7,FM11NC08S (DFN10 + EP),OpenKeys:FM11NC08S_DFN10_PENDING,05-nfc,False,Orderable package/EP drawing unresolved; no arbitrary DFN substitute
+U7,FM11NC08S (DFN10 + EP),OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4,05-nfc,False,"Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM"
 J4,13.56MHz PCB loop / fixture,OpenKeys:NFC_LOOP_PENDING,05-nfc,False,RF-only local PCB y>=73mm; coil not routed or tuned
 C26,100nF,Capacitor_SMD:C_0603_1608Metric,05-nfc,False,
 C27,1uF,Capacitor_SMD:C_0603_1608Metric,05-nfc,False,
@@ -114,3 +114,14 @@ R36,100k,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,
 C42,100nF 10V,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
 C43,100nF,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
 C44,100nF,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
+U14,TPS259470LRPWR,OpenKeys:TPS25947_RPW0010A,08-input-guard,False,"Adjustable OVLO, latch-off variant for latched faults, true reverse-current blocking. Follow datasheet fault-specific recovery; do not infer all OV events latch. Input abs28V is not a system surge rating."
+R37,22.1k 1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R38,10k 1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R39,374k 0.1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R40,100k 0.1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R41,6.49k 1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R42,47k,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+D4,"BZT52-C5V1,115",Diode_SMD:D_SOD-123,08-input-guard,False,Protect EN/UVLO absolute maximum6.5V; not tied directly to raw VBUS. Verify leakage/temp and dynamic clamp.
+D5,SMF16A,Diode_SMD:D_SOD-123F,08-input-guard,False,"Input surge TVS AFTER F1. Nominal datasheet clamp26V vs eFuse28Vabs is not an IEC guarantee; qualify actual diode supplier, layout and I2t."
+C45,100nF 50V,Capacitor_SMD:C_0603_1608Metric,08-input-guard,False,
+C46,1nF C0G,Capacitor_SMD:C_0603_1608Metric,08-input-guard,False,

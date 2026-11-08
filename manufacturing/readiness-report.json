@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "date_beijing": "2026-11-08T17:44:53.816204+08:00",
+  "date_beijing": "2026-11-08T18:21:31.943188+08:00",
   "status": "BLOCKED",
   "manufacturing_release_authorized": false,
   "automated_tool_is_not_release_authority": true,
@@ -10,10 +10,9 @@
       "passed": false,
       "detail": {
         "unresolved": [
-          "U7",
           "J4"
         ],
-        "bom_positions": 115
+        "bom_positions": 126
       }
     },
     {
@@ -35,7 +34,10 @@
           "U10",
           "U13",
           "BAT1",
-          "Y1"
+          "Y1",
+          "U14",
+          "D4",
+          "D5"
         ],
         "note": "EVT selection is not production approval"
       }
@@ -45,7 +47,7 @@
       "passed": false,
       "detail": {
         "errors": 0,
-        "warnings": 2
+        "warnings": 1
       }
     },
     {
@@ -211,6 +213,7 @@
           "vault_atomicity_and_rollback",
           "battery_charge_suspend_and_backup_tamper",
           "single_usb_c_current_esd_and_backfeed",
+          "usb_guard_ovlo_transients_thermal_and_reverse",
           "nfc_final_enclosure_ios",
           "trusted_screen_and_cancel",
           "manager_three_os_real_device",

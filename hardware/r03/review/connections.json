@@ -170,7 +170,7 @@
     "sheet": "02-power",
     "nets": {
       "1": "VBUS_RAW",
-      "2": "USB_5V"
+      "2": "VBUS_FUSED"
     },
     "note": "",
     "dnp": false
@@ -455,6 +455,7 @@
       "33": "FLASH_CS_N",
       "34": "FLASH_SCK",
       "36": "FLASH_MOSI",
+      "8": "USB_GUARD_FAULT_N",
       "9": "NRST",
       "10": "FLASH_MISO",
       "11": "LCD_RESET_N",
@@ -886,7 +887,7 @@
   {
     "ref": "U7",
     "value": "FM11NC08S (DFN10 + EP)",
-    "footprint": "OpenKeys:FM11NC08S_DFN10_PENDING",
+    "footprint": "OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4",
     "sheet": "05-nfc",
     "nets": {
       "1": "+3V3",
@@ -901,7 +902,7 @@
       "10": "NFC_IRQ_N",
       "11": "GND"
     },
-    "note": "Orderable package/EP drawing unresolved; no arbitrary DFN substitute",
+    "note": "Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM",
     "dnp": false
   },
   {
@@ -1532,6 +1533,146 @@
     "sheet": "07-fault-tamper",
     "nets": {
       "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U14",
+    "value": "TPS259470LRPWR",
+    "footprint": "OpenKeys:TPS25947_RPW0010A",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_EN",
+      "2": "USB_GUARD_OV",
+      "3": null,
+      "4": "USB_GUARD_FAULT_N",
+      "5": "VBUS_FUSED",
+      "6": "USB_5V",
+      "7": "USB_GUARD_DVDT",
+      "8": "GND",
+      "9": "USB_GUARD_ILM",
+      "10": null
+    },
+    "note": "Adjustable OVLO, latch-off variant for latched faults, true reverse-current blocking. Follow datasheet fault-specific recovery; do not infer all OV events latch. Input abs28V is not a system surge rating.",
+    "dnp": false
+  },
+  {
+    "ref": "R37",
+    "value": "22.1k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "VBUS_FUSED",
+      "2": "USB_GUARD_EN"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R38",
+    "value": "10k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_EN",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R39",
+    "value": "374k 0.1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "VBUS_FUSED",
+      "2": "USB_GUARD_OV"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R40",
+    "value": "100k 0.1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_OV",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R41",
+    "value": "6.49k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_ILM",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R42",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "+3V3",
+      "2": "USB_GUARD_FAULT_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "D4",
+    "value": "BZT52-C5V1,115",
+    "footprint": "Diode_SMD:D_SOD-123",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_EN",
+      "2": "GND"
+    },
+    "note": "Protect EN/UVLO absolute maximum6.5V; not tied directly to raw VBUS. Verify leakage/temp and dynamic clamp.",
+    "dnp": false
+  },
+  {
+    "ref": "D5",
+    "value": "SMF16A",
+    "footprint": "Diode_SMD:D_SOD-123F",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "VBUS_FUSED",
+      "2": "GND"
+    },
+    "note": "Input surge TVS AFTER F1. Nominal datasheet clamp26V vs eFuse28Vabs is not an IEC guarantee; qualify actual diode supplier, layout and I2t.",
+    "dnp": false
+  },
+  {
+    "ref": "C45",
+    "value": "100nF 50V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "VBUS_FUSED",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C46",
+    "value": "1nF C0G",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_DVDT",
       "2": "GND"
     },
     "note": "",

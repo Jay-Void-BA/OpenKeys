@@ -4301,13 +4301,13 @@
       (uuid "0292df28-f562-5b3a-b95d-d58fbd827ae1")
     )
   )
-  (text "5.1k Rd on each CC pin: sink only. No PD negotiation, no 9 V request.\nApple 20 W adapter uses 5 V through a standards-compliant USB-C cable.\n100mA hardware input limit: 5 V x 0.1 A = 0.50 W nominal input budget.\nTVS is AFTER F1; not a sustained overvoltage cutoff. Input OVP/thermal testing remains BLOCKED."
+  (text "5.1k Rd on each CC pin: sink only. No PD negotiation, no 9 V request.\nApple 20 W adapter uses 5 V through a standards-compliant USB-C cable.\n100mA hardware input limit: 5 V x 0.1 A = 0.50 W nominal input budget.\nInput guard U14 is independent of MCU: see sheet08. Analog timing/thermal protection not yet qualified."
     (at 205 270 0)
     (effects
       (font
         (size 1.3 1.3)
       )
     )
-    (uuid "314a24a7-9669-53b6-89d7-02c5770e8d5e")
+    (uuid "96ef405a-38a9-5821-bcca-eaa17f52606c")
   )
 )

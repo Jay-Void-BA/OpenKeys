@@ -8,7 +8,7 @@
 
 | 交付内容 | 入口与实际状态 |
 |---|---|
-| 新版电路 | [8 页 PDF](hardware/r03/exports/OpenKeys-schematic.pdf)、[KiCad 源文件](hardware/r03/kicad/OpenKeys.kicad_sch)、[BOM](hardware/r03/BOM.csv)、[引脚表](hardware/r03/pinout.csv) |
+| 新版电路 | [9 页 PDF](hardware/r03/exports/OpenKeys-schematic.pdf)、[KiCad 源文件](hardware/r03/kicad/OpenKeys.kicad_sch)、[BOM](hardware/r03/BOM.csv)、[引脚表](hardware/r03/pinout.csv) |
 | 实物结构设计 | [尺寸 PDF](hardware/r03/exports/OpenKeys-dimensions.pdf)、[SVG](hardware/r03/exports/OpenKeys-dimensions.svg)、[OpenSCAD](hardware/r03/mechanical/OpenKeys.scad)、[STL](hardware/r03/exports)、[Blender 源文件](hardware/r03/mechanical/OpenKeys-assembly.blend)；尺寸 74 × 98 × 20 mm，仍需样件配合检查 |
 | PCB | [四层放置研究](hardware/r03/kicad/OpenKeys-floorplan.kicad_pcb)，**没有电气走线或完整元件放置，不是制造板** |
 | 固件部分 | [no_std Rust 授权/指纹/PIN/LCD 核心](crates/device-policy/src/lib.rs)、[目标与缺口](firmware/README.md)；可作 Cortex-M33 编译检查，尚无可烧录 FIDO 固件 |
@@ -32,7 +32,7 @@ cargo check -p device-policy --target thumbv8m.main-none-eabihf --locked
 cargo run -p authdesk --release --locked
 ```
 
-[构建与验证状态](docs/VALIDATION.md)记录本地检查和 GitHub Actions；CI 将编译器警告、Clippy 警告和依赖审计警告视为失败。电路 ERC 的两个 RF 封装警告公开保留，并阻止制造发布，未被隐藏成“硬件全通过”。
+[构建与验证状态](docs/VALIDATION.md)记录本地检查和 GitHub Actions；CI 将编译器警告、Clippy 警告和依赖审计警告视为失败。电路 ERC 的一个天线封装警告公开保留，并阻止制造发布，未被隐藏成“硬件全通过”。
 
 R0.3 活跃硬件位于 `hardware/r03/`；原 `hardware/kicad/`、`hardware/exports/` 及对应旧评审资料是保留的 R0.2 历史设计，不能混用。制造任务书与发布脚本以 R0.3 为准。
 

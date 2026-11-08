@@ -1,0 +1,39 @@
+[
+  {
+    "footprint": "TPS25947_RPW0010A",
+    "electrical_pin_numbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "minimum_candidate_copper_gap_mm": 0.2,
+    "geometry_only": true,
+    "qualified_for_production": false
+  },
+  {
+    "footprint": "FM11NC08S_DFN10_3x3_EP1.7x2.4",
+    "electrical_pin_numbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "minimum_candidate_copper_gap_mm": 0.2,
+    "geometry_only": true,
+    "qualified_for_production": false
+  }
+]

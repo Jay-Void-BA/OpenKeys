@@ -1029,7 +1029,7 @@
         )
       )
     )
-    (property "Footprint" "OpenKeys:FM11NC08S_DFN10_PENDING"
+    (property "Footprint" "OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4"
       (at 114.3 91.44 0)
       (effects
         (font

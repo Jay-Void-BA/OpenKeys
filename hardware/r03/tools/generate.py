@@ -14,6 +14,8 @@ for p in pins(LIB['SUP']):
  if str(node(p,'name')[1]) in ('UV','OV'):p[1]='open_collector'
 LIB['AON']=library('Regulator_Linear','MCP1700x-300xxTT')
 LIB['XTAL']=library('Device','Crystal')
+LIB['ZEN']=library('Device','D_Zener')
+LIB['EFUSE']=custom('TPS259470L',[(1,'EN_UVLO','input'),(2,'OVLO','input'),(3,'AUXOFF','open_collector'),(4,'FLT_N','open_collector'),(5,'IN','power_in'),(6,'OUT','power_out'),(7,'DVDT','passive'),(8,'GND','power_in'),(9,'ILM','passive'),(10,'ITIMER','passive')])
 def named(k,d):return {num:d.get(name) for num,name in pmap(k).items()}
 def usb():
  s=sheet('01-usb','One USB-C receptacle - USB 2.0 FS data and 5 V charging')
@@ -26,10 +28,10 @@ def usb():
  for idx,(net,x) in enumerate([('USB_5V',210.82),('CC1',264.16),('CC2',317.5)]):
   s.comp('TVS','D'+str(idx+1),'SMF5.0A' if idx==0 else 'PESD5V0S1BA',x,220.98,{'1':net,'2':'GND'},'Diode_SMD:D_SOD-123F' if idx==0 else 'Diode_SMD:D_SOD-323')
  for i,net in enumerate(['VBUS_RAW','GND']):s.comp('PWR','#FLG'+str(i+1),'PWR_FLAG',254+i*45.72,40.64,{'1':net})
- s.text('5.1k Rd on each CC pin: sink only. No PD negotiation, no 9 V request.\nApple 20 W adapter uses 5 V through a standards-compliant USB-C cable.\n100mA hardware input limit: 5 V x 0.1 A = 0.50 W nominal input budget.\nTVS is AFTER F1; not a sustained overvoltage cutoff. Input OVP/thermal testing remains BLOCKED.',205,270)
+ s.text('5.1k Rd on each CC pin: sink only. No PD negotiation, no 9 V request.\nApple 20 W adapter uses 5 V through a standards-compliant USB-C cable.\n100mA hardware input limit: 5 V x 0.1 A = 0.50 W nominal input budget.\nInput guard U14 is independent of MCU: see sheet08. Analog timing/thermal protection not yet qualified.',205,270)
 def power():
  s=sheet('02-power','Low-rate charging, protected 500 mAh pack and 3.3 V supply')
- passive(s,'FUSE','250mA hold - qualify I2t',33.02,68.58,'VBUS_RAW','USB_5V')
+ passive(s,'FUSE','250mA hold - qualify I2t',33.02,68.58,'VBUS_RAW','VBUS_FUSED')
  s.comp('CHG','U2','BQ25185DLHR',139.7,73.66,named('CHG',{'IN':'USB_5V','SYS':'SYS','BAT':'BAT','GND':'GND','EP':'GND','CE_N':'CHARGE_DISABLE','TS_MR':'BAT_NTC','ILIM_VSET':'CHG_ILIM_VSET','ISET':'CHG_ISET','STAT1':'CHG_STAT1_N','STAT2':'CHG_STAT2_N'}),'Package_DFN_QFN:Texas_DLH0010A_WSON-10-1EP_2.2x2mm_P0.4mm_EP0.9x1.5mm',note='TI SLUSF65B table6-1:24k=4.2V/input100mA; ISET3k=target100mA before input DPM')
  s.comp('CONN3','J2','Protected 1S 500mAh + 10k NTC',322.58,76.2,{'1':'BAT','2':'BAT_NTC','3':'GND'},'Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal',note='Pack envelope32x37x6 incl PCM; qualified orderable pack/NTC UNRELEASED; no bare cell substitution')
  passive(s,'R','24k 1%',66.04,137.16,'CHG_ILIM_VSET','GND');passive(s,'R','3.00k 1%',109.22,137.16,'CHG_ISET','GND')
@@ -37,7 +39,7 @@ def power():
  s.comp('NMOS','Q2','2N7002',264.16,137.16,{'1':'CHARGE_ENABLE','2':'GND','3':'CHARGE_DISABLE'})
  passive(s,'R','100k',307.34,137.16,'CHARGE_ENABLE','GND')
  caps(s,[('1uF 10V','USB_5V','GND'),('10uF 6.3V','BAT','GND'),('10uF 10V','SYS','GND')],33.02,187.96)
- s.comp('PWR','#FLG3','PWR_FLAG',73.66,35.56,{'1':'USB_5V'})
+ s.comp('PWR','#FLG3','PWR_FLAG',73.66,35.56,{'1':'VBUS_FUSED'})
  s.comp('SPDT','SW1','OFF / ON',190.5,220.98,{'1':'SYS','2':'REG_EN','3':'GND'},'Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN')
  s.comp('REG','U3','TPS63031DSK (3.3 V)',289.56,223.52,named('REG',{'VIN':'SYS','VINA':'REG_VINA','VOUT':'+3V3','FB':'+3V3','EN':'REG_EN','PS/SYNC':'GND','L1':'SW_L1','L2':'SW_L2','GND':'GND','PGND':'GND','EP':'GND'}))
  passive(s,'R','0R',210.82,177.8,'SYS','REG_VINA');passive(s,'L','1.5uH Isat>=1.5A',353.06,152.4,'SW_L1','SW_L2')
@@ -52,7 +54,7 @@ def mcu():
   elif name=='VBAT':nets[num]='TAMP_3V0'
   elif name=='VDDA':nets[num]='VDDA'
   elif name in ('VSS','VSSA'):nets[num]='GND'
- signals={'NRST':'NRST','BOOT0':'BOOT0','PA2':'CHG_STAT1_N','PA3':'CHG_STAT2_N','PA4':'NFC_CS_N','PA5':'NFC_SCK','PA6':'NFC_MISO','PA7':'NFC_MOSI','PA8':'LCD_SCL','PA11':'USB_DM','PA12':'USB_DP','PA13':'SWDIO','PA14':'SWCLK','PA15':'FP_CS_N','PB0':'BTN1_N','PB1':'BTN2_N','PB2':'BTN3_N','PB3':'SWO','PB4':'CHARGE_ENABLE','PB5':'BTN4_N','PB6':'SE_SCL','PB7':'SE_SDA','PB10':'NFC_IRQ_N','PB12':'FLASH_CS_N','PB13':'FLASH_SCK','PB15':'FLASH_MOSI','PC1':'NRST','PC2':'FLASH_MISO','PC3':'LCD_RESET_N','PC4':'LCD_BACKLIGHT','PC5':'VBUS_PRESENT_N','PC6':'FP_IRQ','PC7':'FP_RESET_N','PC8':'SE_ENABLE_REQUEST','PC9':'LCD_SDA','PC10':'FP_SCK','PC11':'FP_MISO','PC12':'FP_MOSI','PC13':'CASE_CLOSED','PC14':'LSE_IN','PC15':'LSE_OUT'}
+ signals={'NRST':'NRST','BOOT0':'BOOT0','PA2':'CHG_STAT1_N','PA3':'CHG_STAT2_N','PA4':'NFC_CS_N','PA5':'NFC_SCK','PA6':'NFC_MISO','PA7':'NFC_MOSI','PA8':'LCD_SCL','PA11':'USB_DM','PA12':'USB_DP','PA13':'SWDIO','PA14':'SWCLK','PA15':'FP_CS_N','PB0':'BTN1_N','PB1':'BTN2_N','PB2':'BTN3_N','PB3':'SWO','PB4':'CHARGE_ENABLE','PB5':'BTN4_N','PB6':'SE_SCL','PB7':'SE_SDA','PB10':'NFC_IRQ_N','PB12':'FLASH_CS_N','PB13':'FLASH_SCK','PB15':'FLASH_MOSI','PC0':'USB_GUARD_FAULT_N','PC1':'NRST','PC2':'FLASH_MISO','PC3':'LCD_RESET_N','PC4':'LCD_BACKLIGHT','PC5':'VBUS_PRESENT_N','PC6':'FP_IRQ','PC7':'FP_RESET_N','PC8':'SE_ENABLE_REQUEST','PC9':'LCD_SDA','PC10':'FP_SCK','PC11':'FP_MISO','PC12':'FP_MOSI','PC13':'CASE_CLOSED','PC14':'LSE_IN','PC15':'LSE_OUT'}
  for pin,net in signals.items():nets[pn[pin]]=net
  nets['30']='VCAP1';nets['62']='VCAP2'
  s.comp('MCU','U4','STM32H573RIT6',160.02,142.24,nets,note='H573 pin62=VCAP2, no PB9; SE PB6/PB7; LCD PA8/PC9. Recheck complete alternate functions before firmware target release')
@@ -76,7 +78,7 @@ def storage():
  s.text('Each user security operation: fresh authenticated device FP + confirmation.\nSensitive administration also needs device PIN. PIN never replaces FP.\nPrecharge attempts durably; uncertain writes deny. AEAD does not alone prevent rollback.\nSE certification does not certify MCU, PCB, biometric path or complete product.',184,264)
 def nfc():
  s=sheet('05-nfc','NFC Type4 card interface - battery-powered trusted fingerprint UI')
- s.comp('NFC','U7','FM11NC08S (DFN10 + EP)',114.3,91.44,{'1':'+3V3','2':'NFC_VOUT','3':'ANT1','4':'ANT2','5':'GND','6':'NFC_CS_N','7':'NFC_SCK','8':'NFC_MOSI','9':'NFC_MISO','10':'NFC_IRQ_N','11':'GND'},'OpenKeys:FM11NC08S_DFN10_PENDING',note='Orderable package/EP drawing unresolved; no arbitrary DFN substitute')
+ s.comp('NFC','U7','FM11NC08S (DFN10 + EP)',114.3,91.44,{'1':'+3V3','2':'NFC_VOUT','3':'ANT1','4':'ANT2','5':'GND','6':'NFC_CS_N','7':'NFC_SCK','8':'NFC_MOSI','9':'NFC_MISO','10':'NFC_IRQ_N','11':'GND'},'OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4',note='Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM')
  s.comp('CONN2','J4','13.56MHz PCB loop / fixture',287.02,76.2,{'1':'ANT1','2':'ANT2'},'OpenKeys:NFC_LOOP_PENDING',note='RF-only local PCB y>=73mm; coil not routed or tuned')
  caps(s,[('100nF','+3V3','GND'),('1uF','+3V3','GND'),('100nF 10V','NFC_VOUT','GND')],53.34,172.72)
  passive(s,'C','C0G tune - value after RF measurement',154.94,172.72,'ANT1','ANT2',dnp=True)
@@ -107,6 +109,14 @@ def fault_tamper():
  passive(s,'R','100k',154.94,172.72,'SE_ENABLE_REQUEST','GND')
  caps(s,[('100nF 10V','SYS','GND'),('100nF','+3V3','GND'),('100nF','+3V3','GND')],246.38,177.8)
  s.text('Reset invalidates volatile grants; reboot must verify firmware and require fresh FP.\nPC13=case input; PC1/TAMP_IN3 observes reset/fault line.\nInternal BOR/PVD, clock checks and persistent precharged attempts also required.\nProduction debug lifecycle closed; no populated external debug connector.\nVBAT+LSE must retain tamper with main OFF; full backup loss must lock, not initialize.\nMeasure reset/ENA latency, leakage and injection before security release.',187,255)
+def input_guard():
+ s=sheet('08-input-guard','Independent VBUS overvoltage cutoff, reverse blocking and limited inrush')
+ s.comp('EFUSE','U14','TPS259470LRPWR',144.78,86.36,named('EFUSE',{'EN_UVLO':'USB_GUARD_EN','OVLO':'USB_GUARD_OV','AUXOFF':None,'FLT_N':'USB_GUARD_FAULT_N','IN':'VBUS_FUSED','OUT':'USB_5V','DVDT':'USB_GUARD_DVDT','GND':'GND','ILM':'USB_GUARD_ILM','ITIMER':None}),'OpenKeys:TPS25947_RPW0010A',note='Adjustable OVLO, latch-off variant for latched faults, true reverse-current blocking. Follow datasheet fault-specific recovery; do not infer all OV events latch. Input abs28V is not a system surge rating.')
+ for i,(v,a,b) in enumerate([('22.1k 1%','VBUS_FUSED','USB_GUARD_EN'),('10k 1%','USB_GUARD_EN','GND'),('374k 0.1%','VBUS_FUSED','USB_GUARD_OV'),('100k 0.1%','USB_GUARD_OV','GND'),('6.49k 1%','USB_GUARD_ILM','GND'),('47k','+3V3','USB_GUARD_FAULT_N')]):passive(s,'R',v,35.56+i*63.5,157.48,a,b)
+ s.comp('ZEN','D4','BZT52-C5V1,115',58.42,88.9,{'1':'USB_GUARD_EN','2':'GND'},'Diode_SMD:D_SOD-123',note='Protect EN/UVLO absolute maximum6.5V; not tied directly to raw VBUS. Verify leakage/temp and dynamic clamp.')
+ s.comp('TVS','D5','SMF16A',302.26,86.36,{'1':'VBUS_FUSED','2':'GND'},'Diode_SMD:D_SOD-123F',note='Input surge TVS AFTER F1. Nominal datasheet clamp26V vs eFuse28Vabs is not an IEC guarantee; qualify actual diode supplier, layout and I2t.')
+ caps(s,[('100nF 50V','VBUS_FUSED','GND'),('1nF C0G','USB_GUARD_DVDT','GND')],246.38,223.52)
+ s.text('OVLO nominal1.2V x(1+374k/100k)=5.688V. Component/leakage corners in protection-calculations.json.\nUVLO divider22.1k/10k: about3.85V nominal. EN is separately clamped, never raw VBUS.\n6.49k ILM: about0.51A protection threshold; BQ charger still sets100mA input budget.\n1nF DVDT: about2V/ms, about2.5ms ramp to5V; measure actual inrush with complete load.\nF1 -> input TVS -> eFuse -> output TVS/ESD reference/charger/sense.\nIndependent cutoff is a circuit provision; response overshoot, CC/data faults and thermal/surge tests remain BLOCKED.',195,263)
 def save():
  for ss in S:ss.save()
  root=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(nuid('OpenKeys'))],['paper',q('A3')],['title_block',['title',q('OpenKeys R0.3 - Engineering review')],['date',q('2026-11-08')],['rev',q('0.3')],['company',q('Jay-Void-BA')]],['lib_symbols']]
@@ -126,4 +136,4 @@ def save():
  (ROOT/'review/connections.json').write_text(json.dumps(comps,indent=2)+'\n')
  print(f'R0.3: {len(S)+1} sheets, {len(comps)} BOM positions; engineering review only')
 if __name__=='__main__':
- usb();power();mcu();storage();nfc();trusted_ui();fault_tamper();save()
+ usb();power();mcu();storage();nfc();trusted_ui();fault_tamper();input_guard();save()

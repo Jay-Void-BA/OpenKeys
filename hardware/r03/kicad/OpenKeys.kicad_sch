@@ -264,6 +264,41 @@
       )
     )
   )
+  (sheet
+    (at 215 223)
+    (size 155 32)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "a9c42f17-6e17-5777-a1d4-7012843fcddd")
+    (property "Sheetname" "08-input-guard"
+      (at 215 222 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "08-input-guard.kicad_sch"
+      (at 215 257 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "9")
+        )
+      )
+    )
+  )
   (sheet_instances
     (path "/"
       (page "1")

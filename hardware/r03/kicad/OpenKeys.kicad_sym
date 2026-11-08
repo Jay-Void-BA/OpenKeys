@@ -8400,4 +8400,378 @@
     )
     (embedded_fonts no)
   )
+  (symbol "TPS259470L"
+    (pin_names
+      (offset 0.7)
+    )
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U"
+      (at 0 11.89 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (property "Value" "TPS259470L"
+      (at 0 9.89 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (symbol "TPS259470L_0_1"
+      (rectangle
+        (start -10.16 8.89)
+        (end 10.16 -8.89)
+        (stroke
+          (width 0.254)
+          (type default)
+        )
+        (fill
+          (type background)
+        )
+      )
+    )
+    (symbol "TPS259470L_1_1"
+      (pin input line
+        (at -12.7 6.35 0)
+        (length 2.54)
+        (name "EN_UVLO"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "1"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin input line
+        (at -12.7 3.81 0)
+        (length 2.54)
+        (name "OVLO"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "2"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin open_collector line
+        (at -12.7 1.27 0)
+        (length 2.54)
+        (name "AUXOFF"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "3"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin open_collector line
+        (at -12.7 -1.27 0)
+        (length 2.54)
+        (name "FLT_N"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "4"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin power_in line
+        (at -12.7 -3.81 0)
+        (length 2.54)
+        (name "IN"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "5"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin power_out line
+        (at 12.7 6.35 180)
+        (length 2.54)
+        (name "OUT"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "6"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin passive line
+        (at 12.7 3.81 180)
+        (length 2.54)
+        (name "DVDT"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "7"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin power_in line
+        (at 12.7 1.27 180)
+        (length 2.54)
+        (name "GND"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "8"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin passive line
+        (at 12.7 -1.27 180)
+        (length 2.54)
+        (name "ILM"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "9"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+      (pin passive line
+        (at 12.7 -3.81 180)
+        (length 2.54)
+        (name "ITIMER"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+        (number "10"
+          (effects
+            (font
+              (size 1.0 1.0)
+            )
+          )
+        )
+      )
+    )
+  )
+  (symbol "D_Zener"
+    (pin_numbers
+      (hide yes)
+    )
+    (pin_names
+      (offset 1.016)
+      (hide yes)
+    )
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "D"
+      (at 0 2.54 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Value" "D_Zener"
+      (at 0 -2.54 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Footprint" ""
+      (at 0 0 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 0 0 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "Zener diode"
+      (at 0 0 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "ki_keywords" "diode"
+      (at 0 0 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+      (at 0 0 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (symbol "D_Zener_0_1"
+      (polyline
+        (pts
+          (xy -1.27 -1.27)
+          (xy -1.27 1.27)
+          (xy -0.762 1.27)
+        )
+        (stroke
+          (width 0.254)
+          (type default)
+        )
+        (fill
+          (type none)
+        )
+      )
+      (polyline
+        (pts
+          (xy 1.27 0)
+          (xy -1.27 0)
+        )
+        (stroke
+          (width 0)
+          (type default)
+        )
+        (fill
+          (type none)
+        )
+      )
+      (polyline
+        (pts
+          (xy 1.27 -1.27)
+          (xy 1.27 1.27)
+          (xy -1.27 0)
+          (xy 1.27 -1.27)
+        )
+        (stroke
+          (width 0.254)
+          (type default)
+        )
+        (fill
+          (type none)
+        )
+      )
+    )
+    (symbol "D_Zener_1_1"
+      (pin passive line
+        (at -3.81 0 0)
+        (length 2.54)
+        (name "K"
+          (effects
+            (font
+              (size 1.27 1.27)
+            )
+          )
+        )
+        (number "1"
+          (effects
+            (font
+              (size 1.27 1.27)
+            )
+          )
+        )
+      )
+      (pin passive line
+        (at 3.81 0 180)
+        (length 2.54)
+        (name "A"
+          (effects
+            (font
+              (size 1.27 1.27)
+            )
+          )
+        )
+        (number "2"
+          (effects
+            (font
+              (size 1.27 1.27)
+            )
+          )
+        )
+      )
+    )
+    (embedded_fonts no)
+  )
 )

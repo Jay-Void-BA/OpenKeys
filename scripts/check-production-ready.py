@@ -68,7 +68,7 @@ if 'firmware_elf' in artifacts:
   check('firmware_is_arm_elf',ok,'Requires 32-bit little-endian ARM ELF; not proof of firmware behavior')
  except (KeyError,OSError,ValueError):check('firmware_is_arm_elf',False,'Missing or invalid ARM firmware ELF')
 else:check('firmware_is_arm_elf',False,'Device-policy is a library, not a flashable authenticator')
-physical_tests=['fido2_u2f_hmac_secret','pin_and_biometric_persistent_retries','biometric_secure_pairing_and_replay','se_nonexport_and_object_policy','signed_boot_update_rollback_debug','vault_atomicity_and_rollback','battery_charge_suspend_and_backup_tamper','single_usb_c_current_esd_and_backfeed','nfc_final_enclosure_ios','trusted_screen_and_cancel','manager_three_os_real_device','emc_safe_failure','side_channel_and_fault_scope']
+physical_tests=['fido2_u2f_hmac_secret','pin_and_biometric_persistent_retries','biometric_secure_pairing_and_replay','se_nonexport_and_object_policy','signed_boot_update_rollback_debug','vault_atomicity_and_rollback','battery_charge_suspend_and_backup_tamper','single_usb_c_current_esd_and_backfeed','usb_guard_ovlo_transients_thermal_and_reverse','nfc_final_enclosure_ios','trusted_screen_and_cancel','manager_three_os_real_device','emc_safe_failure','side_channel_and_fault_scope']
 try:
  q=local(artifacts.get('qualification_report',{}).get('path',required['qualification_report']))
  qualification=json.loads(q.read_text());results=qualification.get('tests',{})

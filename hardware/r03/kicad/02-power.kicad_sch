@@ -1933,7 +1933,7 @@
     )
     (uuid "b4c9b678-088f-5537-96b8-babe3cc0c78c")
   )
-  (global_label "USB_5V"
+  (global_label "VBUS_FUSED"
     (shape input)
     (at 33.02 77.47 270)
     (effects
@@ -3603,7 +3603,7 @@
     )
     (uuid "21a3dfa6-34db-548a-af95-0c16b6a79d80")
   )
-  (global_label "USB_5V"
+  (global_label "VBUS_FUSED"
     (shape input)
     (at 73.66 40.64 270)
     (effects

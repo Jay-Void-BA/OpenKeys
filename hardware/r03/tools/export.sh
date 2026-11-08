@@ -14,6 +14,7 @@ python3 hardware/r03/tools/generate.py
 kicad-cli sch erc --format json --severity-all --output hardware/r03/review/erc.json hardware/r03/kicad/OpenKeys.kicad_sch
 kicad-cli sch export netlist --format kicadxml --output hardware/r03/exports/OpenKeys-netlist.xml hardware/r03/kicad/OpenKeys.kicad_sch
 python3 hardware/r03/tools/check_netlist.py
+python3 hardware/r03/tools/calculate_protection.py
 kicad-cli sch export pdf --output hardware/r03/exports/OpenKeys-schematic.pdf hardware/r03/kicad/OpenKeys.kicad_sch
 kicad-cli sch export svg --output hardware/r03/exports/schematic/ hardware/r03/kicad/OpenKeys.kicad_sch
 python3 - <<'PY_NORMALIZE'

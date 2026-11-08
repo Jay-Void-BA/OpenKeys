@@ -4,13 +4,13 @@
 
 固定功能：单USB-C母口兼USB2数据与5V充电、NFC、白背光16x2英文LCD、四个场景按键、强制设备指纹、仅附加的设备PIN；FIDO2/WebAuthn/Passkey、U2F、hmac-secret、凭据管理、加密notes与recovery codes。已取消动态验证码和USB-A。macOS/iOS认证分别验收；桌面管理软件覆盖macOS/Linux/Windows；手机NFC管理作为依赖设备认证协议的独立交付。
 
-推荐核心：STM32H573RIT6、SE050E、FPC2534AM、NHD-C0216CiZ-FSW-FBW-3V3、四层PCB。自研运行代码Rust，按模块允许Zig，不引入自研C/C++。芯片ROM/applet与OS/第三方库记录版本和信任边界。容量约500mAh电池包必须有PCM和真实NTC；具体可采购型号仍未冻结。
+推荐核心：STM32H573RIT6、SE050E、FPC2534AM、NHD-C0216CiZ-FSW-FBW-3V3、TPS259470L输入保护、四层PCB。自研运行代码Rust，按模块允许Zig，不引入自研C/C++。芯片ROM/applet与OS/第三方库记录版本和信任边界。容量约500mAh电池包必须有PCM和真实NTC；具体可采购型号仍未冻结。
 
 验收固定顺序：设备指纹→需要时四键PIN→完整请求与实体确认→单次操作。PIN、手机指纹、USB/NFC发现和工厂命令均不能替代设备指纹。初始化只允许无用户秘密的空白设备，已配置设备不能因为断电/备用域丢失而重开初始化。
 
 | 独立报价项目 | 必须交付与验收 |
 |---|---|
-| 电路/PCB | 冻结BOM/封装、RF芯片EP/天线、完整布局布线、叠层/回流/热/电源瞬态、DRC/DFM；可编辑源文件、Gerber/钻孔、贴片坐标、装配PDF与摘要 |
+| 电路/PCB | 冻结BOM/封装及已绘制RF芯片候选EP的装配资格、天线、完整布局布线、叠层/回流/热/电源瞬态、DRC/DFM；可编辑源文件、Gerber/钻孔、贴片坐标、装配PDF与摘要 |
 | Rust固件 | 实际ARM ELF/BIN、可重现构建、签名更新；STiRoT/TrustZone/GTZC/调试生命周期；SE/FP/LCD/按键/Flash/USB/NFC/充电/备用防拆驱动与完整FIDO/vault实现 |
 | 生产与配对 | EVT板优先，3把成品另验；每台独立密钥、受控配对夹具、无默认密钥或普通工厂旁路；生产密钥不进入公开仓库/代焊资料 |
 | 软件 | 真设备身份与经评审的加密管理通道、只导入选中项、拔插/休眠撤销；三系统真实设备端到端验证、安装包与必要签名/公证 |
@@ -35,3 +35,5 @@
 大陆入口：[嘉立创](https://www.jlc.com/)、[立创商城](https://www.szlcsc.com/)、[华秋PCB](https://www.hqpcb.com/)、[华秋商城](https://www.hqchip.com/)；需Rust/安全认证器定制研发的部分另找具备能力的团队。已有安全密钥/OEM方案可核查[飞天诚信](https://www.ftsafe.com/)与[文鼎创](https://www.excelsecu.com/)是否接受开放源码/图纸/验证条款，不能把商用品默认称作开源替代。未代表用户联系、下单或取得这些厂商承诺。
 
 当前完整未决清单见[SECURITY_REVIEW_R03](../docs/SECURITY_REVIEW_R03.md)与[readiness-report](readiness-report.json)。没有目标样板、手机连接和物理测试仪器，不能验收真实指纹强制授权或抗物理攻击性能。
+
+输入保护续更：已补独立eFuse及DC误差计算；NFC候选EP已有复旦图纸依据，当前仅余天线封装ERC警告。过压动态/热/TVS协调以及全部系统安全资格仍未通过，不能仅按数据表值验收。

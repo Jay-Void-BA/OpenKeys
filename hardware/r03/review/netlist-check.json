@@ -5,7 +5,12 @@
     "Only USB-C socket, no USB-A or data mux",
     "USB-C duplicate data pads joined",
     "Independent 5.1k Rd on each CC",
-    "VBUS TVS and ESD reference are downstream of series fuse",
+    "Input fuse precedes surge TVS and eFuse",
+    "Protected output powers ESD reference, charger and VBUS sensing",
+    "Guard UVLO divider and enable clamp are fitted",
+    "Guard OVLO uses0.1percent divider independent of MCU",
+    "Guard current and inrush controls have correct values",
+    "Guard fault is wired to dedicated MCU PC0",
     "100mA 4.2V hardware charge selection",
     "100mA target charge current",
     "Cell and NTC separate",
@@ -22,6 +27,7 @@
     "Fingerprint SPI pin order",
     "Fingerprint SPI strap and bezel ground",
     "Fingerprint supply not NFC harvested output",
+    "NFC exposed pad uses ground and the documented package",
     "NFC VOUT isolated from main/battery",
     "UV and OV directly drive reset",
     "Supervisor monitors3.3V, powered from SYS",
@@ -32,15 +38,13 @@
     "Each physical button has independent GPIO",
     "ERC zero electrical errors",
     "Only documented RF footprint warnings",
-    "Only documented RF footprint warnings",
-    "Exactly2 unresolved RF footprint blockers retained"
+    "Antenna footprint blocker retained"
   ],
-  "net_count": 103,
+  "net_count": 110,
   "erc_errors": 0,
-  "erc_warnings": 2,
+  "erc_warnings": 1,
   "unresolved_footprints": [
-    "J4",
-    "U7"
+    "J4"
   ],
   "manufacturing_release": false,
   "physical_validation": false

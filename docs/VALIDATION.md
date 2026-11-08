@@ -36,3 +36,7 @@ python3 scripts/check-production-ready.py
 三个开发版ZIP已下载并与GitHub公布的SHA256逐一相符，检查构建信息确认Linux x86_64、Windows x86_64 MSVC、macOS Apple Silicon。仅检查ZIP/二进制摘要及元信息，未在Mac/Windows执行或连接真实设备；不等于签名安装包/可用设备管理器。见[NATIVE_BUILDS](NATIVE_BUILDS.md)。
 
 公开合成notes基准一次结果：51200条解析并计算摘要约16.48ms；只代表该输入和容器的优化构建，不代表SE、USB/NFC、指纹或设备写入耗时。
+
+## 输入保护与NFC封装续更
+
+在原生CI所测运行源码不变的基础上，硬件增加TPS259470L独立输入保护与使能钳位、独立直流误差计算，以及按复旦原始图纸制作的NFC候选焊盘。现9页电路、126个BOM位号、37项独立网表检查，ERC0电气错误/1项天线封装警告。OVLO直流范围5.5612–5.8436V；动态/热/射频/实机防攻击资格未通过。已通过的31项软件测试不被拿来证明这些硬件性能。

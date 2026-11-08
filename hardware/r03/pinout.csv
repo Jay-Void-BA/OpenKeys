@@ -4,6 +4,7 @@ pin,gpio,net,function
 3,PC14,LSE_IN,power / GPIO / dedicated
 4,PC15,LSE_OUT,power / GPIO / dedicated
 7,NRST,NRST,power / GPIO / dedicated
+8,PC0,USB_GUARD_FAULT_N,power / GPIO / dedicated
 9,PC1,NRST,TAMP_IN3 dedicated
 10,PC2,FLASH_MISO,SPI2_MISO AF5
 11,PC3,LCD_RESET_N,power / GPIO / dedicated

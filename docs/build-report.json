@@ -50,9 +50,9 @@
   "biometric_hardware_backend_implemented": false,
   "hardware_manufacturing_release": false,
   "side_channel_emc_fault_lab_tested": false,
-  "hardware_netlist_checks": 32,
+  "hardware_netlist_checks": 37,
   "hardware_erc_errors": 0,
-  "hardware_erc_warnings": 2,
+  "hardware_erc_warnings": 1,
   "manufacturing_preflight": "../manufacturing/readiness-report.json",
   "linux_release_built": true,
   "linux_local_binary_sha256": "12c48fdaae95a823ec97645a969cc54d15a6e87e41f99a397f038fd5a406f75d",
@@ -100,5 +100,11 @@
     "kicad": "9.0.2",
     "openscad": "2021.01",
     "blender": "4.3.2"
+  },
+  "hardware_update_after_native_ci": {
+    "schematic_pages": 9,
+    "bom_positions": 126,
+    "runtime_source_unchanged": true,
+    "scope": "Added independent input eFuse, DC corner calculation and Fudan-derived NFC land pattern. Physical qualification remains blocked."
   }
 }

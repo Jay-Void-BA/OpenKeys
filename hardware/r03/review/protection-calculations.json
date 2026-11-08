@@ -1,0 +1,42 @@
+{
+  "revision": "0.3-input-guard",
+  "source": "TI TPS25947 SLVSFC9C, pin/electrical tables and equation4",
+  "ovlo_nominal_v": 5.688,
+  "ovlo_dc_corners_v": [
+    5.5612174,
+    5.843614597197196
+  ],
+  "ovlo_inputs": {
+    "rt_ohm": 374000,
+    "rb_ohm": 100000,
+    "r_tolerance_fraction": 0.001,
+    "reference_v": [
+      1.183,
+      1.223
+    ],
+    "leakage_a": [
+      -1e-07,
+      1e-07
+    ]
+  },
+  "uvlo_nominal_v": 3.852,
+  "uvlo_corner_qualified": false,
+  "uvlo_limits": "Zener leakage vs temperature, enable threshold, divider tolerance and ramp require real qualification. Nominal value is not a guaranteed bound.",
+  "ilm_resistor_ohm": [
+    6425.1,
+    6554.9
+  ],
+  "current_limit_typical_a_approx": 0.512326656394453,
+  "guard_current_limit_is_not_usb_consumption_limit": true,
+  "dvdt_nominal_v_per_ms": 2.0,
+  "ramp_to_5v_ms_nominal": 2.5,
+  "qualification": {
+    "dc_math_only": true,
+    "transient_overshoot": false,
+    "tvspptc_i2t_and_temperature": false,
+    "reverse_power_off_and_pin_backfeed": false,
+    "usb_inrush_suspend_and_total_current": false,
+    "protection_against_arbitrary_voltage_or_energy": false
+  },
+  "manufacturing_release": false
+}

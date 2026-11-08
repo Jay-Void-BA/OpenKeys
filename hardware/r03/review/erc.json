@@ -1,28 +1,13 @@
 {
     "$schema": "https://schemas.kicad.org/erc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-08T09:42:58+0000",
+    "date": "2026-11-08T10:19:47+0000",
     "kicad_version": "9.0.2",
     "sheets": [
         {
             "path": "/",
             "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2",
             "violations": [
-                {
-                    "description": "Footprint 'FM11NC08S_DFN10_PENDING' not found in library 'OpenKeys'.",
-                    "items": [
-                        {
-                            "description": "Symbol U7 [FM11NC08S]",
-                            "pos": {
-                                "x": 1.143,
-                                "y": 0.9144
-                            },
-                            "uuid": "016e51d3-6db0-55d8-ba06-c4033ee5a14c"
-                        }
-                    ],
-                    "severity": "warning",
-                    "type": "footprint_link_issues"
-                },
                 {
                     "description": "Footprint 'NFC_LOOP_PENDING' not found in library 'OpenKeys'.",
                     "items": [
@@ -73,6 +58,11 @@
         {
             "path": "/07-fault-tamper/",
             "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/28731aa8-5e70-5192-825d-f85b9d235c73",
+            "violations": []
+        },
+        {
+            "path": "/08-input-guard/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/a9c42f17-6e17-5777-a1d4-7012843fcddd",
             "violations": []
         }
     ],
