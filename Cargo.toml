@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = ["crates/device-policy", "crates/vault-import", "apps/manager"]
+default-members = ["crates/device-policy", "crates/vault-import"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+rust-version = "1.99"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "debuginfo"
+overflow-checks = true
+panic = "abort"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"

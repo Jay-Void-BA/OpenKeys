@@ -1,0 +1,41 @@
+{
+  "retrieved_date_utc": "2026-11-08",
+  "urls": "../THIRD_PARTY.md",
+  "files": [
+    {
+      "local_name": "bq24074.pdf",
+      "sha256": "4fe4e4f9855501f83b400c6932e3098439e51c50539e40dc45b44a8d509e8db1",
+      "bytes": 3739103
+    },
+    {
+      "local_name": "rv3028.pdf",
+      "sha256": "fb5a01874b3e02a088c3043dabe87bf5f0c6760ce2700d33c36ad3c4d02f12fc",
+      "bytes": 850321
+    },
+    {
+      "local_name": "se050.pdf",
+      "sha256": "b47c8a5d40191f31b78e48f6c60c6ba17c3eac56bf97976212ade786ee3ee83c",
+      "bytes": 377642
+    },
+    {
+      "local_name": "tps2116.pdf",
+      "sha256": "5babd88afb84e2e65c9c0da23b75f85758c0c730e34102a0fb746ac9573ed1d5",
+      "bytes": 2924080
+    },
+    {
+      "local_name": "tps63030.pdf",
+      "sha256": "7332b6b39605281419571ff4564e6bda5217dbaa2458b77b130bb81956d20a54",
+      "bytes": 2101881
+    },
+    {
+      "local_name": "ts3usb30e.pdf",
+      "sha256": "4192abb453098c3cb626397d8d1d966805b1040562b2a1dcbc1d728849f95d27",
+      "bytes": 1754619
+    },
+    {
+      "local_name": "u585.pdf",
+      "sha256": "6483871075d4889d39356648a9c1f1fb34f48dce2ce3e8c5a8d73a73f7e935e3",
+      "bytes": 4842120
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+[package]
+name = "authdesk"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+eframe = { version = "0.37.0", default-features = false, features = ["default_fonts", "glow", "x11"] }
+rfd = { version = "0.18.0", default-features = false, features = ["xdg-portal"] }
+nusb = "0.1.14"
+vault-import = { path = "../../crates/vault-import" }
+zeroize = { version = "1.8", features = ["alloc"] }
+
+[lints]
+workspace = true

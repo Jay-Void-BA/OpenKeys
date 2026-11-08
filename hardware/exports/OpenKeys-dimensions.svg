@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 320 220">
+<rect width="320" height="220" fill="#f8fafc"/>
+<g font-family="DejaVu Sans,Arial,sans-serif">
+<text x="12" y="13" font-size="7" fill="#19384a" text-anchor="start">OPENKEYS / R0</text>
+<text x="12" y="21" font-size="3.3" fill="#19384a" text-anchor="start">MECHANICAL DESIGN REVIEW · 2026-11-08</text>
+<text x="306" y="14" font-size="5" fill="#19384a" text-anchor="end">44 × 88 × 16 mm</text>
+<text x="306" y="21" font-size="2.8" fill="#19384a" text-anchor="end">All dimensions in mm · connector/module envelopes provisional</text>
+<rect x="32" y="48" width="44" height="88" rx="5" fill="#e5edf2" stroke="#19384a" stroke-width="0.35" />
+<rect x="48" y="36" width="12" height="17" rx="0.5" fill="#cbd5df" stroke="#19384a" stroke-width="0.35" />
+<rect x="39.5" y="56.5" width="29" height="17" rx="0.5" fill="#0c2230" stroke="#19384a" stroke-width="0.35" />
+<text x="42" y="62" font-size="2.2" fill="#87f6d4" text-anchor="start">example.com</text>
+<text x="42" y="68" font-size="3" fill="#eafff8" text-anchor="start">OTP  123 456</text>
+<circle cx="40" cy="86" r="2.6" fill="#1e8f9c"/>
+<text x="40" y="87" font-size="2.8" fill="white" text-anchor="middle">↑</text>
+<circle cx="48" cy="86" r="2.6" fill="#1e8f9c"/>
+<text x="48" y="87" font-size="2.8" fill="white" text-anchor="middle">↓</text>
+<circle cx="40" cy="96" r="2.6" fill="#1e8f9c"/>
+<text x="40" y="97" font-size="2.8" fill="white" text-anchor="middle">✓</text>
+<circle cx="48" cy="96" r="2.6" fill="#1e8f9c"/>
+<text x="48" y="97" font-size="2.8" fill="white" text-anchor="middle">×</text>
+<rect x="53.7" y="82.7" width="16.6" height="16.6" rx="2" fill="#384d5c" stroke="#19384a" stroke-width="0.35" />
+<path d="M57.0,94 q-2,-4 3,-5 q5,0 3,5" fill="none" stroke="#9cbdc7" stroke-width=".25"/>
+<path d="M57.6,94 q-2,-5 3,-6 q6,0 4,6" fill="none" stroke="#9cbdc7" stroke-width=".25"/>
+<path d="M58.2,94 q-2,-6 3,-7 q7,0 5,7" fill="none" stroke="#9cbdc7" stroke-width=".25"/>
+<path d="M58.8,94 q-2,-7 3,-8 q8,0 6,8" fill="none" stroke="#9cbdc7" stroke-width=".25"/>
+<rect x="34" y="114" width="40" height="18" rx="2" fill="none" stroke="#da941d" stroke-width="0.35" stroke-dasharray="1.5 1"/>
+<text x="54" y="122" font-size="2.6" fill="#9b6507" text-anchor="middle">NFC RF WINDOW</text>
+<text x="54" y="127" font-size="2.2" fill="#9b6507" text-anchor="middle">no metal behind</text>
+<circle cx="38" cy="54" r="1.2" fill="#adc0cc"/>
+<circle cx="70" cy="54" r="1.2" fill="#adc0cc"/>
+<circle cx="38" cy="108" r="1.2" fill="#adc0cc"/>
+<circle cx="70" cy="108" r="1.2" fill="#adc0cc"/>
+<path d="M32,30 L76,30" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M32,28.8 L32,31.2" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M76,28.8 L76,31.2" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="54.0" y="28" font-size="2.7" fill="#19384a" text-anchor="middle">44.0</text>
+<path d="M23,48 L23,136" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M21.8,48 L24.2,48" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M21.8,136 L24.2,136" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="21" y="92.0" font-size="2.7" fill="#19384a" text-anchor="end">88.0</text>
+<text x="54" y="143" font-size="3.6" fill="#19384a" text-anchor="middle">FRONT</text>
+<path d="M76,62 L83,62" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="86" y="61" font-size="3" fill="#19384a" text-anchor="start">Trusted OLED</text>
+<text x="86" y="65" font-size="2.4" fill="#667e8d" text-anchor="start">29 × 17 window, confirm/cancel</text>
+<path d="M76,91 L83,91" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="86" y="90" font-size="3" fill="#19384a" text-anchor="start">Fingerprint</text>
+<text x="86" y="94" font-size="2.4" fill="#667e8d" text-anchor="start">16 × 16 envelope; secure module TBD</text>
+<path d="M76,107 L83,107" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="86" y="106" font-size="3" fill="#19384a" text-anchor="start">Buttons / device PIN</text>
+<text x="86" y="110" font-size="2.4" fill="#667e8d" text-anchor="start">UP, DOWN, CONFIRM, CANCEL</text>
+<path d="M76,124 L83,124" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="86" y="123" font-size="3" fill="#19384a" text-anchor="start">NFC keepout</text>
+<text x="86" y="127" font-size="2.4" fill="#667e8d" text-anchor="start">No battery, shield or ground plane</text>
+<rect x="204" y="48" width="38" height="82" rx="2" fill="#e1f0e9" stroke="#37745b" stroke-width="0.35" />
+<rect x="208" y="53" width="30" height="24" rx="1" fill="none" stroke="#466b87" stroke-width="0.35" stroke-dasharray="1 1"/>
+<text x="223" y="59" font-size="2.5" fill="#19384a" text-anchor="middle">OLED / trusted MCU</text>
+<rect x="216" y="62" width="10" height="10" rx="0.3" fill="#294b40" stroke="#19384a" stroke-width="0.35" />
+<text x="221" y="68" font-size="2.6" fill="white" text-anchor="middle">U7</text>
+<rect x="212" y="76" width="20" height="30" rx="1" fill="#dbe1e6" stroke="#81919b" stroke-width="0.35" stroke-dasharray="1 1"/>
+<text x="222" y="102" font-size="2.3" fill="#19384a" text-anchor="middle">Battery below PCB</text>
+<rect x="223" y="80" width="16" height="16" rx="1" fill="#c0d5cd" stroke="#37745b" stroke-width="0.35" />
+<text x="231" y="87" font-size="2.3" fill="#19384a" text-anchor="middle">FP TBD</text>
+<rect x="206" y="111" width="34" height="17" rx="1" fill="#fff2d4" stroke="#c58a19" stroke-width="0.35" />
+<text x="223" y="117" font-size="2.8" fill="#976006" text-anchor="middle">RF ONLY</text>
+<rect x="208" y="119" width="30" height="7" rx="2" fill="none" stroke="#ba781b" stroke-width="0.35" />
+<rect x="209" y="120" width="28" height="5" rx="2" fill="none" stroke="#ba781b" stroke-width="0.35" />
+<rect x="210" y="121" width="26" height="3" rx="2" fill="none" stroke="#ba781b" stroke-width="0.35" />
+<text x="223" y="132" font-size="1.9" fill="#976006" text-anchor="middle">COIL ILLUSTRATIVE — NOT TUNED</text>
+<path d="M204,38 L242,38" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M204,36.8 L204,39.2" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M242,36.8 L242,39.2" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="223.0" y="36" font-size="2.7" fill="#19384a" text-anchor="middle">38.0</text>
+<path d="M249,48 L249,130" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M247.8,48 L250.2,48" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M247.8,130 L250.2,130" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="247" y="89.0" font-size="2.7" fill="#19384a" text-anchor="end">82.0</text>
+<text x="223" y="143" font-size="3.1" fill="#19384a" text-anchor="middle">PCB PARTITION / 4 LAYERS</text>
+<rect x="25" y="166" width="88" height="16" rx="2" fill="#e5edf2" stroke="#19384a" stroke-width="0.35" />
+<rect x="27" y="168" width="84" height="12" rx="1" fill="#f8fafc" stroke="#19384a" stroke-width="0.35" />
+<rect x="28" y="174.6" width="82" height="1" rx="0" fill="#37745b" stroke="#19384a" stroke-width="0.35" />
+<rect x="56" y="176.2" width="30" height="4" rx="0" fill="#bdc9d1" stroke="#19384a" stroke-width="0.35" />
+<rect x="32" y="168.8" width="25" height="2.4" rx="0" fill="#19384a" stroke="#19384a" stroke-width="0.35" />
+<rect x="60" y="166.2" width="16" height="4" rx="0" fill="#384d5c" stroke="#19384a" stroke-width="0.35" />
+<path d="M91,164 L91,184" stroke="#c58a19" stroke-width="0.3" fill="none" stroke-dasharray="1.4 1" />
+<text x="101" y="172" font-size="2.4" fill="#976006" text-anchor="middle">RF</text>
+<path d="M119,166 L119,182" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M117.8,166 L120.2,166" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<path d="M117.8,182 L120.2,182" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
+<text x="117" y="174.0" font-size="2.7" fill="#19384a" text-anchor="end">16.0</text>
+<text x="69" y="189" font-size="2.9" fill="#19384a" text-anchor="middle">SECTION A–A · enclosure 1.6 mm / PCB 1.0 mm</text>
+<text x="142" y="158" font-size="4" fill="#19384a" text-anchor="start">ASSEMBLY NOTES</text>
+<text x="142" y="166" font-size="2.5" fill="#19384a" text-anchor="start">4 × M2 screw positions: (6,6), (38,6), (6,60), (38,60)</text>
+<text x="142" y="171" font-size="2.5" fill="#19384a" text-anchor="start">Base + lid + four captive plungers; PETG/ABS prototype</text>
+<text x="142" y="176" font-size="2.5" fill="#19384a" text-anchor="start">Protected 1S 200 mAh battery envelope: 20 × 30 × 4</text>
+<text x="142" y="181" font-size="2.5" fill="#19384a" text-anchor="start">NFC screen/fingerprint operation requires battery power</text>
+<text x="142" y="186" font-size="2.5" fill="#19384a" text-anchor="start">Pin order, connector cutouts, tolerance and drop tests pending</text>
+<rect x="12" y="204" width="296" height="9" rx="1" fill="#fff0d7" stroke="#e0a347" stroke-width="0.35" />
+<text x="160" y="210" font-size="3" fill="#81550c" text-anchor="middle">DESIGN REVIEW ONLY · NO GERBER RELEASE · NO CLAIM OF SCA / EMC / FIDO CERTIFICATION</text>
+</g></svg>

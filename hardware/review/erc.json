@@ -1,0 +1,165 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T06:04:21+0000",
+    "kicad_version": "9.0.2",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2",
+            "violations": [
+                {
+                    "description": "The current configuration does not include the footprint library 'OpenKeys'.",
+                    "items": [
+                        {
+                            "description": "Symbol J1 [USB_A]",
+                            "pos": {
+                                "x": 0.4826,
+                                "y": 0.6604
+                            },
+                            "uuid": "e5477c7b-09e1-532a-8553-63662f1c75d6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'OpenKeys'.",
+                    "items": [
+                        {
+                            "description": "Symbol J2 [USB_C_Receptacle_USB2.0_16P]",
+                            "pos": {
+                                "x": 1.3716,
+                                "y": 0.7112
+                            },
+                            "uuid": "4223d15e-8880-52ed-acf6-5f552ffe055f"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'OpenKeys'.",
+                    "items": [
+                        {
+                            "description": "Symbol U11 [FM11NC08S]",
+                            "pos": {
+                                "x": 1.143,
+                                "y": 0.9144
+                            },
+                            "uuid": "1f6c1f7a-55a1-5290-bae2-5dd82831780a"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'OpenKeys'.",
+                    "items": [
+                        {
+                            "description": "Symbol J5 [Conn_01x02]",
+                            "pos": {
+                                "x": 2.8702,
+                                "y": 0.762
+                            },
+                            "uuid": "b6566b4d-1331-5eed-8199-c2629bea2784"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'OpenKeys'.",
+                    "items": [
+                        {
+                            "description": "Symbol SW1 [SW_SPDT]",
+                            "pos": {
+                                "x": 0.508,
+                                "y": 2.3876
+                            },
+                            "uuid": "f5cdd215-a8f7-5a24-8081-3be7542bccc2"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'OpenKeys'.",
+                    "items": [
+                        {
+                            "description": "Symbol U8 [SE050E]",
+                            "pos": {
+                                "x": 0.7112,
+                                "y": 0.8382
+                            },
+                            "uuid": "845e8f18-639e-5f61-8eb4-e1ac2d590438"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'OpenKeys'.",
+                    "items": [
+                        {
+                            "description": "Symbol J7 [Conn_02x05_Odd_Even]",
+                            "pos": {
+                                "x": 2.4384,
+                                "y": 0.6858
+                            },
+                            "uuid": "a4c8648a-871d-57a5-a22a-cfb512ef887f"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "The current configuration does not include the footprint library 'OpenKeys'.",
+                    "items": [
+                        {
+                            "description": "Symbol SW6 [SW_Push]",
+                            "pos": {
+                                "x": 3.5052,
+                                "y": 2.0574
+                            },
+                            "uuid": "18e77929-2879-59c2-baec-c087e8dec8f3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                }
+            ]
+        },
+        {
+            "path": "/01-usb/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/3ba2ea31-402e-5dd7-ae04-356a2899b689",
+            "violations": []
+        },
+        {
+            "path": "/02-power/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/82e5c359-1069-5ac9-ad28-3d39e7fd97d5",
+            "violations": []
+        },
+        {
+            "path": "/03-mcu/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/1e0542b4-d115-5122-8b85-bc2ca1bdc968",
+            "violations": []
+        },
+        {
+            "path": "/04-se-storage-rtc/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/6355ac8f-17d5-5a6a-909c-989ea7d7a93c",
+            "violations": []
+        },
+        {
+            "path": "/05-nfc/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/fbc66e46-48c3-5f7f-8f0d-b09daacaad90",
+            "violations": []
+        },
+        {
+            "path": "/06-trusted-ui/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/14ac5f31-5761-56e0-8855-9943e79a0b58",
+            "violations": []
+        }
+    ],
+    "source": "OpenKeys.kicad_sch"
+}

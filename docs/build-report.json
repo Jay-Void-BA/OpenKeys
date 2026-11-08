@@ -1,0 +1,42 @@
+{
+  "status": "development-only; hardware authorization deliberately unavailable",
+  "date": "2026-11-08",
+  "rust": "1.99.1",
+  "egui_eframe": "0.37.0",
+  "rfd": "0.18.0",
+  "unit_tests_passed": 17,
+  "fmt_passed": true,
+  "clippy_warnings_denied_passed": true,
+  "linux_x86_64_release_built": true,
+  "linux_gui_manual_lock_check": true,
+  "cross_checks_passed": [
+    "x86_64-pc-windows-gnu",
+    "aarch64-apple-darwin"
+  ],
+  "mac_windows_native_installers_built": false,
+  "real_device_integration": false,
+  "custom_pcb_delivered": false,
+  "side_channel_or_emc_lab_tested": false,
+  "dependency_advisory_db": {
+    "advisory-count": 1422,
+    "last-commit": null,
+    "last-updated": null
+  },
+  "known_vulnerabilities": 0,
+  "dependency_warnings": 0,
+  "linux_binary_sha256": "8ebbeba68bd7622c481485b50c600deb08aa17e24f8cd0ceabfd1879363c0001",
+  "cargo_lock_sha256": "d6af5177f7f19c732df8e26f840b5f32b027aaa882948ffeffacfd244601a7b8",
+  "advisory_database_git": {
+    "commit": "309392b18f6b17022f82c701f300433126901068",
+    "commit_date": "2026-11-06T16:34:32+01:00"
+  },
+  "hardware_design_review_delivered": true,
+  "hardware_manufacturing_release": false,
+  "hardware_design_review": "../hardware/review/README.md",
+  "publication_recheck": {
+    "rust_tests": 17,
+    "fmt": true,
+    "clippy_deny_warnings": true,
+    "device_integrated": false
+  }
+}

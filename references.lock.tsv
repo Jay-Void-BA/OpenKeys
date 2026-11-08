@@ -1,0 +1,9 @@
+# name	url	commit	branch
+fido-authenticator	https://github.com/trussed-dev/fido-authenticator.git	c92479c0142baba1c8066daaf9e74d6e6c3594fa	main
+nitrokey-3-firmware	https://github.com/Nitrokey/nitrokey-3-firmware.git	128ac6f165cfd4bf8e983f65a13b4c0738ee0604	main
+opensk	https://github.com/google/OpenSK.git	2382394d4d61e170ef9ed1a2f7d39bf62e94b7d5	develop
+solo2	https://github.com/solokeys/solo2.git	45311f0b6761187d409ea3e7ea34f896810eb156	main
+solo2-hw	https://github.com/solokeys/solo2-hw.git	e7d964cb1ce775b1faa1c0bd1e694b6a124aa630	main
+wasefire	https://github.com/google/wasefire.git	af6259cccd64bc922a32a5d0752dc0883ef218b3	main
+zig-keylib	https://github.com/Zig-Sec/keylib.git	f887bde9ef010dfdede84cf3c62adba3e55b176e	master
+zig-passkeez	https://github.com/Zig-Sec/PassKeeZ.git	dc5fd189366ff19b9a1d3d91709d64bb4b08aea5	master

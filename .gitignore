@@ -1,0 +1,20 @@
+/target/
+/target-cross/
+/target-macos/
+/dist/
+/reference/
+*.pem
+*.key
+*.otpauth
+*.vault
+*.secret
+
+# Local CAD configuration, autosaves and third-party PDF downloads
+hardware/datasheets/
+*.blend1
+*.lck
+*-backups/
+*.kicad_prl
+*.kicad_sch-bak
+*.kicad_pcb-bak
+__pycache__/
