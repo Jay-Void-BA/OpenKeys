@@ -2,7 +2,7 @@
 
 日期：2026-11-08。测试材料均为公开 RFC 向量或合成数据，没有导入用户真实秘密。
 
-## 已完成的检查
+## R0.1基线检查
 
 - 上游 8 个 Git 仓库提交和工作树核对，references.lock.tsv 可重取；不把 HEAD 自动升级为新版本。
 - Linux 主机 17 项 Rust 单元测试通过：授权请求/连接绑定、一次性消费、超时、时间回退、拒绝清除旧授权；URI/JSON 限制、歧义参数拒绝、notes/recovery types、导入内容摘要；RFC6238 SHA1/SHA256/SHA512 全组向量；GUI 不接受假解锁、锁定清除暂存、锁屏不绘制私密数据。
@@ -49,3 +49,5 @@ recovery codes 不应只保存在与其保护的账户凭据同一把钥匙内�
 新增9项指纹策略测试，总计26项软件测试通过；fmt、clippy -D warnings通过。新增策略无堆分配，device-policy在thumbv8m.main-none-eabihf（Cortex-M33）检查通过。生产GCM/持久计数器仍为待实现的硬件接口，没有默认软件匹配授权。RustSec当前报告覆盖新Cargo.lock，0条已知漏洞、0条维护警告。
 
 硬件现有116个BOM位号，ERC为0错误、3项未解决封装（J1/J5/U11）；29项网表检查通过。指纹12pin实际接口、IRQ高有效与SE050 SOT1969-1焊盘已补入。仍无完整PCB制造文件或实际可烧录认证器固件；[制造预检](../manufacturing/readiness-report.json)为BLOCKED。
+
+远端检查输入提交c2dbaca：Linux原生与依赖审计已通过。macOS14在任何代码执行前被运行平台取消，注释为`The configuration macos-14-arm64-us-default is not supported`；工作流现切换到macOS15，并可按平台单独复跑，避免重复已通过的任务。最终结果以build-report及对应Actions链接为准。

@@ -1,10 +1,17 @@
 name: AuthDesk development checks
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: Native platform to check
+        type: choice
+        default: all
+        options: [all, macos, windows, linux]
 permissions:
   contents: read
 jobs:
   dependency-audit:
+    if: ${{ inputs.target == 'all' || inputs.target == '' }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -16,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-14, windows-2022]
+        os: ${{ fromJSON(inputs.target == 'macos' && '["macos-15"]' || inputs.target == 'windows' && '["windows-2022"]' || inputs.target == 'linux' && '["ubuntu-22.04"]' || '["ubuntu-22.04","macos-15","windows-2022"]') }}
     runs-on: ${{ matrix.os }}
     env:
       CC: ${{ github.workspace }}/scripts/reject-c-compiler.sh
@@ -25,6 +32,8 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Install pinned Rust toolchain
         run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy
+      - name: Record native target
+        run: rustc -vV > native-build-info.txt
       - name: Tests
         run: cargo test --workspace --locked
       - name: Lint
@@ -39,4 +48,5 @@ jobs:
           path: |
             target/release/authdesk
             target/release/authdesk.exe
+            native-build-info.txt
           if-no-files-found: error
