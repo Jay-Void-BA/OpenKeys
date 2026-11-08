@@ -24,6 +24,7 @@ def has_part(v,a,b):return any(value(r)==v and ns1=={a,b} for r in components fo
 require('Only USB-C socket, no USB-A or data mux',sum(value(r)=='HRO TYPE-C-31-M-12' for r in components)==1 and not any('USB-A' in value(r) or 'TS3USB30' in value(r) for r in components))
 require('USB-C duplicate data pads joined',same(('J1','A6'),('J1','B6'),('U4',45)) and same(('J1','A7'),('J1','B7'),('U4',44)))
 require('Independent 5.1k Rd on each CC',net('J1','A5')!=net('J1','B5') and all(has_part('5.1k 1%',net('J1',p),'GND') for p in ['A5','B5']))
+require('VBUS TVS and ESD reference are downstream of series fuse',same(('D1',1),('F1',2),('U1',5),('U2',10),('Q1',1)) and net('D1',1)!=net('J1','A4'))
 require('100mA 4.2V hardware charge selection',value('U2')=='BQ25185DLHR' and has_part('24k 1%',net('U2',7),'GND'))
 require('100mA target charge current',has_part('3.00k 1%',net('U2',8),'GND'))
 require('Cell and NTC separate',same(('U2',2),('J2',1)) and net('J2',1)!=net('J2',2) and same(('J2',2),('U2',6)))

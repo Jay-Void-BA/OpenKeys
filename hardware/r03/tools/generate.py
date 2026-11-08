@@ -18,15 +18,15 @@ def named(k,d):return {num:d.get(name) for num,name in pmap(k).items()}
 def usb():
  s=sheet('01-usb','One USB-C receptacle - USB 2.0 FS data and 5 V charging')
  s.comp('USBC','J1','HRO TYPE-C-31-M-12',91.44,88.9,{'A1':'GND','A4':'VBUS_RAW','A5':'CC1','A6':'USB_DP','A7':'USB_DM','A8':None,'A9':'VBUS_RAW','A12':'GND','B1':'GND','B4':'VBUS_RAW','B5':'CC2','B6':'USB_DP','B7':'USB_DM','B8':None,'B9':'VBUS_RAW','B12':'GND','S1':'SHIELD'},'Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12',note='Only external data socket; qualify manufacturer drawing and sample')
- s.comp('ESD','U1','USBLC6-2SC6',218.44,83.82,{'1':'USB_DP','6':'USB_DP','3':'USB_DM','4':'USB_DM','2':'GND','5':'VBUS_RAW'})
+ s.comp('ESD','U1','USBLC6-2SC6',218.44,83.82,{'1':'USB_DP','6':'USB_DP','3':'USB_DM','4':'USB_DM','2':'GND','5':'USB_5V'})
  for x,net in [(269.24,'CC1'),(307.34,'CC2')]:passive(s,'R','5.1k 1%',x,88.9,net,'GND')
  passive(s,'R','1M',264.16,154.94,'SHIELD','GND');passive(s,'C','1nF / 2kV',302.26,154.94,'SHIELD','GND')
- s.comp('NMOS','Q1','2N7002',68.58,210.82,{'1':'VBUS_RAW','2':'GND','3':'VBUS_PRESENT_N'})
+ s.comp('NMOS','Q1','2N7002',68.58,210.82,{'1':'USB_5V','2':'GND','3':'VBUS_PRESENT_N'})
  passive(s,'R','100k',109.22,205.74,'+3V3','VBUS_PRESENT_N');passive(s,'R','1M',149.86,205.74,'VBUS_RAW','GND')
- for idx,(net,x) in enumerate([('VBUS_RAW',210.82),('CC1',264.16),('CC2',317.5)]):
+ for idx,(net,x) in enumerate([('USB_5V',210.82),('CC1',264.16),('CC2',317.5)]):
   s.comp('TVS','D'+str(idx+1),'SMF5.0A' if idx==0 else 'PESD5V0S1BA',x,220.98,{'1':net,'2':'GND'},'Diode_SMD:D_SOD-123F' if idx==0 else 'Diode_SMD:D_SOD-323')
  for i,net in enumerate(['VBUS_RAW','GND']):s.comp('PWR','#FLG'+str(i+1),'PWR_FLAG',254+i*45.72,40.64,{'1':net})
- s.text('5.1k Rd on each CC pin: sink only. No PD negotiation, no 9 V request.\nApple 20 W adapter uses 5 V through a standards-compliant USB-C cable.\n100mA hardware input limit: 5 V x 0.1 A = 0.50 W nominal input budget.\nESD/OVP coordination, inrush, CC leakage and USB suspend need EVT tests.',205,270)
+ s.text('5.1k Rd on each CC pin: sink only. No PD negotiation, no 9 V request.\nApple 20 W adapter uses 5 V through a standards-compliant USB-C cable.\n100mA hardware input limit: 5 V x 0.1 A = 0.50 W nominal input budget.\nTVS is AFTER F1; not a sustained overvoltage cutoff. Input OVP/thermal testing remains BLOCKED.',205,270)
 def power():
  s=sheet('02-power','Low-rate charging, protected 500 mAh pack and 3.3 V supply')
  passive(s,'FUSE','250mA hold - qualify I2t',33.02,68.58,'VBUS_RAW','USB_5V')

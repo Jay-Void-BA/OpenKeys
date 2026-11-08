@@ -37,7 +37,7 @@
       "3": "USB_DM",
       "4": "USB_DM",
       "2": "GND",
-      "5": "VBUS_RAW"
+      "5": "USB_5V"
     },
     "note": "",
     "dnp": false
@@ -96,7 +96,7 @@
     "footprint": "Package_TO_SOT_SMD:SOT-23",
     "sheet": "01-usb",
     "nets": {
-      "1": "VBUS_RAW",
+      "1": "USB_5V",
       "2": "GND",
       "3": "VBUS_PRESENT_N"
     },
@@ -133,7 +133,7 @@
     "footprint": "Diode_SMD:D_SOD-123F",
     "sheet": "01-usb",
     "nets": {
-      "1": "VBUS_RAW",
+      "1": "USB_5V",
       "2": "GND"
     },
     "note": "",

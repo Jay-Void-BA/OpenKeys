@@ -8,7 +8,7 @@
 
 RustSec `--deny warnings`检查当前锁文件：0条已知漏洞、0条维护警告。数据库提交`309392b18f6b17022f82c701f300433126901068`（2026-11-06）。不代表不存在未知漏洞，也不代替对密码、硬件与调用策略的审查。精确数据见build-report及dependency-audit。
 
-本地KiCad9电路导出8页PDF、SVG和XML；115个BOM位号，ERC0电气错误、2项明确未解决RF封装警告。31项独立XML网表检查通过。OpenSCAD三组STL成功导出，Blender渲染及尺寸图已经目视检查；结构模型尚未打印装配。没有完整PCB、Gerber、DRC制造验收或物理测量。
+本地KiCad9电路导出8页PDF、SVG和XML；115个BOM位号，ERC0电气错误、2项明确未解决RF封装警告。32项独立XML网表检查通过。OpenSCAD三组STL成功导出，Blender渲染及尺寸图已经目视检查；结构模型尚未打印装配。没有完整PCB、Gerber、DRC制造验收或物理测量。
 
 GitHub Actions分别运行Linux、macOS、Windows原生构建、测试、fmt、Clippy与依赖审计。编译器/Rustdoc警告和Clippy/审计警告视为失败，官方Actions固定完整提交。R0.3原生远端结果在本版上传后记录于build-report；旧R0.2成功任务不计为新版成功证据。
 

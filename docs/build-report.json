@@ -21,8 +21,10 @@
   "biometric_hardware_backend_implemented": false,
   "hardware_manufacturing_release": false,
   "side_channel_emc_fault_lab_tested": false,
-  "hardware_netlist_checks": 31,
+  "hardware_netlist_checks": 32,
   "hardware_erc_errors": 0,
   "hardware_erc_warnings": 2,
-  "manufacturing_preflight": "../manufacturing/readiness-report.json"
+  "manufacturing_preflight": "../manufacturing/readiness-report.json",
+  "linux_release_built": true,
+  "linux_local_binary_sha256": "12c48fdaae95a823ec97645a969cc54d15a6e87e41f99a397f038fd5a406f75d"
 }

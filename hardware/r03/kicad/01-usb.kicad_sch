@@ -2705,7 +2705,7 @@
     )
     (uuid "7b897165-b24e-56ed-85c3-8edd207ee3ed")
   )
-  (global_label "VBUS_RAW"
+  (global_label "USB_5V"
     (shape input)
     (at 218.44 73.66 90)
     (effects
@@ -3382,7 +3382,7 @@
     )
     (uuid "55274b40-58b6-5508-9e81-df30a8552414")
   )
-  (global_label "VBUS_RAW"
+  (global_label "USB_5V"
     (shape input)
     (at 58.42 210.82 180)
     (effects
@@ -3779,7 +3779,7 @@
     )
     (uuid "0814cc4e-1a80-5ed9-9747-fd7185f9b98f")
   )
-  (global_label "VBUS_RAW"
+  (global_label "USB_5V"
     (shape input)
     (at 201.93 220.98 180)
     (effects
@@ -4301,13 +4301,13 @@
       (uuid "0292df28-f562-5b3a-b95d-d58fbd827ae1")
     )
   )
-  (text "5.1k Rd on each CC pin: sink only. No PD negotiation, no 9 V request.\nApple 20 W adapter uses 5 V through a standards-compliant USB-C cable.\n100mA hardware input limit: 5 V x 0.1 A = 0.50 W nominal input budget.\nESD/OVP coordination, inrush, CC leakage and USB suspend need EVT tests."
+  (text "5.1k Rd on each CC pin: sink only. No PD negotiation, no 9 V request.\nApple 20 W adapter uses 5 V through a standards-compliant USB-C cable.\n100mA hardware input limit: 5 V x 0.1 A = 0.50 W nominal input budget.\nTVS is AFTER F1; not a sustained overvoltage cutoff. Input OVP/thermal testing remains BLOCKED."
     (at 205 270 0)
     (effects
       (font
         (size 1.3 1.3)
       )
     )
-    (uuid "b2194f5c-823d-5018-bb32-f809b69ad68f")
+    (uuid "314a24a7-9669-53b6-89d7-02c5770e8d5e")
   )
 )

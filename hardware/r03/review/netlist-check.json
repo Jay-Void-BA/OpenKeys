@@ -5,6 +5,7 @@
     "Only USB-C socket, no USB-A or data mux",
     "USB-C duplicate data pads joined",
     "Independent 5.1k Rd on each CC",
+    "VBUS TVS and ESD reference are downstream of series fuse",
     "100mA 4.2V hardware charge selection",
     "100mA target charge current",
     "Cell and NTC separate",

@@ -5,7 +5,7 @@
 - [8 页电路 PDF](exports/OpenKeys-schematic.pdf)、[KiCad](kicad/OpenKeys.kicad_sch)、[BOM](BOM.csv)、[引脚表](pinout.csv)。115 个 BOM 位号。
 - [结构尺寸 PDF](exports/OpenKeys-dimensions.pdf)、[SVG](exports/OpenKeys-dimensions.svg)、[OpenSCAD](mechanical/OpenKeys.scad)、[3D 图](exports/OpenKeys-assembly.png)、[STL](exports)、[Blender](mechanical/OpenKeys-assembly.blend)。图是结构渲染，未拍摄实物。
 - [PCB 放置研究](kicad/OpenKeys-floorplan.kicad_pcb)：68×92×1mm、4 层、RF 隔离区域及部分关键封装；无完整放置、电气网络和布线，未提供冒充制造包的空 Gerber。
-- [ERC](review/erc.json)：0 电气错误、2 RF 封装警告；[31 项 XML 网表检查](review/netlist-check.json)。封装警告是制造阻断项，不是已解决的“允许警告”。
+- [ERC](review/erc.json)：0 电气错误、2 RF 封装警告；[32 项 XML 网表检查](review/netlist-check.json)。封装警告是制造阻断项，不是已解决的“允许警告”。
 
 ## 核心与授权
 
@@ -45,3 +45,5 @@ blender -b -t 2 -P hardware/r03/tools/render.py
 依赖 KiCad9、OpenSCAD、带 pcbnew 的系统 Python；PDF/SVG 源文件全部保留。工程脚本不进行烧录、熔丝写入或生产授权。
 
 核对依据：[H573](https://www.st.com/resource/en/datasheet/stm32h573ri.pdf)、[STiRoT](https://wiki.st.com/stm32mcu/wiki/Security%3ASTiRoT_for_STM32H5)、[Newhaven LCD](https://newhavendisplay.com/content/specs/NHD-C0216CiZ-FSW-FBW-3V3.pdf)、[BQ25185](https://www.ti.com/lit/ds/symlink/bq25185.pdf)、[TPS3702](https://www.ti.com/lit/ds/symlink/tps3702.pdf)、[MCP1700](https://ww1.microchip.com/downloads/en/DeviceDoc/MCP1700-Data-Sheet-20001826F.pdf)、[FPC](https://www.fpc.com/media/legj15fr/spc27317-6-fpc2530-product-specification.pdf)。PDF 不重新分发；事实摘要、散列和链接保留在 review。
+
+输入防护补充：VBUS TVS、USB ESD的供电参考与VBUS感知均放在串联保险丝之后；当前仍无独立持续输入过压切断。TVS不能用作长期稳压器，保险丝/夹位/接口绝对最大值及失效温升必须验证，见安全复查B12。

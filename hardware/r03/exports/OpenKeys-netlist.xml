@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/workspace/openkeys-publish/hardware/r03/kicad/OpenKeys.kicad_sch</source>
-    <date>2026-11-08T09:33:06+0000</date>
+    <date>2026-11-08T09:42:59+0000</date>
     <tool>Eeschema 9.0.2+dfsg-1</tool>
     <textvar name="DESIGN_STATUS">NOT_FOR_FABRICATION</textvar>
     <sheet number="1" name="/" tstamps="/">
@@ -3153,7 +3153,10 @@
     </net>
     <net code="68" name="USB_5V" class="Default">
       <node ref="C2" pin="1" pintype="passive"/>
+      <node ref="D1" pin="1" pinfunction="A1" pintype="passive"/>
       <node ref="F1" pin="2" pintype="passive"/>
+      <node ref="Q1" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="U1" pin="5" pinfunction="VBUS" pintype="passive"/>
       <node ref="U2" pin="10" pinfunction="IN" pintype="power_in"/>
     </net>
     <net code="69" name="USB_DM" class="Default">
@@ -3176,15 +3179,12 @@
       <node ref="U4" pin="25" pinfunction="PC5" pintype="bidirectional"/>
     </net>
     <net code="72" name="VBUS_RAW" class="Default">
-      <node ref="D1" pin="1" pinfunction="A1" pintype="passive"/>
       <node ref="F1" pin="1" pintype="passive"/>
       <node ref="J1" pin="A4" pinfunction="VBUS" pintype="passive"/>
       <node ref="J1" pin="A9" pinfunction="VBUS" pintype="passive"/>
       <node ref="J1" pin="B4" pinfunction="VBUS" pintype="passive"/>
       <node ref="J1" pin="B9" pinfunction="VBUS" pintype="passive"/>
-      <node ref="Q1" pin="1" pinfunction="G" pintype="input"/>
       <node ref="R5" pin="1" pintype="passive"/>
-      <node ref="U1" pin="5" pinfunction="VBUS" pintype="passive"/>
     </net>
     <net code="73" name="VCAP1" class="Default">
       <node ref="C15" pin="1" pintype="passive"/>
