@@ -8,6 +8,7 @@ export XDG_CONFIG_HOME="$openkeys_cad_state/config"
 export XDG_CACHE_HOME="$openkeys_cad_state/cache"
 export XDG_DATA_HOME="$openkeys_cad_state/data"
 mkdir -p "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" hardware/exports/schematic hardware/review
+/usr/bin/python3 hardware/tools/footprints.py
 python3 hardware/tools/schematic.py
 /usr/bin/python3 hardware/tools/mechanical.py
 kicad-cli sch erc --format json --severity-all --output hardware/review/erc.json hardware/kicad/OpenKeys.kicad_sch

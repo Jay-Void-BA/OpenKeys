@@ -43,3 +43,9 @@ recovery codes 不应只保存在与其保护的账户凭据同一把钥匙内�
 ## OpenKeys R0上传前复核
 
 同日将工作区复制到OpenKeys检出后，17项测试、fmt和clippy再次通过；Cargo.lock未变。新增7页KiCad电路、外壳模型与未布线PCB分区，实际检查范围见[硬件记录](../hardware/review/README.md)。硬件图纸的交付不改变上述完整固件和物理验证的未完成状态。
+
+## R0.2追加验证
+
+新增9项指纹策略测试，总计26项软件测试通过；fmt、clippy -D warnings通过。新增策略无堆分配，device-policy在thumbv8m.main-none-eabihf（Cortex-M33）检查通过。生产GCM/持久计数器仍为待实现的硬件接口，没有默认软件匹配授权。RustSec当前报告覆盖新Cargo.lock，0条已知漏洞、0条维护警告。
+
+硬件现有116个BOM位号，ERC为0错误、3项未解决封装（J1/J5/U11）；29项网表检查通过。指纹12pin实际接口、IRQ高有效与SE050 SOT1969-1焊盘已补入。仍无完整PCB制造文件或实际可烧录认证器固件；[制造预检](../manufacturing/readiness-report.json)为BLOCKED。

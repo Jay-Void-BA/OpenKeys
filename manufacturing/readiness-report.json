@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "date_beijing": "2026-11-08T14:53:38.281618+08:00",
+  "status": "BLOCKED",
+  "manufacturing_release_authorized": false,
+  "automated_tool_is_not_release_authority": true,
+  "checks": [
+    {
+      "name": "schematic_footprint_selection",
+      "passed": false,
+      "detail": {
+        "unresolved": [
+          "J1",
+          "U11",
+          "J5"
+        ],
+        "bom_positions": 116
+      }
+    },
+    {
+      "name": "critical_parts_frozen_for_production",
+      "passed": false,
+      "detail": {
+        "not_released": [
+          "U7",
+          "U8",
+          "FP1",
+          "J7",
+          "J2",
+          "J1",
+          "SW1",
+          "SW2-SW6",
+          "U11",
+          "BAT1",
+          "DISPLAY1",
+          "ANT1"
+        ],
+        "note": "EVT selection is not production approval"
+      }
+    },
+    {
+      "name": "erc_zero_errors_and_unresolved_warnings",
+      "passed": false,
+      "detail": {
+        "errors": 0,
+        "warnings": 3
+      }
+    },
+    {
+      "name": "release_manifest_present",
+      "passed": false,
+      "detail": "Explicit artifact paths and SHA-256 hashes required"
+    },
+    {
+      "name": "artifact_board_source",
+      "passed": false,
+      "detail": {
+        "path": "hardware/kicad/OpenKeys.kicad_pcb",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_drc_report",
+      "passed": false,
+      "detail": {
+        "path": "manufacturing/evidence/pcb-drc.json",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_fabrication_zip",
+      "passed": false,
+      "detail": {
+        "path": "manufacturing/release/gerber-and-drill.zip",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_assembly_drawing",
+      "passed": false,
+      "detail": {
+        "path": "manufacturing/release/assembly.pdf",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_placements",
+      "passed": false,
+      "detail": {
+        "path": "manufacturing/release/placements.csv",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_firmware_elf",
+      "passed": false,
+      "detail": {
+        "path": "firmware/dist/openkeys.elf",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_firmware_bin",
+      "passed": false,
+      "detail": {
+        "path": "firmware/dist/openkeys.bin",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_signed_update_bundle",
+      "passed": false,
+      "detail": {
+        "path": "firmware/dist/openkeys-update.bin",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_bootloader",
+      "passed": false,
+      "detail": {
+        "path": "firmware/dist/bootloader.bin",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_provisioning_instructions",
+      "passed": false,
+      "detail": {
+        "path": "manufacturing/release/provisioning.md",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_manager_macos",
+      "passed": false,
+      "detail": {
+        "path": "dist/macos/AuthDesk.dmg",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_manager_windows",
+      "passed": false,
+      "detail": {
+        "path": "dist/windows/AuthDesk.msi",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_manager_linux",
+      "passed": false,
+      "detail": {
+        "path": "dist/linux/authdesk.tar.gz",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_qualification_report",
+      "passed": false,
+      "detail": {
+        "path": "manufacturing/evidence/qualification.json",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "artifact_release_signoff",
+      "passed": false,
+      "detail": {
+        "path": "manufacturing/evidence/release-signoff.json",
+        "exists": false,
+        "hash_verified": false
+      }
+    },
+    {
+      "name": "pcb_contains_complete_placement_and_tracks",
+      "passed": false,
+      "detail": "Only an explicitly unrouted floorplan is currently provided"
+    },
+    {
+      "name": "firmware_is_arm_elf",
+      "passed": false,
+      "detail": "Device-policy is a library, not a flashable authenticator"
+    },
+    {
+      "name": "physical_qualification_complete",
+      "passed": false,
+      "detail": {
+        "missing": [
+          "fido2_u2f_hmac_secret",
+          "pin_and_biometric_persistent_retries",
+          "biometric_secure_pairing_and_replay",
+          "se_nonexport_and_object_policy",
+          "signed_boot_update_rollback_debug",
+          "vault_atomicity_and_rollback",
+          "totp_time_and_battery_faults",
+          "usb_dual_port_and_backfeed",
+          "nfc_final_enclosure_ios",
+          "trusted_screen_and_cancel",
+          "manager_three_os_real_device",
+          "emc_safe_failure",
+          "side_channel_and_fault_scope"
+        ],
+        "note": "Evidence authenticity and scope require independent human review"
+      }
+    }
+  ],
+  "blocker_count": 22,
+  "limits": "Checks inventory and declared hashes, not the truth of lab reports or security certification. Human signoff and actual qualification are mandatory."
+}

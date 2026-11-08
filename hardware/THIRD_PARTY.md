@@ -21,3 +21,5 @@
 | FM11NC08 | https://www.fm-chips.com/fm11nc08-15403638655782941.html |
 
 审查时下载的PDF SHA-256与UTC日期见review/datasheets.json，PDF未放入Git。安全设计必须结合最新勘误、已知问题和采购修订再次核对。
+
+R0.2新增：SE050实际封装使用[NXP SOT1969-1](https://www.nxp.com/docs/en/package-information/SOT1969-1.pdf)第4–6页的尺寸与钢网事实自行生成：0.4mm节距、0.725×0.2mm焊盘、1.9mm EP、四个0.75mm钢网开口。FPC资料/接口交叉检查与MIT参考声明见[指纹设计](../docs/BIOMETRIC_PROTOCOL.md)。FPC2534AM、SE050内部固件仍非本项目开放源码。

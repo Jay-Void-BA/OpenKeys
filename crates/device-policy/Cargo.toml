@@ -6,3 +6,9 @@ license.workspace = true
 
 [lints]
 workspace = true
+
+[dependencies]
+zeroize = { version = "1.9", default-features = false }
+
+[dev-dependencies]
+aes-gcm = { version = "=0.10.3", default-features = false, features = ["aes"] }

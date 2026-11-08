@@ -1,5 +1,5 @@
 {
-  "utc": "2026-11-08T06:04:21.644377+00:00",
+  "utc": "2026-11-08T06:53:28.101519+00:00",
   "source": "KiCad XML netlist + unmodified ERC JSON",
   "result": "PASS_WITH_RELEASE_BLOCKERS",
   "checks": [
@@ -24,29 +24,22 @@
     "USB current controls default to distinct signals",
     "LQFP64 SPI2 MISO uses pin 10 (PC2)",
     "LQFP64 I2C2 SDA uses pin 35 (PB14)",
+    "Fingerprint SPI mode strap is grounded",
+    "Fingerprint flex power and bezel ground pins match documented pinout",
+    "Fingerprint SPI wiring matches documented flex pins",
     "ERC has zero electrical errors",
-    "Only documented footprint warnings remain: The current configuration does not include the footprint library 'OpenKeys'.",
-    "Only documented footprint warnings remain: The current configuration does not include the footprint library 'OpenKeys'.",
-    "Only documented footprint warnings remain: The current configuration does not include the footprint library 'OpenKeys'.",
-    "Only documented footprint warnings remain: The current configuration does not include the footprint library 'OpenKeys'.",
-    "Only documented footprint warnings remain: The current configuration does not include the footprint library 'OpenKeys'.",
-    "Only documented footprint warnings remain: The current configuration does not include the footprint library 'OpenKeys'.",
-    "Only documented footprint warnings remain: The current configuration does not include the footprint library 'OpenKeys'.",
-    "Only documented footprint warnings remain: The current configuration does not include the footprint library 'OpenKeys'.",
-    "Exactly eight unresolved footprint references are documented"
+    "Only documented footprint warnings remain: Footprint 'USB_A_Plug_THT_PENDING' not found in library 'OpenKeys'.",
+    "Only documented footprint warnings remain: Footprint 'FM11NC08S_DFN10_PENDING' not found in library 'OpenKeys'.",
+    "Only documented footprint warnings remain: Footprint 'NFC_LOOP_PENDING' not found in library 'OpenKeys'.",
+    "Exactly three unresolved footprint references are documented"
   ],
-  "net_count": 104,
+  "net_count": 106,
   "erc_errors": 0,
-  "erc_warnings": 8,
+  "erc_warnings": 3,
   "unresolved_footprints": [
     "J1",
-    "J2",
     "J5",
-    "J7",
-    "SW1",
-    "SW6",
-    "U11",
-    "U8"
+    "U11"
   ],
   "manufacturing_release": false,
   "physical_validation": false

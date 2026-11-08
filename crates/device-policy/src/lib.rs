@@ -5,6 +5,8 @@
 //! secure monotonic time and authenticated channel bindings themselves.
 //! This library does not authenticate hardware or implement cryptography.
 
+pub mod biometric;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Method {
     Fingerprint,

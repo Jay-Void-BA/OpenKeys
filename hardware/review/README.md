@@ -1,15 +1,16 @@
-# R0 交付前检查
+# R0.2 交付检查
 
-2026-11-08，工具：KiCad 9.0.2、OpenSCAD 2021.01、Blender 4.3.2、Python 3。环境为Linux容器，未连接硬件。
+日期2026-11-08（北京时间）；工具KiCad 9.0.2、OpenSCAD 2021.01、Blender 4.3.2、Python 3。Linux容器没有连接目标硬件。
 
-- 7页原理图解析并导出PDF/SVG/XML网表；117个BOM位号、104个网络。
-- 原始ERC：[erc.json](erc.json)。0个电气错误、8个封装链接警告，未修改规则或排除告警。分别为J1/J2/J5/J7、U8/U11、SW1/SW6；保留为投板前阻断项。
-- 从KiCad导出的XML检查31项连接/报告条件，见[netlist-check.json](netlist-check.json)及[检查脚本](../tools/check_netlist.py)。不使用生成脚本的连接JSON作为验证输入。
-- 已目视检查尺寸图、装配渲染与全部电路页，调整了标签方向、引脚/标注和标题栏避让。矢量图可以放大核对。
-- 三个STL均由OpenSCAD实际构造，CGAL报告Simple=yes；底壳/上盖各为一个连通实体，按键件为四个独立实体。未经过打印、支撑、配合公差或强度验证。
-- 同一提交前的Rust工作区：17项测试、fmt、clippy -D warnings通过。软件依赖未变化，沿用[既有依赖扫描记录](../../docs/dependency-audit.json)的精确Cargo.lock/RustSec状态。
-- Markdown相对链接、SVG/XML语法、待公开文本的常见凭据格式扫描通过。仅测试合成/RFC数据；没有用户的OTP、指纹或recovery codes。
+- 7页原理图实际导出PDF/SVG/XML网表，116个BOM位号。
+- 原始[ERC](erc.json)：0错误、3个封装链接警告（J1 USB-A、U11 NFC封装、J5天线）。未修改规则来排除告警。
+- [网表检查](netlist-check.json)：29项条件通过，包含指纹12pin的电源/ESD地/模式选择和SPI映射。数字检查不是芯片或RF测试。
+- SE050独立封装按NXP SOT1969-1重新生成，20个0.4mm节距焊盘+1.9mm EP和四个0.75mm钢网窗口。PCB源仅增加该器件的空间占位，整体仍是未布线分区。
+- 指纹目标选FPC2534AM；实际封装配合、供电、GCM、SE持久operation tag/失败计数及独立解锁验证未完成。详情见[协议设计](../../docs/BIOMETRIC_PROTOCOL.md)。
+- 软件26项测试、fmt、clippy -D warnings通过；新增no_std策略在Cortex-M33目标检查通过。原生Linux开发版重新编译；设备后端依旧默认拒绝。
+- 新Cargo.lock的RustSec扫描0条已知漏洞、0条维护警告；新AES-GCM仅作为测试依赖，生产代码尚无可用硬件GCM后端。
+- 外壳STL仍为打印原型设计，未实物装配；像素预览/打印网格生成不能证明显示/指纹/电池的真实配合。
 
-`PASS_WITH_RELEASE_BLOCKERS`只表示上述数字检查通过，并不放行制造或真实秘密使用。[发布门槛](../RELEASE_GATES.md)全部仍需执行。没有Gerber/贴片坐标、没有完整设备固件，也没有侧信道、故障注入、NFC射频或EMC测试报告。
+[制造预检](../../manufacturing/readiness-report.json)仍为BLOCKED。没有Gerber/贴片坐标、完整设备固件、iOS/NFC实测或侧信道/故障/EMC报告。文件完整性脚本也不会自动批准生产。
 
-`SHA256SUMS`记录当前硬件源文件与导出物；不包含自身、生成日志或未来的Git提交号。厂商PDF的摘要另见[datasheets.json](datasheets.json)，PDF未上传。
+SHA256SUMS覆盖当前硬件源/导出物；厂商PDF只保留摘要与来源，不上传PDF正文。

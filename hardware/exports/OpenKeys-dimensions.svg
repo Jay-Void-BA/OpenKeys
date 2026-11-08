@@ -44,7 +44,7 @@
 <text x="86" y="65" font-size="2.4" fill="#667e8d" text-anchor="start">29 × 17 window, confirm/cancel</text>
 <path d="M76,91 L83,91" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
 <text x="86" y="90" font-size="3" fill="#19384a" text-anchor="start">Fingerprint</text>
-<text x="86" y="94" font-size="2.4" fill="#667e8d" text-anchor="start">16 × 16 envelope; secure module TBD</text>
+<text x="86" y="94" font-size="2.4" fill="#667e8d" text-anchor="start">FPC2534AM target; physical fit unverified</text>
 <path d="M76,107 L83,107" stroke="#5f7a8b" stroke-width="0.3" fill="none" />
 <text x="86" y="106" font-size="3" fill="#19384a" text-anchor="start">Buttons / device PIN</text>
 <text x="86" y="110" font-size="2.4" fill="#667e8d" text-anchor="start">UP, DOWN, CONFIRM, CANCEL</text>
@@ -59,7 +59,7 @@
 <rect x="212" y="76" width="20" height="30" rx="1" fill="#dbe1e6" stroke="#81919b" stroke-width="0.35" stroke-dasharray="1 1"/>
 <text x="222" y="102" font-size="2.3" fill="#19384a" text-anchor="middle">Battery below PCB</text>
 <rect x="223" y="80" width="16" height="16" rx="1" fill="#c0d5cd" stroke="#37745b" stroke-width="0.35" />
-<text x="231" y="87" font-size="2.3" fill="#19384a" text-anchor="middle">FP TBD</text>
+<text x="231" y="87" font-size="2.3" fill="#19384a" text-anchor="middle">FP target</text>
 <rect x="206" y="111" width="34" height="17" rx="1" fill="#fff2d4" stroke="#c58a19" stroke-width="0.35" />
 <text x="223" y="117" font-size="2.8" fill="#976006" text-anchor="middle">RF ONLY</text>
 <rect x="208" y="119" width="30" height="7" rx="2" fill="none" stroke="#ba781b" stroke-width="0.35" />

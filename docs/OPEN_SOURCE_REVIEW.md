@@ -1,6 +1,6 @@
 # 开源方案比较
 
-检索/拉取日期：2026-11-08。所有项目锁定具体提交，见 references.lock.tsv；不自动跟随分支更新。以下为源码检查与选型推论，不是整机安全审计。
+检索/拉取日期：2026-11-08。共9个参考，所有项目锁定具体提交，见 references.lock.tsv；不自动跟随分支更新。以下为源码检查与选型推论，不是整机安全审计。
 
 | 项目 | 可参考部分 | 本项目采用边界 |
 |---|---|---|
@@ -12,6 +12,8 @@
 | [Nitrokey 3](https://github.com/Nitrokey/nitrokey-3-firmware) | Rust 固件工程、SE 后端接入、生产/升级组织、参考板与 CI | 含 littlefs2，README 构建依赖 clang。已有 SE 不代表其所有 FIDO 密钥都在 SE；官方说明 FIDO2 除额外随机数外不使用 SE。不能照搬这一密钥边界后声称本项目 FIDO 抗物理侧信道。 |
 | [Zig keylib](https://github.com/Zig-Sec/keylib) | Zig CTAP 库、UV/UP 回调、客户端示例，README 提及 PRF/hmac-secret | GitHub 镜像指向 Codeberg。当前 build.zig.zon 含 hidapi、translate_c，不能把整个构建当成无 C。自行实现存储、UV、硬件运算与验证的责任仍在开发者。 |
 | [PassKeeZ](https://github.com/Zig-Sec/PassKeeZ) | Zig Linux 平台认证器、KDBX/管理体验参考 | 是 Linux 平台软件认证器，不是本项目的独立硬件钥匙；README 明确不支持其自身数据库生物解锁，不能充当三平台设备管理器。 |
+
+新增参考：[SparkFun FPC2534 API](https://github.com/sparkfun/SparkFun_FPC2534_Arduino_Library/tree/5d0d1727ea05e79ad3c2e3c84fb933dba37f2723)，MIT，只核对帧头、Identify operation tag及flex资料，不编译其C/C++源码。实际安全策略用Rust重新实现；不把上游普通通信示例当作已完成安全配对/防重放。许可证保留在reference-licenses目录。
 
 ## 路线决定
 

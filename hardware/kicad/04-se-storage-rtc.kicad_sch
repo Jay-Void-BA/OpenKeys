@@ -6,7 +6,7 @@
   (title_block
     (title "OpenKeys R0 - 04-se-storage-rtc")
     (date "2026-11-08")
-    (rev "0.1-design-review")
+    (rev "0.2-design-review")
     (company "Jay-Void-BA")
     (comment 1 "NOT FOR FABRICATION - see hardware/RELEASE_GATES.md")
   )
@@ -1559,7 +1559,7 @@
         )
       )
     )
-    (property "Footprint" "OpenKeys:SE050_HVQFN20_PENDING"
+    (property "Footprint" "OpenKeys:SE050_SOT1969-1_HX2QFN20"
       (at 71.12 83.82 0)
       (effects
         (font

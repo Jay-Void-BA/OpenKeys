@@ -6,7 +6,7 @@
   (title_block
     (title "OpenKeys R0 - Design review")
     (date "2026-11-08")
-    (rev "0.1")
+    (rev "0.2")
     (company "Jay-Void-BA")
   )
   (lib_symbols)

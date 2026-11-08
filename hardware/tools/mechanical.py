@@ -37,7 +37,7 @@ def drawing():
  dimension(x,y-18,x+44,y-18,'44.0');dimension(x-9,y,x-9,y+88,'88.0',True)
  text(x+22,y+95,'FRONT',3.6,anchor='middle')
  # Front labels
- for a,b,c in [(14,'Trusted OLED','29 × 17 window, confirm/cancel'),(43,'Fingerprint','16 × 16 envelope; secure module TBD'),(59,'Buttons / device PIN','UP, DOWN, CONFIRM, CANCEL'),(76,'NFC keepout','No battery, shield or ground plane')]:
+ for a,b,c in [(14,'Trusted OLED','29 × 17 window, confirm/cancel'),(43,'Fingerprint','FPC2534AM target; physical fit unverified'),(59,'Buttons / device PIN','UP, DOWN, CONFIRM, CANCEL'),(76,'NFC keepout','No battery, shield or ground plane')]:
   line(x+44,y+a,83,y+a);text(86,y+a-1,b,3);text(86,y+a+3,c,2.4,'#667e8d')
  # board floorplan
  x,y=204,48
@@ -45,7 +45,7 @@ def drawing():
  rect(x+4,y+5,30,24,'none','#466b87',1,'stroke-dasharray="1 1"')
  text(x+19,y+11,'OLED / trusted MCU',2.5,anchor='middle');rect(x+12,y+14,10,10,'#294b40',r=.3);text(x+17,y+20,'U7',2.6,'white','middle')
  rect(x+8,y+28,20,30,'#dbe1e6','#81919b',1,'stroke-dasharray="1 1"');text(x+18,y+54,'Battery below PCB',2.3,anchor='middle')
- rect(x+19,y+32,16,16,'#c0d5cd','#37745b',1);text(x+27,y+39,'FP TBD',2.3,anchor='middle')
+ rect(x+19,y+32,16,16,'#c0d5cd','#37745b',1);text(x+27,y+39,'FP target',2.3,anchor='middle')
  rect(x+2,y+63,34,17,'#fff2d4','#c58a19',1);text(x+19,y+69,'RF ONLY',2.8,'#976006','middle')
  for k in [0,1,2]:rect(x+4+k,y+71+k,30-2*k,7-2*k,'none','#ba781b',2)
  text(x+19,y+84,'COIL ILLUSTRATIVE — NOT TUNED',1.9,'#976006','middle')
@@ -82,8 +82,10 @@ def board():
  # Only a verified package footprint is placed, no fabricated black-box pads.
  fp=p.FootprintLoad('/usr/share/kicad/footprints/Package_QFP.pretty','LQFP-64_10x10mm_P0.5mm')
  fp.SetReference('U7');fp.SetValue('STM32U585RIT6');fp.SetPosition(v(18,18));b.Add(fp)
+ fp=p.FootprintLoad(str(R/'kicad/OpenKeys.pretty'),'SE050_SOT1969-1_HX2QFN20')
+ fp.SetReference('U8');fp.SetValue('SE050E2HQ1/Z01Z3Z');fp.SetPosition(v(30,18));b.Add(fp)
  box(9,28,20,30);label('BATTERY BELOW',19,54)
- box(19,32,16,16);label('TRUSTED FP TBD',27,39,size=.8)
+ box(19,32,16,16);label('FPC2534AM target',27,39,size=.8)
  box(0,63,38,19);label('NFC RF WINDOW',19,66);label('NO OTHER COPPER / METAL',19,69,size=.7)
  # Rule areas on all four layers. Coil copper intentionally absent until tuned.
  z=p.ZONE(b);z.SetIsRuleArea(True);z.SetDoNotAllowTracks(True);z.SetDoNotAllowVias(True);z.SetDoNotAllowCopperPour(True);z.SetDoNotAllowPads(True);z.SetDoNotAllowFootprints(True)

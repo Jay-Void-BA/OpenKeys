@@ -6,7 +6,7 @@
   (title_block
     (title "OpenKeys R0 - 01-usb")
     (date "2026-11-08")
-    (rev "0.1-design-review")
+    (rev "0.2-design-review")
     (company "Jay-Void-BA")
     (comment 1 "NOT FOR FABRICATION - see hardware/RELEASE_GATES.md")
   )
@@ -3369,7 +3369,7 @@
         )
       )
     )
-    (property "Footprint" "OpenKeys:USB_C_16P_RECEPTACLE_PENDING"
+    (property "Footprint" "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12"
       (at 116.84 71.12 0)
       (effects
         (font
@@ -5998,14 +5998,14 @@
     )
     (uuid "4a6d26cd-b2b9-5801-8626-037f6febb26b")
   )
-  (text "CC and VBUS TVS fitted; verify leakage and clamp coordination.\nUSB-A plug and USB-C footprints remain unselected.\nGND is common; simultaneous hosts are not galvanically isolated."
+  (text "CC and VBUS TVS fitted; verify leakage and clamp coordination.\nUSB-A footprint remains unresolved; USB-C target is HRO TYPE-C-31-M-12.\nGND is common; simultaneous hosts are not galvanically isolated."
     (at 92 250 0)
     (effects
       (font
         (size 1.3 1.3)
       )
     )
-    (uuid "77b9ba99-3ab3-58bc-9d9d-3da231b9529e")
+    (uuid "03dc4e7f-9c96-5ed7-a6d9-bbc1a7a24eec")
   )
   (wire
     (pts

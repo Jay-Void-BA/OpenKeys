@@ -1,3 +1,5 @@
+> 历史快照：R0.1。最新进度与缺口请以[主README](../README.md)和[制造预检](../manufacturing/README.md)为准。
+
 # 开源认证器与 AuthDesk 管理器
 
 这是研发工程首版，不是经过安全评估的成品。当前没有可投产 PCB，也没有能在真实指纹模组上运行的设备固件。不要用于真实账户、OTP 种子或 recovery codes。

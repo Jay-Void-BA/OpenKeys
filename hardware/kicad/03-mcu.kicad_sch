@@ -6,7 +6,7 @@
   (title_block
     (title "OpenKeys R0 - 03-mcu")
     (date "2026-11-08")
-    (rev "0.1-design-review")
+    (rev "0.2-design-review")
     (company "Jay-Void-BA")
     (comment 1 "NOT FOR FABRICATION - see hardware/RELEASE_GATES.md")
   )
@@ -4553,36 +4553,9 @@
     (at 142.24 116.84)
     (uuid "9719d42e-10a2-57ff-88c3-ea1978b28d0f")
   )
-  (wire
-    (pts
-      (xy 142.24 121.92)
-      (xy 137.16 121.92)
-    )
-    (stroke
-      (width 0)
-      (type default)
-    )
-    (uuid "b08b4a81-dad2-5f73-87b4-4fb2802a7397")
-  )
-  (global_label "FP_TAMPER_N"
-    (shape input)
-    (at 137.16 121.92 180)
-    (effects
-      (font
-        (size 0.9 0.9)
-      )
-      (justify right)
-    )
-    (uuid "76e191ba-fd61-524b-b86a-ca13b2119842")
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 137.16 121.92 180)
-      (effects
-        (font
-          (size 0.8 0.8)
-        )
-        (hide yes)
-      )
-    )
+  (no_connect
+    (at 142.24 121.92)
+    (uuid "633e0eae-9b01-56fb-a6a9-a629770b8b3c")
   )
   (no_connect
     (at 142.24 124.46)
@@ -4816,7 +4789,7 @@
     )
     (uuid "63455a30-b0c4-5211-9649-a6f09b311ff3")
   )
-  (global_label "FP_IRQ_N"
+  (global_label "FP_IRQ"
     (shape input)
     (at 137.16 144.78 180)
     (effects

@@ -6,7 +6,7 @@
   (title_block
     (title "OpenKeys R0 - 05-nfc")
     (date "2026-11-08")
-    (rev "0.1-design-review")
+    (rev "0.2-design-review")
     (company "Jay-Void-BA")
     (comment 1 "NOT FOR FABRICATION - see hardware/RELEASE_GATES.md")
   )

@@ -1,6 +1,6 @@
 {
   "retrieved_date_utc": "2026-11-08",
-  "urls": "../THIRD_PARTY.md",
+  "urls": "../THIRD_PARTY.md and ../../docs/BIOMETRIC_PROTOCOL.md and ../../manufacturing/critical-parts.csv",
   "files": [
     {
       "local_name": "bq24074.pdf",
@@ -36,6 +36,46 @@
       "local_name": "u585.pdf",
       "sha256": "6483871075d4889d39356648a9c1f1fb34f48dce2ce3e8c5a8d73a73f7e935e3",
       "bytes": 4842120
+    },
+    {
+      "local_name": "fpc2530-product-rev6.pdf",
+      "sha256": "6a90b159e61626ba4a6581f11e1f211c6db69e4bf92437d7f5af3789aed1d022",
+      "bytes": 3100944
+    },
+    {
+      "local_name": "fpc2530-product.pdf",
+      "sha256": "c16c68a99a4980b8d3ca3dbf7dd4c002f173e47ed5b0a14e7e5e1542ba7799f8",
+      "bytes": 3100429
+    },
+    {
+      "local_name": "fpc2534-secure-rev3.pdf",
+      "sha256": "73330b63ebaa315a00a97016024c8ab1de958e8e489697d5c0eb2bf644e246d6",
+      "bytes": 390382
+    },
+    {
+      "local_name": "fpc2534-secure.pdf",
+      "sha256": "8384b0a936fd831aa5bdc41a0f179eb454ba409cc4a81af9d907d3c80787a9db",
+      "bytes": 337132
+    },
+    {
+      "local_name": "gct1061.pdf",
+      "sha256": "dd7c5f9361a61ef29a694cb695c761a3fcc5dc6798581e604eeb544af92be10a",
+      "bytes": 121190
+    },
+    {
+      "local_name": "molex48037.pdf",
+      "sha256": "c2d60b1b15f46b45f5790b55a2f3c4cba5efe66b2c78e750c281df4fb39ab023",
+      "bytes": 81345
+    },
+    {
+      "local_name": "molex505110.pdf",
+      "sha256": "9a9d73e9f719f5a01da1b7ca3c568d630a57c35eed504b475831ffa09e9292c2",
+      "bytes": 896205
+    },
+    {
+      "local_name": "se050-package.pdf",
+      "sha256": "9c65cd921f21847d95e3061dcd6f5772db47a2cefd29627ebc880c15ccc26f72",
+      "bytes": 244863
     }
   ]
 }

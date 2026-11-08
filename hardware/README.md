@@ -1,6 +1,6 @@
 # OpenKeys R0 硬件交付
 
-版本：0.1 design review，2026-11-08。此包可用于电路/结构评审与打样准备；不应直接下单生产。尚未布线，未制造、烧录、调谐或测量。安全要求见 [发布门槛](RELEASE_GATES.md)。
+版本：0.2 design review，2026-11-08。此包可用于电路/结构评审与打样准备；不应直接下单生产。尚未布线，未制造、烧录、调谐或测量。安全要求见 [发布门槛](RELEASE_GATES.md)。
 
 ## 文件
 
@@ -19,13 +19,16 @@
 | `exports/OpenKeys-assembly.png` | 外观模型预览，不是已制造实物照片 |
 | `review/erc.json`、`review/netlist-check.json` | 实际检查原始记录 |
 
-板分区是器件空间规划，不包含完整元件布局、走线、阻抗、层叠材料或 Gerber。FP/USB/开关/NFC 等 `PENDING` 封装故意未伪造。不能通过删除警告来把它变成制造包。
+板分区是器件空间规划，不包含完整元件布局、走线、阻抗、层叠材料或 Gerber。USB-A/NFC/天线的 `PENDING` 封装仍未伪造；指纹目标已选FPC2534AM，SE050焊盘依据SOT1969-1而非通用QFN。不能通过删除警告来把它变成制造包。
+
+真实成品缺口和价格取舍见[制造交付入口](../manufacturing/README.md)。
 
 ## 重建
 
 需要 KiCad 9 的官方符号/封装库、Python 3、OpenSCAD；渲染另需 Blender 4.3 和 DejaVu Sans 字体。Debian 的 `pcbnew` 通常只在 `/usr/bin/python3` 可用。
 
 ```sh
+/usr/bin/python3 hardware/tools/footprints.py
 python3 hardware/tools/schematic.py
 /usr/bin/python3 hardware/tools/mechanical.py
 sh hardware/tools/export.sh

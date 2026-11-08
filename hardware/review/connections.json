@@ -17,7 +17,7 @@
   {
     "ref": "J2",
     "value": "USB-C USB2 receptacle",
-    "footprint": "OpenKeys:USB_C_16P_RECEPTACLE_PENDING",
+    "footprint": "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12",
     "sheet": "01-usb",
     "nets": {
       "A1": "GND",
@@ -38,7 +38,7 @@
       "B12": "GND",
       "S1": "SHIELD"
     },
-    "note": "Select exact connector and manufacturer drawing before PCB",
+    "note": "HRO TYPE-C-31-M-12; verify actual connector drawing and mating envelope in EVT",
     "dnp": false
   },
   {
@@ -565,7 +565,7 @@
   {
     "ref": "SW1",
     "value": "OFF / ON",
-    "footprint": "OpenKeys:SLIDE_SPDT_PENDING",
+    "footprint": "Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN",
     "sheet": "02-power",
     "nets": {
       "1": "SYS",
@@ -887,12 +887,11 @@
       "37": "NFC_IRQ_N",
       "38": "FP_RESET_N",
       "39": "SE_EN",
-      "40": "FP_IRQ_N",
+      "40": "FP_IRQ",
       "51": "FP_SCK",
       "52": "FP_MISO",
       "53": "FP_MOSI",
-      "2": "CASE_TAMPER_N",
-      "8": "FP_TAMPER_N"
+      "2": "CASE_TAMPER_N"
     },
     "note": "No PB11 on LQFP64; PC2=SPI2_MISO AF5, PB14=I2C2_SDA AF4",
     "dnp": false
@@ -900,7 +899,7 @@
   {
     "ref": "U8",
     "value": "SE050E2HQ1/Z01Z3Z",
-    "footprint": "OpenKeys:SE050_HVQFN20_PENDING",
+    "footprint": "OpenKeys:SE050_SOT1969-1_HX2QFN20",
     "sheet": "04-se-storage-rtc",
     "nets": {
       "1": "GND",
@@ -1267,22 +1266,24 @@
   },
   {
     "ref": "J7",
-    "value": "Trusted fingerprint SPI - NOT SELECTED",
-    "footprint": "OpenKeys:FINGERPRINT_SECURE_MODULE_PENDING",
+    "value": "FPC2534AM / FH12-12S-0.5SH(55)",
+    "footprint": "Connector_FFC-FPC:Hirose_FH12-12S-0.5SH_1x12-1MP_P0.50mm_Horizontal",
     "sheet": "06-trusted-ui",
     "nets": {
-      "1": "FP_3V3",
-      "2": "GND",
-      "3": "FP_SCK",
-      "4": "FP_MOSI",
-      "5": "FP_MISO",
-      "6": "FP_CS_N",
-      "7": "FP_IRQ_N",
-      "8": "FP_RESET_N",
-      "9": "GND",
-      "10": "FP_TAMPER_N"
+      "1": "GND",
+      "2": null,
+      "3": null,
+      "4": "FP_IRQ",
+      "5": "FP_MOSI",
+      "6": "FP_MISO",
+      "7": "FP_SCK",
+      "8": "FP_CS_N",
+      "9": "FP_RESET_N",
+      "10": "FP_3V3",
+      "11": "GND",
+      "12": "GND"
     },
-    "note": "Only a contract placeholder; cannot certify UV with unauthenticated match bit",
+    "note": "Target module 100026230: 0.5mm, 0.3mm bottom-contact flex; verify contact orientation on EVT; key provisioning + SE persistent operation tags required",
     "dnp": false
   },
   {
@@ -1359,12 +1360,12 @@
   },
   {
     "ref": "R36",
-    "value": "47k",
+    "value": "100k",
     "footprint": "Resistor_SMD:R_0603_1608Metric",
     "sheet": "06-trusted-ui",
     "nets": {
-      "1": "FP_3V3",
-      "2": "FP_IRQ_N"
+      "1": "FP_IRQ",
+      "2": "GND"
     },
     "note": "",
     "dnp": false
@@ -1382,18 +1383,6 @@
     "dnp": false
   },
   {
-    "ref": "R38",
-    "value": "47k",
-    "footprint": "Resistor_SMD:R_0603_1608Metric",
-    "sheet": "06-trusted-ui",
-    "nets": {
-      "1": "FP_3V3",
-      "2": "FP_TAMPER_N"
-    },
-    "note": "",
-    "dnp": false
-  },
-  {
     "ref": "SW2",
     "value": "UP",
     "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
@@ -1406,7 +1395,7 @@
     "dnp": false
   },
   {
-    "ref": "R39",
+    "ref": "R38",
     "value": "47k",
     "footprint": "Resistor_SMD:R_0603_1608Metric",
     "sheet": "06-trusted-ui",
@@ -1442,7 +1431,7 @@
     "dnp": false
   },
   {
-    "ref": "R40",
+    "ref": "R39",
     "value": "47k",
     "footprint": "Resistor_SMD:R_0603_1608Metric",
     "sheet": "06-trusted-ui",
@@ -1478,7 +1467,7 @@
     "dnp": false
   },
   {
-    "ref": "R41",
+    "ref": "R40",
     "value": "47k",
     "footprint": "Resistor_SMD:R_0603_1608Metric",
     "sheet": "06-trusted-ui",
@@ -1514,7 +1503,7 @@
     "dnp": false
   },
   {
-    "ref": "R42",
+    "ref": "R41",
     "value": "47k",
     "footprint": "Resistor_SMD:R_0603_1608Metric",
     "sheet": "06-trusted-ui",
@@ -1540,7 +1529,7 @@
   {
     "ref": "SW6",
     "value": "CASE CLOSED",
-    "footprint": "OpenKeys:TAMPER_SWITCH_PENDING",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
     "sheet": "06-trusted-ui",
     "nets": {
       "1": "CASE_TAMPER_N",
@@ -1550,7 +1539,7 @@
     "dnp": false
   },
   {
-    "ref": "R43",
+    "ref": "R42",
     "value": "47k",
     "footprint": "Resistor_SMD:R_0603_1608Metric",
     "sheet": "06-trusted-ui",

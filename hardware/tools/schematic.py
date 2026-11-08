@@ -80,7 +80,7 @@ SPECS={
 'NMOS':('Transistor_FET','2N7002'),
 'SW':('Switch','SW_Push'),'SPDT':('Switch','SW_SPDT'),
 'CONN2':('Connector_Generic','Conn_01x02'),'CONN3':('Connector_Generic','Conn_01x03'),
-'CONN4':('Connector_Generic','Conn_01x04'),'CONN10':('Connector_Generic','Conn_02x05_Odd_Even'),
+'CONN4':('Connector_Generic','Conn_01x04'),'CONN12':('Connector_Generic','Conn_01x12'),'CONN10':('Connector_Generic','Conn_02x05_Odd_Even'),
 'TVS':('Device','D_TVS'),'PWR':('power','PWR_FLAG')}
 LIB={k:library(*v) for k,v in SPECS.items()}
 LIB['SE']=custom('SE050E',[(1,'LB','passive'),(2,'NC','no_connect'),(3,'IO1','bidirectional'),(4,'NC','no_connect'),(5,'NC','no_connect'),(6,'NC','no_connect'),(7,'NC','no_connect'),(8,'NC','no_connect'),(9,'SDA','bidirectional'),(10,'SCL','input'),(11,'ENA','input'),(12,'VIN','power_in'),(13,'CLK','input'),(14,'RST_N','input'),(15,'VOUT','power_out'),(16,'IO2','bidirectional'),(17,'LA','passive'),(18,'VCC','power_in'),(19,'VSS','power_in'),(20,'NC','no_connect'),(21,'EP','passive')])
@@ -124,7 +124,7 @@ class Sheet:
     def save(self):
         libs=[]
         for id,lib in self.used.items():l=copy.deepcopy(lib);l[1]=q(id);libs.append(l)
-        doc=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(self.uid)],['paper',q('A3')],['title_block',['title',q('OpenKeys R0 - '+self.name)],['date',q('2026-11-08')],['rev',q('0.1-design-review')],['company',q('Jay-Void-BA')],['comment',1,q('NOT FOR FABRICATION - see hardware/RELEASE_GATES.md')]],['lib_symbols',*libs],*self.items]
+        doc=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(self.uid)],['paper',q('A3')],['title_block',['title',q('OpenKeys R0 - '+self.name)],['date',q('2026-11-08')],['rev',q('0.2-design-review')],['company',q('Jay-Void-BA')],['comment',1,q('NOT FOR FABRICATION - see hardware/RELEASE_GATES.md')]],['lib_symbols',*libs],*self.items]
         (CAD/(self.name+'.kicad_sch')).write_text(pretty(doc)+'\n')
 
 S=[]
@@ -143,7 +143,7 @@ def generate():
     # USB: each raw 5 V input has independent ESD protection and resettable fuse.
     s=sheet('01-usb','USB-A / USB-C - USB 2.0 FS, sink only')
     s.comp('USBA','J1','USB-A male (plug)',48.26,66.04,{'1':'VBUS_A_RAW','2':'USB_A_DM','3':'USB_A_DP','4':'GND','5':'SHIELD'},'OpenKeys:USB_A_Plug_THT_PENDING',note='Exact plug mechanical footprint is a fabrication blocker')
-    s.comp('USBC','J2','USB-C USB2 receptacle',137.16,71.12,{'A1':'GND','A4':'VBUS_C_RAW','A5':'CC1','A6':'USB_C_DP','A7':'USB_C_DM','A8':None,'A9':'VBUS_C_RAW','A12':'GND','B1':'GND','B4':'VBUS_C_RAW','B5':'CC2','B6':'USB_C_DP','B7':'USB_C_DM','B8':None,'B9':'VBUS_C_RAW','B12':'GND','S1':'SHIELD'},'OpenKeys:USB_C_16P_RECEPTACLE_PENDING',note='Select exact connector and manufacturer drawing before PCB')
+    s.comp('USBC','J2','USB-C USB2 receptacle',137.16,71.12,{'A1':'GND','A4':'VBUS_C_RAW','A5':'CC1','A6':'USB_C_DP','A7':'USB_C_DM','A8':None,'A9':'VBUS_C_RAW','A12':'GND','B1':'GND','B4':'VBUS_C_RAW','B5':'CC2','B6':'USB_C_DP','B7':'USB_C_DM','B8':None,'B9':'VBUS_C_RAW','B12':'GND','S1':'SHIELD'},'Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12',note='HRO TYPE-C-31-M-12; verify actual connector drawing and mating envelope in EVT')
     def named(k,d):return {num:d.get(name) for num,name in pmap(k).items()}
     s.comp('DMUX','U1','TS3USB30EDGSR',266.7,66.04,named('DMUX',{'VCC':'+3V3','GND':'GND','D+':'USB_DP','D-':'USB_DM','D1+':'USB_A_DP','D1-':'USB_A_DM','D2+':'USB_C_DP','D2-':'USB_C_DM','S':'USB_SEL','~{OE}':'USB_OE_N'}))
     s.comp('ESD','U2','USBLC6-2SC6',55.88,134.62,{'1':'USB_A_DP','6':'USB_A_DP','3':'USB_A_DM','4':'USB_A_DM','2':'GND','5':'VBUS_A_RAW'})
@@ -157,7 +157,7 @@ def generate():
         passive(s,'R','1M',x+33.02,227.33,raw,'GND')
     caps(s,[('100nF','+3V3','GND')],254,200.66)
     s.text('USB_SEL: 0=A, 1=C. /OE pulled HIGH disables all data at reset.\nFirmware only enables after selected VBUS is valid; stop on disconnect/port change.\nBoth plugs must never join D+/D- directly. No USB PD and no source VBUS.',270,239)
-    s.text('CC and VBUS TVS fitted; verify leakage and clamp coordination.\nUSB-A plug and USB-C footprints remain unselected.\nGND is common; simultaneous hosts are not galvanically isolated.',92,250)
+    s.text('CC and VBUS TVS fitted; verify leakage and clamp coordination.\nUSB-A footprint remains unresolved; USB-C target is HRO TYPE-C-31-M-12.\nGND is common; simultaneous hosts are not galvanically isolated.',92,250)
     for i,(net,x) in enumerate([('VBUS_A_RAW',35.56),('VBUS_C_RAW',101.6),('CC1',167.64),('CC2',233.68)]):
         s.comp('TVS','D'+str(i+1),'SMF5.0A' if i<2 else 'PESD5V0S1BA',x,270.51,{'1':net,'2':'GND'},'Diode_SMD:D_SOD-123F' if i<2 else 'Diode_SMD:D_SOD-323')
     for i,net in enumerate(['VBUS_A_RAW','VBUS_C_RAW','GND']):s.comp('PWR','#FLG'+str(i+1),'PWR_FLAG',320.04+i*30.48,31.75,{'1':net})
@@ -181,7 +181,7 @@ def generate():
     passive(s,'R','100k',304.8,127,'USB_LIMIT_500','GND');passive(s,'R','100k',337.82,127,'USB_LIMIT_EXT','GND')
     caps(s,[('1uF 10V','VBUS_A','GND'),('1uF 10V','VBUS_C','GND'),('4.7uF 10V','USB_5V','GND'),('10uF 6.3V','BAT','GND'),('10uF 10V','SYS','GND')],40.64,172.72)
     # Enable regulator with physical OFF/ON; RTC remains on backup.
-    s.comp('SPDT','SW1','OFF / ON',50.8,238.76,{'1':'SYS','2':'REG_EN','3':'GND'},'OpenKeys:SLIDE_SPDT_PENDING')
+    s.comp('SPDT','SW1','OFF / ON',50.8,238.76,{'1':'SYS','2':'REG_EN','3':'GND'},'Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN')
     s.comp('REG','U6','TPS63031DSK (3.3 V)',167.64,236.22,named('REG',{'VIN':'SYS','VINA':'REG_VINA','VOUT':'+3V3','FB':'+3V3','EN':'REG_EN','PS/SYNC':'GND','L1':'SW_L1','L2':'SW_L2','GND':'GND','PGND':'GND','EP':'GND'}))
     passive(s,'R','0R',205.74,185.42,'SYS','REG_VINA')
     passive(s,'L','1.5uH Isat>=1.5A',243.84,215.9,'SW_L1','SW_L2')
@@ -194,7 +194,7 @@ def generate():
     for num,name in pmap('MCU').items():
         if name in ('VDD','VDDA','VDDUSB','VBAT'):nets[num]='+3V3' if name!='VDDA' else 'VDDA'
         elif name in ('VSS','VSSA'):nets[num]='GND'
-    signals={'NRST':'NRST','PH3':'BOOT0','VCAP':'VCAP','PA0':'USB_SEL','PA1':'USB_OE_N','PA2':'PGOOD_N','PA3':'CHG_N','PA4':'NFC_CS_N','PA5':'NFC_SCK','PA6':'NFC_MISO','PA7':'NFC_MOSI','PA11':'USB_DM','PA12':'USB_DP','PA13':'SWDIO','PA14':'SWCLK','PA15':'FP_CS_N','PB0':'BTN_UP_N','PB1':'BTN_DOWN_N','PB2':'BTN_OK_N','PB3':'SWO','PB4':'CHARGE_ENABLE','PB5':'BTN_CANCEL_N','PB6':'USB_LIMIT_500','PB7':'USB_LIMIT_EXT','PB8':'SE_SCL','PB9':'SE_SDA','PB10':'UI_SCL','PB12':'FLASH_CS_N','PB13':'FLASH_SCK','PB14':'UI_SDA','PB15':'FLASH_MOSI','PC2':'FLASH_MISO','PC3':'RTC_INT_N','PC4':'VBUS_A_N','PC5':'VBUS_C_N','PC6':'NFC_IRQ_N','PC7':'FP_RESET_N','PC8':'SE_EN','PC9':'FP_IRQ_N','PC10':'FP_SCK','PC11':'FP_MISO','PC12':'FP_MOSI','PC13':'CASE_TAMPER_N'}
+    signals={'NRST':'NRST','PH3':'BOOT0','VCAP':'VCAP','PA0':'USB_SEL','PA1':'USB_OE_N','PA2':'PGOOD_N','PA3':'CHG_N','PA4':'NFC_CS_N','PA5':'NFC_SCK','PA6':'NFC_MISO','PA7':'NFC_MOSI','PA11':'USB_DM','PA12':'USB_DP','PA13':'SWDIO','PA14':'SWCLK','PA15':'FP_CS_N','PB0':'BTN_UP_N','PB1':'BTN_DOWN_N','PB2':'BTN_OK_N','PB3':'SWO','PB4':'CHARGE_ENABLE','PB5':'BTN_CANCEL_N','PB6':'USB_LIMIT_500','PB7':'USB_LIMIT_EXT','PB8':'SE_SCL','PB9':'SE_SDA','PB10':'UI_SCL','PB12':'FLASH_CS_N','PB13':'FLASH_SCK','PB14':'UI_SDA','PB15':'FLASH_MOSI','PC2':'FLASH_MISO','PC3':'RTC_INT_N','PC4':'VBUS_A_N','PC5':'VBUS_C_N','PC6':'NFC_IRQ_N','PC7':'FP_RESET_N','PC8':'SE_EN','PC9':'FP_IRQ','PC10':'FP_SCK','PC11':'FP_MISO','PC12':'FP_MOSI','PC13':'CASE_TAMPER_N'}
     for pin,net in signals.items():nets[pn[pin]]=net
     s.comp('MCU','U7','STM32U585RIT6',160.02,142.24,nets,note='No PB11 on LQFP64; PC2=SPI2_MISO AF5, PB14=I2C2_SDA AF4')
     caps(s,[('100nF','+3V3','GND')]*4+[('4.7uF','+3V3','GND'),('4.7uF low ESR','VCAP','GND'),('100nF','VDDA','GND'),('1uF','VDDA','GND')],35.56,35.56)
@@ -206,7 +206,7 @@ def generate():
     s.text('Pinmux assignments are listed in pinout.csv.\nScreen/buttons belong to trusted device code.\nPC13: tamper event locks + latches.\nNo automatic wipe on switch bounce.',320,58)
     # secure + RTC + flash
     s=sheet('04-se-storage-rtc','Secure element, encrypted external storage and timekeeping')
-    s.comp('SE','U8','SE050E2HQ1/Z01Z3Z',71.12,83.82,{'1':'GND','9':'SE_SDA','10':'SE_SCL','11':'SE_EN','12':'+3V3','14':'GND','15':'SE_CORE','17':'GND','18':'SE_CORE','19':'GND','21':'GND'},'OpenKeys:SE050_HVQFN20_PENDING',note='Deep-power-down topology. VOUT powers VCC, never connect VOUT to +3V3')
+    s.comp('SE','U8','SE050E2HQ1/Z01Z3Z',71.12,83.82,{'1':'GND','9':'SE_SDA','10':'SE_SCL','11':'SE_EN','12':'+3V3','14':'GND','15':'SE_CORE','17':'GND','18':'SE_CORE','19':'GND','21':'GND'},'OpenKeys:SE050_SOT1969-1_HX2QFN20',note='Deep-power-down topology. VOUT powers VCC, never connect VOUT to +3V3')
     s.comp('FLASH','U9','W25Q64JVSSIQ',205.74,81.28,named('FLASH',{'VCC':'+3V3','GND':'GND','~{CS}':'FLASH_CS_N','CLK':'FLASH_SCK','DI':'FLASH_MOSI','DO':'FLASH_MISO','DI/IO_{0}':'FLASH_MOSI','DO/IO_{1}':'FLASH_MISO','~{WP}/IO_{2}':'FLASH_WP_N','~{HOLD}/~{RESET}/IO_{3}':'FLASH_HOLD_N','~{WP}':'+3V3','~{HOLD}':'+3V3','IO0':'FLASH_MOSI','IO1':'FLASH_MISO','IO2':'+3V3','IO3':'+3V3'}))
     s.comp('RTC','U10','RV-3028-C7',330.2,81.28,named('RTC',{'VDD':'+3V3','VSS':'GND','GND':'GND','VBACKUP':'BAT','SCL':'UI_SCL','SDA':'UI_SDA','~{INT}':'RTC_INT_N','INT':'RTC_INT_N','CLKOUT':None,'EVI': 'GND'}))
     for i,(a,b,v) in enumerate([('+3V3','SE_SCL','4.7k'),('+3V3','SE_SDA','4.7k'),('SE_EN','GND','100k'),('+3V3','FLASH_CS_N','47k'),('+3V3','UI_SCL','4.7k'),('+3V3','UI_SDA','4.7k'),('+3V3','RTC_INT_N','47k'),('+3V3','CHG_N','47k'),('+3V3','PGOOD_N','47k')]):passive(s,'R',v,35.56+i*38.1,154.94,a,b)
@@ -229,20 +229,19 @@ def generate():
     # UI
     s=sheet('06-trusted-ui','Trusted OLED, device fingerprint boundary, PIN buttons and tamper')
     s.comp('CONN4','J6','OLED 128x64 I2C / SSD1306',66.04,66.04,{'1':'GND','2':'+3V3','3':'UI_SCL','4':'UI_SDA'},'Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical',note='Pick exact display and confirm pin order, supply and logic voltage')
-    s.comp('CONN10','J7','Trusted fingerprint SPI - NOT SELECTED',243.84,68.58,{'1':'FP_3V3','2':'GND','3':'FP_SCK','4':'FP_MOSI','5':'FP_MISO','6':'FP_CS_N','7':'FP_IRQ_N','8':'FP_RESET_N','9':'GND','10':'FP_TAMPER_N'},'OpenKeys:FINGERPRINT_SECURE_MODULE_PENDING',note='Only a contract placeholder; cannot certify UV with unauthenticated match bit')
+    s.comp('CONN12','J7','FPC2534AM / FH12-12S-0.5SH(55)',243.84,68.58,{'1':'GND','2':None,'3':None,'4':'FP_IRQ','5':'FP_MOSI','6':'FP_MISO','7':'FP_SCK','8':'FP_CS_N','9':'FP_RESET_N','10':'FP_3V3','11':'GND','12':'GND'},'Connector_FFC-FPC:Hirose_FH12-12S-0.5SH_1x12-1MP_P0.50mm_Horizontal',note='Target module 100026230: 0.5mm, 0.3mm bottom-contact flex; verify contact orientation on EVT; key provisioning + SE persistent operation tags required')
     passive(s,'FB','600R@100MHz',337.82,66.04,'+3V3','FP_3V3')
     caps(s,[('1uF','+3V3','GND'),('100nF','+3V3','GND'),('10uF','FP_3V3','GND'),('100nF','FP_3V3','GND')],43.18,132.08)
-    passive(s,'R','47k',208.28,132.08,'FP_3V3','FP_CS_N');passive(s,'R','47k',246.38,132.08,'FP_3V3','FP_IRQ_N');passive(s,'R','100k',284.48,132.08,'FP_RESET_N','GND')
-    passive(s,'R','47k',322.58,132.08,'FP_3V3','FP_TAMPER_N')
+    passive(s,'R','47k',208.28,132.08,'FP_3V3','FP_CS_N');passive(s,'R','100k',246.38,132.08,'FP_IRQ','GND');passive(s,'R','100k',284.48,132.08,'FP_RESET_N','GND')
     # FP tamper connected to MCU spare PC0, patched in final below.
     for i,(label,net) in enumerate([('UP','BTN_UP_N'),('DOWN','BTN_DOWN_N'),('CONFIRM','BTN_OK_N'),('CANCEL','BTN_CANCEL_N'),('CASE CLOSED','CASE_TAMPER_N')]):
         x=45.72+i*76.2
-        s.comp('SW','SW'+str(i+2),label,x,205.74,{'1':net,'2':'GND'},'Button_Switch_SMD:SW_SPST_TL3342' if i<4 else 'OpenKeys:TAMPER_SWITCH_PENDING')
+        s.comp('SW','SW'+str(i+2),label,x,205.74,{'1':net,'2':'GND'},'Button_Switch_SMD:SW_SPST_TL3342')
         passive(s,'R','47k',x,226.06,'+3V3',net)
         passive(s,'C','10nF',x+30.48,226.06,net,'GND')
-    s.text('Private account labels, credentials, TOTP and recovery notes stay hidden while locked.\nFingerprint must be verified inside a trusted boundary; device PIN fallback has attempt limits.\nOLED is NOT an input device: PIN uses device buttons only.\nCONFIRM/CANCEL apply to one displayed, request-bound action.',181,169)
+    s.text('Private account labels, credentials, TOTP and recovery notes stay hidden while locked.\nFPC2534AM: authenticated GCM + durable never-reused operation tags; PIN fallback.\nOLED is NOT an input device: PIN uses device buttons only.\nCONFIRM/CANCEL apply to one displayed, request-bound action.',181,169)
     # Add FP tamper to PC0 without introducing an unconnected loose wire.
-    m=S[2];old=m.components[0];old['nets'][pn['PC0']]='FP_TAMPER_N'
+    m=S[2];old=m.components[0];old['nets'].pop(pn['PC0'],None)
     # Regenerate MCU sheet component while preserving all other items.
     pref='U7';kill={nuid(pref)}
     for n in pmap('MCU'):
@@ -253,7 +252,7 @@ def generate():
     for idx,(ss,net,x,y) in enumerate([(S[1],'REG_VINA',233.68,228.6),(S[2],'VDDA',370.84,149.86),(S[5],'FP_3V3',370.84,40.64)]):
         ss.comp('PWR','#FLG'+str(idx+5),'PWR_FLAG',x,y,{'1':net})
     for s in S:s.save()
-    root=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(nuid('OpenKeys'))],['paper',q('A3')],['title_block',['title',q('OpenKeys R0 - Design review')],['date',q('2026-11-08')],['rev',q('0.1')],['company',q('Jay-Void-BA')]],['lib_symbols']]
+    root=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(nuid('OpenKeys'))],['paper',q('A3')],['title_block',['title',q('OpenKeys R0 - Design review')],['date',q('2026-11-08')],['rev',q('0.2')],['company',q('Jay-Void-BA')]],['lib_symbols']]
     root.append(['text',q('OPENKEYS R0 - USB-A + USB-C + NFC authenticator\nEditable circuit design, not fabrication release\nFingerprint module, RF tuning and all physical security tests remain open'),['at',180,30,0],effects(2),['uuid',q(nuid('root/title'))]])
     for i,s in enumerate(S):
         x=30+(i%2)*185;y=60+(i//2)*60

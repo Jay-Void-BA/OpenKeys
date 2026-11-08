@@ -2,7 +2,6 @@ pin,gpio,net,function
 1,VBAT,+3V3,power / GPIO / dedicated
 2,PC13,CASE_TAMPER_N,power / GPIO / dedicated
 7,NRST,NRST,power / GPIO / dedicated
-8,PC0,FP_TAMPER_N,power / GPIO / dedicated
 10,PC2,FLASH_MISO,SPI2_MISO AF5
 11,PC3,RTC_INT_N,power / GPIO / dedicated
 12,VSSA,GND,power / GPIO / dedicated
@@ -33,7 +32,7 @@ pin,gpio,net,function
 37,PC6,NFC_IRQ_N,power / GPIO / dedicated
 38,PC7,FP_RESET_N,power / GPIO / dedicated
 39,PC8,SE_EN,power / GPIO / dedicated
-40,PC9,FP_IRQ_N,power / GPIO / dedicated
+40,PC9,FP_IRQ,power / GPIO / dedicated
 44,PA11,USB_DM,USB_DM AF10
 45,PA12,USB_DP,USB_DP AF10
 46,PA13,SWDIO,power / GPIO / dedicated

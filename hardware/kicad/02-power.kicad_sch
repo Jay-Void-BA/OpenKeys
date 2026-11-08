@@ -6,7 +6,7 @@
   (title_block
     (title "OpenKeys R0 - 02-power")
     (date "2026-11-08")
-    (rev "0.1-design-review")
+    (rev "0.2-design-review")
     (company "Jay-Void-BA")
     (comment 1 "NOT FOR FABRICATION - see hardware/RELEASE_GATES.md")
   )
@@ -5711,7 +5711,7 @@
         (justify left)
       )
     )
-    (property "Footprint" "OpenKeys:SLIDE_SPDT_PENDING"
+    (property "Footprint" "Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN"
       (at 54.8 238.76 0)
       (effects
         (font
