@@ -18,6 +18,9 @@ jobs:
       XDG_CONFIG_HOME: /tmp/openkeys-ci/config
       XDG_CACHE_HOME: /tmp/openkeys-ci/cache
       XDG_DATA_HOME: /tmp/openkeys-ci/data
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: init.defaultBranch
+      GIT_CONFIG_VALUE_0: main
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Verify delivered CAD hashes
