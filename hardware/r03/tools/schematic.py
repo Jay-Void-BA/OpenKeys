@@ -129,4 +129,3 @@ def passive(s,k,val,x,y,a,b,note='',dnp=False):
     s.comp(k,ref(prefix),val,x,y,{'1':a,'2':b},fp,note,dnp)
 def caps(s,values,x,y):
     for i,(val,a,b) in enumerate(values):passive(s,'C',val,x+(i%9)*33.02,y+(i//9)*33.02,a,b)
-

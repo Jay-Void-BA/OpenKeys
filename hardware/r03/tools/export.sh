@@ -16,6 +16,11 @@ kicad-cli sch export netlist --format kicadxml --output hardware/r03/exports/Ope
 python3 hardware/r03/tools/check_netlist.py
 kicad-cli sch export pdf --output hardware/r03/exports/OpenKeys-schematic.pdf hardware/r03/kicad/OpenKeys.kicad_sch
 kicad-cli sch export svg --output hardware/r03/exports/schematic/ hardware/r03/kicad/OpenKeys.kicad_sch
+python3 - <<'PY_NORMALIZE'
+from pathlib import Path
+for path in Path('hardware/r03/exports/schematic').glob('*.svg'):
+    path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines()).rstrip()+'\n')
+PY_NORMALIZE
 openscad --export-format binstl -o hardware/r03/exports/OpenKeys-base.stl -D 'part="base"' hardware/r03/mechanical/OpenKeys.scad
 openscad --export-format binstl -o hardware/r03/exports/OpenKeys-lid.stl -D 'part="lid"' hardware/r03/mechanical/OpenKeys.scad
 openscad --export-format binstl -o hardware/r03/exports/OpenKeys-plungers.stl -D 'part="plungers"' hardware/r03/mechanical/OpenKeys.scad
