@@ -1,15 +1,18 @@
-//! PUBLIC RFC test material only. Not a real-vault import bypass.
+//! PUBLIC synthetic material only. Not a real-vault authorization bypass.
 use std::time::Instant;
 fn main() {
-    let uri = "otpauth://totp/Example:alice?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example";
-    let data = vec![uri; 256].join("\n");
+    let item = r#"{"type":"note","title":"Public example","body":"Synthetic benchmark"}"#;
+    let data = format!(
+        "{{\"version\":2,\"entries\":[{}]}}",
+        vec![item; 256].join(",")
+    );
     let start = Instant::now();
     for _ in 0..200 {
         let entries = vault_import::parse_import(std::hint::black_box(data.as_bytes())).unwrap();
         std::hint::black_box(vault_import::manifest_digest(&entries));
     }
     println!(
-        "PUBLIC synthetic benchmark: 51200 entries parsed + hashed in {:?}",
+        "PUBLIC benchmark: 51200 notes parsed and hashed in {:?}",
         start.elapsed()
     );
 }

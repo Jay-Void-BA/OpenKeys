@@ -1,3 +1,5 @@
+> **历史资料**：下文对应较早版本。当前R0.3要求与状态以仓库README、manufacturing/HANDOFF.md和docs/SECURITY_REVIEW_R03.md为准，旧OTP/双USB/PIN备用方案不再适用。
+
 # 三档选择与预算边界
 
 三档均保留指纹独立解锁、设备PIN备用、SE密钥保护、可信屏幕、FIDO/U2F/hmac-secret、TOTP/notes、双USB与NFC。不能把普通明文指纹模块加PIN当作本用户已经同意的降级路线。当前均未达到可生产成品状态。

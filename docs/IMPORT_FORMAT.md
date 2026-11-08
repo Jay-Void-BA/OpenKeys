@@ -1,34 +1,19 @@
-# 导入格式 v1
+# 导入格式 v2
 
-只能在真实设备授权后打开文件和预览私密元数据。当前管理器尚无硬件授权后端，所以保持锁定，不接受真实秘密。以下样例均为公开测试数据。
+只接受 UTF-8 JSON 的 notes 和 recovery codes。必须先完成真实设备指纹验证；提交还需设备 PIN 与实体确认。当前硬件通道尚未实现，管理器保持锁定，不能导入真实秘密。
 
-## TOTP
-
-UTF-8 文本，一行一个 URI。支持 SHA1/SHA256/SHA512、6/8 位、15–120 秒周期；省略参数使用 SHA1/6 位/30 秒。
-
-~~~text
-otpauth://totp/Example:alice?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example
-~~~
-
-重复参数、无效 Base32、非法 UTF-8、控制字符/双向文本控制符、冲突 issuer、未知参数均拒绝。默认不猜测纠错。
-
-## Notes 和 recovery codes
-
-~~~json
+```json
 {
-  "version": 1,
+  "version": 2,
   "entries": [
-    {"type": "otp", "uri": "otpauth://totp/Example:alice?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example"},
     {"type": "note", "title": "Example account", "body": "SYNTHETIC TEST NOTE"},
     {"type": "recovery_codes", "title": "Example backup codes", "codes": ["SYNTHETIC-ONE", "SYNTHETIC-TWO"]}
   ]
 }
-~~~
+```
 
-单文件最多 1 MiB；单批最多 256 条；单条 note 最多 16 KiB；每组 recovery codes 最多 64 个。设备实际容量还需取决于 SE/Flash 和保留空间；桌面格式上限不代表硬件已经支持相同容量。
+单文件最多 1MiB；最多 256 条；每 note body 最多 16KiB；每组 recovery codes 最多 64 个、每码最多 256 UTF-8 字节；标题最多 256 字节。拒绝未知/重复 JSON 字段、旧版本、OTP 类型、otpauth URI、非法 UTF-8、误导性控制字符和双向文本控制符。多行 note 允许换行/回车/制表符；它们不得用来模拟设备系统授权画面。
 
-已实现解析和校验；尚未实现真实设备写入。批量提交必须只包含勾选记录，设备重新校验内容并让用户确认。不可由电脑一句“已解锁”放行。
+摘要有 v2 域分隔，绑定类型、标题、完整内容、长度、代码边界与条目顺序。它不是认证码或解锁凭据；设备必须对认证解密并重新校验后的实际选中项重算摘要。格式上限不代表目标设备已经具备对应容量。
 
-Google Authenticator otpauth-migration 二维码/protobuf、Aegis、2FAS、Bitwarden、1Password、CSV 和扫描二维码均尚未实现；本版不把通用 JSON 支持冒充这些厂商格式支持。
-
-recovery code 的“已使用”只能是用户标记或可信服务返回，不能凭本地点击就声称网站已消费该码。当前导入模型不伪造使用状态。导入不是安全删除原始导出文件，工具不自动删除用户文件。
+尚未实现真实设备写入、存储加密、事务提交、备份恢复和厂商导出格式转换。程序不自动删除原始导出文件；本地标记“已使用”也不能声称网站已消费恢复码。

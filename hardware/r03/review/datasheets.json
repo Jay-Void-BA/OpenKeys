@@ -1,0 +1,34 @@
+{
+  "date_beijing": "2026-11-08",
+  "sources": [
+    {
+      "name": "lcd",
+      "url": "https://newhavendisplay.com/content/specs/NHD-C0216CiZ-FSW-FBW-3V3.pdf",
+      "sha256": "708f5b0d81e2c54d905ffcf1a8c21c6fc7cb02e9c6c70f7793098bf9b1230c1f",
+      "bytes": 1473655,
+      "pdf_redistributed": false
+    },
+    {
+      "name": "bq25185",
+      "url": "https://www.ti.com/lit/ds/symlink/bq25185.pdf",
+      "sha256": "c73ed7d63e6532bb05e26df30edd37c6ac2de310c1222a84a77625e15e133684",
+      "bytes": 1544774,
+      "pdf_redistributed": false
+    },
+    {
+      "name": "h573",
+      "url": "https://www.st.com/resource/en/datasheet/stm32h573ri.pdf",
+      "sha256": "c5da8110c5896b2aca27051ae877e78f4248204f7ccc0992245b812285506141",
+      "bytes": 5808159,
+      "pdf_redistributed": false
+    },
+    {
+      "name": "tps3702",
+      "url": "https://www.ti.com/lit/ds/symlink/tps3702.pdf",
+      "sha256": "3f1fb9255cfa9b220938447e903cc6d72eae2abe228393bcb8f1afcb4adb52c8",
+      "bytes": 1274887,
+      "pdf_redistributed": false
+    }
+  ],
+  "other_primary_references": "See hardware/r03/README.md and docs/BIOMETRIC_PROTOCOL.md"
+}

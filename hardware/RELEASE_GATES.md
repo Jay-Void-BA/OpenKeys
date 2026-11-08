@@ -1,3 +1,5 @@
+> **历史资料**：下文对应较早版本。当前R0.3要求与状态以仓库README、manufacturing/HANDOFF.md和docs/SECURITY_REVIEW_R03.md为准，旧OTP/双USB/PIN备用方案不再适用。
+
 # 不可跳过的发布门槛
 
 目前所有项目均未通过实物验收。成本目标不能替代这些安全要求。

@@ -1,51 +1,28 @@
 {
-  "status": "development-design-review-0.2-NOT-production",
-  "date": "2026-11-08",
+  "revision": "R0.3",
+  "date_beijing": "2026-11-08",
+  "status": "ENGINEERING_REVIEW_NOT_PRODUCTION",
   "rust": "1.99.1",
-  "egui_eframe": "0.37.0",
-  "rfd": "0.18.0",
-  "unit_tests_passed": 26,
+  "unit_tests_passed": 31,
   "fmt_passed": true,
-  "clippy_warnings_denied_passed": true,
-  "linux_x86_64_release_built": true,
-  "linux_gui_manual_lock_check": true,
-  "cross_checks_passed": {
-    "baseline_R01": [
-      "x86_64-pc-windows-gnu",
-      "aarch64-apple-darwin"
-    ],
-    "R02_native_Linux": true,
-    "R02_CortexM33_policy": true,
-    "R02_mac_windows_native_builds": "pending CI"
-  },
-  "mac_windows_native_installers_built": false,
-  "real_device_integration": false,
-  "custom_pcb_delivered": false,
-  "side_channel_or_emc_lab_tested": false,
-  "dependency_advisory_db": {
-    "advisory-count": 1422,
-    "last-commit": null,
-    "last-updated": null
-  },
-  "known_vulnerabilities": 0,
-  "dependency_warnings": 0,
-  "linux_binary_sha256": "8ebbeba68bd7622c481485b50c600deb08aa17e24f8cd0ceabfd1879363c0001",
-  "cargo_lock_sha256": "4e356dec79d117bde83cce1b84c334458f6d8adee39842a24e7627facfb1993e",
-  "advisory_database_git": {
-    "commit": "309392b18f6b17022f82c701f300433126901068",
-    "commit_date": "2026-11-06T16:34:32+01:00"
-  },
-  "hardware_design_review_delivered": true,
-  "hardware_manufacturing_release": false,
-  "hardware_design_review": "../hardware/review/README.md",
-  "publication_recheck": {
-    "rust_tests": 26,
-    "fmt": true,
-    "clippy_deny_warnings": true,
-    "device_integrated": false,
-    "arm_policy_target": "thumbv8m.main-none-eabihf"
-  },
+  "clippy_deny_warnings_passed": true,
   "cortex_m33_policy_check": true,
+  "known_vulnerabilities": 0,
+  "dependency_warnings": {},
+  "advisory_database": {
+    "advisory-count": 1422,
+    "last-commit": "309392b18f6b17022f82c701f300433126901068",
+    "last-updated": "2026-11-06T16:34:32+01:00"
+  },
+  "cargo_lock_sha256": "c363f5d94361bea0c9267fce2fb4013c08c8bb2520e3cf855cab939636b61d63",
+  "native_ci_r03": "pending publication",
+  "real_device_integration": false,
+  "flashable_authenticator_firmware": false,
   "biometric_hardware_backend_implemented": false,
-  "production_preflight": "../manufacturing/readiness-report.json"
+  "hardware_manufacturing_release": false,
+  "side_channel_emc_fault_lab_tested": false,
+  "hardware_netlist_checks": 31,
+  "hardware_erc_errors": 0,
+  "hardware_erc_warnings": 2,
+  "manufacturing_preflight": "../manufacturing/readiness-report.json"
 }

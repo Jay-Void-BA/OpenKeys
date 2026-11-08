@@ -1,3 +1,5 @@
+> **R0.2 历史硬件资料**：当前设计已迁移到 [hardware/r03](r03/README.md)。下文 USB-A、OLED、OTP 和 PIN 备用不再属于当前需求。
+
 # OpenKeys R0 硬件交付
 
 版本：0.2 design review，2026-11-08。此包可用于电路/结构评审与打样准备；不应直接下单生产。尚未布线，未制造、烧录、调谐或测量。安全要求见 [发布门槛](RELEASE_GATES.md)。

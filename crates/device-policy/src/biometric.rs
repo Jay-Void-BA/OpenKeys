@@ -49,7 +49,7 @@ pub trait ProtectedAttempts {
     /// after BOTH commits are confirmed; ordered writes are permitted (no
     /// cross-object transaction or rollback is assumed). An ambiguous
     /// power/transport outcome must return Err and must not issue a sensor request.
-    /// Exhaustion, reset and PIN recovery must NEVER wrap/reset the tag counter.
+    /// Exhaustion, reset and PIN entry must NEVER wrap/reset the tag counter.
     fn reserve_identify_attempt(&mut self) -> Result<u32, Error>;
 
     /// Persist successful verification / retry credit AFTER authenticated match.
@@ -82,10 +82,13 @@ struct Pending {
 /// Created only after a final authenticated matching Identify event and a
 /// successful durable retry update. Device confirmation is still required by
 /// the outer SecureVerifier/Gate; this type alone does not sign or expose data.
-pub struct VerifiedRequest(Request);
+pub struct VerifiedRequest {
+    pub(crate) request: Request,
+    pub(crate) expires: u64,
+}
 impl VerifiedRequest {
     pub fn request(&self) -> &Request {
-        &self.0
+        &self.request
     }
 }
 
@@ -246,7 +249,10 @@ impl<C: ProtectedAttempts, A: ProtectedGcm> Session<C, A> {
         if after_commit >= pending.expires {
             return Err(Error::Expired);
         }
-        Ok(Some(VerifiedRequest(pending.request)))
+        Ok(Some(VerifiedRequest {
+            request: pending.request,
+            expires: pending.expires,
+        }))
     }
 
     pub fn cancel(&mut self) {

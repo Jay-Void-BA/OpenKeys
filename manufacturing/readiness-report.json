@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "date_beijing": "2026-11-08T14:53:38.281618+08:00",
+  "date_beijing": "2026-11-08T17:32:03.100904+08:00",
   "status": "BLOCKED",
   "manufacturing_release_authorized": false,
   "automated_tool_is_not_release_authority": true,
@@ -10,11 +10,10 @@
       "passed": false,
       "detail": {
         "unresolved": [
-          "J1",
-          "U11",
-          "J5"
+          "U7",
+          "J4"
         ],
-        "bom_positions": 116
+        "bom_positions": 115
       }
     },
     {
@@ -22,18 +21,21 @@
       "passed": false,
       "detail": {
         "not_released": [
-          "U7",
-          "U8",
+          "U4",
+          "U5",
           "FP1",
-          "J7",
-          "J2",
+          "J5",
           "J1",
           "SW1",
           "SW2-SW6",
-          "U11",
+          "U7",
+          "ANT1",
+          "U2",
+          "U8",
+          "U10",
+          "U13",
           "BAT1",
-          "DISPLAY1",
-          "ANT1"
+          "Y1"
         ],
         "note": "EVT selection is not production approval"
       }
@@ -43,7 +45,7 @@
       "passed": false,
       "detail": {
         "errors": 0,
-        "warnings": 3
+        "warnings": 2
       }
     },
     {
@@ -55,7 +57,7 @@
       "name": "artifact_board_source",
       "passed": false,
       "detail": {
-        "path": "hardware/kicad/OpenKeys.kicad_pcb",
+        "path": "hardware/r03/kicad/OpenKeys.kicad_pcb",
         "exists": false,
         "hash_verified": false
       }
@@ -207,8 +209,8 @@
           "se_nonexport_and_object_policy",
           "signed_boot_update_rollback_debug",
           "vault_atomicity_and_rollback",
-          "totp_time_and_battery_faults",
-          "usb_dual_port_and_backfeed",
+          "battery_charge_suspend_and_backup_tamper",
+          "single_usb_c_current_esd_and_backfeed",
           "nfc_final_enclosure_ios",
           "trusted_screen_and_cancel",
           "manager_three_os_real_device",

@@ -1,0 +1,272 @@
+(kicad_sch
+  (version 20250114)
+  (generator "eeschema")
+  (uuid "d0923185-2fdb-574b-930d-f52d526642e2")
+  (paper "A3")
+  (title_block
+    (title "OpenKeys R0.3 - Engineering review")
+    (date "2026-11-08")
+    (rev "0.3")
+    (company "Jay-Void-BA")
+  )
+  (lib_symbols)
+  (text "OPENKEYS R0.3 - ONE USB-C + NFC / WHITE 16x2 LCD\nFingerprint mandatory; PIN additional only\nNOT a routed or qualified manufacturing release"
+    (at 190 28 0)
+    (effects
+      (font
+        (size 2 2)
+      )
+    )
+    (uuid "ab9021e4-fa9f-5cdd-8ea7-16881558d7ef")
+  )
+  (sheet
+    (at 30 55)
+    (size 155 32)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "3ba2ea31-402e-5dd7-ae04-356a2899b689")
+    (property "Sheetname" "01-usb"
+      (at 30 54 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "01-usb.kicad_sch"
+      (at 30 89 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "2")
+        )
+      )
+    )
+  )
+  (sheet
+    (at 215 55)
+    (size 155 32)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "82e5c359-1069-5ac9-ad28-3d39e7fd97d5")
+    (property "Sheetname" "02-power"
+      (at 215 54 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "02-power.kicad_sch"
+      (at 215 89 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "3")
+        )
+      )
+    )
+  )
+  (sheet
+    (at 30 111)
+    (size 155 32)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "1e0542b4-d115-5122-8b85-bc2ca1bdc968")
+    (property "Sheetname" "03-mcu"
+      (at 30 110 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "03-mcu.kicad_sch"
+      (at 30 145 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "4")
+        )
+      )
+    )
+  )
+  (sheet
+    (at 215 111)
+    (size 155 32)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "ef8228e0-5867-5d4e-8a75-2a1d56b1c944")
+    (property "Sheetname" "04-se-storage"
+      (at 215 110 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "04-se-storage.kicad_sch"
+      (at 215 145 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "5")
+        )
+      )
+    )
+  )
+  (sheet
+    (at 30 167)
+    (size 155 32)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "fbc66e46-48c3-5f7f-8f0d-b09daacaad90")
+    (property "Sheetname" "05-nfc"
+      (at 30 166 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "05-nfc.kicad_sch"
+      (at 30 201 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "6")
+        )
+      )
+    )
+  )
+  (sheet
+    (at 215 167)
+    (size 155 32)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "14ac5f31-5761-56e0-8855-9943e79a0b58")
+    (property "Sheetname" "06-trusted-ui"
+      (at 215 166 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "06-trusted-ui.kicad_sch"
+      (at 215 201 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "7")
+        )
+      )
+    )
+  )
+  (sheet
+    (at 30 223)
+    (size 155 32)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "28731aa8-5e70-5192-825d-f85b9d235c73")
+    (property "Sheetname" "07-fault-tamper"
+      (at 30 222 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "07-fault-tamper.kicad_sch"
+      (at 30 257 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "8")
+        )
+      )
+    )
+  )
+  (sheet_instances
+    (path "/"
+      (page "1")
+    )
+  )
+)

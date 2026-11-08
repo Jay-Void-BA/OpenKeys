@@ -1,3 +1,5 @@
+> **历史资料**：下文对应较早版本。当前R0.3要求与状态以仓库README、manufacturing/HANDOFF.md和docs/SECURITY_REVIEW_R03.md为准，旧OTP/双USB/PIN备用方案不再适用。
+
 > 历史快照：R0.1。最新进度与缺口请以[主README](../README.md)和[制造预检](../manufacturing/README.md)为准。
 
 # 开源认证器与 AuthDesk 管理器

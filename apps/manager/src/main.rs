@@ -24,7 +24,6 @@ impl Access {
 enum Tab {
     Overview,
     Import,
-    Otp,
     Notes,
     Recovery,
 }
@@ -37,7 +36,7 @@ struct Pending {
 #[derive(Default)]
 struct HardwareBackend;
 impl HardwareBackend {
-    fn unlock(&mut self, _use_device_pin: bool) -> Result<Access, &'static str> {
+    fn unlock(&mut self) -> Result<Access, &'static str> {
         // No authenticated sensor/channel driver exists for a selected PCB yet.
         // Fail closed: discovery, a click, or an OS biometric prompt is not UV.
         Err(
@@ -110,9 +109,9 @@ impl AuthDesk {
             let _ = tx.send(result);
         });
     }
-    fn request_unlock(&mut self, pin: bool) {
+    fn request_unlock(&mut self) {
         self.lock();
-        match self.backend.unlock(pin) {
+        match self.backend.unlock() {
             Ok(access) => {
                 self.access = Some(access);
                 self.tab = Tab::Import;
@@ -126,7 +125,7 @@ impl AuthDesk {
             return;
         }
         let Some(paths) = rfd::FileDialog::new()
-            .add_filter("OTP / notes import", &["txt", "json", "otpauth"])
+            .add_filter("Notes / recovery import", &["json"])
             .pick_files()
         else {
             return;
@@ -193,7 +192,6 @@ impl AuthDesk {
                 for (tab, label) in [
                     (Tab::Overview, "Device"),
                     (Tab::Import, "Import"),
-                    (Tab::Otp, "One-time codes"),
                     (Tab::Notes, "Private notes"),
                     (Tab::Recovery, "Recovery codes"),
                 ] {
@@ -234,7 +232,6 @@ impl AuthDesk {
                 RichText::new(match self.tab {
                     Tab::Overview => "Your device",
                     Tab::Import => "Import to device",
-                    Tab::Otp => "One-time codes",
                     Tab::Notes => "Private notes",
                     Tab::Recovery => "Recovery codes",
                 })
@@ -259,12 +256,11 @@ impl AuthDesk {
         if !self.unlocked() {
             egui::Frame::group(ui.style()).inner_margin(24.0).show(ui,|ui| {
                 ui.heading("Private by default"); ui.add_space(10.0);
-                ui.label("Verify on the hardware key to view accounts, codes, notes or recovery codes.");
-                ui.label("Device PIN is available as a backup. Secrets are never entered into an unlock form on this computer.");
+                ui.label("Verify your fingerprint on the hardware key to view private records.");
+                ui.label("Fingerprint is mandatory. Sensitive management also requires the device PIN, entered with its four buttons.");
                 ui.add_space(18.0);
                 ui.horizontal(|ui| {
-                    if ui.button("Request fingerprint verification").clicked(){self.request_unlock(false);}
-                    if ui.button("Use device PIN").clicked(){self.request_unlock(true);}
+                    if ui.button("Request fingerprint verification").clicked(){self.request_unlock();}
                 });
             });
             ui.add_space(24.0);
@@ -287,7 +283,7 @@ impl AuthDesk {
             ui.add_space(24.0);
             ui.colored_label(Color32::from_rgb(234,183,100),"Hardware integration is pending. Do not use real credentials with this development build.");
         } else if self.tab == Tab::Import {
-            ui.label("Supported: otpauth://totp URI lists and versioned JSON with notes / recovery codes.");
+            ui.label("Supported: version 2 JSON with private notes and recovery codes.");
             ui.horizontal(|ui| {
                 if ui.button("Choose files").clicked() {
                     self.import_files();
@@ -318,7 +314,7 @@ impl AuthDesk {
                         }
                     }
                 });
-            ui.label("OTP seeds, note bodies and recovery codes stay masked in previews.");
+            ui.label("Note bodies and recovery codes stay masked in previews.");
             let selected = self.pending.iter().filter(|x| x.selected).count();
             if ui
                 .add_enabled(
@@ -343,7 +339,7 @@ impl AuthDesk {
             }
         } else {
             ui.label("Device-private records are retrieved only through an authenticated, authorized hardware connection.");
-            ui.label("Reveal and deletion each require a new device confirmation.");
+            ui.label("Each operation requires a fresh device fingerprint and confirmation. Deletion also requires the device PIN.");
         }
         if !self.message.is_empty() {
             ui.add_space(20.0);
@@ -445,9 +441,7 @@ mod tests {
     #[test]
     fn ui_cannot_fake_hardware_authorization() {
         let mut app = AuthDesk::default();
-        app.request_unlock(false);
-        assert!(!app.unlocked());
-        app.request_unlock(true);
+        app.request_unlock();
         assert!(!app.unlocked());
     }
     #[test]

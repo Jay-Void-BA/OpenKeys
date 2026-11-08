@@ -1,53 +1,28 @@
-# 验证记录与交付门槛
+# R0.3 验证记录
 
-日期：2026-11-08。测试材料均为公开 RFC 向量或合成数据，没有导入用户真实秘密。
+日期：2026-11-08（北京时间）。对象为R0.3工程设计及当前Rust源码；全部测试材料为公开或合成数据。历史R0.1/R0.2结果保留在Git历史，不能冒充新版测试。
 
-## R0.1基线检查
+本地31项Rust测试通过：device-policy23项、vault-import5项、AuthDesk3项。包括指纹不可被正确PIN替代、请求/连接/内容替换、一次消费、过期/时钟回退、慢硬件调用、GCM帧逐位变异与断电重放、持久写不确定、PIN预扣与取消、LCD长身份分页及锁定清屏、拒绝旧OTP格式、导入边界和锁屏不绘制私密内容。
 
-- 上游 8 个 Git 仓库提交和工作树核对，references.lock.tsv 可重取；不把 HEAD 自动升级为新版本。
-- Linux 主机 17 项 Rust 单元测试通过：授权请求/连接绑定、一次性消费、超时、时间回退、拒绝清除旧授权；URI/JSON 限制、歧义参数拒绝、notes/recovery types、导入内容摘要；RFC6238 SHA1/SHA256/SHA512 全组向量；GUI 不接受假解锁、锁定清除暂存、锁屏不绘制私密数据。
-- malformed_public_corpus 测试覆盖有界伪随机字节和公开 URI 的逐字节变异；它不是完整模糊测试或形式化证明。
-- cargo fmt / clippy 检查；构建中设置 CC/CXX 为拒绝编译脚本，自己编写的运行源码没有 C/C++。这不证明系统库、芯片 ROM 或所有可能依赖功能都不存在 C。
-- Windows x86_64 GNU、macOS Apple Silicon 的 cargo check。它们是交叉类型/编译检查，没有生成 Windows 安装包、macOS 公证应用，也没有完成这些系统实机测试。
-- 原生 Linux 优化开发版已启动，并对升级后的 eframe 0.37.0 / rfd 0.18.0 版本复测：未接入设备时指纹/PIN 请求均保持 LOCKED、私密导航禁用，不接受真实秘密。
-- RustSec 报告保存在 dependency-audit.json；当前 0 条已知漏洞、0 条维护警告，且开启 --deny warnings 检查通过。数据库提交 309392b18f6b17022f82c701f300433126901068，数据库时间 2026-11-06。不能把扫描结果解释为没有未知漏洞。
+`cargo fmt --all -- --check`、`cargo clippy --workspace --all-targets --locked -- -D warnings`、`cargo check -p device-policy --target thumbv8m.main-none-eabihf --locked`通过。Cortex-M33检查对象是no_std库，不是可烧录固件。CC/CXX设置为拒绝编译脚本，自己的运行源码不使用C/C++；不对OS/第三方库/芯片ROM作相同承诺。
 
-## 已测性能范围
+RustSec `--deny warnings`检查当前锁文件：0条已知漏洞、0条维护警告。数据库提交`309392b18f6b17022f82c701f300433126901068`（2026-11-06）。不代表不存在未知漏洞，也不代替对密码、硬件与调用策略的审查。精确数据见build-report及dependency-audit。
 
-同一容器一次优化版合成基准：51,200 条公开 TOTP 记录解析并计算导入摘要用时约 206.6 ms。它仅说明该输入/环境的主机导入库表现；不代表安全芯片、USB/NFC、指纹、屏幕、真实批量写入或目标电脑性能。
+本地KiCad9电路导出8页PDF、SVG和XML；115个BOM位号，ERC0电气错误、2项明确未解决RF封装警告。31项独立XML网表检查通过。OpenSCAD三组STL成功导出，Blender渲染及尺寸图已经目视检查；结构模型尚未打印装配。没有完整PCB、Gerber、DRC制造验收或物理测量。
 
-重现：cargo run -p vault-import --example synthetic_bench --release --locked。
+GitHub Actions分别运行Linux、macOS、Windows原生构建、测试、fmt、Clippy与依赖审计。编译器/Rustdoc警告和Clippy/审计警告视为失败，官方Actions固定完整提交。R0.3原生远端结果在本版上传后记录于build-report；旧R0.2成功任务不计为新版成功证据。
 
-## 设备成品必须补做
+未完成：设备端到端认证、真实SE/指纹/计数/PIN/管理通道、FIDO/U2F/hmac-secret互操作、vault掉电事务、iPhone NFC、充电/suspend/热/备用域防拆、侧信道/故障注入/EMC、完整覆盖模糊测试/独立审计、正式安装包签名公证。详见[安全复查](SECURITY_REVIEW_R03.md)。
 
-1. FIDO2/U2F、PIN/UV、credential management、hmac-secret、浏览器/目标 App 互操作及负向请求。iOS Safari、NFC 和原生应用分别验证；不能只验证 USB。
-2. SE 内私钥/HMAC 根秘密不导出、默认密钥替换、对象权限无旁路、保护域内使用；存储容量、耗时、磨损、故障回收实测。
-3. 指纹传感器替换/重放/线缆注入、可信模组固件与模板保护、PIN/UV 失败计数断电保持、新指纹录入授权、传感器失效后的 PIN 备用。
-4. Notes/recovery codes/OTP 与 FIDO 密钥命名空间隔离；锁定下元数据不泄漏；明文释放独立授权；导入仅写勾选项，断电/重放/撤销不产生半条记录或旧记录复活。
-5. 签名启动/升级、防降级、错误密钥、调试入口、工厂模式、重置与加密存储清除、更新断电恢复；锁定精确 MCU 修订/固件提交。
-6. 离线 TOTP 的 RTC 漂移、电池寿命、掉电无效时钟、回拨、受授权校时、验证码显示超时；host RTC 不作无条件真值。
-7. USB 双口互斥/防反灌；ESD 与适用辐射/传导抗扰度项目；最终壳体屏幕电池状态下 NFC 量测调谐。无论干扰是否导致复位，都不得误签名或绕过 UV。
-8. 功耗与近场电磁泄漏、时序相关性测试；再按威胁模型评估电压/时钟/EM 故障注入。激光/开封攻击另定范围与预算。被动侧信道和主动故障攻击不能混成一项“加屏蔽即可”。
-9. 有界预评估/TVLA 无显著泄漏不是不存在可利用泄漏的证明。第三方报告必须标明 PCB/固件/芯片/配置版本、采样次数、攻击能力和结论范围。
-10. 3 把成品之外预留测试板；完成独立代码审查与实机三平台安装/锁定/休眠/拔插测试，再签名、公证、打包和发布。
+复现：
 
-## 可用性和恢复
+```sh
+cargo test --workspace --locked
+cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo fmt --all -- --check
+cargo check -p device-policy --target thumbv8m.main-none-eabihf --locked
+hardware/r03/tools/export.sh
+python3 scripts/check-production-ready.py
+```
 
-recovery codes 不应只保存在与其保护的账户凭据同一把钥匙内。应另有经过用户授权的独立离线备份；目前没有实现备份/恢复，不提供明文自动导出。三把设备的 FIDO 凭据分别注册，不能靠复制一个目录冒充完整克隆。
-
-## 本版不能声称
-
-不能声称已交付完整管理软件、已投产 PCB、已通过 FIDO 或整机侧信道认证、能抵御所有物理攻击，也不能声称 Rust 的内存安全消除了密码侧信道或恶意操作系统风险。
-
-
-## OpenKeys R0上传前复核
-
-同日将工作区复制到OpenKeys检出后，17项测试、fmt和clippy再次通过；Cargo.lock未变。新增7页KiCad电路、外壳模型与未布线PCB分区，实际检查范围见[硬件记录](../hardware/review/README.md)。硬件图纸的交付不改变上述完整固件和物理验证的未完成状态。
-
-## R0.2追加验证
-
-新增9项指纹策略测试，总计26项软件测试通过；fmt、clippy -D warnings通过。新增策略无堆分配，device-policy在thumbv8m.main-none-eabihf（Cortex-M33）检查通过。生产GCM/持久计数器仍为待实现的硬件接口，没有默认软件匹配授权。RustSec当前报告覆盖新Cargo.lock，0条已知漏洞、0条维护警告。
-
-硬件现有116个BOM位号，ERC为0错误、3项未解决封装（J1/J5/U11）；29项网表检查通过。指纹12pin实际接口、IRQ高有效与SE050 SOT1969-1焊盘已补入。仍无完整PCB制造文件或实际可烧录认证器固件；[制造预检](../manufacturing/readiness-report.json)为BLOCKED。
-
-远端检查输入提交c2dbaca：Linux原生与依赖审计已通过。macOS14在任何代码执行前被运行平台取消，注释为`The configuration macos-14-arm64-us-default is not supported`；工作流现切换到macOS15，并可按平台单独复跑，避免重复已通过的任务。最终结果以build-report及对应Actions链接为准。
+最后一项当前预期返回2并报告BLOCKED，不应篡改为成功。CI无编译/依赖警告不表示硬件无封装警告，更不代表整机安全认证。

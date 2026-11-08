@@ -15,19 +15,19 @@ def local(name):
  p=(ROOT/name).resolve()
  if not p.is_relative_to(ROOT):raise ValueError('Artifact must remain within project')
  return p
-bom=list(csv.DictReader((ROOT/'hardware/BOM.csv').open()))
+bom=list(csv.DictReader((ROOT/'hardware/r03/BOM.csv').open()))
 unresolved=[r['ref'] for r in bom if 'PENDING' in r['footprint'] or 'NOT SELECTED' in r['value']]
 check('schematic_footprint_selection',not unresolved,{'unresolved':unresolved,'bom_positions':len(bom)})
 critical=list(csv.DictReader((ROOT/'manufacturing/critical-parts.csv').open()))
 open_parts=[r['reference'] for r in critical if r['selection_status'] not in ('released','alternative_not_in_current_circuit')]
 check('critical_parts_frozen_for_production',not open_parts,{'not_released':open_parts,'note':'EVT selection is not production approval'})
-erc=json.loads((ROOT/'hardware/review/erc.json').read_text())
+erc=json.loads((ROOT/'hardware/r03/review/erc.json').read_text())
 viol=[v for s in erc['sheets'] for v in s['violations']]
 check('erc_zero_errors_and_unresolved_warnings',not viol,{'errors':sum(v['severity']=='error' for v in viol),'warnings':sum(v['severity']=='warning' for v in viol)})
 try:manifest=json.loads((ROOT/'manufacturing/release-manifest.json').read_text())
 except (FileNotFoundError,json.JSONDecodeError):manifest={}
 required={
- 'board_source':'hardware/kicad/OpenKeys.kicad_pcb',
+ 'board_source':'hardware/r03/kicad/OpenKeys.kicad_pcb',
  'drc_report':'manufacturing/evidence/pcb-drc.json',
  'fabrication_zip':'manufacturing/release/gerber-and-drill.zip',
  'assembly_drawing':'manufacturing/release/assembly.pdf',
@@ -68,7 +68,7 @@ if 'firmware_elf' in artifacts:
   check('firmware_is_arm_elf',ok,'Requires 32-bit little-endian ARM ELF; not proof of firmware behavior')
  except (KeyError,OSError,ValueError):check('firmware_is_arm_elf',False,'Missing or invalid ARM firmware ELF')
 else:check('firmware_is_arm_elf',False,'Device-policy is a library, not a flashable authenticator')
-physical_tests=['fido2_u2f_hmac_secret','pin_and_biometric_persistent_retries','biometric_secure_pairing_and_replay','se_nonexport_and_object_policy','signed_boot_update_rollback_debug','vault_atomicity_and_rollback','totp_time_and_battery_faults','usb_dual_port_and_backfeed','nfc_final_enclosure_ios','trusted_screen_and_cancel','manager_three_os_real_device','emc_safe_failure','side_channel_and_fault_scope']
+physical_tests=['fido2_u2f_hmac_secret','pin_and_biometric_persistent_retries','biometric_secure_pairing_and_replay','se_nonexport_and_object_policy','signed_boot_update_rollback_debug','vault_atomicity_and_rollback','battery_charge_suspend_and_backup_tamper','single_usb_c_current_esd_and_backfeed','nfc_final_enclosure_ios','trusted_screen_and_cancel','manager_three_os_real_device','emc_safe_failure','side_channel_and_fault_scope']
 try:
  q=local(artifacts.get('qualification_report',{}).get('path',required['qualification_report']))
  qualification=json.loads(q.read_text());results=qualification.get('tests',{})

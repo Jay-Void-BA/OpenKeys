@@ -1,0 +1,9 @@
+{
+  "meta": {
+    "filename": "OpenKeys.kicad_pro",
+    "version": 1
+  },
+  "text_variables": {
+    "DESIGN_STATUS": "NOT_FOR_FABRICATION"
+  }
+}

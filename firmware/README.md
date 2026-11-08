@@ -1,0 +1,20 @@
+# Device firmware status — R0.3
+
+This directory defines the target integration. The implemented Rust firmware **library** is [`device-policy`](../crates/device-policy); there is no flashable authenticator ELF/BIN or signed update bundle yet. A host executable or an ARM `.rlib` is not device firmware delivery.
+
+Target: STM32H573RIT6, Cortex-M33, STiRoT immutable boot, TrustZone/GTZC isolation, SE050E, authenticated FPC2534AM, I2C 16x2 white LCD, four physical buttons, one USB-C USB2 FS port, FM11NC08S NFC card interface, encrypted external Flash. Exact pin assignments: [R0.3 pinout](../hardware/r03/pinout.csv).
+
+Implemented and tested: request/channel/digest-bound one-shot authorization; mandatory authenticated biometric receipt; device-derived additional PIN policy; durable-attempt adapter contracts; FPC secure-frame parsing, replay/context/tag checks; bounded 12-symbol button PIN entry; English LCD identity pagination and cancellation clearing. Default hardware adapters deny access.
+
+Integration still required: actual sensor pairing/driver and SE SCP03/AEAD/counter/PIN adapters; authenticated device management transport; full FIDO2/U2F/hmac-secret/credential storage; AEAD transactional vault with anti-rollback; LCD/button drivers; USB/NFC framing and cancellation; power/charging/suspend service; backup-tamper continuity; STiRoT configuration, signed updates, rollback and production debug lifecycle. No production fuses or keys are supplied in this repository.
+
+The protected domain must own the FP/SE/LCD buses, button GPIO, timers, DMA attribution, key memory and request dispatcher. Untrusted transport must not have raw SE, encrypt/decrypt, display, button-injection or counter-reset APIs. The SE enable circuit is a fault interlock, not proof of fingerprint verification.
+
+Before first enrollment, a blank device has no user secrets. Provisioning is a separate physically controlled ceremony: unique device/sensor/SE pairing, initial device PIN, fingerprint enrollment, lifecycle closure and attestation of that state. A provisioned device must never re-enter blank enrollment merely because backup power or a sensor was reset. A missing fingerprint never enables PIN-only access.
+
+```sh
+rustup target add thumbv8m.main-none-eabihf --toolchain 1.99.1
+cargo check -p device-policy --target thumbv8m.main-none-eabihf --locked
+```
+
+This verifies portable policy code only, not boot, registers, timing, pinmux, interoperability or resistance to physical attacks. Manufacturing remains blocked until target firmware and actual hardware evidence exist.
