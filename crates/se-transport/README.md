@@ -23,3 +23,11 @@ Primary protocol reference: NXP nano-package
 [`26d55b4`](https://github.com/NXPPlugNTrust/nano-package/tree/26d55b43225bc84de364057660cba676fa69f6e4/lib/t1oi2c),
 Apache2. C source was read as a reference; none is compiled or linked.
 Unit/integration negative tests are model evidence, not an actual chip trace.
+
+Target limitation: Embassy-stm320.6.0 reports NACKs as `Unknown`, so the
+generic board adapter deliberately treats them as terminal. It cannot yet
+provide the address-only busy polling needed by a real SE in every state.
+A qualified target driver must establish that no data/frame bytes were
+accepted before permitting a retry; do not change all Unknown NACKs into
+retryable address NACKs. This is a functional integration gate, not evidence
+that the SE link currently works on hardware.

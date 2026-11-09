@@ -17,4 +17,6 @@
 
 新的密码路径说明：[H573核查](H573_CRYPTO_REVIEW.md)。协议/策略/密码状态机继续禁止unsafe；[Secure MMIO](../firmware/secure-mmio/README.md)单独列出五个固定地址构造的Rust unsafe边界，不再把R03的“全部自研运行代码无unsafe”泛化到R04。仍无自写或运行构建所需的C/C++。
 
+[SE持久实现约束](SE_PERSISTENCE_REQUIREMENTS.md)记录提交锚点、撕裂/回滚区分和实际I2C NACK进度缺口。这些尚未实现/实测的环节与完整运行时仍阻止成品交付；不能声称“只剩烧录”或“只差认证”。
+
 固定范围：指纹必须先通过，PIN仅附加；白背光16×2字符LCD；四个实体上下文按钮；唯一USB-C母口兼充电，NFC；FIDO2/U2F/hmac-secret、凭据、加密notes及recovery codes；无OTP。自己的运行代码Rust，按模块允许Zig，不引入自写C/C++。

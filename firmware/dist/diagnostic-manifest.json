@@ -44,7 +44,7 @@
     "crates/scp03/src/tests.rs": "77bb45562addcbe52a2add1299051e0e3bf66a53be4b774c7681e1d45560ae5f",
     "crates/scp03/tests/generate-fixtures.py": "f703adb1dc1e6a69aefae3660eabab944170af2f224c23318ba79bef09493d70",
     "crates/se-transport/Cargo.toml": "8f43599614133456cbb175915c8ee64f9723c0fe9d39a293c971c5497c389279",
-    "crates/se-transport/README.md": "9cffa18983d7c3369315b2d93ca5e1bab461a8be89c5101e686bc6fb50e6997e",
+    "crates/se-transport/README.md": "7443a0c0dab1413ae24b5f5a9376a511ab3e3ec9236ceb005d1139f68ffe5f6b",
     "crates/se-transport/src/atr.rs": "d8520755529d5c2093d72f926a39f9d0ae0ae1fd7ab3ae756b0c8299ab86bf5a",
     "crates/se-transport/src/lib.rs": "435ba1e6fdbf77236734a010b107d972785eb9671e1ef814d572eff541a9a975",
     "crates/se-transport/src/transport.rs": "035dde4e707d8b5ef55a9f42166e770a8263bdcd7bbaeec47c0ea7317ee2c553",
