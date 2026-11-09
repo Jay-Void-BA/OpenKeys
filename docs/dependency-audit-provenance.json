@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "auditor": "cargo-audit 0.22.2",
+  "flags": [
+    "--deny",
+    "warnings",
+    "--no-fetch"
+  ],
+  "database_commit": "7a40350e1b8ba5b656d909f88222a8059a83d88d",
+  "database_commit_time": "2026-11-08T16:03:42-07:00",
+  "database_worktree_clean": true,
+  "audit_report_sha256": "235117d7da21aeb799a1ec12739e0834e4f67aa89025c68c398e1a9920c9c596",
+  "cargo_lock_sha256": "51dd708eaf804bdc72d8ad9dbca292bc4d32b3c1fb04a22963daa38d3fa328c0",
+  "scope": "Current full lockfile, including test/target dependencies. No advisory ignore list. Unknown vulnerabilities are outside this result."
+}

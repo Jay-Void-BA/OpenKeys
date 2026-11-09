@@ -8,3 +8,4 @@ wasefire	https://github.com/google/wasefire.git	af6259cccd64bc922a32a5d0752dc088
 zig-keylib	https://github.com/Zig-Sec/keylib.git	f887bde9ef010dfdede84cf3c62adba3e55b176e	master
 zig-passkeez	https://github.com/Zig-Sec/PassKeeZ.git	dc5fd189366ff19b9a1d3d91709d64bb4b08aea5	master
 sparkfun-fpc2534-lib	https://github.com/sparkfun/SparkFun_FPC2534_Arduino_Library.git	5d0d1727ea05e79ad3c2e3c84fb933dba37f2723	main
+nxp-nano-reference-only	https://github.com/NXPPlugNTrust/nano-package.git	26d55b43225bc84de364057660cba676fa69f6e4	master

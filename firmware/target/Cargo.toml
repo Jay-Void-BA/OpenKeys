@@ -25,6 +25,10 @@ cortex-m-rt = "=0.7.7"
 embedded-hal-bus = "=0.3.0"
 embedded-hal = "=1.0.0"
 device-vault = { path = "../../crates/device-vault" }
+openkeys-se-transport = { path = "../../crates/se-transport" }
+openkeys-scp03 = { path = "../../crates/scp03" }
+openkeys-h573-crypto = { path = "../../crates/h573-crypto" }
+openkeys-secure-mmio = { path = "../secure-mmio" }
 zeroize = { version = "1.9", default-features = false }
 subtle = { version = "=2.6.1", default-features = false }
 

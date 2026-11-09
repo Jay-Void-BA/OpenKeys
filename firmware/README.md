@@ -6,7 +6,7 @@ Target: STM32H573RIT6, Cortex-M33, STiRoT immutable boot, TrustZone/GTZC isolati
 
 Implemented and tested: request/channel/digest-bound one-shot authorization; mandatory authenticated biometric receipt; device-derived additional PIN policy; durable-attempt adapter contracts; FPC secure-frame parsing, replay/context/tag checks; bounded 12-symbol button PIN entry; English LCD identity pagination and cancellation clearing. Default hardware adapters deny access.
 
-Integration still required: actual sensor pairing/driver and SE SCP03/AEAD/counter/PIN adapters; authenticated device management transport; full FIDO2/U2F/hmac-secret/credential storage; AEAD transactional vault with anti-rollback; LCD/button drivers; USB/NFC framing and cancellation; power/charging/suspend service and secure PC0 input-eFuse fault handling; backup-tamper continuity; STiRoT configuration, signed updates, rollback and production debug lifecycle. No production fuses or keys are supplied in this repository.
+Integration still required: actual sensor pairing/driver and SE commissioning/object/ledger/counter/PIN adapters; authenticated device management transport; full FIDO2/U2F/hmac-secret/credential storage; transactional vault/record/authorization integration; actual LCD/button timing qualification; USB/NFC framing and cancellation; power/charging/suspend service and secure PC0 input-eFuse fault handling; backup-tamper continuity; STiRoT configuration, signed updates, rollback and production debug lifecycle. No production fuses or keys are supplied in this repository.
 
 The protected domain must own the FP/SE/LCD buses, button GPIO, timers, DMA attribution, key memory and request dispatcher. Untrusted transport must not have raw SE, encrypt/decrypt, display, button-injection or counter-reset APIs. The SE enable circuit is a fault interlock, not proof of fingerprint verification.
 
@@ -28,3 +28,22 @@ This verifies portable policy code only, not boot, registers, timing, pinmux, in
 ## Encrypted snapshot integration progress
 
 [device-vault](../crates/device-vault) now provides a bounded two-bank AEAD snapshot core with mandatory protected-runtime checkpoints and power-loss/replay tests. The board crate maps its complete sectors to the actual8MiB W25Q64; the target library implements H573 SAES AES-256-GCM with tag-before-release and key-register clearing. These compile for Cortex-M33. A real authenticated/anti-rollback SE ledger, key provisioning, record validation and authorized dispatcher are still required; the diagnostic binary exposes none of them. No production adapter silently falls back to a test key, host Boolean or ordinary Flash counter.
+
+## SE channel and H573 crypto progress
+
+The actual PB6/PB7 I2C1 adapter now connects to [bounded T=1](../crates/se-transport)
+and [strict SCP03](../crates/scp03). The client requires all four messaging
+protections, authenticated responses, exact sequence and live guard checks;
+an uncertain command is never automatically replayed. Actual SE E2 profile,
+key commissioning, SCP mandate/ACLs, object applications and durable ledger
+remain to be qualified/implemented. The diagnostic keeps SE disabled.
+
+[H573 crypto](../crates/h573-crypto) replaces Embassy's cipher sequencing in
+the vault path: documented IV order, bounded waits, checked error flags,
+KEYPROT, key erasure and checked entropy. [Secure MMIO](secure-mmio) contains
+the five explicitly documented fixed-address unsafe Rust constructions for
+Secure aliases/missing RNG_NSCR. Other own protocol/policy/crypto crates
+forbid unsafe. The shared SAES is exclusively borrowed per transaction;
+SCP session state cannot create a second hardware owner. No production
+software AES, UID/default key or entropy-recovery fallback is supplied.
+See [review/test limits](../docs/H573_CRYPTO_REVIEW.md).

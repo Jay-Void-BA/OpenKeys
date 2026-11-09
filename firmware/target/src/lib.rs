@@ -5,3 +5,9 @@
 
 #[cfg(target_arch = "arm")]
 pub mod vault_aead;
+
+#[cfg(target_arch = "arm")]
+pub mod se_link;
+
+#[cfg(target_arch = "arm")]
+pub mod scp_crypto;

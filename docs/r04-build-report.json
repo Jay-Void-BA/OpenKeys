@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "revision": "0.4",
+  "date_utc": "2026-11-09",
+  "status": "INCOMPLETE_ENGINEERING_CANDIDATE",
+  "manufacturing_release_authorized": false,
+  "local": {
+    "rust_toolchain": "1.99.1",
+    "unit_and_integration_tests_passed": 81,
+    "workspace_fmt": true,
+    "workspace_clippy_deny_warnings": true,
+    "cortex_m33_checks": true,
+    "diagnostic_build": true,
+    "diagnostic_binary_bytes": 25296,
+    "diagnostic_is_authenticator": false,
+    "cargo_lock_sha256": "51dd708eaf804bdc72d8ad9dbca292bc4d32b3c1fb04a22963daa38d3fa328c0",
+    "strict_dependency_audit": {
+      "packages": 355,
+      "known_vulnerabilities": 0,
+      "warnings": 0,
+      "database_commit": "7a40350e1b8ba5b656d909f88222a8059a83d88d"
+    }
+  },
+  "remote_ci": {
+    "current_source_status": "PENDING_UPLOAD_AND_RUN",
+    "previous_snapshot_source": "7cf8cf8ca67e0c299510257796f2ccd778611b1a",
+    "previous_snapshot_build_run": 42565375583,
+    "previous_snapshot_build_warning_lines": 0,
+    "unchanged_hardware_run": 42565375425
+  },
+  "not_implemented_or_not_qualified": [
+    "complete_ctap_and_protected_dispatcher",
+    "sensor_driver_pairing_and_se_ledger_object_adapters",
+    "secure_boot_update_lifecycle_deployment",
+    "authenticated_device_management_transport",
+    "actual_usb_nfc_fido_interoperability",
+    "chip_known_answer_tests_and_error_tamper_paths",
+    "physical_emc_sidechannel_fault_and_assembly_qualification"
+  ],
+  "own_unsafe_boundary": "firmware/secure-mmio: five fixed-address PAC constructors in one documented function. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++."
+}

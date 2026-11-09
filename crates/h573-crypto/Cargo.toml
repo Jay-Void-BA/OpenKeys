@@ -1,0 +1,16 @@
+[package]
+name = "openkeys-h573-crypto"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+zeroize = { version = "1.9", default-features = false }
+
+[dev-dependencies]
+aes = "=0.8.4"
+aes-gcm = { version = "=0.10.3", default-features = false, features = ["aes"] }
+cmac = "=0.7.2"
+
+[lints]
+workspace = true

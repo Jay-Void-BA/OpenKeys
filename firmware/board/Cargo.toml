@@ -8,6 +8,7 @@ build = "build.rs"
 [dependencies]
 device-policy = { path = "../../crates/device-policy" }
 device-vault = { path = "../../crates/device-vault" }
+openkeys-se-transport = { path = "../../crates/se-transport" }
 embedded-hal = "=1.0.0"
 
 [build-dependencies]
