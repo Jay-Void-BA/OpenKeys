@@ -25,13 +25,13 @@
     "se_marker_sha256": "3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5"
   },
   "remote_ci": {
-    "current_source_status": "PENDING_NEW_183_TEST_SOURCE_RUN; other run fields identify previous validated source",
+    "current_source_status": "VALIDATED_SOURCE_INCOMPLETE_PRODUCT",
     "previous_snapshot_source": "7cf8cf8ca67e0c299510257796f2ccd778611b1a",
     "previous_snapshot_build_run": 42565375583,
     "previous_snapshot_build_warning_lines": 0,
     "unchanged_hardware_run": 42565375425,
-    "source_commit": "31ec3e366e60e7c38d9be49465ed374458db9a49",
-    "build_run": 42619548062,
+    "source_commit": "e5340fdfc701fb3bd4a3d3b2f355ca62f95441be",
+    "build_run": 42719762400,
     "native_targets": [
       "ubuntu-24.04",
       "macos-15",
@@ -76,8 +76,8 @@
     },
     "unit_tests_per_native_target": 125,
     "strict_dependency_audit": "PASS",
-    "full_log_bytes": 365107,
-    "full_log_sha256": "ad09257915035f1b308487f8dd8963f662e3e9376859cbdf767730ada56fff4f",
+    "full_log_bytes": 379288,
+    "full_log_sha256": "2ee49a68d91bf03d1161d115a899c1c6d5ac6f32d20c0e1dbf873a2676eb56d5",
     "log_format": "Four complete top-level job logs from Actions ZIP, sorted by path and joined with one LF",
     "warning_lines": 0,
     "warning_annotations": 0,
@@ -89,7 +89,17 @@
       "source_commit": "3bf60ce861eb38ce3174de26fa93e165ff7ae063",
       "build_run": 42606524747
     },
-    "unit_and_integration_tests_each_native": 155
+    "unit_and_integration_tests_each_native": 183,
+    "previous_validated_155_test_version": {
+      "source_commit": "31ec3e366e60e7c38d9be49465ed374458db9a49",
+      "build_run": 42619548062,
+      "full_log_bytes": 365107,
+      "full_log_sha256": "ad09257915035f1b308487f8dd8963f662e3e9376859cbdf767730ada56fff4f",
+      "warning_lines": 0,
+      "warning_annotations": 0,
+      "notice_annotations": 1,
+      "unit_and_integration_tests_each_native": 155
+    }
   },
   "not_implemented_or_not_qualified": [
     "production_hardware_env_key_bridges_persistence_and_protected_ctap_dispatcher",

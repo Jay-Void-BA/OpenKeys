@@ -110,3 +110,5 @@ SE/密码远端[运行42575127427](https://github.com/Jay-Void-BA/OpenKeys/actio
 当前183项本地测试通过；工作区fmt/Clippy、Cortex-M33认证核心/目标适配和实际诊断目标Clippy均通过。增加完整1MiB流式编辑、范围后段故障/取消全输出清零、严格记录索引、notes/recovery借用解析、主机规范编码、OpenSK持久接口、明确profile初始化、专用签名counter与槽预留、通用重置隔离及101账户连续请求容量回归。共享的AES/介质fixture仅以测试源编译，不进入生产代码。
 
 SE schema2新增两个独立counter并拒绝schema1，marker=3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5；只导出公开布局，没有对设备编程或自动迁移。400个锁定依赖以实际更新的RustSec数据库d9cb059f3217db87aeccd190b81eaffe8cc29cb9严格审计，0已知漏洞/0维护警告。CAD89文件摘要不变；ARM诊断仍25296字节、无私密服务。新源码远端CI另记；完整Root、生产密钥/启动、管理通道和实片资格仍未完成。对抗性复核明确拒绝据此断言整机理论安全，制造/实验室候选只代表公开能力核对。
+
+183项版本远端[42719762400](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42719762400)，输入e5340fdfc701fb3bd4a3d3b2f355ca62f95441be：三平台各183项测试、全部编译/Clippy/格式、严格依赖审计及Linux ARM检查成功。完整四任务日志379288字节，SHA256 2ee49a68d91bf03d1161d115a899c1c6d5ac6f32d20c0e1dbf873a2676eb56d5，warning行0、warning注释0、平台notice1。三个开发包及ARM诊断ZIP经GitHub连接器实际取得并匹配GitHub摘要，ELF/PE/Mach-O与构建信息相符；未执行这些二进制、未接真设备，明确保留开发/诊断用途。下载索引与机器记录更新到本版本。

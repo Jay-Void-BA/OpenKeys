@@ -2,13 +2,13 @@
 
 以下是**缺少真实硬件认证后端、保持锁定的开发版可执行文件**，不是正式管理器或DMG/MSI安装包。没有开发者发布签名/Apple公证；无法实际解锁或写入设备，不用于真实凭据。
 
-[GitHub Actions 42606524747](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42606524747)，输入提交`3bf60ce861eb38ce3174de26fa93e165ff7ae063`。三个原生目标各125项测试、严格依赖审计、编译/Clippy/格式及Linux ARM检查均成功；完整日志warning行0、warning注释0。macOS有1条平台排队容量notice。
+[GitHub Actions 42719762400](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42719762400)，输入提交`e5340fdfc701fb3bd4a3d3b2f355ca62f95441be`。三个原生目标各183项测试、严格依赖审计、编译/Clippy/格式及Linux ARM检查均成功；完整日志warning行0、warning注释0。macOS有1条平台排队容量notice。
 
 | 平台 | 当前开发版ZIP | ZIP SHA256 |
 |---|---|---|
-| macOS / Apple Silicon | [下载开发包](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42606524747/artifacts/13668128488) | `f43d7bd443cf5a203c3691682a3e70ccce8401edb2a3e505a61b50e5ba0a89b4` |
-| Windows / x64 | [下载开发包](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42606524747/artifacts/13669100344) | `12a1d91ae96c868288f8d1ac1b49a7fb559238ca2b136e7884c45bfcbf77a626` |
-| Linux / x86_64 | [下载开发包](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42606524747/artifacts/13668456626) | `220861830639d4bad0d3e98657688bf2197dc96911cf6e6009b52f18372c69f3` |
+| macOS / Apple Silicon | [下载开发包](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42719762400/artifacts/13718894432) | `9f8590a57b0aad34dfe98a52131ca5ad0a115aab750d05c30b1ace4c69cefbb2` |
+| Windows / x64 | [下载开发包](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42719762400/artifacts/13720375419) | `6f36a93ccc4b057bfa172572d87db70eed232d98836f60eeb862e80a43999583` |
+| Linux / x86_64 | [下载开发包](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42719762400/artifacts/13719940867) | `31abce1eb8ef8cf20d2ef73290787346295f4924f5368c107d0b13d07dc7bb51` |
 
 三个ZIP均已实际下载，并与GitHub公布的SHA256一致；同时核对ELF/PE/Mach-O架构与包内rustc构建信息。未执行这些发布二进制、未做三系统原生对话框/合成器实机验证，也未连接真实设备。机器记录含二进制SHA256：[native-builds-r04.json](native-builds-r04.json)。
 
