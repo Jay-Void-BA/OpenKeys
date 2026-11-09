@@ -17,6 +17,8 @@ sha2 = "=0.10.9"
 [dev-dependencies]
 cortex-m = { version = "=0.7.10", features = ["std"] }
 critical-section = { version = "=1.2.0", features = ["std"] }
+embedded-hal-bus = "=0.3.0"
+aes-gcm = { version = "=0.10.3", default-features = false, features = ["aes"] }
 
 [lints]
 workspace = true

@@ -2064,11 +2064,13 @@ checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
 name = "openkeys-board"
 version = "0.1.0"
 dependencies = [
+ "aes-gcm",
  "cortex-m",
  "critical-section",
  "device-policy",
  "device-vault",
  "embedded-hal 1.0.0",
+ "embedded-hal-bus",
  "openkeys-se-transport",
  "sha2",
 ]

@@ -6,7 +6,7 @@ Target: STM32H573RIT6, Cortex-M33, STiRoT immutable boot, TrustZone/GTZC isolati
 
 Implemented and tested: request/channel/digest-bound one-shot authorization; mandatory authenticated biometric receipt; device-derived additional PIN policy; durable-attempt adapter contracts; FPC secure-frame parsing, replay/context/tag checks; bounded 12-symbol button PIN entry; English LCD identity pagination and cancellation clearing. Default hardware adapters deny access.
 
-Integration still required: actual sensor pairing/SPI driver, SE commissioning/ACL and chip qualification, PIN adapter and protected-runtime deployment of the new state service; authenticated device management transport; full FIDO2/U2F/hmac-secret/credential storage; transactional vault/record/authorization integration; actual LCD/button timing qualification; USB/NFC framing and cancellation; power/charging/suspend service and secure PC0 input-eFuse fault handling; backup-tamper continuity; STiRoT configuration, signed updates, rollback and production debug lifecycle. No production fuses or keys are supplied in this repository.
+Integration still required: actual sensor pairing, SPI/runtime integration and chip qualification, SE commissioning/ACL and chip qualification, PIN adapter and protected-runtime deployment of the new state service; authenticated device management transport; full FIDO2/U2F/hmac-secret/credential storage; transactional vault/record/authorization integration; actual LCD/button timing qualification; USB/NFC framing and cancellation; power/charging/suspend service and secure PC0 input-eFuse fault handling; backup-tamper continuity; STiRoT configuration, signed updates, rollback and production debug lifecycle. No production fuses or keys are supplied in this repository.
 
 The protected domain must own the FP/SE/LCD buses, button GPIO, timers, DMA attribution, key memory and request dispatcher. Untrusted transport must not have raw SE, encrypt/decrypt, display, button-injection or counter-reset APIs. The SE enable circuit is a fault interlock, not proof of fingerprint verification.
 
@@ -66,3 +66,7 @@ pairing and entropy/fault qualification are still missing. Runtime providers
 must be trusted actual hardware implementations, not host flags/fake crypto.
 State/crypto services compile for M33; the diagnostic still enables none of
 these private services. Do not treat these libraries as a complete key image.
+
+## FPC paired-runtime progress
+
+The R04 SPI3/CS/IRQ/reset binding and paired-runtime SPI driver now exist, together with policy-precharged encrypted Identify construction and H573 request sealing. The sender checks the current request and deadline before/after I/O; received frames remain untrusted until protected GCM, context, template/tag and durable credit verification. This is not an activated authenticator. [FPC review](../docs/FPC_RUNTIME_REVIEW.md) records hardware entropy/IV, watchdog, HAL alias/SAU/GTZC and commissioning gaps; the diagnostic remains disabled.

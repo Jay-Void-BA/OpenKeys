@@ -96,3 +96,7 @@ SE 的芯片认证只覆盖其具体型号、版本和认证范围。MCU、配�
 新增C07：对照[SE状态布局](../manufacturing/se-state-layout.json)，逐对象核对type、8字节counter宽度、PERSISTENT=01、head长度和marker；验证实际ACL及SCP强制，不能只核对公开marker。在每条nonce/重试预扣、head写入/回读、commit/credit更新指令前后切断SE及主控电源，核对旧/新状态和不退款。破坏被commit锚点选中的head后必须拒绝，不能自动回到另一个槽。八次失败/取消后，关机和PIN都不能恢复尝试；65535标签不可回绕。测试数据及损坏样本分开，全部实片结果当前NOT_RUN。
 
 新增C08：在SCP、vault和指纹密码适配间切换并注入RNG/SAES故障和服务重入，验证所有共享适配器拒绝，旧实例/新轻量适配器均不能清除poison。对FPC安全帧同时验证GCM错误、有效GCM但错误请求/tag/模板、credit应答丢失，保证无授权证明、LCD秘密或有效签名输出。另测传感器重置/故障下的随机IV重复；接收侧tag防重放不能证明传感器RNG故障下仍安全。
+
+新增C09：用仅含公开测试key的Secure候选镜像和逻辑分析仪，在三块板逐台记录FPC SPI3时序。核对Mode0/MSB/1MHz、CS低后>500µs首沿、整帧连续CS、IRQ空闲不发时钟；模拟半次传输、洪泛和deadline跨越。冻结SPI进度标志时，独立watchdog必须在规定上限重置，LCD/SE门控必须进入安全状态；reset引脚断开不能误报已复位。记录镜像/芯片revision、原始波形与复位上限。当前NOT_RUN。
+
+新增C10：逐个核对HAL实际访问地址与SAU/IDAU/GTZC/GPIO/RCC/中断/DMA属性；测试NS/非特权读写、DMA请求、alias覆盖和中断路由。不得将整个0x40000000–0x4fffffff暴露给NS后仍假定FP/LCD/SE访问受保护，也不得仅凭HAL trustzone-secure功能名称记PASS。实际安全事务、非法访问fault和秘密不输出均须留证；当前NOT_RUN。

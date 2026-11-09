@@ -4,6 +4,7 @@
 //! the protected device domain; they do not authenticate a host or a finger.
 
 pub mod buttons;
+pub mod fingerprint;
 pub mod flash;
 pub mod lcd;
 pub mod pins;

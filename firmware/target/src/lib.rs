@@ -19,3 +19,6 @@ pub use openkeys_se_state as persistent_state;
 
 #[cfg(target_arch = "arm")]
 pub mod fingerprint_aead;
+
+#[cfg(target_arch = "arm")]
+pub mod fingerprint_link;

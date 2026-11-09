@@ -19,6 +19,8 @@
 
 [SE持久实现约束](SE_PERSISTENCE_REQUIREMENTS.md)记录提交锚点、撕裂/回滚区分和实际I2C NACK进度缺口。这些尚未实现/实测的环节与完整运行时仍阻止成品交付；不能声称“只剩烧录”或“只差认证”。
 
-最新源码续更：[SE状态适配](../crates/se-state/README.md)及共享SAES/RNG服务已实现；目标增加实际FPC AES256-GCM认证标签验证适配，只有标签验证成功才释放12字节payload，之后还需指纹语义检查与SE credit成功。主控引导、传感器驱动、I2C进度判别和端到端协议仍未完成。八次失败锁定的可用性与恢复策略须在制造前评审。
+最新源码续更：[SE状态适配](../crates/se-state/README.md)及共享SAES/RNG服务已实现；目标增加实际FPC AES256-GCM认证标签验证适配，只有标签验证成功才释放12字节payload，之后还需指纹语义检查与SE credit成功。已增加R04指纹SPI候选驱动、受保护加密请求构造与SAES发送适配；主控引导、配对/模板/取消运行时、I2C进度判别和端到端协议仍未完成。八次失败锁定的可用性与恢复策略须在制造前评审。
 
 固定范围：指纹必须先通过，PIN仅附加；白背光16×2字符LCD；四个实体上下文按钮；唯一USB-C母口兼充电，NFC；FIDO2/U2F/hmac-secret、凭据、加密notes及recovery codes；无OTP。自己的运行代码Rust，按模块允许Zig，不引入自写C/C++。
+
+[FPC通信核查](FPC_RUNTIME_REVIEW.md)新增阻塞HAL看门狗约束，以及PAC非安全别名/SAU事务属性核查。单纯勾选HAL功能或通过引脚类型检查均不证明安全归属。

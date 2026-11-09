@@ -88,6 +88,38 @@ pub trait ProtectedGcm {
     ) -> Result<(), Error>;
 }
 
+/// Outbound provider for the paired runtime. Generate a fresh 12-byte IV with
+/// the protected entropy source; never accept a host IV or use a fixed/test IV.
+/// The durable 16-bit operation tag is anti-replay context, NOT a replacement
+/// for GCM nonce safety. Real sensor/host RNG fault qualification is mandatory.
+pub trait ProtectedIdentifyGcm: ProtectedGcm {
+    fn seal_identify_payload(
+        &mut self,
+        header: &[u8; 8],
+        payload: &mut [u8; 10],
+    ) -> Result<([u8; 12], [u8; 16]), Error>;
+}
+
+/// A precharged, request-bound encrypted request, not a match or user grant.
+/// No public constructor/Clone/Debug/host conversion. The protected root must
+/// install real counter/AEAD providers; Rust types do not isolate a hostile TCB.
+pub struct EncryptedIdentify {
+    wire: [u8; 46],
+    request: Request,
+    expires: u64,
+}
+impl EncryptedIdentify {
+    pub fn wire_bytes(&self) -> &[u8; 46] {
+        &self.wire
+    }
+    pub fn request(&self) -> &Request {
+        &self.request
+    }
+    pub fn expires_ms(&self) -> u64 {
+        self.expires
+    }
+}
+
 #[derive(Clone, Copy)]
 struct Pending {
     request: Request,
@@ -281,6 +313,61 @@ impl<C: ProtectedAttempts, A: ProtectedGcm> Session<C, A> {
     }
 }
 
+impl<C: ProtectedAttempts, A: ProtectedIdentifyGcm> Session<C, A> {
+    /// Production sender: local intent -> durable debit/tag -> live clock ->
+    /// fixed Identify body -> protected GCM -> live clock. No packet leaves on
+    /// any storage/entropy/crypto/deadline error. Transport must recheck again
+    /// immediately before and after its blocking write and never retry it.
+    pub fn begin_encrypted(
+        &mut self,
+        request: Request,
+        template: u16,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<EncryptedIdentify, Error> {
+        let result = (|| {
+            let tag = self.begin(request, template, clock())?;
+            let pending = self.pending.ok_or(Error::Locked)?;
+            self.time(clock())?;
+            if self.last_time >= pending.expires {
+                return Err(Error::Expired);
+            }
+            let header = [4, 0, 0x11, 0, 0x11, 0, 38, 0];
+            let mut body = Zeroizing::new([0u8; 10]);
+            for (index, word) in [IDENTIFY, 0x11, SPECIFIED, template, tag]
+                .into_iter()
+                .enumerate()
+            {
+                body[2 * index..2 * index + 2].copy_from_slice(&word.to_le_bytes());
+            }
+            let (iv, mac) = self
+                .aead
+                .seal_identify_payload(&header, &mut body)
+                .map_err(|_| {
+                    self.recovery_required = true;
+                    Error::RecoveryRequired
+                })?;
+            self.time(clock())?;
+            if self.last_time >= pending.expires {
+                return Err(Error::Expired);
+            }
+            let mut wire = [0u8; 46];
+            wire[..8].copy_from_slice(&header);
+            wire[8..20].copy_from_slice(&iv);
+            wire[20..36].copy_from_slice(&mac);
+            wire[36..].copy_from_slice(&body[..]);
+            Ok(EncryptedIdentify {
+                wire,
+                request,
+                expires: pending.expires,
+            })
+        })();
+        if result.is_err() {
+            self.pending = None;
+        }
+        result
+    }
+}
+
 fn word(bytes: &[u8], offset: usize) -> u16 {
     u16::from_le_bytes([bytes[offset], bytes[offset + 1]])
 }
@@ -353,6 +440,152 @@ mod tests {
             },
             TestGcm,
         )
+    }
+    struct Outbound {
+        calls: Rc<Cell<u32>>,
+        fail: bool,
+    }
+    impl ProtectedGcm for Outbound {
+        fn decrypt_identify_payload(
+            &mut self,
+            header: &[u8; 8],
+            iv: &[u8; 12],
+            tag: &[u8; 16],
+            payload: &mut [u8; 12],
+        ) -> Result<(), Error> {
+            Aes256Gcm::new_from_slice(&[0x35; 32])
+                .unwrap()
+                .decrypt_in_place_detached(
+                    Nonce::from_slice(iv),
+                    header,
+                    payload,
+                    Tag::from_slice(tag),
+                )
+                .map_err(|_| Error::Unauthenticated)
+        }
+    }
+    impl ProtectedIdentifyGcm for Outbound {
+        fn seal_identify_payload(
+            &mut self,
+            header: &[u8; 8],
+            payload: &mut [u8; 10],
+        ) -> Result<([u8; 12], [u8; 16]), Error> {
+            self.calls.set(self.calls.get() + 1);
+            if self.fail {
+                return Err(Error::Unauthenticated);
+            }
+            // Public deterministic outbound fixture key/nonce, TEST ONLY.
+            let iv = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+            let mac = Aes256Gcm::new_from_slice(&[0x35; 32])
+                .unwrap()
+                .encrypt_in_place_detached(Nonce::from_slice(&iv), header, payload)
+                .unwrap();
+            Ok((iv, mac.into()))
+        }
+    }
+    fn outbound() -> Session<Counter, Outbound> {
+        Session::new(
+            Counter {
+                value: Rc::new(Cell::new(0)),
+                uncertain: false,
+                fail_commit: false,
+            },
+            Outbound {
+                calls: Rc::new(Cell::new(0)),
+                fail: false,
+            },
+        )
+    }
+    #[test]
+    fn outbound_wire_matches_independent_aes_gcm_fixture_and_keeps_request_binding() {
+        let mut s = outbound();
+        let command = s.begin_encrypted(req(), 7, || 100).unwrap();
+        // Generated independently with Python cryptography 50.0.0 AESGCM.
+        let expected = [
+            0x04, 0x00, 0x11, 0x00, 0x11, 0x00, 0x26, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05,
+            0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x9b, 0x98, 0x62, 0xa0, 0x9a, 0x16, 0x3b, 0x21,
+            0x7b, 0xfb, 0x77, 0x61, 0x1c, 0x2d, 0x28, 0x56, 0x6d, 0x35, 0xf4, 0x5c, 0xf3, 0xc3,
+            0x4d, 0xfc, 0xe6, 0x33,
+        ];
+        assert_eq!(command.wire_bytes(), &expected);
+        assert_eq!(command.request(), &req());
+        assert_eq!(command.expires_ms(), 15_100);
+        assert_eq!(s.counter.value.get(), 1);
+        // Same public key in both directions, distinct IV. Independent Python
+        // AESGCM result for the matching template7/tag1 event.
+        let response = [
+            0x04, 0x00, 0x13, 0x00, 0x41, 0x00, 0x28, 0x00, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15,
+            0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x30, 0x40, 0x4c, 0x6a, 0x46, 0x5f, 0x45, 0xd2,
+            0xf2, 0x58, 0x9b, 0x7f, 0xae, 0x6e, 0x82, 0x74, 0x8f, 0x67, 0x8e, 0x2c, 0x8b, 0xc5,
+            0x8f, 0x3a, 0xf0, 0x8c, 0xe4, 0x7a,
+        ];
+        let proof = s.receive(&response, &req(), || 101).unwrap().unwrap();
+        assert_eq!(proof.request(), &req());
+    }
+    #[test]
+    fn slow_reservation_or_sealing_returns_no_command_and_burns_the_tag() {
+        for ticks in [[0, 15_000, 15_000], [0, 1, 15_000]] {
+            let mut s = outbound();
+            let mut clock = ticks.into_iter();
+            assert!(matches!(
+                s.begin_encrypted(req(), 7, || clock.next().unwrap()),
+                Err(Error::Expired)
+            ));
+            assert_eq!(s.counter.value.get(), 1);
+            assert!(matches!(
+                s.receive(&matched(1), &req(), || 15_001),
+                Err(Error::Locked)
+            ));
+            // Restarting the operation reserves a new tag, never a refund.
+            s.begin_encrypted(req(), 7, || 15_002).unwrap();
+            assert_eq!(s.counter.value.get(), 2);
+        }
+    }
+    #[test]
+    fn uncertain_storage_or_crypto_fault_cannot_emit_or_retry_a_command() {
+        let mut s = outbound();
+        s.counter.uncertain = true;
+        assert!(matches!(
+            s.begin_encrypted(req(), 7, || 0),
+            Err(Error::Storage)
+        ));
+        assert_eq!(s.aead.calls.get(), 0);
+        s.counter.uncertain = false;
+        assert!(matches!(
+            s.begin_encrypted(req(), 7, || 1),
+            Err(Error::RecoveryRequired)
+        ));
+        let mut s = outbound();
+        s.aead.fail = true;
+        assert!(matches!(
+            s.begin_encrypted(req(), 7, || 0),
+            Err(Error::RecoveryRequired)
+        ));
+        assert_eq!(s.counter.value.get(), 1);
+        s.aead.fail = false;
+        assert!(matches!(
+            s.begin_encrypted(req(), 7, || 1),
+            Err(Error::RecoveryRequired)
+        ));
+        assert_eq!(s.aead.calls.get(), 1);
+        assert_eq!(s.counter.value.get(), 1);
+    }
+    #[test]
+    fn backwards_clock_during_outbound_crypto_requires_recovery() {
+        let mut s = outbound();
+        let mut clock = [100, 101, 99].into_iter();
+        assert!(matches!(
+            s.begin_encrypted(req(), 7, || clock.next().unwrap()),
+            Err(Error::TimeWentBackwards)
+        ));
+        assert!(matches!(
+            s.receive(&matched(1), &req(), || 102),
+            Err(Error::RecoveryRequired)
+        ));
+        assert!(matches!(
+            s.begin_encrypted(req(), 7, || 102),
+            Err(Error::RecoveryRequired)
+        ));
     }
     fn packet(cmd: u16, kind: u16, fields: [u16; 4]) -> [u8; 48] {
         let mut output = [0_u8; 48];

@@ -1,5 +1,7 @@
 # R04 electrical diagnostic image
 
+The target library also contains candidate protected-runtime crypto and FPC SPI3 adapters. They are not called by the diagnostic. Their [security review](../../docs/FPC_RUNTIME_REVIEW.md) lists the remaining pairing, TrustZone attribution, runtime and chip-qualification gates.
+
 This is a real Cortex-M33 executable for the frozen STM32H573RIT6 PCB. It is **not a FIDO authenticator**, a vault, or production secure firmware. It contains no successful enrollment/authentication path and must never be used to provision the three real keys.
 
 Actual bindings: I2C3 PA8/PC9 to the 3.0V LCD, PC3 **open-drain** reset, PC4 backlight; SPI2 PB13/PB15/PC2 and PB12 CS to W25Q64; PB0/PB1/PB2/PB5 buttons; PC13 case and PC0 input-guard fault. PC8 SE request and PC7 sensor reset stay LOW; PA15 and PA4 deselect FP/NFC. PB4 charging enable stays LOW because the USB suspend/current service is not implemented in this image. No USB enumeration or NFC operation is advertised.
