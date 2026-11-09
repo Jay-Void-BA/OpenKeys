@@ -8,8 +8,10 @@ license.workspace = true
 embassy-stm32 = { version = "=0.6.0", features = ["stm32h573ri", "unstable-pac"] }
 cortex-m = { version = "=0.7.10", features = ["critical-section-single-core"] }
 openkeys-h573-crypto = { path = "../../crates/h573-crypto" }
+openkeys-board = { path = "../board" }
+openkeys-se-transport = { path = "../../crates/se-transport" }
 
-# This is the sole own-code exception: five fixed MMIO handle constructors,
+# This is the sole own-code exception: six fixed MMIO handle constructors,
 # explained in README. It never accepts an arbitrary address or host buffer.
 [lints.rust]
 unsafe_code = "deny"

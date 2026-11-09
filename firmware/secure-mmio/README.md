@@ -1,10 +1,10 @@
 # H573 secure MMIO boundary
 
 This is an explicit exception to `forbid(unsafe_code)` in the other own-code
-crates. Its one `aliases()` function contains five fixed-address PAC handle
+crates. Its one `aliases()` function contains six fixed-address PAC handle
 constructors, with no caller-selected pointer, memory slice, allocator, data
 conversion or foreign code. No C/C++ is compiled. The constructors map the
-documented Secure aliases of RNG, SAES, RCC, GTZC and RNG_NSCR. The selected
+documented Secure aliases of RNG, SAES, RCC, GTZC, RNG_NSCR and I2C1. The selected
 metapac21.0.0 has Non-secure constants and omits RNG_NSCR and SAES GTZC fields.
 Moving a `Peri<RNG>` / `Peri<SAES>` into the ports preserves single-owner
 runtime use; the whole privileged Secure program remains the trusted caller.
@@ -28,3 +28,5 @@ ARM compilation is checked. Register-model tests run in `openkeys-h573-crypto`;
 real Secure-alias access, startup, clock/health-error injection, KAT, clear
 timing and physical leakage are **NOT_RUN** and block production use. This
 boundary needs independent review before the3keys hold any real secrets.
+
+I2C1 uses the fixed Secure alias0x50005400, consumes the unique initialized HAL/pin owner, and performs transactions through the bounded board state machine. Every register operation checks current GTZC Secure+privileged attribution, RCC enable and the captured kernel-clock selector. No HAL ambiguous-NACK transfer method is used. PB6/PB7 SAU/GPIO attribution, verified boot and a live clock remain root obligations; this port never enables SE_EN or authorizes private operations. See [SE I2C review](../../docs/SE_I2C_REVIEW.md).

@@ -6,6 +6,7 @@
 //! The chip's atomic/monotonic/persistent behavior and commissioning ACLs must
 //! still be qualified on the exact E2 personality; model tests do not do so.
 
+pub mod keys;
 mod objects;
 mod record;
 mod state;

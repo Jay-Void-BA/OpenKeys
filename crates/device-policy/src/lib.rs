@@ -49,7 +49,9 @@ pub struct Request {
     pub operation: Operation,
     /// Hash of the canonical operation, item ID, revision and complete payload.
     pub digest: [u8; 32],
-    /// Derived from the authenticated encrypted connection, not a host label.
+    /// Device-derived channel binding: authenticated transcript for management;
+    /// fresh physical transport session + CID for standard USB/NFC FIDO.
+    /// Never a host-supplied label. Standard FIDO transport is not encrypted.
     pub channel: [u8; 32],
 }
 
@@ -95,6 +97,30 @@ struct Grant {
     request: Request,
     expires: u64,
     generation: u64,
+}
+
+/// One-shot authority consumed inside the protected root. No public
+/// constructor, Clone, Copy, Debug or deserialization from a host message.
+/// The trusted root still owns the verifier implementations and hardware.
+pub struct Authorization {
+    request: Request,
+    issued: u64,
+    expires: u64,
+    generation: u64,
+}
+impl Authorization {
+    pub fn request(&self) -> &Request {
+        &self.request
+    }
+    pub fn expires_ms(&self) -> u64 {
+        self.expires
+    }
+    pub fn issued_ms(&self) -> u64 {
+        self.issued
+    }
+    pub fn generation(&self) -> u64 {
+        self.generation
+    }
 }
 
 pub struct Gate<V> {
@@ -180,11 +206,14 @@ impl<V: SecureVerifier> Gate<V> {
     /// Consumes the grant on success OR failure. The secure runtime must execute
     /// the matching key operation without returning to untrusted code between
     /// this check and use. This model alone cannot enforce peripheral isolation.
-    pub fn consume(
+    pub fn consume(&mut self, request: &Request, clock: impl FnMut() -> u64) -> Result<(), Error> {
+        self.consume_authorized(request, clock).map(|_| ())
+    }
+    pub fn consume_authorized(
         &mut self,
         request: &Request,
         mut clock: impl FnMut() -> u64,
-    ) -> Result<(), Error> {
+    ) -> Result<Authorization, Error> {
         let grant = self.pending.take();
         self.observe_time(clock())?;
         let grant = grant.ok_or(Error::Locked)?;
@@ -192,7 +221,12 @@ impl<V: SecureVerifier> Gate<V> {
         if grant.generation != self.generation || grant.request != *request {
             return Err(Error::WrongRequest);
         }
-        Ok(())
+        Ok(Authorization {
+            request: grant.request,
+            issued: self.last_time,
+            expires: grant.expires,
+            generation: grant.generation,
+        })
     }
     /// Invoke on disconnect, suspend, reset, cancellation, error or lock.
     pub fn lock(&mut self) {

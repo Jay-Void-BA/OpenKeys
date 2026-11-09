@@ -21,7 +21,7 @@
 
 PCB先冻结引脚和文件摘要，再写匹配固件。硬件已增加独立UV/OV、开盖复位、SE使能门控和LCD复位，**门控本身不能证明指纹通过**；必须配合真实认证传感器、可信启动、TrustZone/GTZC/DMA隔离和受保护执行路径。尚无实物侧信道、故障注入或整机认证通过报告。
 
-最新软件续更：SE对象APDU、双head/提交锚点、持久指纹重试、共享SAES/RNG、FPC GCM双向适配及R04指纹SPI驱动/请求发送检查；125项测试已在macOS/Linux/Windows通过，CI warning为0。详见[持久状态实现](crates/se-state/README.md)、[密码专项复查](docs/H573_CRYPTO_REVIEW.md)、[指纹通信核查](docs/FPC_RUNTIME_REVIEW.md)和[CI/构建记录](docs/r04-build-report.json)。实片资格、完整认证运行时和管理通道仍未完成；当前8次失败锁定的恢复/可用性须在制造前评审。
+最新软件续更：已集成固定版本OpenSK认证核心、严格的设备授权网关、U2F与hmac-secret v1/v2；新增SE芯片内签名/HKDF候选适配及区分NACK进度的目标I2C。当前155项本地测试、严格Clippy和ARM编译通过；最新远端结果将在实际完成后记录，前版125项三平台CI不覆盖本次新增源码。详见[认证核心核查](docs/AUTHENTICATOR_CORE_REVIEW.md)、[持久状态实现](crates/se-state/README.md)、[密码专项复查](docs/H573_CRYPTO_REVIEW.md)和[CI/构建记录](docs/r04-build-report.json)。实片资格、完整认证运行时和管理通道仍未完成；当前8次失败锁定的恢复/可用性须在制造前评审。
 
 充电：**Apple20W USB-C适配器的5V档，输入预算约0.50W；电池侧100mA目标、4.2V上限，约0.42W上限**，随电量与系统负载下降；不请求9V、不使用20W。选500mAh受保护电池包、独立贴芯真实NTC；需开启设备运行充电服务，不要求解锁秘密。电芯及保护包寿命、温升和实际充电时间待实测。
 
@@ -39,6 +39,6 @@ sh hardware/r04/tools/export.sh
 python3 scripts/check-production-ready.py
 ```
 
-[验证记录](docs/VALIDATION.md)区分原生软件CI与新硬件检查。[R04硬件说明](hardware/r04/README.md)含板层、天线、机械坐标、外接件、工具版本和模拟限制；[制造任务书](manufacturing/HANDOFF.md)含三档预算口径与大陆厂家入口。未代表用户联系厂商或下单。
+[验证记录](docs/VALIDATION.md)区分原生软件CI与新硬件检查。[R04硬件说明](hardware/r04/README.md)含板层、天线、机械坐标、外接件、工具版本和模拟限制；[制造任务书](manufacturing/HANDOFF.md)含三档预算口径与大陆厂家入口。[硬件验收步骤](manufacturing/HARDWARE_ACCEPTANCE.md)按你、工厂和实验室分工。未代表用户联系厂商或下单。
 
-运行源码采用[MIT](LICENSE)，硬件采用[CERN-OHL-S-2.0](hardware/LICENSE-CERN-OHL-S-2.0.txt)。第三方库/芯片ROM保留各自许可及信任边界。[参考锁定版本](references.lock.tsv)包含Solo2、Google OpenSK/Wasefire、Nitrokey/Trussed等，不把它们的认证转移给本设备。`hardware/r03/`和更早目录为历史资料，不能与R04混用。
+自研运行源码采用[MIT](LICENSE)，硬件采用[CERN-OHL-S-2.0](hardware/LICENSE-CERN-OHL-S-2.0.txt)，集成的[OpenSK子集与明确补丁](vendor/opensk/README.md)保留Apache-2.0。其他第三方库/芯片ROM保留各自许可及信任边界。[参考锁定版本](references.lock.tsv)包含Solo2、Google OpenSK/Wasefire、Nitrokey/Trussed等，不把它们的认证转移给本设备。`hardware/r03/`和更早目录为历史资料，不能与R04混用。

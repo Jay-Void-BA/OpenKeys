@@ -6,23 +6,24 @@
   "manufacturing_release_authorized": false,
   "local": {
     "rust_toolchain": "1.99.1",
-    "unit_and_integration_tests_passed": 125,
+    "unit_and_integration_tests_passed": 155,
     "workspace_fmt": true,
     "workspace_clippy_deny_warnings": true,
     "cortex_m33_checks": true,
     "diagnostic_build": true,
     "diagnostic_binary_bytes": 25296,
     "diagnostic_is_authenticator": false,
-    "cargo_lock_sha256": "8dd178f7a48676f59a019282056ccf510503e51cee09bb0dd38dedb12fa4953f",
+    "cargo_lock_sha256": "0a06b368c2ce9c616fa77ac42f28d26f2e3755f7286c930af68db031d10309c2",
     "strict_dependency_audit": {
-      "packages": 356,
+      "packages": 399,
       "known_vulnerabilities": 0,
       "warnings": 0,
       "database_commit": "7a40350e1b8ba5b656d909f88222a8059a83d88d"
-    }
+    },
+    "opensk_source_and_patch_hash_check": true
   },
   "remote_ci": {
-    "current_source_status": "VALIDATED_SOURCE_INCOMPLETE_PRODUCT",
+    "current_source_status": "PENDING_NEW_155_TEST_SOURCE_RUN; retained run fields identify previous tested source only",
     "previous_snapshot_source": "7cf8cf8ca67e0c299510257796f2ccd778611b1a",
     "previous_snapshot_build_run": 42565375583,
     "previous_snapshot_build_warning_lines": 0,
@@ -93,7 +94,7 @@
     }
   },
   "not_implemented_or_not_qualified": [
-    "complete_ctap_and_protected_dispatcher",
+    "production_hardware_env_key_bridges_persistence_and_protected_ctap_dispatcher",
     "sensor_pairing_template_abort_runtime_se_commissioning_acl_and_state_chip_qualification",
     "secure_boot_update_lifecycle_deployment",
     "authenticated_device_management_transport",
@@ -104,7 +105,7 @@
     "eight_failure_biometric_lockout_maintenance_and_availability_review",
     "actual_hal_address_sau_gtzc_gpio_rcc_dma_and_watchdog_security_qualification"
   ],
-  "own_unsafe_boundary": "firmware/secure-mmio: five fixed-address PAC constructors in one documented function. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++.",
+  "own_unsafe_boundary": "firmware/secure-mmio: six fixed-address PAC constructors in one documented function, including Secure I2C1. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++.",
   "production_preflight": {
     "status": "BLOCKED",
     "incomplete_handoff_conditions": 13,

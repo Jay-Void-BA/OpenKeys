@@ -1,0 +1,77 @@
+--- a/libraries/opensk/src/api/key_store.rs
++++ b/libraries/opensk/src/api/key_store.rs
+@@ -0,0 +1 @@
++// OpenKeys modifications (2026): non-exporting derived-credential-secret API.
+@@ -16,0 +18 @@
++use crate::api::crypto::hkdf256::Hkdf256;
+@@ -23 +25 @@
+-use crate::env::{AesKey, Env, Hmac};
++use crate::env::{AesKey, Env, Hkdf, Hmac};
+@@ -99,0 +102,9 @@
++    /// Derive a per-credential value without requiring a hardware backend to
++    /// export its master root. The default Helper retains upstream semantics;
++    /// a production SE backend implements this through its protected HKDF.
++    fn derive_cred_random(
++        &mut self,
++        has_uv: bool,
++        salt: &[u8; 32],
++    ) -> Result<Secret<[u8; 32]>, Error>;
++
+@@ -119,0 +131,10 @@
++    fn derive_cred_random(
++        &mut self,
++        has_uv: bool,
++        salt: &[u8; 32],
++    ) -> Result<Secret<[u8; 32]>, Error> {
++        let key = self.cred_random(has_uv)?;
++        let mut result = Secret::default();
++        Hkdf::<T>::hkdf_256(&*key, salt, b"credRandom", &mut result);
++        Ok(result)
++    }
+--- a/libraries/opensk/src/api/persist.rs
++++ b/libraries/opensk/src/api/persist.rs
+@@ -0,0 +1 @@
++// OpenKeys modifications (2026): checked signature-counter overflow.
+@@ -150,2 +151,4 @@
+-        // In hopes that servers handle the wrapping gracefully.
+-        let new_value = old_value.wrapping_add(increment);
++        // Never silently roll back the externally visible signature counter.
++        let new_value = old_value
++            .checked_add(increment)
++            .ok_or(Ctap2StatusCode::CTAP2_ERR_VENDOR_INTERNAL_ERROR)?;
+--- a/libraries/opensk/src/ctap/mod.rs
++++ b/libraries/opensk/src/ctap/mod.rs
+@@ -0,0 +1 @@
++// OpenKeys modifications (2026): hardware secret derivation and one-call gated U2F bridge.
+@@ -73 +73,0 @@
+-use crate::api::crypto::hkdf256::Hkdf256;
+@@ -83 +83 @@
+-use crate::env::{EcdsaSk, Env, Hkdf, Sha};
++use crate::env::{EcdsaSk, Env, Sha};
+@@ -584,0 +585,18 @@
++    /// Root adapter: caller has already consumed an exact-request device
++    /// fingerprint/PIN/confirmation capability. Never caches UP across calls.
++    #[cfg(feature = "ctap1")]
++    pub fn process_legacy_protected(&mut self, env: &mut E, bytes: &[u8]) -> Vec<u8> {
++        self.stateful_command_permission.clear();
++        self.u2f_up_state = U2fUserPresenceState::new();
++        let _ = self.u2f_up_state.consume_up(env);
++        self.u2f_up_state.grant_up(env);
++        let result = ctap1::Ctap1Command::process_command(env, bytes, self);
++        self.u2f_up_state = U2fUserPresenceState::new();
++        match result {
++            Ok(mut data) => {
++                data.extend([0x90, 0]);
++                data
++            }
++            Err(status) => (u16::from(status)).to_be_bytes().to_vec(),
++        }
++    }
+@@ -1095,4 +1113,3 @@
+-        let key = env.key_store().cred_random(has_uv)?;
+-        let mut output = Secret::default();
+-        Hkdf::<E>::hkdf_256(&*key, &salt, b"credRandom", &mut output);
+-        Ok(output)
++        env.key_store()
++            .derive_cred_random(has_uv, &salt)
++            .map_err(Into::into)

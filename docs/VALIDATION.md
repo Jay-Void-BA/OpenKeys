@@ -96,3 +96,9 @@ SE/密码远端[运行42575127427](https://github.com/Jay-Void-BA/OpenKeys/actio
 最新源码（包含全部Bidi_Control拒绝与未知窗口焦点锁定）[运行42606524747](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42606524747)，输入提交3bf60ce：三平台各125项测试、严格依赖审计及全部编译/Clippy/格式成功；Linux ARM检查成功。完整四任务日志323538字节，SHA256 `934e894581cf79041cc486ad589da52535a9ebad239e0394429c51d5d90f43cc`，warning行0、warning注释0，macOS有1条平台容量notice。之前8bcdec3的125项运行42605076674也成功；机器记录分列两者，不混用源码。
 
 最新三个原生开发包已通过GitHub工具实际取得并核对ZIP摘要、程序架构与rustc元信息；均未执行或连接实物。下载/摘要入口更新到[NATIVE_BUILDS](NATIVE_BUILDS.md)。硬件89个CAD文件保持相同摘要。生产预检再次明确BLOCKED、13项缺口，未用开发包或诊断ELF冒充成品/安全认证。
+
+## OpenSK认证核心与Secure I2C续更
+
+当前155项本地测试通过：新增SE I2C寄存器模型11项、OpenSK网关/注册/登录/U2F/hmac-secret v1/v2/连续请求11项、SE密钥APDU与独立验签8项。工作区fmt/Clippy `-D warnings`、实际ARM目标编译和诊断目标Clippy通过。新增测试里的软件密钥和模型仅在测试构建存在，未冒充实物SE或已部署认证器。
+
+399个锁定依赖的严格审计通过，0已知漏洞/0维护警告；OpenSK83个源文件及3处明确补丁的哈希核对通过，保留Apache许可和原始上游摘要。89个硬件文件摘要不变；诊断重新导出仍25296字节、无私密服务。新源码远端CI将在上传后记录，前述125项版本不覆盖这些新增源码。硬件Env、密钥桥接、实际协议/管理通道和生产启动仍待完成；硬件验收见manufacturing/HARDWARE_ACCEPTANCE.md。

@@ -14,8 +14,10 @@ privileged firmware or a fake crypto provider installed by that firmware.
 8-byte counters and three BinaryFiles. Open validates exact ReadType,
 PERSISTENT=01, size and a policy/layout marker. Counter values use big-endian
 encoding. Malformed/duplicate/trailing TLV data and unprotected/missing-object
-errors never become zero or an empty vault. There are no runtime create,
-delete, arbitrary-ID or factory-key APIs. Persistent IDs have explicit values.
+errors never become zero or an empty vault. The state/ledger interface has no
+runtime create/delete, arbitrary-ID or factory-key APIs. Persistent IDs have
+explicit values. The separate `keys` module has a restricted generation API
+for a bounded signing-key namespace, with explicit policies and no overwrites.
 
 `scripts/export-se-state-layout.py` exports public schema data only; it does
 not communicate with hardware or handle keys/fuses. Its independent Python
@@ -79,6 +81,27 @@ new ledger while replaying old NOR images. Fixed marker generation is
 independent. Model cuts are not real chip power-cut or physical attack tests.
 
 Still required: commissioned E2 hardware traces and cut tests, target I2C
-NACK-progress driver, real sensor SPI/pairing, protected dispatcher/guard and
+NACK-progress qualification, real sensor pairing, protected dispatcher/guard and
 boot attribution, PIN adapter, full CTAP/management integration, plus SCA,
 fault and EMC qualification. The diagnostic image enables none of them.
+
+## Non-exporting key operations
+
+`keys::Keys` adds actual SE P-256 generation/signing and hmac-secret HKDF
+APDUs, consuming only sealed authenticated exchanges and requiring an opaque
+device authorization. A restrictive explicit signing policy omits private-key
+import/export, update, regeneration and key-agreement rights. The MCU reads
+only the public point, checks it is on P-256, and independently verifies each
+DER signature over SHA256(message) before returning it. The two separately
+commissioned hmac-secret roots stay in SE; HKDF uses the exact OpenSK salt,
+SHA256, `credRandom` info and32-byte output.
+
+This does not yet install an OpenSK hardware provider, allocate durable slots,
+commission roots or prove ACL enforcement. The root must bind the SCP guard to
+the same live authorization, authenticate stored public-key/slot metadata and
+reserve slots durably before generation. Ambiguous generation never retries
+or overwrites an existing ID; an interrupted operation may consume capacity.
+256 possible catalog IDs are a software bound, not a measured SE capacity.
+The selected personality must return the checked curve-specific P-256 type
+and32-byte size; unsupported/generic types are rejected, not assumed safe.
+The factory must test object policies, non-export, actual KATs and power cuts.

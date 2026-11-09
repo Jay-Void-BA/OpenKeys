@@ -41,7 +41,7 @@ remain to be qualified/implemented. The diagnostic keeps SE disabled.
 [H573 crypto](../crates/h573-crypto) replaces Embassy's cipher sequencing in
 the vault path: documented IV order, bounded waits, checked error flags,
 KEYPROT, key erasure and checked entropy. [Secure MMIO](secure-mmio) contains
-the five explicitly documented fixed-address unsafe Rust constructions for
+the six explicitly documented fixed-address unsafe Rust constructions for
 Secure aliases/missing RNG_NSCR. Other own protocol/policy/crypto crates
 forbid unsafe. The shared SAES is exclusively borrowed per transaction;
 SCP session state cannot create a second hardware owner. No production

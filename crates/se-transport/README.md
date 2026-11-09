@@ -24,10 +24,10 @@ Primary protocol reference: NXP nano-package
 Apache2. C source was read as a reference; none is compiled or linked.
 Unit/integration negative tests are model evidence, not an actual chip trace.
 
-Target limitation: Embassy-stm320.6.0 reports NACKs as `Unknown`, so the
-generic board adapter deliberately treats them as terminal. It cannot yet
-provide the address-only busy polling needed by a real SE in every state.
-A qualified target driver must establish that no data/frame bytes were
-accepted before permitting a retry; do not change all Unknown NACKs into
-retryable address NACKs. This is a functional integration gate, not evidence
-that the SE link currently works on hardware.
+The R04 target now uses a fixed Secure-alias I2C1 register implementation,
+not Embassy0.6.0's ambiguous-NACK transfer API. Address busy is returned only
+with zero data-register progress, empty FIFO state and confirmed STOP/idle;
+all other errors latch. The generic embedded-hal adapter still rejects
+Unknown NACKs. See [source review and chip tests](../../docs/SE_I2C_REVIEW.md).
+This removes the missing driver implementation; physical SE timing and fault
+qualification still require a real board and are not declared passed.

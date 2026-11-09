@@ -8,6 +8,7 @@ pub mod fingerprint;
 pub mod flash;
 pub mod lcd;
 pub mod pins;
+pub mod se_i2c;
 pub mod se_io;
 pub mod storage;
 

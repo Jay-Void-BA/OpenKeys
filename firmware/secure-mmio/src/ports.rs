@@ -19,6 +19,7 @@ struct Aliases {
     rcc: pac::rcc::Rcc,
     gtzc: pac::gtzc::Gtzc1Tzsc,
     nscr: pac::common::Reg<u32, pac::common::RW>,
+    i2c1: pac::i2c::I2c,
 }
 #[allow(unsafe_code)]
 fn aliases() -> Aliases {
@@ -35,7 +36,103 @@ fn aliases() -> Aliases {
             rcc: pac::rcc::Rcc::from_ptr(0x5402_0c00 as *mut ()),
             gtzc: pac::gtzc::Gtzc1Tzsc::from_ptr(0x5003_2400 as *mut ()),
             nscr: pac::common::Reg::from_ptr(0x520c_080c as *mut u32),
+            i2c1: pac::i2c::I2c::from_ptr(0x5000_5400 as *mut ()),
         }
+    }
+}
+
+/// Holds the unique HAL owner to preserve pin/peripheral lifetime. Runtime
+/// transactions use the bounded, progress-aware Secure-alias implementation;
+/// the HAL's ambiguous-NACK read/write methods are never called.
+pub struct I2c1Registers<'d> {
+    _owned: embassy_stm32::i2c::I2c<
+        'd,
+        embassy_stm32::mode::Blocking,
+        embassy_stm32::i2c::mode::Master,
+    >,
+    registers: pac::i2c::I2c,
+    rcc: pac::rcc::Rcc,
+    gtzc: pac::gtzc::Gtzc1Tzsc,
+    clock_source: u8,
+}
+impl I2c1Registers<'_> {
+    fn attributed(&self) -> bool {
+        self.gtzc.seccfgr1().read().i2c1sec()
+            && self.gtzc.privcfgr1().read().i2c1priv()
+            && self.rcc.apb1lenr().read().i2c1en()
+            && self.rcc.ccipr4().read().i2c1sel().to_bits() == self.clock_source
+    }
+}
+pub type SecureSeI2c<'d, C> = openkeys_board::se_i2c::Master<I2c1Registers<'d>, C>;
+
+/// Privileged Secure bootstrap, serialized with all clock/pin attribution.
+/// The root must already own PB6/PB7 and establish their SAU/GPIO attributes.
+/// No clock reset, bus-unwedge pulses, DMA, interrupt, address or key API.
+pub fn initialize_se_i2c<'d, C: openkeys_se_transport::transport::Clock>(
+    bus: embassy_stm32::i2c::I2c<
+        'd,
+        embassy_stm32::mode::Blocking,
+        embassy_stm32::i2c::mode::Master,
+    >,
+    clock: C,
+) -> Result<SecureSeI2c<'d, C>, openkeys_board::se_i2c::Error> {
+    let a = aliases();
+    let registers = I2c1Registers {
+        _owned: bus,
+        registers: a.i2c1,
+        rcc: a.rcc,
+        gtzc: a.gtzc,
+        clock_source: a.rcc.ccipr4().read().i2c1sel().to_bits(),
+    };
+    if !registers.attributed() {
+        return Err(openkeys_board::se_i2c::Error::Hardware);
+    }
+    // HAL master configuration must not enable any target address.
+    if registers.registers.oar1().read().0 & (1 << 15) != 0
+        || registers.registers.oar2().read().0 & (1 << 15) != 0
+    {
+        return Err(openkeys_board::se_i2c::Error::Hardware);
+    }
+    openkeys_board::se_i2c::Master::new(registers, clock)
+}
+impl openkeys_board::se_i2c::Registers for I2c1Registers<'_> {
+    fn read(
+        &mut self,
+        reg: openkeys_board::se_i2c::Register,
+    ) -> Result<u32, openkeys_board::se_i2c::Error> {
+        use openkeys_board::se_i2c::{Error, Register as R};
+        if !self.attributed() {
+            return Err(Error::Hardware);
+        }
+        let p = self.registers;
+        Ok(match reg {
+            R::Cr1 => p.cr1().read().0,
+            R::Cr2 => p.cr2().read().0,
+            R::Isr => p.isr().read().0,
+            R::Timing => p.timingr().read().0,
+            R::Rxdr => p.rxdr().read().0,
+            _ => return Err(Error::Hardware),
+        })
+    }
+    fn write(
+        &mut self,
+        reg: openkeys_board::se_i2c::Register,
+        value: u32,
+    ) -> Result<(), openkeys_board::se_i2c::Error> {
+        use openkeys_board::se_i2c::{Error, PE, Register as R};
+        // A terminal PE-disable is attempted even after attribution changed.
+        if !(reg == R::Cr1 && value & PE == 0) && !self.attributed() {
+            return Err(Error::Hardware);
+        }
+        let p = self.registers;
+        match reg {
+            R::Cr1 => p.cr1().write_value(pac::i2c::regs::Cr1(value)),
+            R::Cr2 => p.cr2().write_value(pac::i2c::regs::Cr2(value)),
+            R::Icr => p.icr().write_value(pac::i2c::regs::Icr(value)),
+            R::Txdr => p.txdr().write_value(pac::i2c::regs::Txdr(value)),
+            _ => return Err(Error::Hardware),
+        }
+        Ok(())
     }
 }
 

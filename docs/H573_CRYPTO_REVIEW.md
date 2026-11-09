@@ -26,7 +26,7 @@
 
 ## 内存与代码边界
 
-[Secure MMIO](../firmware/secure-mmio/README.md)是本版显式的unsafe Rust例外：一个函数中五个固定地址PAC构造，地址不来自主机，不构造RAM引用，不做指针切片或FFI。其他自研协议/策略/密码状态机继续`forbid(unsafe_code)`，运行构建CC/CXX拒绝C/C++。R03“所有自研运行代码无unsafe”的表述只适用于当时源码。
+[Secure MMIO](../firmware/secure-mmio/README.md)是本版显式的unsafe Rust例外：一个函数中六个固定地址PAC构造（含新增Secure I2C1），地址不来自主机，不构造RAM引用，不做指针切片或FFI。其他自研协议/策略/密码状态机继续`forbid(unsafe_code)`，运行构建CC/CXX拒绝C/C++。R03“所有自研运行代码无unsafe”的表述只适用于当时源码。
 
 SAES被单个所有者持有，vault与SCP适配器按操作互斥借用；会话密钥和响应缓冲单独零化，不通过日志/Debug或主机原始密码API导出。芯片ROM、外部库、MCU特权保护域及传感器分类器仍属于可信边界。
 

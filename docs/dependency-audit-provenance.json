@@ -9,7 +9,7 @@
   "database_commit": "7a40350e1b8ba5b656d909f88222a8059a83d88d",
   "database_commit_time": "2026-11-08T16:03:42-07:00",
   "database_worktree_clean": true,
-  "audit_report_sha256": "b06c553c04a6cc3b98257d9ca8180121772bbd48610a230804efba3e452dabaa",
-  "cargo_lock_sha256": "8dd178f7a48676f59a019282056ccf510503e51cee09bb0dd38dedb12fa4953f",
+  "audit_report_sha256": "e142314b1a183c27c0f907958c552c4a2eff6a9e7f8b522b2929e8a7549b800b",
+  "cargo_lock_sha256": "0a06b368c2ce9c616fa77ac42f28d26f2e3755f7286c930af68db031d10309c2",
   "scope": "Current full lockfile, including test/target dependencies. No advisory ignore list. Unknown vulnerabilities are outside this result."
 }

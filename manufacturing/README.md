@@ -7,6 +7,7 @@
 - [实际预检报告](readiness-report.json)
 - [指纹独立解锁协议设计及实现边界](../docs/BIOMETRIC_PROTOCOL.md)
 - [硬件电路/结构文件](../hardware/r04/README.md)
+- [你、工厂和实验室分别需要做的硬件验收](HARDWARE_ACCEPTANCE.md)
 
 运行 `python3 scripts/check-production-ready.py` 重新生成报告；当前应返回退出码2。报告检查真实文件、器件状态、ERC及声明的交付摘要，缺少完整设备固件、布线/制造文件或实物证据时拒绝给出放行状态。完整文件集也只代表可提交人工评审，不是自动获得生产批准。
 

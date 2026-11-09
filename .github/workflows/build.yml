@@ -1,9 +1,9 @@
 name: AuthDesk development checks
 on:
   push:
-    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'hardware/r04/**', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', '.github/workflows/build.yml']
   pull_request:
-    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'hardware/r04/**', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', '.github/workflows/build.yml']
   workflow_dispatch:
     inputs:
       target:
@@ -50,7 +50,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           rustup target add thumbv8m.main-none-eabihf --toolchain 1.99.1
-          cargo check -p device-policy -p device-vault -p openkeys-board -p openkeys-se-transport -p openkeys-scp03 -p openkeys-h573-crypto -p openkeys-se-state --target thumbv8m.main-none-eabihf --locked
+          cargo check -p device-policy -p device-vault -p openkeys-board -p openkeys-se-transport -p openkeys-scp03 -p openkeys-h573-crypto -p openkeys-se-state -p openkeys-authenticator-core --target thumbv8m.main-none-eabihf --locked
           cargo build -p openkeys-h573 --release --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked
           cargo clippy -p openkeys-h573 --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked -- -D warnings
       - name: Tests
@@ -58,6 +58,9 @@ jobs:
       - name: Verify public SE schema
         if: runner.os == 'Linux'
         run: python3 scripts/export-se-state-layout.py --check
+      - name: Verify pinned OpenSK source and patches
+        if: runner.os == 'Linux'
+        run: python3 scripts/check-opensk-vendor.py
       - name: Lint
         run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - name: Format
