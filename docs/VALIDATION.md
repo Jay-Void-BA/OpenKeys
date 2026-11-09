@@ -70,3 +70,5 @@ ngspice47被动线圈和复位RC模拟通过已列数值断言且无模拟警告
 355个锁定依赖的严格审计通过，0已知漏洞/0维护警告；当前审计数据库提交及原始JSON单列于[审计来源](dependency-audit-provenance.json)。`--no-fetch`模式的原始审计JSON不提供commit字段，所以另取已核对干净工作树的实际Git提交记录，未把旧数据库提交冒充最新结果。硬件89文件SHA再次核对通过。生产预检仍BLOCKED，有13项未完成条件。
 
 已修复SAES IV寄存器顺序、故障标志误清和末次输出后/擦除前故障被覆盖的问题，增加H573专用RNG与明确Secure MMIO边界。具体范围和实片未执行项见[专项核查](H573_CRYPTO_REVIEW.md)；[R04机器记录](r04-build-report.json)将远端新源码CI与上述本地结果分开记录。
+
+SE/密码远端[运行42575127427](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42575127427)，输入提交1ca41e3：三个原生目标及审计全部成功，81项测试通过；Linux同时编译/检查实际ARM适配。完整日志481514字节，warning行0、warning注释0；macOS有1条平台排队容量notice。完整日志SHA256及各范围见R04机器记录。

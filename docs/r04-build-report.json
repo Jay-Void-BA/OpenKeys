@@ -22,11 +22,25 @@
     }
   },
   "remote_ci": {
-    "current_source_status": "PENDING_UPLOAD_AND_RUN",
+    "current_source_status": "PASS",
     "previous_snapshot_source": "7cf8cf8ca67e0c299510257796f2ccd778611b1a",
     "previous_snapshot_build_run": 42565375583,
     "previous_snapshot_build_warning_lines": 0,
-    "unchanged_hardware_run": 42565375425
+    "unchanged_hardware_run": 42565375425,
+    "source_commit": "1ca41e37598bbd06f3cd32bf8a1f94ce6fb9064f",
+    "build_run": 42575127427,
+    "native_targets": [
+      "ubuntu-24.04",
+      "macos-15",
+      "windows-2022"
+    ],
+    "strict_dependency_audit": "PASS",
+    "full_log_bytes": 481514,
+    "full_log_sha256": "e2fcc7f2bff6b3c2f79684a9f45eccd2b3543afab6ca3de7cd49a7820ee80346",
+    "warning_lines": 0,
+    "warning_annotations": 0,
+    "notice_annotations": 1,
+    "notice_scope": "GitHub macOS arm64 queue-capacity notice; not a compiler/Actions warning"
   },
   "not_implemented_or_not_qualified": [
     "complete_ctap_and_protected_dispatcher",
