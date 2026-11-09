@@ -1,9 +1,9 @@
 name: AuthDesk development checks
 on:
   push:
-    paths: ['Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'hardware/r04/**', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'hardware/r04/**', '.github/workflows/build.yml']
   pull_request:
-    paths: ['Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'hardware/r04/**', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'hardware/r04/**', '.github/workflows/build.yml']
   workflow_dispatch:
     inputs:
       target:

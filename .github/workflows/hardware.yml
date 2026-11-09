@@ -2,9 +2,9 @@ name: R04 electrical CAD checks
 on:
   workflow_dispatch:
   push:
-    paths: ['hardware/r04/**', '.github/workflows/hardware.yml']
+    paths: ['.gitattributes', 'hardware/r04/**', '.github/workflows/hardware.yml']
   pull_request:
-    paths: ['hardware/r04/**', '.github/workflows/hardware.yml']
+    paths: ['.gitattributes', 'hardware/r04/**', '.github/workflows/hardware.yml']
 permissions:
   contents: read
 jobs:
