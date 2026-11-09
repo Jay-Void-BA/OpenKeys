@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "board_revision": "0.4",
+  "purpose": "LOCKED_DEVELOPMENT_MANAGERS_ONLY",
+  "hardware_backend_completed": false,
+  "real_device_unlock_or_write_supported": false,
+  "developer_signed_or_notarized_release": false,
+  "source_commit": "3bf60ce861eb38ce3174de26fa93e165ff7ae063",
+  "workflow_run": 42606524747,
+  "artifacts": [
+    {
+      "platform": "linux",
+      "target": "x86_64-unknown-linux-gnu",
+      "artifact_id": 13668456626,
+      "download_page": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42606524747/artifacts/13668456626",
+      "archive_bytes": 3054450,
+      "archive_sha256": "220861830639d4bad0d3e98657688bf2197dc96911cf6e6009b52f18372c69f3",
+      "github_digest_matches": true,
+      "archive_expires_at": "2027-02-07T11:08:04Z",
+      "executable_path": "target/release/authdesk",
+      "executable_bytes": 7464912,
+      "executable_sha256": "704939a136da01c8d6f1c7bf99fd1d69680c69300f85a3232de422c264a31945",
+      "architecture_and_build_info_verified": true,
+      "binary_executed": false,
+      "native_build_info": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1"
+    },
+    {
+      "platform": "macos",
+      "target": "aarch64-apple-darwin",
+      "artifact_id": 13668128488,
+      "download_page": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42606524747/artifacts/13668128488",
+      "archive_bytes": 2389197,
+      "archive_sha256": "f43d7bd443cf5a203c3691682a3e70ccce8401edb2a3e505a61b50e5ba0a89b4",
+      "github_digest_matches": true,
+      "archive_expires_at": "2027-02-07T11:08:04Z",
+      "executable_path": "target/release/authdesk",
+      "executable_bytes": 5370992,
+      "executable_sha256": "ebb5f616247cda5651e8f41235c28d76edb3bf205eb06396760ca9a99b582a4d",
+      "architecture_and_build_info_verified": true,
+      "binary_executed": false,
+      "native_build_info": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1"
+    },
+    {
+      "platform": "windows",
+      "target": "x86_64-pc-windows-msvc",
+      "artifact_id": 13669100344,
+      "download_page": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42606524747/artifacts/13669100344",
+      "archive_bytes": 2472987,
+      "archive_sha256": "12a1d91ae96c868288f8d1ac1b49a7fb559238ca2b136e7884c45bfcbf77a626",
+      "github_digest_matches": true,
+      "archive_expires_at": "2027-02-07T11:08:04Z",
+      "executable_path": "target/release/authdesk.exe",
+      "executable_bytes": 5244928,
+      "executable_sha256": "dd081882c7b1730c868cba5f668113eecfcb6e35acc43ac8fb99a54fa64a2a1b",
+      "architecture_and_build_info_verified": true,
+      "binary_executed": false,
+      "native_build_info": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-pc-windows-msvc\nrelease: 1.99.1\nLLVM version: 23.1.1"
+    }
+  ],
+  "scope": "Downloaded ZIP bytes match GitHub digests; executable architecture matches rustc build metadata. No binary execution, real-device verification or platform UI qualification was performed."
+}

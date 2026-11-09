@@ -22,13 +22,13 @@
     }
   },
   "remote_ci": {
-    "current_source_status": "PENDING_UPLOAD_AND_RUN",
+    "current_source_status": "VALIDATED_SOURCE_INCOMPLETE_PRODUCT",
     "previous_snapshot_source": "7cf8cf8ca67e0c299510257796f2ccd778611b1a",
     "previous_snapshot_build_run": 42565375583,
     "previous_snapshot_build_warning_lines": 0,
     "unchanged_hardware_run": 42565375425,
-    "source_commit": null,
-    "build_run": null,
+    "source_commit": "3bf60ce861eb38ce3174de26fa93e165ff7ae063",
+    "build_run": 42606524747,
     "native_targets": [
       "ubuntu-24.04",
       "macos-15",
@@ -70,6 +70,26 @@
       "warning_annotations": 0,
       "notice_annotations": 1,
       "notice_scope": "GitHub macOS arm64 queue-capacity notice"
+    },
+    "unit_tests_per_native_target": 125,
+    "strict_dependency_audit": "PASS",
+    "full_log_bytes": 323538,
+    "full_log_sha256": "934e894581cf79041cc486ad589da52535a9ebad239e0394429c51d5d90f43cc",
+    "log_format": "Four complete top-level job logs from Actions ZIP, sorted by path and joined with one LF",
+    "warning_lines": 0,
+    "warning_annotations": 0,
+    "notice_annotations": 1,
+    "notice_scope": "GitHub macOS arm64 queue-capacity notice; not a compiler/Actions warning",
+    "native_manager_archives_verified": true,
+    "native_manager_artifact_record": "docs/native-builds-r04.json",
+    "previous_validated_125_test_version": {
+      "source_commit": "8bcdec3c9a9a1305a21ebb27f32d903e1e01f020",
+      "build_run": 42605076674,
+      "full_log_bytes": 323540,
+      "full_log_sha256": "5e1e1ec8c9aa22e7329800f383079caabb34eced65faca62778074a42a8d186c",
+      "warning_lines": 0,
+      "warning_annotations": 0,
+      "notice_annotations": 1
     }
   },
   "not_implemented_or_not_qualified": [
@@ -84,5 +104,10 @@
     "eight_failure_biometric_lockout_maintenance_and_availability_review",
     "actual_hal_address_sau_gtzc_gpio_rcc_dma_and_watchdog_security_qualification"
   ],
-  "own_unsafe_boundary": "firmware/secure-mmio: five fixed-address PAC constructors in one documented function. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++."
+  "own_unsafe_boundary": "firmware/secure-mmio: five fixed-address PAC constructors in one documented function. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++.",
+  "production_preflight": {
+    "status": "BLOCKED",
+    "incomplete_handoff_conditions": 13,
+    "report": "manufacturing/readiness-report.json"
+  }
 }
