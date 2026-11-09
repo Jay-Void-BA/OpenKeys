@@ -74,14 +74,18 @@ pub(crate) enum Counter {
     BioTag = 2,
     VaultNonce = 3,
     VaultCommit = 4,
+    FidoSignature = 5,
+    SigningSlot = 6,
 }
 impl Counter {
-    pub(crate) const ALL: [Self; 5] = [
+    pub(crate) const ALL: [Self; 7] = [
         Self::BioSpent,
         Self::BioCredit,
         Self::BioTag,
         Self::VaultNonce,
         Self::VaultCommit,
+        Self::FidoSignature,
+        Self::SigningSlot,
     ];
     pub(crate) const fn index(self) -> usize {
         self as usize
@@ -119,11 +123,12 @@ impl File {
 }
 pub(crate) fn marker() -> [u8; 32] {
     let mut hash = Sha256::new();
-    hash.update(b"OpenKeys/R04/SE-state/v1");
+    hash.update(b"OpenKeys/R04/SE-state/v2");
     hash.update(crate::BIO_MAX_FAILURES.to_be_bytes());
     hash.update(u16::MAX.to_be_bytes());
     hash.update(device_vault::MAX_SNAPSHOT_BYTES.to_be_bytes());
     hash.update((HEAD_BYTES as u32).to_be_bytes());
+    hash.update(crate::keys::KEY_SLOTS.to_be_bytes());
     for c in Counter::ALL {
         hash.update(c.id().to_be_bytes());
     }
@@ -135,14 +140,14 @@ pub(crate) fn marker() -> [u8; 32] {
 
 pub(crate) struct Objects<X: Exchange> {
     io: X,
-    last: [Option<u64>; 5],
+    last: [Option<u64>; 7],
     faulted: bool,
 }
 impl<X: Exchange> Objects<X> {
     pub(crate) fn open(io: X) -> Result<Self, Error> {
         let mut this = Self {
             io,
-            last: [None; 5],
+            last: [None; 7],
             faulted: false,
         };
         let result = (|| {

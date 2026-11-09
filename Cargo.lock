@@ -678,6 +678,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "device-records"
+version = "0.1.0"
+dependencies = [
+ "aes-gcm",
+ "device-vault",
+ "sha2 0.10.9",
+ "zeroize",
+]
+
+[[package]]
 name = "device-vault"
 version = "0.1.0"
 dependencies = [
@@ -2313,6 +2323,9 @@ version = "0.1.0"
 dependencies = [
  "aes-gcm",
  "device-policy",
+ "device-records",
+ "device-vault",
+ "openkeys-se-state",
  "opensk",
  "p256",
  "sha2 0.10.9",
@@ -3335,6 +3348,7 @@ checksum = "4a06f08a856b009bc7bbaf7d3e79808595d032dd19074c0c2ef26e49e03e6bdc"
 name = "vault-import"
 version = "0.1.0"
 dependencies = [
+ "device-records",
  "serde",
  "serde_json",
  "sha2 0.10.9",

@@ -62,8 +62,15 @@ reserved and never automatically overwritten/reused. Slot capacity is bounded.
 
 ## Integration still required
 
+Encrypted logical persistence is now supplied by `RecordPersist` over
+`device-records`; it checks commissioned profile/AAGUID, rejects torn reset,
+requires live scope checks, and uses a separate SE signature counter. It does
+not create missing keys/profiles or perform a partial factory reset. Root
+receives ownership of the opaque authorization while a private call executes.
+The gateway intercepts CTAP reset and requires a root-owned reset transaction.
+
 The production hardware `Env`, fallible hardware-key bridges for upstream
-crypto traits, encrypted logical persistence, slot lifecycle, actual SE roots
+crypto traits, complete slot lifecycle, actual SE roots
 and attestation provisioning, protected boot/runtime and USB/NFC transports
 are not supplied by `TestEnv`. Manager hardware unlock remains disabled.
 The diagnostic ELF is not an authenticator. Fingerprint management/reset also

@@ -105,7 +105,7 @@ impl Platform for Model {
             Ok(())
         }
     }
-    fn begin_authorized(&mut self, _: &Authorization) -> Result<(), Error> {
+    fn begin_authorized(&mut self, _: Authorization) -> Result<(), Error> {
         let mut stats = self.stats.borrow_mut();
         stats.begins += 1;
         assert!(!stats.active);
@@ -116,6 +116,9 @@ impl Platform for Model {
         let mut stats = self.stats.borrow_mut();
         stats.ends += 1;
         stats.active = false;
+    }
+    fn reset_fido_authorized(&mut self) -> Result<Vec<u8>, Error> {
+        Err(Error::Unsupported)
     }
 }
 struct Counter;
@@ -406,6 +409,46 @@ fn real_make_credential_and_assertion_have_forced_uv_and_a_verifiable_signature(
         .unwrap();
     assert_eq!(stats.borrow().begins, 2);
     assert!(!stats.borrow().active);
+}
+
+#[test]
+fn reset_dispatch_cannot_partially_delete_shared_fingerprints_via_upstream_fallback() {
+    let (env, stats) = Model::new();
+    let mut core = Processor::new(env);
+    assert_eq!(run(&mut core, &make_credential())[0], 0);
+    let reset = prepare_ctap2(&[7], BINDING, CHANNEL).unwrap();
+    let authorization = authority(reset.request().unwrap());
+    assert!(matches!(
+        core.authorized(reset, authorization, || 10),
+        Err(Error::Unsupported)
+    ));
+    assert!(!stats.borrow().active);
+    assert_eq!(run(&mut core, &get_assertion(0x51))[0], 0);
+}
+
+#[test]
+fn multi_account_limit_uses_the_trusted_platform_capacity_instead_of_a_smaller_magic_number() {
+    let (env, _) = Model::new();
+    let mut core = Processor::new(env);
+    for account in 0u8..101 {
+        let raw = make_credential();
+        let mut map = opensk::ctap::cbor_read(&raw[1..])
+            .unwrap()
+            .extract_map()
+            .unwrap();
+        let user = map
+            .iter_mut()
+            .find(|(k, _)| *k == Value::unsigned(3))
+            .unwrap();
+        user.1 = cbor_map! {"id"=>vec![account],"name"=>"fixture"};
+        assert_eq!(run(&mut core, &encode(1, Value::map(map)))[0], 0);
+    }
+    let response = run(&mut core, &get_assertion(0x51));
+    let map = response_map(&response);
+    assert_eq!(get(&map, 5).extract_unsigned(), Some(101));
+    let next = core.prepare(&[8], BINDING, CHANNEL, 11).unwrap();
+    let authorization = authority(next.request().unwrap());
+    assert_eq!(core.authorized(next, authorization, || 11).unwrap()[0], 0);
 }
 
 #[test]

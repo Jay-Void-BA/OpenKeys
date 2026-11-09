@@ -10,7 +10,7 @@ privileged firmware or a fake crypto provider installed by that firmware.
 
 ## Namespace and commissioning
 
-[Public layout](../../manufacturing/se-state-layout.json) fixes five persistent
+[Public layout](../../manufacturing/se-state-layout.json), schema2, fixes seven persistent
 8-byte counters and three BinaryFiles. Open validates exact ReadType,
 PERSISTENT=01, size and a policy/layout marker. Counter values use big-endian
 encoding. Malformed/duplicate/trailing TLV data and unprotected/missing-object
@@ -69,6 +69,22 @@ handle and cannot turn an outer success into a usable proof. The crypto
 service similarly owns one SAES/RNG and uses short per-operation borrows,
 so holding an SE session does not monopolize hardware needed by the vault/FP.
 These services are internal to the protected root, never raw host RPCs.
+
+## Signature counter and signing slots
+
+Schema2 adds separate8-byte `FidoSignature` and `SigningSlot` counters. The
+signature counter is externally bounded tou32 and advances1..8 confirmed
+single increments per request; an uncertain prefix is burned, not refunded.
+This avoids rewriting all notes on each signature and keeps the vault nonce
+independent. A signing slot is durably reserved before in-chip generation;
+failed registrations can consume slots but never cause overwrite/reuse.
+The256-ID bound is not a measured number of simultaneously available keys.
+
+Schema2 marker is `3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5`.
+Schema1 marker/missing new counters are rejected. No automatic migration,
+counter clearing or reinitialization is supplied. Existing commissioned
+devices, if any, require an explicitly reviewed migration; the diagnostics
+never commissions either profile.
 
 ## Evidence
 

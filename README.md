@@ -21,7 +21,9 @@
 
 PCB先冻结引脚和文件摘要，再写匹配固件。硬件已增加独立UV/OV、开盖复位、SE使能门控和LCD复位，**门控本身不能证明指纹通过**；必须配合真实认证传感器、可信启动、TrustZone/GTZC/DMA隔离和受保护执行路径。尚无实物侧信道、故障注入或整机认证通过报告。
 
-最新软件续更：已集成固定版本OpenSK认证核心、严格的设备授权网关、U2F与hmac-secret v1/v2；新增SE芯片内签名/HKDF候选适配及区分NACK进度的目标I2C。当前155项本地测试、严格Clippy和ARM编译通过；最新远端结果将在实际完成后记录，前版125项三平台CI不覆盖本次新增源码。详见[认证核心核查](docs/AUTHENTICATOR_CORE_REVIEW.md)、[持久状态实现](crates/se-state/README.md)、[密码专项复查](docs/H573_CRYPTO_REVIEW.md)和[CI/构建记录](docs/r04-build-report.json)。实片资格、完整认证运行时和管理通道仍未完成；当前8次失败锁定的恢复/可用性须在制造前评审。
+最新软件续更：固定版本OpenSK、严格授权网关、U2F/hmac-secret v1/v2、SE签名/HKDF及进度型I2C已有候选实现；现增加流式逻辑记录、设备notes/recovery校验、OpenSK加密持久适配、独立SE签名计数/槽预留及重置隔离。183项本地测试、严格Clippy和ARM编译通过；新提交远端CI将在运行后记录，前版155项三平台CI不覆盖新增源码。详见[认证核心核查](docs/AUTHENTICATOR_CORE_REVIEW.md)、[设备记录](crates/device-records/README.md)、[SE实现](crates/se-state/README.md)和[CI记录](docs/r04-build-report.json)。实片资格、完整认证运行时和管理通道仍未完成。
+
+**安全复核结论仍为未达到整机交付条件**：[对抗性复核](docs/ADVERSARIAL_REVIEW_R04.md)列明启动/隔离、快故障、触点桥接、侧信道、密钥/恢复生命周期等未关闭项；[大陆厂商与实验室](manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md)附实际核对的官方能力、数量限制和询价文本。不能把SE使能门或通过CI解释成已证明硬件强制指纹/抗所有物理攻击。
 
 充电：**Apple20W USB-C适配器的5V档，输入预算约0.50W；电池侧100mA目标、4.2V上限，约0.42W上限**，随电量与系统负载下降；不请求9V、不使用20W。选500mAh受保护电池包、独立贴芯真实NTC；需开启设备运行充电服务，不要求解锁秘密。电芯及保护包寿命、温升和实际充电时间待实测。
 

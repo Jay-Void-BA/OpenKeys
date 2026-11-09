@@ -27,7 +27,7 @@ struct Trace {
     data: Vec<u8>,
 }
 pub(crate) struct Silicon {
-    counters: [Option<u64>; 5],
+    counters: [Option<u64>; 7],
     files: [Option<Vec<u8>>; 3],
     calls: Vec<Trace>,
     cut: Option<(usize, Cut)>,
@@ -41,7 +41,7 @@ impl Default for Silicon {
     fn default() -> Self {
         let empty = record::encode(0, None).unwrap().to_vec();
         Self {
-            counters: [Some(0); 5],
+            counters: [Some(0); 7],
             files: [Some(empty.clone()), Some(empty), Some(marker().to_vec())],
             calls: Vec::new(),
             cut: None,
@@ -695,15 +695,88 @@ fn namespace_marker_binds_the_exact_policy_and_fixed_object_layout() {
     assert_eq!(
         marker(),
         [
-            0xad, 0xdf, 0x4c, 0xeb, 0x7a, 0x64, 0x6b, 0x47, 0x34, 0x6c, 0x5f, 0x94, 0x7b, 0x2a,
-            0x64, 0xf6, 0xa7, 0x23, 0x65, 0xff, 0x16, 0xc4, 0xf8, 0x57, 0xe5, 0xd0, 0xb7, 0x0d,
-            0x9d, 0xe3, 0x81, 0x12
+            0x3c, 0x4a, 0xb9, 0x1d, 0xae, 0x4b, 0x19, 0xc8, 0x04, 0xe5, 0xcd, 0xfc, 0x6c, 0x82,
+            0xa0, 0x83, 0xd4, 0x42, 0x02, 0x33, 0x27, 0x82, 0x2d, 0x9b, 0x6d, 0x70, 0xfa, 0x8f,
+            0x09, 0x15, 0x4f, 0xe5
         ]
     );
     assert_eq!(Counter::VaultNonce.id(), 0x4f4b0004);
     assert_eq!(Counter::VaultCommit.id(), 0x4f4b0005);
+    assert_eq!(Counter::FidoSignature.id(), 0x4f4b0006);
+    assert_eq!(Counter::SigningSlot.id(), 0x4f4b0007);
     assert_eq!(File::Head0.id(), 0x4f4b0100);
     assert_eq!(File::Head1.id(), 0x4f4b0101);
+}
+
+#[test]
+fn signature_counter_is_persistent_bounded_and_independent_of_vault_nonce_and_biometric_budget() {
+    let (io, shared) = model();
+    let mut s = State::open(io).unwrap();
+    assert_eq!(s.signature_counter().unwrap(), 0);
+    s.advance_signature_counter(8).unwrap();
+    drop(s);
+    let mut reboot = State::open(peer(&shared)).unwrap();
+    assert_eq!(reboot.signature_counter().unwrap(), 8);
+    assert_eq!(value(&shared, Counter::VaultNonce), 0);
+    assert_eq!(value(&shared, Counter::BioSpent), 0);
+    assert_eq!(reboot.advance_signature_counter(0), Err(Error::Counter));
+    assert_eq!(reboot.signature_counter(), Err(Error::Closed));
+    shared.borrow_mut().counters[Counter::FidoSignature.index()] = Some(u64::from(u32::MAX));
+    let mut reboot = State::open(peer(&shared)).unwrap();
+    assert_eq!(reboot.advance_signature_counter(1), Err(Error::Exhausted));
+    assert_eq!(value(&shared, Counter::FidoSignature), u64::from(u32::MAX));
+    shared.borrow_mut().counters[Counter::FidoSignature.index()] = Some(u64::from(u32::MAX) + 1);
+    assert!(State::open(peer(&shared)).is_err());
+}
+
+#[test]
+fn every_signature_increment_cut_burns_only_executed_steps_and_never_refunds_on_reboot() {
+    let (io, shared) = model();
+    let mut s = State::open(io).unwrap();
+    shared.borrow_mut().calls.clear();
+    s.advance_signature_counter(3).unwrap();
+    let calls = shared.borrow().calls.len();
+    for cut in 0..calls {
+        for timing in [Cut::Before, Cut::After, Cut::Half] {
+            let (io, shared) = model();
+            let mut s = State::open(io).unwrap();
+            shared.borrow_mut().calls.clear();
+            shared.borrow_mut().cut = Some((cut, timing));
+            assert!(s.advance_signature_counter(3).is_err());
+            let persisted = value(&shared, Counter::FidoSignature);
+            assert!(persisted <= 3);
+            shared.borrow_mut().cut = None;
+            let mut reboot = State::open(peer(&shared)).unwrap();
+            assert_eq!(reboot.signature_counter().unwrap(), persisted as u32);
+            reboot.advance_signature_counter(1).unwrap();
+            assert_eq!(value(&shared, Counter::FidoSignature), persisted + 1);
+        }
+    }
+}
+
+#[test]
+fn signing_slots_are_durably_reserved_never_reused_and_exhaust_without_overwrite() {
+    let (io, shared) = model();
+    let mut s = State::open(io).unwrap();
+    let auth = crate::keys::tests::auth(Operation::FidoRegister);
+    assert_eq!(s.reserve_signing_slot(&auth).unwrap(), 0);
+    drop(s);
+    let mut reboot = State::open(peer(&shared)).unwrap();
+    assert_eq!(reboot.reserve_signing_slot(&auth).unwrap(), 1);
+    let not_registration = crate::keys::tests::auth(Operation::FidoSign);
+    assert_eq!(
+        reboot.reserve_signing_slot(&not_registration),
+        Err(Error::Authorization)
+    );
+    for slot in 2..crate::keys::KEY_SLOTS {
+        assert_eq!(reboot.reserve_signing_slot(&auth).unwrap(), slot);
+    }
+    assert_eq!(reboot.reserve_signing_slot(&auth), Err(Error::Exhausted));
+    assert_eq!(
+        value(&shared, Counter::SigningSlot),
+        u64::from(crate::keys::KEY_SLOTS)
+    );
+    assert_eq!(value(&shared, Counter::VaultNonce), 0);
 }
 
 #[test]

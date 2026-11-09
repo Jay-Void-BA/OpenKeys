@@ -102,3 +102,11 @@ SE/密码远端[运行42575127427](https://github.com/Jay-Void-BA/OpenKeys/actio
 当前155项本地测试通过：新增SE I2C寄存器模型11项、OpenSK网关/注册/登录/U2F/hmac-secret v1/v2/连续请求11项、SE密钥APDU与独立验签8项。工作区fmt/Clippy `-D warnings`、实际ARM目标编译和诊断目标Clippy通过。新增测试里的软件密钥和模型仅在测试构建存在，未冒充实物SE或已部署认证器。
 
 399个锁定依赖的严格审计通过，0已知漏洞/0维护警告；OpenSK83个源文件及3处明确补丁的哈希核对通过，保留Apache许可和原始上游摘要。89个硬件文件摘要不变；诊断重新导出仍25296字节、无私密服务。新源码远端CI将在上传后记录，前述125项版本不覆盖这些新增源码。硬件Env、密钥桥接、实际协议/管理通道和生产启动仍待完成；硬件验收见manufacturing/HARDWARE_ACCEPTANCE.md。
+
+155项版本远端[42619548062](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42619548062)，输入31ec3e366e60e7c38d9be49465ed374458db9a49：三平台各155项测试及严格审计成功。四个顶层任务完整日志共365107字节，SHA256 ad09257915035f1b308487f8dd8963f662e3e9376859cbdf767730ada56fff4f；warning行0、warning注释0、macOS平台容量notice1。此结果不覆盖下面的新记录/持久适配源码。
+
+## 流式记录与OpenSK持久适配续更
+
+当前183项本地测试通过；工作区fmt/Clippy、Cortex-M33认证核心/目标适配和实际诊断目标Clippy均通过。增加完整1MiB流式编辑、范围后段故障/取消全输出清零、严格记录索引、notes/recovery借用解析、主机规范编码、OpenSK持久接口、明确profile初始化、专用签名counter与槽预留、通用重置隔离及101账户连续请求容量回归。共享的AES/介质fixture仅以测试源编译，不进入生产代码。
+
+SE schema2新增两个独立counter并拒绝schema1，marker=3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5；只导出公开布局，没有对设备编程或自动迁移。400个锁定依赖以实际更新的RustSec数据库d9cb059f3217db87aeccd190b81eaffe8cc29cb9严格审计，0已知漏洞/0维护警告。CAD89文件摘要不变；ARM诊断仍25296字节、无私密服务。新源码远端CI另记；完整Root、生产密钥/启动、管理通道和实片资格仍未完成。对抗性复核明确拒绝据此断言整机理论安全，制造/实验室候选只代表公开能力核对。

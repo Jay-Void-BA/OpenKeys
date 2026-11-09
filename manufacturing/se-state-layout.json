@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "status": "ENGINEERING_SCHEMA_NOT_PRODUCTION_APPROVAL",
   "programming_performed": false,
   "contains_private_keys_or_fuses": false,
@@ -8,6 +8,9 @@
   "pin_only_recovery": false,
   "maximum_identify_tag": 65535,
   "recovery_procedure_qualified": false,
+  "fido_signature_maximum": 4294967295,
+  "signing_slots_maximum": 256,
+  "automatic_migration_or_counter_reset": false,
   "counter_objects": [
     {
       "role": "biometric_spent",
@@ -38,6 +41,18 @@
       "id": "4F4B0005",
       "bytes": 8,
       "initial_value": "0000000000000000"
+    },
+    {
+      "role": "fido_signature",
+      "id": "4F4B0006",
+      "bytes": 8,
+      "initial_value": "0000000000000000"
+    },
+    {
+      "role": "signing_slot",
+      "id": "4F4B0007",
+      "bytes": 8,
+      "initial_value": "0000000000000000"
     }
   ],
   "file_objects": [
@@ -57,10 +72,10 @@
       "role": "namespace_marker",
       "id": "4F4B0102",
       "bytes": 32,
-      "initial_value": "ADDF4CEB7A646B47346C5F947B2A64F6A72365FF16C4F857E5D0B70D9DE38112"
+      "initial_value": "3C4AB91DAE4B19C804E5CDFC6C82A083D442023327822D9B6D70FA8F09154FE5"
     }
   ],
-  "marker_sha256": "addf4ceb7a646b47346c5f947b2a64f6a72365ff16c4f857e5d0b70d9de38112",
+  "marker_sha256": "3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5",
   "marker_purpose": "Binds policy/layout, not peer identity or proof of correct ACLs",
   "required_external_checks": [
     "Exact E2 applet/OEF and persistent counter power-loss semantics qualified",

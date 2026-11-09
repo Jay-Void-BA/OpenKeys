@@ -85,6 +85,41 @@ pub trait Source {
     fn read(&mut self, offset: u32, output: &mut [u8]) -> Result<(), Error>;
 }
 
+/// Bounded access to the currently committed plaintext. It is supplied only
+/// inside an authorized edit; reads use the same live checkpoint as the write.
+pub trait SnapshotReader {
+    fn length(&self) -> u32;
+    fn read_at(&mut self, offset: u32, output: &mut [u8]) -> Result<(), Error>;
+}
+
+/// A streaming replacement may copy parts of the old committed snapshot.
+/// Previous and destination banks share one owned flash/crypto backend, so no
+/// alias, cloned peripheral owner or full1MiB plaintext buffer is necessary.
+pub trait SnapshotSource {
+    fn length(&self) -> u32;
+    fn read(
+        &mut self,
+        previous: &mut dyn SnapshotReader,
+        offset: u32,
+        output: &mut [u8],
+    ) -> Result<(), Error>;
+}
+
+struct Replacement<'a, T>(&'a mut T);
+impl<T: Source> SnapshotSource for Replacement<'_, T> {
+    fn length(&self) -> u32 {
+        self.0.length()
+    }
+    fn read(
+        &mut self,
+        _: &mut dyn SnapshotReader,
+        offset: u32,
+        output: &mut [u8],
+    ) -> Result<(), Error> {
+        self.0.read(offset, output)
+    }
+}
+
 /// Protected runtime validation of the exact request/channel, live monotonic
 /// deadline, cancellation and latched hardware faults. Not a cached host flag.
 /// The final ledger commit must remain in this same protected execution path.
@@ -177,6 +212,18 @@ impl<S: CiphertextStorage, L: Ledger, C: Aead> Vault<S, L, C> {
         expected_plaintext: &[u8; 32],
         authorization: &mut impl Checkpoint,
     ) -> Result<(), Error> {
+        self.replace_from(&mut Replacement(source), expected_plaintext, authorization)
+    }
+
+    /// Streaming edit of the committed snapshot. The source can only read the
+    /// old head until the new head is committed. Any error closes this owner;
+    /// an uncertain commit requires a trusted remount, never an in-place retry.
+    pub fn replace_from(
+        &mut self,
+        source: &mut impl SnapshotSource,
+        expected_plaintext: &[u8; 32],
+        authorization: &mut impl Checkpoint,
+    ) -> Result<(), Error> {
         if self.faulted {
             return Err(Error::Faulted);
         }
@@ -189,7 +236,7 @@ impl<S: CiphertextStorage, L: Ledger, C: Aead> Vault<S, L, C> {
 
     fn replace_inner(
         &mut self,
-        source: &mut impl Source,
+        source: &mut impl SnapshotSource,
         expected: &[u8; 32],
         authorization: &mut impl Checkpoint,
     ) -> Result<(), Error> {
@@ -219,7 +266,14 @@ impl<S: CiphertextStorage, L: Ledger, C: Aead> Vault<S, L, C> {
             authorization.check()?;
             bytes.fill(0);
             let count = used(&head, index);
-            source.read(index * PAYLOAD_BYTES as u32, &mut bytes[..count])?;
+            source.read(
+                &mut ActiveReader {
+                    vault: self,
+                    authorization,
+                },
+                index * PAYLOAD_BYTES as u32,
+                &mut bytes[..count],
+            )?;
             authorization.check()?;
             plaintext.update(&bytes[..count]);
             let tag = self
@@ -271,6 +325,68 @@ impl<S: CiphertextStorage, L: Ledger, C: Aead> Vault<S, L, C> {
         result
     }
 
+    /// Metadata is private too: the caller needs a live checkpoint even to
+    /// obtain the current length. No head is an explicitly commissioned empty
+    /// state; corrupt/missing SE objects were already rejected at mount.
+    pub fn length(&mut self, authorization: &mut impl Checkpoint) -> Result<u32, Error> {
+        if self.faulted {
+            return Err(Error::Faulted);
+        }
+        authorization.check()?;
+        Ok(self.head.map_or(0, |h| h.length))
+    }
+
+    /// Stream only the requested range, at most one bounded plaintext sector
+    /// in scratch RAM. Entire caller output is wiped on every error, including
+    /// late cancellation or a damaged later sector after an earlier copy.
+    pub fn read_at(
+        &mut self,
+        offset: u32,
+        output: &mut [u8],
+        authorization: &mut impl Checkpoint,
+    ) -> Result<(), Error> {
+        output.fill(0);
+        if self.faulted {
+            return Err(Error::Faulted);
+        }
+        let result = self.read_range(offset, output, authorization);
+        if result.is_err() {
+            output.fill(0);
+            self.faulted = true;
+        }
+        result
+    }
+
+    fn read_range(
+        &mut self,
+        offset: u32,
+        output: &mut [u8],
+        authorization: &mut impl Checkpoint,
+    ) -> Result<(), Error> {
+        authorization.check()?;
+        let length = self.head.map_or(0, |h| h.length);
+        let count = u32::try_from(output.len()).map_err(|_| Error::Invalid)?;
+        let end = offset.checked_add(count).ok_or(Error::Invalid)?;
+        if end > length {
+            return Err(Error::Invalid);
+        }
+        let mut scratch = Zeroizing::new([0; PAYLOAD_BYTES]);
+        let mut position = offset;
+        let mut written = 0;
+        while position < end {
+            let index = position / PAYLOAD_BYTES as u32;
+            let inside = (position % PAYLOAD_BYTES as u32) as usize;
+            let useful = self.read_inner(index, &mut scratch, authorization)?;
+            let take = (useful - inside).min(output.len() - written);
+            output[written..written + take].copy_from_slice(&scratch[inside..inside + take]);
+            scratch.fill(0);
+            position += take as u32;
+            written += take;
+        }
+        authorization.check()?;
+        Ok(())
+    }
+
     fn read_inner(
         &mut self,
         index: u32,
@@ -303,5 +419,20 @@ impl<S: CiphertextStorage, L: Ledger, C: Aead> Vault<S, L, C> {
         }
         output[..count].copy_from_slice(&plaintext[..count]);
         Ok(count)
+    }
+}
+
+struct ActiveReader<'a, S, L, C, A> {
+    vault: &'a mut Vault<S, L, C>,
+    authorization: &'a mut A,
+}
+impl<S: CiphertextStorage, L: Ledger, C: Aead, A: Checkpoint> SnapshotReader
+    for ActiveReader<'_, S, L, C, A>
+{
+    fn length(&self) -> u32 {
+        self.vault.head.map_or(0, |h| h.length)
+    }
+    fn read_at(&mut self, offset: u32, output: &mut [u8]) -> Result<(), Error> {
+        self.vault.read_at(offset, output, self.authorization)
     }
 }

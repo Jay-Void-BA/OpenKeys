@@ -154,7 +154,7 @@ impl SecureVerifier for Bio {
         Ok(())
     }
 }
-fn auth(operation: Operation) -> Authorization {
+pub(crate) fn auth(operation: Operation) -> Authorization {
     let request = Request {
         operation,
         digest: [1; 32],

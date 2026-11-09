@@ -6,30 +6,32 @@
   "manufacturing_release_authorized": false,
   "local": {
     "rust_toolchain": "1.99.1",
-    "unit_and_integration_tests_passed": 155,
+    "unit_and_integration_tests_passed": 183,
     "workspace_fmt": true,
     "workspace_clippy_deny_warnings": true,
     "cortex_m33_checks": true,
     "diagnostic_build": true,
     "diagnostic_binary_bytes": 25296,
     "diagnostic_is_authenticator": false,
-    "cargo_lock_sha256": "0a06b368c2ce9c616fa77ac42f28d26f2e3755f7286c930af68db031d10309c2",
+    "cargo_lock_sha256": "10669c69e7b6939633b92df3b191ec808d7d58e8a08ffb35dd94d9d8c110dc7d",
     "strict_dependency_audit": {
-      "packages": 399,
+      "packages": 400,
       "known_vulnerabilities": 0,
       "warnings": 0,
-      "database_commit": "7a40350e1b8ba5b656d909f88222a8059a83d88d"
+      "database_commit": "d9cb059f3217db87aeccd190b81eaffe8cc29cb9"
     },
-    "opensk_source_and_patch_hash_check": true
+    "opensk_source_and_patch_hash_check": true,
+    "se_schema": 2,
+    "se_marker_sha256": "3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5"
   },
   "remote_ci": {
-    "current_source_status": "PENDING_NEW_155_TEST_SOURCE_RUN; retained run fields identify previous tested source only",
+    "current_source_status": "PENDING_NEW_183_TEST_SOURCE_RUN; other run fields identify previous validated source",
     "previous_snapshot_source": "7cf8cf8ca67e0c299510257796f2ccd778611b1a",
     "previous_snapshot_build_run": 42565375583,
     "previous_snapshot_build_warning_lines": 0,
     "unchanged_hardware_run": 42565375425,
-    "source_commit": "3bf60ce861eb38ce3174de26fa93e165ff7ae063",
-    "build_run": 42606524747,
+    "source_commit": "31ec3e366e60e7c38d9be49465ed374458db9a49",
+    "build_run": 42619548062,
     "native_targets": [
       "ubuntu-24.04",
       "macos-15",
@@ -74,8 +76,8 @@
     },
     "unit_tests_per_native_target": 125,
     "strict_dependency_audit": "PASS",
-    "full_log_bytes": 323538,
-    "full_log_sha256": "934e894581cf79041cc486ad589da52535a9ebad239e0394429c51d5d90f43cc",
+    "full_log_bytes": 365107,
+    "full_log_sha256": "ad09257915035f1b308487f8dd8963f662e3e9376859cbdf767730ada56fff4f",
     "log_format": "Four complete top-level job logs from Actions ZIP, sorted by path and joined with one LF",
     "warning_lines": 0,
     "warning_annotations": 0,
@@ -84,14 +86,10 @@
     "native_manager_archives_verified": true,
     "native_manager_artifact_record": "docs/native-builds-r04.json",
     "previous_validated_125_test_version": {
-      "source_commit": "8bcdec3c9a9a1305a21ebb27f32d903e1e01f020",
-      "build_run": 42605076674,
-      "full_log_bytes": 323540,
-      "full_log_sha256": "5e1e1ec8c9aa22e7329800f383079caabb34eced65faca62778074a42a8d186c",
-      "warning_lines": 0,
-      "warning_annotations": 0,
-      "notice_annotations": 1
-    }
+      "source_commit": "3bf60ce861eb38ce3174de26fa93e165ff7ae063",
+      "build_run": 42606524747
+    },
+    "unit_and_integration_tests_each_native": 155
   },
   "not_implemented_or_not_qualified": [
     "production_hardware_env_key_bridges_persistence_and_protected_ctap_dispatcher",
@@ -103,7 +101,9 @@
     "physical_emc_sidechannel_fault_and_assembly_qualification",
     "native_import_dialog_focus_suspend_and_compositor_manual_qualification",
     "eight_failure_biometric_lockout_maintenance_and_availability_review",
-    "actual_hal_address_sau_gtzc_gpio_rcc_dma_and_watchdog_security_qualification"
+    "actual_hal_address_sau_gtzc_gpio_rcc_dma_and_watchdog_security_qualification",
+    "bounded_long_operation_authorization_and_bulk_staging",
+    "crash_safe_fido_and_global_reset_key_lifecycle"
   ],
   "own_unsafe_boundary": "firmware/secure-mmio: six fixed-address PAC constructors in one documented function, including Secure I2C1. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++.",
   "production_preflight": {

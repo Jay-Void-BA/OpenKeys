@@ -6,10 +6,10 @@
     "warnings",
     "--no-fetch"
   ],
-  "database_commit": "7a40350e1b8ba5b656d909f88222a8059a83d88d",
-  "database_commit_time": "2026-11-08T16:03:42-07:00",
-  "database_worktree_clean": true,
-  "audit_report_sha256": "e142314b1a183c27c0f907958c552c4a2eff6a9e7f8b522b2929e8a7549b800b",
-  "cargo_lock_sha256": "0a06b368c2ce9c616fa77ac42f28d26f2e3755f7286c930af68db031d10309c2",
+  "database_commit": "d9cb059f3217db87aeccd190b81eaffe8cc29cb9",
+  "database_commit_time": "2026-11-09T17:13:08+01:00",
+  "database_worktree_clean": false,
+  "audit_report_sha256": "eaf10134f4336fd0e087afec247e6d9f80efa52abc2395819a034566b8256538",
+  "cargo_lock_sha256": "10669c69e7b6939633b92df3b191ec808d7d58e8a08ffb35dd94d9d8c110dc7d",
   "scope": "Current full lockfile, including test/target dependencies. No advisory ignore list. Unknown vulnerabilities are outside this result."
 }

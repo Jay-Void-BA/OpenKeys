@@ -6,6 +6,7 @@ extern crate alloc;
 pub use opensk;
 
 mod limits;
+pub mod persist;
 mod processor;
 mod request;
 pub use processor::{Platform, Processor};

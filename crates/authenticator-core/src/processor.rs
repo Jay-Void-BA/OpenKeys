@@ -3,7 +3,7 @@ use crate::{Error, Prepared, Review, prepare_ctap2};
 use alloc::vec::Vec;
 use device_policy::Authorization;
 use device_policy::Operation;
-use opensk::{ctap::CtapState, env::Env};
+use opensk::{api::customization::Customization, ctap::CtapState, env::Env};
 use zeroize::{Zeroize, Zeroizing};
 
 /// Implement only inside the verified root. Counter, key, persistence and
@@ -11,8 +11,12 @@ use zeroize::{Zeroize, Zeroizing};
 /// or public simulation backend is supplied. End must revoke ALL scope state.
 pub trait Platform: Env {
     fn check_boot_and_channel(&mut self, binding: &[u8; 32]) -> Result<(), Error>;
-    fn begin_authorized(&mut self, authorization: &Authorization) -> Result<(), Error>;
+    fn begin_authorized(&mut self, authorization: Authorization) -> Result<(), Error>;
     fn end_authorized(&mut self);
+    /// Root-owned crash-safe FIDO reset. Do not invoke OpenSK's generic reset:
+    /// it can delete shared sensor templates before the vault/SE transaction.
+    /// Device-level notes/fingerprint lifecycle is separate from CTAP reset.
+    fn reset_fido_authorized(&mut self) -> Result<Vec<u8>, Error>;
 }
 pub struct Processor<E: Platform> {
     env: E,
@@ -75,7 +79,7 @@ impl<E: Platform> Processor<E> {
         self.env.end_authorized();
         self.continuation = None;
         self.env.check_boot_and_channel(&request.binding)?;
-        let mut response = Zeroizing::new(self.dispatch(&request));
+        let mut response = Zeroizing::new(self.dispatch(&request)?);
         self.env.check_boot_and_channel(&request.binding)?;
         if response.len() > 7609 {
             return Err(Error::Limit);
@@ -126,13 +130,15 @@ impl<E: Platform> Processor<E> {
             return Err(Error::Time);
         }
         self.env.check_boot_and_channel(&expected.channel)?;
-        if let Err(error) = self.env.begin_authorized(&authorization) {
+        let issued = authorization.issued_ms();
+        let expires = authorization.expires_ms();
+        if let Err(error) = self.env.begin_authorized(authorization) {
             self.env.end_authorized();
             return Err(error);
         }
         let before = clock();
         if before < start
-            || before >= authorization.expires_ms()
+            || before >= expires
             || continuation_expires.is_some_and(|until| before >= until)
         {
             self.env.end_authorized();
@@ -140,22 +146,25 @@ impl<E: Platform> Processor<E> {
             return Err(Error::Time);
         }
         let previous = self.continuation.take();
-        let mut response = Zeroizing::new(self.dispatch(&request));
+        let mut dispatched = self.dispatch(&request);
         let checked = self.env.check_boot_and_channel(&expected.channel);
         let after = clock();
         self.env.end_authorized();
         if checked.is_err()
             || after < before
-            || after >= authorization.expires_ms()
+            || after >= expires
             || continuation_expires.is_some_and(|until| after >= until)
         {
-            response.zeroize();
+            if let Ok(response) = &mut dispatched {
+                response.zeroize();
+            }
             return Err(if checked.is_err() {
                 Error::State
             } else {
                 Error::Time
             });
         }
+        let mut response = Zeroizing::new(dispatched?);
         if response.len() > 7609 {
             response.zeroize();
             return Err(Error::Limit);
@@ -170,7 +179,9 @@ impl<E: Platform> Processor<E> {
                 .find(|(k, _)| *k == sk_cbor::Value::unsigned(5))
                 .and_then(|(_, v)| v.clone().extract_unsigned())
                 .unwrap_or(1);
-            if remaining > 100 {
+            if remaining > self.env.customization().max_supported_resident_keys() as u64
+                || remaining > device_records::MAX_RECORDS as u64
+            {
                 response.zeroize();
                 return Err(Error::Limit);
             }
@@ -184,8 +195,8 @@ impl<E: Platform> Processor<E> {
                     seed: expected.digest,
                     sequence: 1,
                     remaining: remaining - 1,
-                    issued: authorization.issued_ms(),
-                    expires: authorization.expires_ms(),
+                    issued,
+                    expires,
                     operation: expected.operation,
                 });
             }
@@ -201,8 +212,11 @@ impl<E: Platform> Processor<E> {
         }
         Ok(response)
     }
-    fn dispatch(&mut self, request: &Prepared) -> Vec<u8> {
-        match request.dialect {
+    fn dispatch(&mut self, request: &Prepared) -> Result<Vec<u8>, Error> {
+        if request.dialect == Dialect::Ctap2 && request.bytes[0] == 7 {
+            return self.env.reset_fido_authorized();
+        }
+        Ok(match request.dialect {
             Dialect::Ctap2 => {
                 self.state
                     .process_command(&mut self.env, &request.bytes, request.channel)
@@ -210,7 +224,7 @@ impl<E: Platform> Processor<E> {
             Dialect::U2f => self
                 .state
                 .process_legacy_protected(&mut self.env, &request.bytes),
-        }
+        })
     }
 }
 

@@ -41,6 +41,19 @@ pub enum Entry {
     RecoveryCodes(RecoveryCodes),
 }
 impl Entry {
+    /// Canonical bounded record consumed by the device's independent parser.
+    /// This is plaintext: call only inside the authorized import workflow.
+    pub fn canonical_record(&self) -> Result<Zeroizing<Vec<u8>>, ImportError> {
+        use device_records::item;
+        match self {
+            Self::Note(x) => item::note(x.title.expose(), x.body.expose()),
+            Self::RecoveryCodes(x) => {
+                let codes: Vec<_> = x.codes.iter().map(SecretText::expose).collect();
+                item::recovery(x.title.expose(), &codes)
+            }
+        }
+        .map_err(|_| ImportError::InvalidMetadata)
+    }
     pub fn title(&self) -> &str {
         match self {
             Self::Note(x) => x.title.expose(),
@@ -185,6 +198,20 @@ mod tests {
         let entries = parse_import(br#"{"version":2,"entries":[{"type":"note","title":"account","body":"private note"},{"type":"recovery_codes","title":"backup","codes":["a-1","b-2"]}]}"#).unwrap();
         assert!(matches!(entries[0], Entry::Note(_)));
         assert!(matches!(entries[1], Entry::RecoveryCodes(_)));
+        use device_records::{
+            Namespace,
+            item::{Content, View},
+        };
+        let note = entries[0].canonical_record().unwrap();
+        let view = View::parse(Namespace::Note, &note).unwrap();
+        assert_eq!(view.title, "account");
+        assert!(matches!(view.content, Content::Note("private note")));
+        let codes = entries[1].canonical_record().unwrap();
+        let view = View::parse(Namespace::Recovery, &codes).unwrap();
+        let Content::Recovery(codes) = view.content else {
+            panic!()
+        };
+        assert_eq!(codes.iter().collect::<Vec<_>>(), vec!["a-1", "b-2"]);
     }
     #[test]
     fn removed_otp_legacy_versions_and_unknown_fields_are_rejected() {

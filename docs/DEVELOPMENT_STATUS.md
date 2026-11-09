@@ -15,6 +15,7 @@
 | FIDO协议核心 | 固定版本OpenSK与资源/授权网关，注册、登录、U2F、hmac-secret v1/v2及多账户连续请求测试通过；实际硬件Env/USB/NFC尚未接通 |
 | SE密钥操作 | 芯片内P-256生成/签名与根密钥HKDF候选APDU，独立验签及异常关闭测试；非导出/策略/容量实片资格未执行 |
 | SE目标I2C | 按真实寄存器进度区分地址忙与数据NACK，有界状态机及ARM适配通过；实际逻辑分析仪/故障测试待执行 |
+| 逻辑存储与设备记录格式 | 单owner流式编辑、FIDO/notes/recovery隔离、设备端严格值解析及OpenSK持久适配已实现；真实Root/批量staging/长事务/密钥生命周期尚未完成 |
 
 当前必须继续：按R04引脚实现目标板运行时和实际驱动；认证SE/FPC配对与持久状态；完整CTAP/vault/认证管理通道；可信启动/调试/防回滚配置；三系统与手机的真实设备互通；对样板进行上电、结构/RF/电源、EMC、侧信道和故障注入资格。缺少实物不阻止完成独立可做的源码、图纸、检查与制造资料。
 
@@ -29,3 +30,5 @@
 [FPC通信核查](FPC_RUNTIME_REVIEW.md)新增阻塞HAL看门狗约束，以及PAC非安全别名/SAU事务属性核查。单纯勾选HAL功能或通过引脚类型检查均不证明安全归属。
 
 [认证核心核查](AUTHENTICATOR_CORE_REVIEW.md)记录实际实现与尚未接通的硬件边界；[硬件验收入口](../manufacturing/HARDWARE_ACCEPTANCE.md)列明你、工厂和实验室分别需要完成的工作。
+
+[对抗性复核](ADVERSARIAL_REVIEW_R04.md)明确当前不能确认整机“理论上不易攻破”；[大陆制造与实验室候选](../manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md)附官方来源、数量/范围边界和可复制的询价内容。

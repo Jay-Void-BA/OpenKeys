@@ -269,4 +269,4 @@ impl<X: Exchange> Drop for Keys<X> {
 }
 
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;

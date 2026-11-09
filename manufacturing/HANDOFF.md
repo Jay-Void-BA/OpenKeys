@@ -36,4 +36,4 @@
 
 当前完整未决清单见[SECURITY_REVIEW_R04](../docs/SECURITY_REVIEW_R04.md)与[readiness-report](readiness-report.json)。没有目标样板、手机连接和物理测试仪器，不能验收真实指纹强制授权或抗物理攻击性能。
 
-输入保护续更：已补独立eFuse及DC误差计算；NFC候选EP已有复旦图纸依据，当前仅余天线封装ERC警告。过压动态/热/TVS协调以及全部系统安全资格仍未通过，不能仅按数据表值验收。
+R04输入保护续更：已补独立eFuse及DC误差计算；实际电气PCB与天线封装完成后ERC/DRC为0违规，不再沿用早期天线警告。过压动态/热/TVS协调以及全部系统安全资格仍未通过，不能仅按数据表值验收。2026-11-09核对的[制造与实验室候选](MAINLAND_SUPPLIERS_AND_LABS.md)包括SMT、客供/后焊及物理攻击/EMC分项能力，尚无本项目正式报价或接单承诺。

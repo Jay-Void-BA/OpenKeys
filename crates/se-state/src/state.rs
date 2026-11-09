@@ -49,17 +49,64 @@ impl<X: Exchange> State<X> {
             let spent = state.objects.read_counter(Counter::BioSpent)?;
             let credit = state.objects.read_counter(Counter::BioCredit)?;
             let tag = state.objects.read_counter(Counter::BioTag)?;
+            let signature = state.objects.read_counter(Counter::FidoSignature)?;
+            let slots = state.objects.read_counter(Counter::SigningSlot)?;
             if credit > spent
                 || spent - credit > BIO_MAX_FAILURES
                 || tag > u64::from(u16::MAX)
                 || tag > spent
                 || (credit > 0 && tag == 0)
+                || signature > u64::from(u32::MAX)
+                || slots > u64::from(crate::keys::KEY_SLOTS)
             {
                 return Err(Error::Counter);
             }
             Ok(())
         })?;
         Ok(this)
+    }
+    /// Protected-root metadata, not a public unauthenticated CTAP endpoint.
+    /// ScpSession's live guard must be bound to the consumed FIDO authority.
+    pub fn signature_counter(&mut self) -> Result<u32, Error> {
+        self.run(|s| s.signature_inner())
+    }
+    fn signature_inner(&mut self) -> Result<u32, Error> {
+        u32::try_from(self.objects.read_counter(Counter::FidoSignature)?)
+            .map_err(|_| Error::Exhausted)
+    }
+    pub fn advance_signature_counter(&mut self, increment: u32) -> Result<(), Error> {
+        self.run(|s| s.advance_signature_inner(increment))
+    }
+    fn advance_signature_inner(&mut self, increment: u32) -> Result<(), Error> {
+        if !(1..=8).contains(&increment) {
+            return Err(Error::Counter);
+        }
+        let old = self.signature_inner()?;
+        old.checked_add(increment).ok_or(Error::Exhausted)?;
+        for n in 0..increment {
+            self.objects
+                .increment(Counter::FidoSignature, u64::from(old + n))?;
+        }
+        Ok(())
+    }
+    /// Called before in-chip generation. Interrupted/failed registration burns
+    /// its slot permanently; no overwrite, fallback allocation or refund.
+    pub fn reserve_signing_slot(
+        &mut self,
+        authorization: &device_policy::Authorization,
+    ) -> Result<u16, Error> {
+        if authorization.request().operation != device_policy::Operation::FidoRegister {
+            return Err(Error::Authorization);
+        }
+        self.run(|s| s.reserve_slot_inner())
+    }
+    fn reserve_slot_inner(&mut self) -> Result<u16, Error> {
+        let old = self.objects.read_counter(Counter::SigningSlot)?;
+        if old >= u64::from(crate::keys::KEY_SLOTS) {
+            return Err(Error::Exhausted);
+        }
+        self.objects.increment(Counter::SigningSlot, old)?;
+        Ok(old as u16)
     }
     fn run<T>(
         &mut self,
@@ -235,6 +282,21 @@ impl<X: Exchange> Clone for StateRef<'_, X> {
     }
 }
 impl<'a, X: Exchange> StateRef<'a, X> {
+    pub fn signature_counter(&mut self) -> Result<u32, Error> {
+        self.with(|s| s.signature_inner())
+    }
+    pub fn advance_signature_counter(&mut self, increment: u32) -> Result<(), Error> {
+        self.with(|s| s.advance_signature_inner(increment))
+    }
+    pub fn reserve_signing_slot(
+        &mut self,
+        authorization: &device_policy::Authorization,
+    ) -> Result<u16, Error> {
+        if authorization.request().operation != device_policy::Operation::FidoRegister {
+            return Err(Error::Authorization);
+        }
+        self.with(|s| s.reserve_slot_inner())
+    }
     fn with<T>(&self, f: impl FnOnce(&mut State<X>) -> Result<T, Error>) -> Result<T, Error> {
         if self.service.poisoned.get() {
             return Err(Error::Closed);

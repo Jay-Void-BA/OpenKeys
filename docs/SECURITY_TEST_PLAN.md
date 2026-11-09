@@ -100,3 +100,9 @@ SE 的芯片认证只覆盖其具体型号、版本和认证范围。MCU、配�
 新增C09：用仅含公开测试key的Secure候选镜像和逻辑分析仪，在三块板逐台记录FPC SPI3时序。核对Mode0/MSB/1MHz、CS低后>500µs首沿、整帧连续CS、IRQ空闲不发时钟；模拟半次传输、洪泛和deadline跨越。冻结SPI进度标志时，独立watchdog必须在规定上限重置，LCD/SE门控必须进入安全状态；reset引脚断开不能误报已复位。记录镜像/芯片revision、原始波形与复位上限。当前NOT_RUN。
 
 新增C10：逐个核对HAL实际访问地址与SAU/IDAU/GTZC/GPIO/RCC/中断/DMA属性；测试NS/非特权读写、DMA请求、alias覆盖和中断路由。不得将整个0x40000000–0x4fffffff暴露给NS后仍假定FP/LCD/SE访问受保护，也不得仅凭HAL trustzone-secure功能名称记PASS。实际安全事务、非法访问fault和秘密不输出均须留证；当前NOT_RUN。
+
+新增C11：按[SE I2C核查](SE_I2C_REVIEW.md)捕获地址阶段忙、每字节之后的数据NACK、错误STOP和分块边界。只有确认尚无数据收发的地址忙可重试；部分或不确定传输不能自动重发SE操作。真实引脚/波形结果NOT_RUN。
+
+新增C12：对照schema2核对独立FidoSignature/SigningSlot对象和新marker；测试签名counter到u32上限、增量中各次APDU前后断电、预留槽后生成前断电及耗尽。不得回绕、退款、复用槽或把旧schema自动清零升级；签名计数不应触发整个notes区重写。实际SE容量、策略和非导出行为另测。
+
+新增C13：在生产候选Root存在后，用合成1MiB数据测试流式编辑、越界/后扇区坏标签、跨namespace、空FIDO标记、错误notes/recovery记录及每个提交阶段断电。失败后整个调用输出和缓存索引关闭；只能保留完整旧版/新版。另测FIDO重置不会先删共用指纹再半途失败，notes与全局擦除的范围必须与设备确认文字一致。当前只有软件模型证据，整机仍NOT_RUN。

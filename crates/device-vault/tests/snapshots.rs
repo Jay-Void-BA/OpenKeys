@@ -1,6 +1,7 @@
 use aes_gcm::{Aes256Gcm, KeyInit, aead::AeadInPlace};
 use device_vault::{
-    Aead, CiphertextStorage, Error, Head, Ledger, PAYLOAD_BYTES, SECTOR_BYTES, Source, Vault,
+    Aead, CiphertextStorage, Error, Head, Ledger, PAYLOAD_BYTES, SECTOR_BYTES, SnapshotReader,
+    SnapshotSource, Source, Vault,
 };
 use sha2::{Digest, Sha256};
 use std::{
@@ -288,5 +289,206 @@ fn cancellation_at_every_write_checkpoint_preserves_the_old_commit() {
             Err(Error::Authorization)
         );
         assert_eq!(state.borrow().active, old);
+    }
+}
+
+struct Splice {
+    old_len: u32,
+    start: u32,
+    removed: u32,
+    insert: Vec<u8>,
+    calls: usize,
+}
+impl SnapshotSource for Splice {
+    fn length(&self) -> u32 {
+        self.old_len - self.removed + self.insert.len() as u32
+    }
+    fn read(
+        &mut self,
+        previous: &mut dyn SnapshotReader,
+        offset: u32,
+        out: &mut [u8],
+    ) -> Result<(), Error> {
+        assert!(out.len() <= PAYLOAD_BYTES);
+        assert_eq!(previous.length(), self.old_len);
+        self.calls += 1;
+        let mut pos = offset;
+        let mut written = 0;
+        let insert_end = self.start + self.insert.len() as u32;
+        while written < out.len() {
+            if pos < self.start {
+                let count = (self.start - pos).min((out.len() - written) as u32) as usize;
+                previous.read_at(pos, &mut out[written..written + count])?;
+                written += count;
+                pos += count as u32;
+            } else if pos < insert_end {
+                let count = (insert_end - pos).min((out.len() - written) as u32) as usize;
+                let from = (pos - self.start) as usize;
+                out[written..written + count].copy_from_slice(&self.insert[from..from + count]);
+                written += count;
+                pos += count as u32;
+            } else {
+                previous.read_at(
+                    pos - insert_end + self.start + self.removed,
+                    &mut out[written..],
+                )?;
+                break;
+            }
+        }
+        Ok(())
+    }
+}
+fn splice(old: &[u8], start: usize, removed: usize, insert: &[u8]) -> (Splice, Vec<u8>) {
+    let mut result = old[..start].to_vec();
+    result.extend(insert);
+    result.extend(&old[start + removed..]);
+    (
+        Splice {
+            old_len: old.len() as u32,
+            start: start as u32,
+            removed: removed as u32,
+            insert: insert.into(),
+            calls: 0,
+        },
+        result,
+    )
+}
+
+#[test]
+fn streaming_edits_copy_old_sectors_with_one_owned_backend_at_all_boundaries() {
+    let old: Vec<_> = (0..PAYLOAD_BYTES * 3 + 7)
+        .map(|i| (i % 251) as u8)
+        .collect();
+    for (start, removed, insert) in [
+        (0, 0, vec![3; 12]),
+        (PAYLOAD_BYTES - 1, 2, vec![9; PAYLOAD_BYTES + 3]),
+        (PAYLOAD_BYTES, 17, vec![]),
+        (old.len(), 0, vec![7; 10]),
+        (0, old.len(), vec![]),
+    ] {
+        let state = Shared::default();
+        let mut vault = mount(&state).unwrap();
+        replace(&mut vault, &old).unwrap();
+        let (mut edit, expected) = splice(&old, start, removed, &insert);
+        vault
+            .replace_from(&mut edit, &Sha256::digest(&expected).into(), &mut Approved)
+            .unwrap();
+        assert_eq!(edit.calls, expected.len().div_ceil(PAYLOAD_BYTES));
+        assert_eq!(vault.length(&mut Approved).unwrap(), expected.len() as u32);
+        let mut got = vec![0; expected.len()];
+        vault.read_at(0, &mut got, &mut Approved).unwrap();
+        assert_eq!(got, expected);
+        let mut recovered = mount(&state).unwrap();
+        assert_eq!(all(&mut recovered, expected.len()), expected);
+    }
+}
+
+#[test]
+fn full_one_mib_streamed_update_never_requests_a_large_plaintext_scratch_buffer() {
+    let old = vec![0x35; device_vault::MAX_SNAPSHOT_BYTES as usize];
+    let state = Shared::default();
+    let mut vault = mount(&state).unwrap();
+    replace(&mut vault, &old).unwrap();
+    let (mut edit, expected) = splice(&old, PAYLOAD_BYTES - 3, 100, &[0x77; 100]);
+    vault
+        .replace_from(&mut edit, &Sha256::digest(&expected).into(), &mut Approved)
+        .unwrap();
+    assert_eq!(edit.calls, old.len().div_ceil(PAYLOAD_BYTES));
+    let mut output = vec![0; 300];
+    vault
+        .read_at((PAYLOAD_BYTES - 100) as u32, &mut output, &mut Approved)
+        .unwrap();
+    assert_eq!(output, expected[PAYLOAD_BYTES - 100..PAYLOAD_BYTES + 200]);
+}
+
+#[test]
+fn every_streamed_edit_io_cut_keeps_only_the_old_or_complete_new_commit() {
+    let old = vec![0x12; PAYLOAD_BYTES + 17];
+    // First measure all read/write/flush/ledger calls, including reads of old
+    // plaintext while constructing the inactive bank. Then cut each one.
+    let probe = Shared::default();
+    let mut vault = mount(&probe).unwrap();
+    replace(&mut vault, &old).unwrap();
+    let (mut edit, expected) = splice(&old, PAYLOAD_BYTES - 2, 7, b"changed");
+    probe.borrow_mut().operations = 0;
+    vault
+        .replace_from(&mut edit, &Sha256::digest(&expected).into(), &mut Approved)
+        .unwrap();
+    let operations = probe.borrow().operations;
+    for cut in 0..operations {
+        for ambiguous_commit in [false, true] {
+            let state = Shared::default();
+            let mut vault = mount(&state).unwrap();
+            replace(&mut vault, &old).unwrap();
+            {
+                let mut s = state.borrow_mut();
+                s.operations = 0;
+                s.cut = Some(cut);
+                s.commit_then_error = ambiguous_commit;
+            }
+            let (mut edit, _) = splice(&old, PAYLOAD_BYTES - 2, 7, b"changed");
+            assert!(
+                vault
+                    .replace_from(&mut edit, &Sha256::digest(&expected).into(), &mut Approved)
+                    .is_err()
+            );
+            let mut out = [0xa5; 16];
+            assert_eq!(
+                vault.read_at(0, &mut out, &mut Approved),
+                Err(Error::Faulted)
+            );
+            assert_eq!(out, [0; 16]);
+            state.borrow_mut().cut = None;
+            let mut reboot = mount(&state).unwrap();
+            let got = all(&mut reboot, old.len());
+            assert!(got == old || got == expected, "cut {cut}");
+            // An epoch was burned even when the first reserve reply was lost.
+            assert_eq!(state.borrow().counter, 2);
+        }
+    }
+}
+
+#[test]
+fn range_bounds_and_empty_state_are_checked_without_releasing_partial_output() {
+    for (offset, count) in [(0, 1), (1, 0), (u32::MAX, 8)] {
+        let state = Shared::default();
+        let mut vault = mount(&state).unwrap();
+        let mut out = vec![0xa5; count];
+        assert_eq!(
+            vault.read_at(offset, &mut out, &mut Approved),
+            Err(Error::Invalid)
+        );
+        assert!(out.iter().all(|b| *b == 0));
+    }
+    let state = Shared::default();
+    let mut vault = mount(&state).unwrap();
+    assert_eq!(vault.length(&mut Approved).unwrap(), 0);
+    vault.read_at(0, &mut [], &mut Approved).unwrap();
+}
+
+#[test]
+fn later_range_tag_failure_and_cancellation_wipe_all_earlier_copied_plaintext() {
+    let state = Shared::default();
+    let mut vault = mount(&state).unwrap();
+    let old = vec![0x76; PAYLOAD_BYTES + 10];
+    replace(&mut vault, &old).unwrap();
+    let bank = state.borrow().active.unwrap().bank;
+    state.borrow_mut().sectors.get_mut(&(bank, 1)).unwrap()[10] ^= 1;
+    let mut out = vec![0xa5; old.len()];
+    assert_eq!(
+        vault.read_at(0, &mut out, &mut Approved),
+        Err(Error::Crypto)
+    );
+    assert!(out.iter().all(|b| *b == 0));
+    for checks in 0..8 {
+        let state = Shared::default();
+        let mut vault = mount(&state).unwrap();
+        replace(&mut vault, &old).unwrap();
+        let mut out = vec![0xa5; old.len()];
+        assert_eq!(
+            vault.read_at(0, &mut out, &mut Budget(checks)),
+            Err(Error::Authorization)
+        );
+        assert!(out.iter().all(|b| *b == 0));
     }
 }
