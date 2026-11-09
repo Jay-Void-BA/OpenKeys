@@ -30,7 +30,7 @@ struct Model {
     fail_key_ready: bool,
 }
 #[derive(Clone, Default)]
-struct Port(Rc<RefCell<Model>>);
+pub(crate) struct Port(Rc<RefCell<Model>>);
 
 impl Model {
     fn keys(&self) -> Vec<u8> {
@@ -246,7 +246,7 @@ impl Registers for Port {
     }
 }
 
-fn engine() -> (MaskedAes<Port>, Port) {
+pub(crate) fn engine() -> (MaskedAes<Port>, Port) {
     let port = Port::default();
     let engine = MaskedAes::new(port.clone()).unwrap();
     (engine, port)

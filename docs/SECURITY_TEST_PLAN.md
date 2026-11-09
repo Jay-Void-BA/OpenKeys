@@ -91,3 +91,7 @@ SE 的芯片认证只覆盖其具体型号、版本和认证范围。MCU、配�
 | C06 | 复查芯片擦除、CMAC子密钥/XOR及临时RAM、SCP会话材料和指纹方向消息的实际功耗/EM泄漏。 | 与第4节相同，保留轨迹、样本数、攻击与外推范围。硬件AES带mask和模型KAT通过不能替代此测试。 |
 
 独立模型复现可运行`cargo test -p openkeys-h573-crypto -p openkeys-scp03 -p openkeys-se-transport --locked`；它只用于源码回归，不将C01–C06改为PASS。
+
+新增C07：对照[SE状态布局](../manufacturing/se-state-layout.json)，逐对象核对type、8字节counter宽度、PERSISTENT=01、head长度和marker；验证实际ACL及SCP强制，不能只核对公开marker。在每条nonce/重试预扣、head写入/回读、commit/credit更新指令前后切断SE及主控电源，核对旧/新状态和不退款。破坏被commit锚点选中的head后必须拒绝，不能自动回到另一个槽。八次失败/取消后，关机和PIN都不能恢复尝试；65535标签不可回绕。测试数据及损坏样本分开，全部实片结果当前NOT_RUN。
+
+新增C08：在SCP、vault和指纹密码适配间切换并注入RNG/SAES故障和服务重入，验证所有共享适配器拒绝，旧实例/新轻量适配器均不能清除poison。对FPC安全帧同时验证GCM错误、有效GCM但错误请求/tag/模板、credit应答丢失，保证无授权证明、LCD秘密或有效签名输出。另测传感器重置/故障下的随机IV重复；接收侧tag防重放不能证明传感器RNG故障下仍安全。

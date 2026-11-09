@@ -2,17 +2,17 @@
 //! Requires verified boot/attribution, independent per-device vault key and
 //! durable SE epoch ledger. No default/UID-derived key or diagnostic unlock.
 use device_vault::{Aead, Error, PAYLOAD_BYTES};
-use openkeys_h573_crypto::{Direction, MaskedAes, Registers};
+use openkeys_h573_crypto::{Direction, Registers, Service, entropy::Source};
 use subtle::ConstantTimeEq;
 use zeroize::{Zeroize, Zeroizing};
 
-pub struct HardwareVaultAead<'a, P: Registers> {
-    engine: &'a mut MaskedAes<P>,
+pub struct HardwareVaultAead<'a, P: Registers, S: Source> {
+    engine: &'a Service<P, S>,
     key: Zeroizing<[u8; 32]>,
     faulted: bool,
 }
-impl<'a, P: Registers> HardwareVaultAead<'a, P> {
-    pub fn new(engine: &'a mut MaskedAes<P>, key: Zeroizing<[u8; 32]>) -> Self {
+impl<'a, P: Registers, S: Source> HardwareVaultAead<'a, P, S> {
+    pub fn new(engine: &'a Service<P, S>, key: Zeroizing<[u8; 32]>) -> Self {
         Self {
             engine,
             key,
@@ -40,7 +40,7 @@ impl<'a, P: Registers> HardwareVaultAead<'a, P> {
             })
     }
 }
-impl<P: Registers> Aead for HardwareVaultAead<'_, P> {
+impl<P: Registers, S: Source> Aead for HardwareVaultAead<'_, P, S> {
     fn seal(
         &mut self,
         nonce: &[u8; 12],
@@ -65,6 +65,7 @@ impl<P: Registers> Aead for HardwareVaultAead<'_, P> {
         }
         bytes.fill(0);
         self.faulted = true;
+        self.engine.revoke();
         self.key.zeroize();
         Err(Error::Crypto)
     }

@@ -2086,6 +2086,7 @@ dependencies = [
  "openkeys-board",
  "openkeys-h573-crypto",
  "openkeys-scp03",
+ "openkeys-se-state",
  "openkeys-se-transport",
  "openkeys-secure-mmio",
  "subtle",
@@ -2109,6 +2110,19 @@ dependencies = [
  "aes",
  "cmac",
  "openkeys-se-transport",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
+name = "openkeys-se-state"
+version = "0.1.0"
+dependencies = [
+ "aes-gcm",
+ "device-policy",
+ "device-vault",
+ "openkeys-scp03",
+ "sha2",
  "subtle",
  "zeroize",
 ]

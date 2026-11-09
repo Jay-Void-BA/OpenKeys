@@ -8,6 +8,8 @@
 use zeroize::Zeroizing;
 
 pub mod entropy;
+mod shared;
+pub use shared::Service;
 
 const EN: u32 = 1;
 const KEYPROT: u32 = 1 << 19;

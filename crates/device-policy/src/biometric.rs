@@ -50,11 +50,28 @@ pub trait ProtectedAttempts {
     /// cross-object transaction or rollback is assumed). An ambiguous
     /// power/transport outcome must return Err and must not issue a sensor request.
     /// Exhaustion, reset and PIN entry must NEVER wrap/reset the tag counter.
-    fn reserve_identify_attempt(&mut self) -> Result<u32, Error>;
+    fn reserve_identify_attempt(&mut self, request: &Request) -> Result<u32, Error>;
 
     /// Persist successful verification / retry credit AFTER authenticated match.
     /// Must not reset the lifetime operation-tag counter. Error denies release.
-    fn record_match(&mut self, tag: u16) -> Result<(), Error>;
+    fn record_match(&mut self, proof: &AuthenticatedMatch) -> Result<(), Error>;
+}
+
+/// Minted only by the protected frame verifier after GCM, result, template,
+/// tag, request and live-deadline checks. This is not a user grant yet: the
+/// persistent retry update and outer device confirmation must still succeed.
+/// No public constructor, Clone/Copy, Debug or host Boolean conversion exists.
+pub struct AuthenticatedMatch {
+    request: Request,
+    tag: u16,
+}
+impl AuthenticatedMatch {
+    pub fn request(&self) -> &Request {
+        &self.request
+    }
+    pub fn tag(&self) -> u16 {
+        self.tag
+    }
 }
 
 /// Verify GCM before making plaintext usable. The exact 8-byte frame header is
@@ -132,7 +149,7 @@ impl<C: ProtectedAttempts, A: ProtectedGcm> Session<C, A> {
         self.pending = None;
         self.time(now)?;
         let expires = now.checked_add(DEADLINE_MS).ok_or(Error::Expired)?;
-        let reserved = match self.counter.reserve_identify_attempt() {
+        let reserved = match self.counter.reserve_identify_attempt(&request) {
             Ok(tag) => tag,
             Err(error) => {
                 self.recovery_required = true;
@@ -240,7 +257,11 @@ impl<C: ProtectedAttempts, A: ProtectedGcm> Session<C, A> {
         if word(&body[..], 4) != MATCH {
             return Err(Error::NoMatch);
         }
-        self.counter.record_match(pending.tag).map_err(|_| {
+        let proof = AuthenticatedMatch {
+            request: pending.request,
+            tag: pending.tag,
+        };
+        self.counter.record_match(&proof).map_err(|_| {
             self.recovery_required = true;
             Error::Storage
         })?;
@@ -279,7 +300,7 @@ mod tests {
         fail_commit: bool,
     }
     impl ProtectedAttempts for Counter {
-        fn reserve_identify_attempt(&mut self) -> Result<u32, Error> {
+        fn reserve_identify_attempt(&mut self, _: &Request) -> Result<u32, Error> {
             self.value.set(self.value.get() + 1);
             if self.uncertain {
                 Err(Error::Storage)
@@ -287,7 +308,7 @@ mod tests {
                 Ok(self.value.get())
             }
         }
-        fn record_match(&mut self, _: u16) -> Result<(), Error> {
+        fn record_match(&mut self, _: &AuthenticatedMatch) -> Result<(), Error> {
             if self.fail_commit {
                 Err(Error::Storage)
             } else {

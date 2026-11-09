@@ -41,10 +41,11 @@ def main():
     assert 0 < len(code) <= 2 * 1024 * 1024
     assert 0x20000000 < stack <= 0x20040000 and reset & 1
     assert 0x08000000 <= reset < 0x08000000 + len(code)
-    files = [ROOT / 'Cargo.toml', ROOT / 'Cargo.lock', Path(__file__).resolve()]
+    files = [ROOT / 'Cargo.toml', ROOT / 'Cargo.lock', Path(__file__).resolve(),
+             ROOT / 'scripts/export-se-state-layout.py', ROOT / 'manufacturing/se-state-layout.json']
     for folder in ('firmware/board', 'firmware/target', 'firmware/secure-mmio', 'firmware/vendor/cortex-m',
                    'crates/device-policy', 'crates/device-vault', 'crates/se-transport',
-                   'crates/scp03', 'crates/h573-crypto'):
+                   'crates/scp03', 'crates/h573-crypto', 'crates/se-state'):
         files.extend(p for p in (ROOT / folder).rglob('*') if p.is_file())
     report = {
         'schema': 1, 'purpose': 'R04_ELECTRICAL_DIAGNOSTIC_ONLY',

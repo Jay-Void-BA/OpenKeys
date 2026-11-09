@@ -37,3 +37,11 @@ Masked SAES does not make the whole program side-channel resistant. CMAC
 subkey/XOR operations, protected RAM/stack copies, comparison code, buses,
 sensor classification and the complete root service need independent physical
 evaluation. No software AES is linked by this crate's production build.
+
+The shared `Service` owns SAES/RNG once. SCP03, vault and fingerprint
+adapters borrow it per crypto call; no long-lived SE session holds an
+exclusive hardware borrow. RNG/cipher failures or reentry poison all purposes
+and erase failed output, including an outer operation which otherwise finished
+successfully. Creating a new reference/adapter cannot clear poison. The root
+still must revoke grants, blank LCD and handle physical fault/lifecycle state;
+this component and its tests are not the complete protected root.

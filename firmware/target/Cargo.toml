@@ -29,6 +29,7 @@ openkeys-se-transport = { path = "../../crates/se-transport" }
 openkeys-scp03 = { path = "../../crates/scp03" }
 openkeys-h573-crypto = { path = "../../crates/h573-crypto" }
 openkeys-secure-mmio = { path = "../secure-mmio" }
+openkeys-se-state = { path = "../../crates/se-state" }
 zeroize = { version = "1.9", default-features = false }
 subtle = { version = "=2.6.1", default-features = false }
 

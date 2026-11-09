@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "status": "ENGINEERING_SCHEMA_NOT_PRODUCTION_APPROVAL",
+  "programming_performed": false,
+  "contains_private_keys_or_fuses": false,
+  "persistent_type": 1,
+  "biometric_consecutive_failure_limit": 8,
+  "pin_only_recovery": false,
+  "maximum_identify_tag": 65535,
+  "recovery_procedure_qualified": false,
+  "counter_objects": [
+    {
+      "role": "biometric_spent",
+      "id": "4F4B0001",
+      "bytes": 8,
+      "initial_value": "0000000000000000"
+    },
+    {
+      "role": "biometric_credit",
+      "id": "4F4B0002",
+      "bytes": 8,
+      "initial_value": "0000000000000000"
+    },
+    {
+      "role": "biometric_tag",
+      "id": "4F4B0003",
+      "bytes": 8,
+      "initial_value": "0000000000000000"
+    },
+    {
+      "role": "vault_nonce",
+      "id": "4F4B0004",
+      "bytes": 8,
+      "initial_value": "0000000000000000"
+    },
+    {
+      "role": "vault_commit",
+      "id": "4F4B0005",
+      "bytes": 8,
+      "initial_value": "0000000000000000"
+    }
+  ],
+  "file_objects": [
+    {
+      "role": "vault_head0",
+      "id": "4F4B0100",
+      "bytes": 104,
+      "initial_value": "4F70656E4B65797348656164563100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DA915F0E88800386419E482EA2F1CA31C31C8660527E01EE47E80E6DAFAE63E9"
+    },
+    {
+      "role": "vault_head1",
+      "id": "4F4B0101",
+      "bytes": 104,
+      "initial_value": "4F70656E4B65797348656164563100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DA915F0E88800386419E482EA2F1CA31C31C8660527E01EE47E80E6DAFAE63E9"
+    },
+    {
+      "role": "namespace_marker",
+      "id": "4F4B0102",
+      "bytes": 32,
+      "initial_value": "ADDF4CEB7A646B47346C5F947B2A64F6A72365FF16C4F857E5D0B70D9DE38112"
+    }
+  ],
+  "marker_sha256": "addf4ceb7a646b47346c5f947b2a64f6a72365ff16c4f857e5d0b70d9de38112",
+  "marker_purpose": "Binds policy/layout, not peer identity or proof of correct ACLs",
+  "required_external_checks": [
+    "Exact E2 applet/OEF and persistent counter power-loss semantics qualified",
+    "Unique per-device SCP ENC/MAC/DEK, authenticated root provisioning and mandatory full SCP",
+    "Actual object policies verified; no unauthorized delete, reset, export or recreate",
+    "Refuse commissioning if any namespace object already exists; no runtime creation",
+    "Write marker LAST, after successful readback and controlled commissioning",
+    "Secure boot/update/debug/tamper and memory/DMA attribution deployed"
+  ]
+}

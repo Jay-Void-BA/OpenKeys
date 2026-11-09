@@ -6,51 +6,56 @@
   "manufacturing_release_authorized": false,
   "local": {
     "rust_toolchain": "1.99.1",
-    "unit_and_integration_tests_passed": 81,
+    "unit_and_integration_tests_passed": 100,
     "workspace_fmt": true,
     "workspace_clippy_deny_warnings": true,
     "cortex_m33_checks": true,
     "diagnostic_build": true,
     "diagnostic_binary_bytes": 25296,
     "diagnostic_is_authenticator": false,
-    "cargo_lock_sha256": "51dd708eaf804bdc72d8ad9dbca292bc4d32b3c1fb04a22963daa38d3fa328c0",
+    "cargo_lock_sha256": "205e819285354161ed514ade0cbb4f305d2fdab76bba4d5ead6de849297c0184",
     "strict_dependency_audit": {
-      "packages": 355,
+      "packages": 356,
       "known_vulnerabilities": 0,
       "warnings": 0,
       "database_commit": "7a40350e1b8ba5b656d909f88222a8059a83d88d"
     }
   },
   "remote_ci": {
-    "current_source_status": "PASS",
+    "current_source_status": "PENDING_UPLOAD_AND_RUN",
     "previous_snapshot_source": "7cf8cf8ca67e0c299510257796f2ccd778611b1a",
     "previous_snapshot_build_run": 42565375583,
     "previous_snapshot_build_warning_lines": 0,
     "unchanged_hardware_run": 42565375425,
-    "source_commit": "1dc1370f99921f9831452c16f7c99ec75b32b557",
-    "build_run": 42577949376,
+    "source_commit": null,
+    "build_run": null,
     "native_targets": [
       "ubuntu-24.04",
       "macos-15",
       "windows-2022"
     ],
-    "strict_dependency_audit": "PASS",
-    "full_log_bytes": 481498,
-    "full_log_sha256": "cf28d1be54bca10755ddc1c9bdbe661605e609940a1711cc6f8bd1974ad5a413",
-    "warning_lines": 0,
-    "warning_annotations": 0,
-    "notice_annotations": 1,
-    "notice_scope": "GitHub macOS arm64 queue-capacity notice; not a compiler/Actions warning"
+    "previous_validated_81_test_version": {
+      "strict_dependency_audit": "PASS",
+      "full_log_bytes": 481498,
+      "full_log_sha256": "cf28d1be54bca10755ddc1c9bdbe661605e609940a1711cc6f8bd1974ad5a413",
+      "warning_lines": 0,
+      "warning_annotations": 0,
+      "notice_annotations": 1,
+      "notice_scope": "GitHub macOS arm64 queue-capacity notice; not a compiler/Actions warning",
+      "source_commit": "1dc1370f99921f9831452c16f7c99ec75b32b557",
+      "build_run": 42577949376
+    }
   },
   "not_implemented_or_not_qualified": [
     "complete_ctap_and_protected_dispatcher",
-    "sensor_driver_pairing_and_se_ledger_object_adapters",
+    "sensor_spi_pairing_se_commissioning_acl_and_state_chip_qualification",
     "secure_boot_update_lifecycle_deployment",
     "authenticated_device_management_transport",
     "actual_usb_nfc_fido_interoperability",
     "chip_known_answer_tests_and_error_tamper_paths",
     "physical_emc_sidechannel_fault_and_assembly_qualification",
-    "nonblocking_import_ui_privacy_before_real_backend_activation"
+    "nonblocking_import_ui_privacy_before_real_backend_activation",
+    "eight_failure_biometric_lockout_maintenance_and_availability_review"
   ],
   "own_unsafe_boundary": "firmware/secure-mmio: five fixed-address PAC constructors in one documented function. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++."
 }

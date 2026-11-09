@@ -74,3 +74,9 @@ ngspice47被动线圈和复位RC模拟通过已列数值断言且无模拟警告
 SE/密码远端[运行42575127427](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42575127427)，输入提交1ca41e3：三个原生目标及审计全部成功，81项测试通过；Linux同时编译/检查实际ARM适配。完整日志481514字节，warning行0、warning注释0；macOS有1条平台排队容量notice。完整日志SHA256及各范围见R04机器记录。
 
 最终资料续更复跑[42577949376](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42577949376)，输入提交1dc1370：三平台及审计全部成功；完整日志481498字节，warning行0、warning注释0。macOS仍仅有平台容量notice。文档记录SE持久实现约束和NACK端口缺口，不改变诊断镜像的用途。
+
+## 持久SE与共享密码服务续更
+
+本地全工作区100项测试通过：新增SE状态15项、共享密码服务4项，之前81项保留。SE模型逐条APDU前后中断/应答丢失、head半写、旧head/NOR重放、请求替换、nonce不退款、失败预算与tag耗尽、schema/marker/计数回退和重入均作负向测试；真实vault核心使用新ledger及测试AES-GCM进行组合验证。模型中的counter原子/持久行为仍是实片待验证前提，不是实验结果。
+
+完整fmt、工作区/目标Clippy `-D warnings`、Cortex-M33编译及实际诊断ELF/BIN导出通过。公开SE schema由独立Python生成，与Rust固定marker向量一致；`--check`不操作设备。356个锁定依赖严格审计0已知漏洞/0维护警告，硬件89文件SHA核对通过。诊断仍为25296字节，全部私密服务关闭；新源码摘要已绑定。新提交远端CI需在上传后单独记录，不能用前述81项版本替代。

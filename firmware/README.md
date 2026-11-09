@@ -6,7 +6,7 @@ Target: STM32H573RIT6, Cortex-M33, STiRoT immutable boot, TrustZone/GTZC isolati
 
 Implemented and tested: request/channel/digest-bound one-shot authorization; mandatory authenticated biometric receipt; device-derived additional PIN policy; durable-attempt adapter contracts; FPC secure-frame parsing, replay/context/tag checks; bounded 12-symbol button PIN entry; English LCD identity pagination and cancellation clearing. Default hardware adapters deny access.
 
-Integration still required: actual sensor pairing/driver and SE commissioning/object/ledger/counter/PIN adapters; authenticated device management transport; full FIDO2/U2F/hmac-secret/credential storage; transactional vault/record/authorization integration; actual LCD/button timing qualification; USB/NFC framing and cancellation; power/charging/suspend service and secure PC0 input-eFuse fault handling; backup-tamper continuity; STiRoT configuration, signed updates, rollback and production debug lifecycle. No production fuses or keys are supplied in this repository.
+Integration still required: actual sensor pairing/SPI driver, SE commissioning/ACL and chip qualification, PIN adapter and protected-runtime deployment of the new state service; authenticated device management transport; full FIDO2/U2F/hmac-secret/credential storage; transactional vault/record/authorization integration; actual LCD/button timing qualification; USB/NFC framing and cancellation; power/charging/suspend service and secure PC0 input-eFuse fault handling; backup-tamper continuity; STiRoT configuration, signed updates, rollback and production debug lifecycle. No production fuses or keys are supplied in this repository.
 
 The protected domain must own the FP/SE/LCD buses, button GPIO, timers, DMA attribution, key memory and request dispatcher. Untrusted transport must not have raw SE, encrypt/decrypt, display, button-injection or counter-reset APIs. The SE enable circuit is a fault interlock, not proof of fingerprint verification.
 
@@ -47,3 +47,22 @@ forbid unsafe. The shared SAES is exclusively borrowed per transaction;
 SCP session state cannot create a second hardware owner. No production
 software AES, UID/default key or entropy-recovery fallback is supplied.
 See [review/test limits](../docs/H573_CRYPTO_REVIEW.md).
+
+## Persistent SE and shared crypto service
+
+[openkeys-se-state](../crates/se-state) now implements the actual persistent
+object APDUs and Ledger/ProtectedAttempts adapters, with an explicit namespace
+and marker. The commit anchor selects one head, never an older fallback. The
+FP verifier now passes a private-constructor authenticated-match type to the
+credit update; request/tag/debit must match. Its8-failure engineering policy
+and blocked recovery require availability review before commissioning.
+
+The target adapters now borrow one `openkeys_h573_crypto::Service` for SCP,
+vault and FPC GCM. It owns SAES/RNG once and releases each short borrow before
+SE I/O returns to another component. Shared fault/reentry poison cannot be
+cleared by creating another adapter. FPC GCM keeps tentative plaintext in a
+zeroizing buffer and checks the tag before output; the sensor SPI driver,
+pairing and entropy/fault qualification are still missing. Runtime providers
+must be trusted actual hardware implementations, not host flags/fake crypto.
+State/crypto services compile for M33; the diagnostic still enables none of
+these private services. Do not treat these libraries as a complete key image.
