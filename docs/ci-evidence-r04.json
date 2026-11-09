@@ -1,0 +1,49 @@
+{
+  "run": 42723819737,
+  "source_commit": "029ca7f4ded00bc4fc7c4ddc8fabeeff9405c559",
+  "status": "completed",
+  "conclusion": "success",
+  "full_log_bytes": 383310,
+  "full_log_sha256": "02f64a309fdc3f1bc6b3d0a27ae610925c03ccfd0c51453138e2ee320b83a6a2",
+  "test_counts": {
+    "0_native (windows-2022).txt": 191,
+    "1_native (macos-15).txt": 191,
+    "2_dependency-audit.txt": 0,
+    "3_native (ubuntu-24.04).txt": 191
+  },
+  "warning_lines": 0,
+  "warning_annotations": 0,
+  "annotations": [
+    {
+      "job": "native (macos-15)",
+      "level": "notice",
+      "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times."
+    }
+  ],
+  "jobs": [
+    {
+      "id": 129524210904,
+      "name": "dependency-audit",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 129524211158,
+      "name": "native (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 129524211348,
+      "name": "native (windows-2022)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 129524211528,
+      "name": "native (macos-15)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ]
+}

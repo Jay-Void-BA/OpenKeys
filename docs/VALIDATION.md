@@ -118,3 +118,5 @@ SE schema2新增两个独立counter并拒绝schema1，marker=3c4ab91dae4b19c804e
 当前191项本地测试通过，完整fmt、工作区Clippy `-D warnings`、Cortex-M33认证核心/目标编译及诊断目标Clippy通过。新增一次消费的Execution、固定操作预算、不可续期和持续代际/时间/状态检查；FIDO网关已转移执行所有权，并测试激活回退、密码操作前撤权及输出后撤权。真实Root检查点、硬件密钥桥接和批量staging仍未接通，不能把策略库测试当成生产部署。
 
 严格依赖审计重新使用上游HEAD d9cb059f3217db87aeccd190b81eaffe8cc29cb9的独立干净工作树，400包0已知漏洞/0维护警告。先前本地数据库缓存存在未提交差异，本次未使用该缓存，来源记录已改正；不能以旧缓存的HEAD字段证明其文件内容。新源码远端CI将在实际运行后单列，前述183项结果不覆盖本次变更。
+
+191项版本远端[42723819737](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42723819737)，输入029ca7f4ded00bc4fc7c4ddc8fabeeff9405c559：三平台各191项测试、全部编译/Clippy/格式、严格审计与Linux ARM检查成功；诊断125项源码摘要及ELF/BIN/板号清单检查通过。完整四任务日志383310字节，SHA256 02f64a309fdc3f1bc6b3d0a27ae610925c03ccfd0c51453138e2ee320b83a6a2，warning行0、warning注释0、平台notice1。新三平台开发包和ARM诊断ZIP均实际取得并匹配GitHub摘要，架构/构建信息核对通过；没有执行这些二进制或连接实物。机器证据见[ci-evidence-r04.json](ci-evidence-r04.json)。诊断仍无认证服务，生产预检仍BLOCKED。

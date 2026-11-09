@@ -22,10 +22,12 @@
     },
     "opensk_source_and_patch_hash_check": true,
     "se_schema": 2,
-    "se_marker_sha256": "3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5"
+    "se_marker_sha256": "3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5",
+    "diagnostic_source_inventory_check": true,
+    "diagnostic_source_hashes": 125
   },
   "remote_ci": {
-    "current_source_status": "PENDING_NEW_SOURCE_CI",
+    "current_source_status": "VALIDATED_SOURCE_INCOMPLETE_PRODUCT",
     "previous_snapshot_source": "7cf8cf8ca67e0c299510257796f2ccd778611b1a",
     "previous_snapshot_build_run": 42565375583,
     "previous_snapshot_build_warning_lines": 0,
@@ -100,7 +102,17 @@
       "notice_annotations": 1,
       "unit_and_integration_tests_each_native": 183
     },
-    "native_manager_archives_scope": "Previous 183-test source e5340fdfc701fb3bd4a3d3b2f355ca62f95441be only; see native artifact record"
+    "native_manager_archives_scope": "Current validated 191-test source 029ca7f4ded00bc4fc7c4ddc8fabeeff9405c559; archives and executable architectures verified, not executed",
+    "source_commit": "029ca7f4ded00bc4fc7c4ddc8fabeeff9405c559",
+    "build_run": 42723819737,
+    "unit_and_integration_tests_each_native": 191,
+    "full_log_bytes": 383310,
+    "full_log_sha256": "02f64a309fdc3f1bc6b3d0a27ae610925c03ccfd0c51453138e2ee320b83a6a2",
+    "warning_lines": 0,
+    "warning_annotations": 0,
+    "notice_annotations": 1,
+    "notice_scope": "GitHub macOS arm64 queue-capacity notice; not a compiler/Actions warning",
+    "evidence_record": "docs/ci-evidence-r04.json"
   },
   "not_implemented_or_not_qualified": [
     "production_hardware_env_key_bridges_persistence_and_protected_ctap_dispatcher",
