@@ -40,7 +40,7 @@
     "crates/h573-crypto/src/shared.rs": "5708f91d5966d75f727615d90b90636682d7430e8420589107a09c185e69ba98",
     "crates/h573-crypto/src/tests.rs": "c54a24527d2d375d7d2ae6a1afd0b058c14068feb6baa103caa68b1589b49fa2",
     "crates/scp03/Cargo.toml": "417b4245c127795474ee22148d63b3f53e25f373a89a0bd6cad56beddc035a24",
-    "crates/scp03/README.md": "0af9bb5d5aba2fa0db8d6b29291042262659235392382ede6fba7f911c4be816",
+    "crates/scp03/README.md": "779c59edbaee132a02f05449d4679e805845b55eb973b5beace6cab8e110676f",
     "crates/scp03/src/client.rs": "1687d33f25e16b945dcd4f99dbb180606883ff7ab8e2d4920294c1b17fea0d17",
     "crates/scp03/src/lib.rs": "dddf8ae54d851f82c472004423c86d38e57067157fb0fcf8705f20e241fb6487",
     "crates/scp03/src/test_vectors.rs": "cea183233da4f0fa54f58e2bab4230d5bf4c9d66163f977a2fff4ab72899d43a",
@@ -141,7 +141,9 @@
     "firmware/vendor/cortex-m/src/register/psp.rs": "27f35dec90fd02d7fcfdeb300ce069bde7b90fb5305c62817121ed44ee73048a",
     "firmware/vendor/cortex-m/src/register/psplim.rs": "cf62586d643032425a8247824e6c7ef8628f97d5139c087ac8c44df0f13d8f46",
     "manufacturing/se-state-layout.json": "8530195804b0d0564424476b1b1e063f38b35d983143246965c2d64e107dab2a",
-    "scripts/export-diagnostic.py": "b3db01006f2fe8ce5d10fc6f466dbd4730941eb88ac6dbc11254b14785f4058f",
+    "scripts/check-diagnostic-manifest.py": "079f2a90c4eb83a3667ddbdcb16211a88e604337d55b5bce40618b8b15eb9026",
+    "scripts/diagnostic_contract.py": "3ea8fb212096f73ac8781de89cea2dbcaf152982c9271712efb328d69cea14bd",
+    "scripts/export-diagnostic.py": "4c652fe50ffcfca865d680b0627059c00220000be7c3a15bd5c214cc2195038e",
     "scripts/export-se-state-layout.py": "0fdcc09b56c31c6d5b1e627679fb87da184c40c2258369fbdf0bd5bc55c2a7ef"
   },
   "artifacts": {

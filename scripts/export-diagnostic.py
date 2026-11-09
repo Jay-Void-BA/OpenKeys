@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
 """Build and bind the real R04 ARM diagnostic; never provisions or flashes."""
-import hashlib
 import json
 import os
 from pathlib import Path
 import shutil
 import struct
 import subprocess
+from diagnostic_contract import ROOT, sha, source_hashes
 
-ROOT = Path(__file__).resolve().parents[1]
 TOOLCHAIN = '1.99.1'
 TARGET = 'thumbv8m.main-none-eabihf'
-
-
-def sha(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def main():
@@ -41,12 +36,6 @@ def main():
     assert 0 < len(code) <= 2 * 1024 * 1024
     assert 0x20000000 < stack <= 0x20040000 and reset & 1
     assert 0x08000000 <= reset < 0x08000000 + len(code)
-    files = [ROOT / 'Cargo.toml', ROOT / 'Cargo.lock', Path(__file__).resolve(),
-             ROOT / 'scripts/export-se-state-layout.py', ROOT / 'manufacturing/se-state-layout.json']
-    for folder in ('firmware/board', 'firmware/target', 'firmware/secure-mmio', 'firmware/vendor/cortex-m',
-                   'crates/device-policy', 'crates/device-vault', 'crates/se-transport',
-                   'crates/scp03', 'crates/h573-crypto', 'crates/se-state'):
-        files.extend(p for p in (ROOT / folder).rglob('*') if p.is_file())
     report = {
         'schema': 1, 'purpose': 'R04_ELECTRICAL_DIAGNOSTIC_ONLY',
         'production_authenticator': False, 'signed_update': False,
@@ -60,7 +49,7 @@ def main():
             'pcb': sha(ROOT / 'hardware/r04/kicad/OpenKeys.kicad_pcb'),
             'pinout': sha(ROOT / 'hardware/r04/pinout.csv'),
         },
-        'source_sha256': {str(p.relative_to(ROOT)): sha(p) for p in sorted(set(files))},
+        'source_sha256': source_hashes(),
         'artifacts': {p.name: sha(p) for p in (output, binary)},
     }
     (dist / 'diagnostic-manifest.json').write_text(json.dumps(report, indent=2) + '\n')

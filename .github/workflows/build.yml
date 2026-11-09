@@ -1,9 +1,9 @@
 name: AuthDesk development checks
 on:
   push:
-    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
   pull_request:
-    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
   workflow_dispatch:
     inputs:
       target:
@@ -58,6 +58,9 @@ jobs:
       - name: Verify public SE schema
         if: runner.os == 'Linux'
         run: python3 scripts/export-se-state-layout.py --check
+      - name: Verify diagnostic source and artifact inventory
+        if: runner.os == 'Linux'
+        run: python3 scripts/check-diagnostic-manifest.py
       - name: Verify pinned OpenSK source and patches
         if: runner.os == 'Linux'
         run: python3 scripts/check-opensk-vendor.py

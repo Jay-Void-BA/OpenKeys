@@ -49,3 +49,10 @@ USB/NFC management or the complete hardware `Env`. The human fingerprint/PIN/
 full LCD review deadline remains 15s and still needs a usability review; this
 change does not silently extend cached biometric approval. Physical fault and
 side-channel resistance remain NOT_RUN.
+
+Diagnostic exports additionally have an exact source/artifact inventory check
+in CI. Missing/new/stale source entries, changed PCB/pinout, invalid ARM vectors
+or mismatching ELF/BIN hashes fail it. This checks provenance consistency; it
+does not turn an unsigned diagnostic into a production image or prove a
+reproducible production build. The stale-source negative case was observed
+before regenerating the current diagnostic manifest.
