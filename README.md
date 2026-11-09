@@ -12,7 +12,7 @@
 | 实际PCB与制造数据 | [KiCad电气板](hardware/r04/kicad/OpenKeys.kicad_pcb)、[Gerber/钻孔ZIP](hardware/r04/exports/OpenKeys-fabrication.zip)、[贴片坐标](hardware/r04/exports/OpenKeys-SMD-position.csv)、[最终DRC](hardware/r04/review/routed-drc.json) |
 | 实物设计图 | [尺寸PDF](hardware/r04/exports/OpenKeys-dimensions.pdf)、[SVG](hardware/r04/exports/OpenKeys-dimensions.svg)、[OpenSCAD](hardware/r04/mechanical/enclosure.scad)、[STL/板体STEP](hardware/r04/exports)、[Blender](hardware/r04/mechanical/OpenKeys-assembly.blend)；外形74×98×20mm，须样件试装 |
 | 模拟与核对 | [被动网络/线圈估计](hardware/r04/review/simulation.json)、[电源DC角落](hardware/r04/review/protection-calculations.json)、[624项板网核对](hardware/r04/review/board-check.json)、[文件哈希](hardware/r04/review/cad-manifest.json) |
-| 固件 | [Rust授权/指纹/PIN/LCD策略](crates/device-policy)、[目标与当前缺口](firmware/README.md)；尚无可用于真实秘密的完整FIDO设备固件 |
+| 固件 | [按实板编写的驱动](firmware/board)、[ARM诊断ELF/BIN与哈希](firmware/dist)、[授权/指纹/PIN策略](crates/device-policy)；诊断镜像保持SE/指纹关闭，完整安全FIDO运行时仍在开发，见[固件状态](firmware/README.md) |
 | 管理软件 | [AuthDesk源码](apps/manager)、[三平台开发构建](docs/NATIVE_BUILDS.md)；macOS/Linux/Windows原生GUI，真实设备认证通道未完成，保持锁定 |
 | Android/iOS NFC管理 | [实现前提](apps/mobile/README.md)；尚无可用APK/IPA，不把手机指纹等同于设备指纹 |
 | 安全测试与复查 | **[你可以照做的安全测试方法](docs/SECURITY_TEST_PLAN.md)**、[R04发现与修正](docs/SECURITY_REVIEW_R04.md)、[完整交付预检](manufacturing/readiness-report.json) |

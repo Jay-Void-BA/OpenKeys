@@ -1,5 +1,9 @@
 name: AuthDesk development checks
 on:
+  push:
+    paths: ['Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'hardware/r04/**', '.github/workflows/build.yml']
+  pull_request:
+    paths: ['Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'hardware/r04/**', '.github/workflows/build.yml']
   workflow_dispatch:
     inputs:
       target:
@@ -9,6 +13,10 @@ on:
         options: [all, macos, windows, linux]
 permissions:
   contents: read
+env:
+  GIT_CONFIG_COUNT: '1'
+  GIT_CONFIG_KEY_0: init.defaultBranch
+  GIT_CONFIG_VALUE_0: main
 jobs:
   dependency-audit:
     if: ${{ inputs.target == 'all' || inputs.target == '' }}
@@ -38,11 +46,13 @@ jobs:
         run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy
       - name: Record native target
         run: rustc -vV > native-build-info.txt
-      - name: Cortex-M33 firmware policy check
+      - name: Cortex-M33 board contract and diagnostic image
         if: runner.os == 'Linux'
         run: |
           rustup target add thumbv8m.main-none-eabihf --toolchain 1.99.1
-          cargo check -p device-policy --target thumbv8m.main-none-eabihf --locked
+          cargo check -p device-policy -p openkeys-board --target thumbv8m.main-none-eabihf --locked
+          cargo build -p openkeys-h573 --release --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked
+          cargo clippy -p openkeys-h573 --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked -- -D warnings
       - name: Tests
         run: cargo test --workspace --locked
       - name: Lint
@@ -58,4 +68,10 @@ jobs:
             target/release/authdesk
             target/release/authdesk.exe
             native-build-info.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: runner.os == 'Linux'
+        with:
+          name: r04-diagnostic-arm-elf
+          path: target/thumbv8m.main-none-eabihf/release/openkeys-r04-diagnostics
           if-no-files-found: error

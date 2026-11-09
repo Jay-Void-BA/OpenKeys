@@ -4,7 +4,7 @@
 use eframe::egui::{self, Color32, RichText};
 use std::{
     io::Read,
-    time::{Duration, Instant},
+    time::{Duration, Instant, SystemTime},
 };
 use vault_import::{Entry, MAX_FILE_BYTES, parse_import};
 use zeroize::Zeroizing;
@@ -13,11 +13,27 @@ use zeroize::Zeroizing;
 /// build intentionally has no constructor that accepts a host Boolean or PIN.
 struct Access {
     expires: Instant,
+    issued_wall: SystemTime,
+    expires_wall: SystemTime,
 }
 impl Access {
     fn live(&self) -> bool {
-        Instant::now() < self.expires
+        self.live_at(Instant::now(), SystemTime::now())
     }
+    fn live_at(&self, monotonic: Instant, wall: SystemTime) -> bool {
+        // Some platform monotonic clocks pause during sleep. This independent
+        // display/privacy guard also denies wall-clock rollback. Device-side
+        // authorization and USB suspend revocation remain authoritative.
+        monotonic < self.expires && wall >= self.issued_wall && wall < self.expires_wall
+    }
+}
+
+fn interrupted_frame(now: Instant, last: Instant, wall: SystemTime, last_wall: SystemTime) -> bool {
+    now.checked_duration_since(last)
+        .is_none_or(|gap| gap > Duration::from_secs(5))
+        || wall
+            .duration_since(last_wall)
+            .map_or(true, |gap| gap > Duration::from_secs(5))
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -58,6 +74,7 @@ struct AuthDesk {
     devices: Vec<String>,
     scan: Option<std::sync::mpsc::Receiver<Result<Vec<String>, ()>>>,
     last_frame: Instant,
+    last_wall_frame: SystemTime,
 }
 
 impl Default for AuthDesk {
@@ -72,6 +89,7 @@ impl Default for AuthDesk {
             devices: Vec::new(),
             scan: None,
             last_frame: Instant::now(),
+            last_wall_frame: SystemTime::now(),
         }
     }
 }
@@ -352,15 +370,17 @@ impl eframe::App for AuthDesk {
     fn ui(&mut self, root: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let ctx = root.ctx().clone();
         let now = Instant::now();
+        let wall = SystemTime::now();
         let lost_focus = ctx.input(|i| i.viewport().focused == Some(false));
         if self.access.is_some()
             && (!self.unlocked()
                 || lost_focus
-                || now.duration_since(self.last_frame) > Duration::from_secs(5))
+                || interrupted_frame(now, self.last_frame, wall, self.last_wall_frame))
         {
             self.lock();
         }
         self.last_frame = now;
+        self.last_wall_frame = wall;
         if let Some(scan) = &self.scan
             && let Ok(result) = scan.try_recv()
         {
@@ -438,6 +458,31 @@ fn main() -> eframe::Result {
 mod tests {
     use super::*;
     use vault_import::SecretText;
+    #[test]
+    fn paused_monotonic_clock_and_wall_rollback_cannot_extend_access() {
+        let now = Instant::now();
+        let wall = SystemTime::now();
+        let access = Access {
+            expires: now + Duration::from_secs(15),
+            issued_wall: wall,
+            expires_wall: wall + Duration::from_secs(15),
+        };
+        assert!(access.live_at(now, wall));
+        assert!(!access.live_at(now, wall + Duration::from_secs(15)));
+        assert!(!access.live_at(now, wall - Duration::from_secs(1)));
+        assert!(interrupted_frame(
+            now,
+            now,
+            wall + Duration::from_secs(6),
+            wall
+        ));
+        assert!(interrupted_frame(
+            now,
+            now,
+            wall - Duration::from_secs(1),
+            wall
+        ));
+    }
     #[test]
     fn ui_cannot_fake_hardware_authorization() {
         let mut app = AuthDesk::default();

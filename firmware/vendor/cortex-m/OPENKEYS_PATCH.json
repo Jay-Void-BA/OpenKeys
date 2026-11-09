@@ -1,0 +1,18 @@
+{
+  "upstream": "https://crates.io/crates/cortex-m/0.7.10",
+  "upstream_crate_sha256": "408ca8c6d703a196b73219fdb68fd8914d4fda90c34e2bd6859d4842f761bd5f",
+  "license": "MIT OR Apache-2.0",
+  "changes": [
+    "Remove archived bare-metal dependency and legacy Nr compatibility",
+    "Re-export lifetime-scoped critical_section::CriticalSection and Mutex",
+    "Delegate interrupt::free to critical_section::with; caller passes token by value",
+    "Bundle upstream license texts and correct README license links"
+  ],
+  "unchanged_security_critical_parts": [
+    "single-core PRIMASK backend and compiler memory barriers",
+    "register and peripheral implementations",
+    "interrupt disable/enable assembly"
+  ],
+  "scope": "Private project patch; not an upstream-compatible drop-in for legacy Nr/borrow-by-reference callers; not a security certification",
+  "upstream_commit": "b79801ce4884fe46105b562f701a7d2fd5c586c7"
+}

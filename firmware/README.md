@@ -18,3 +18,9 @@ cargo check -p device-policy --target thumbv8m.main-none-eabihf --locked
 ```
 
 This verifies portable policy code only, not boot, registers, timing, pinmux, interoperability or resistance to physical attacks. Manufacturing remains blocked until target firmware and actual hardware evidence exist.
+
+## R04 board support and executable
+
+[openkeys-board](board) now implements the actual LCD, release-only four-key debounce and bounded/verified W25Q64 driver. Its build contract checks the PCB/pinout SHA256 and all GPIO/AF mappings. Tests include LCD I/O failure/reset/teardown, malformed display bytes, chords/context changes/clock discontinuities, Flash overflow/page wrap/WEL/readback corruption and maintained critical-section nesting/thread exclusion.
+
+[Target diagnostic firmware](target/README.md) builds a real ARM ELF/BIN at [dist](dist). This is an explicitly OPEN/TZEN=0 **electrical diagnostic**, not a flashable authenticator. It keeps the sensor, SE, charging and private operations disabled. Production readiness does not accept this diagnostic as `openkeys.elf`, a signed update or a boot-security profile. The preceding list of integration requirements still applies; LCD/button/Flash drivers now exist but require real board timing/fit qualification.

@@ -27716,3 +27716,13 @@ photographs. R04 scripts and new mechanical/circuit/PCB work: CERN-OHL-S-2.0.
 Freerouting1.9.0 (GPLv3) was used as an external CAD tool; its executable is
 not distributed in this repository. The saved KiCad board and Gerber files
 are the reviewed outputs; CI does not execute the autorouter.
+
+R04 board support uses embedded-hal1.0.0 (MIT OR Apache-2.0) and Embassy
+STM320.6.0 (MIT OR Apache-2.0). The ARM diagnostic image includes Cortex-M
+runtime0.7.7 and the documented Cortex-M0.7.10 source patch under
+firmware/vendor/cortex-m (MIT OR Apache-2.0, original license texts included).
+The patch removes the archived bare-metal dependency and obsolete Nr API,
+using critical-section1.2.0's lifetime-scoped token/Mutex and unchanged
+single-core PRIMASK backend. It changes a legacy public API; it is not claimed
+as an unmodified upstream release. OPENKEYS_PATCH.json records provenance.
+No cargo-audit advisory is ignored for this change.
