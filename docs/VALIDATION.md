@@ -72,3 +72,5 @@ ngspice47被动线圈和复位RC模拟通过已列数值断言且无模拟警告
 已修复SAES IV寄存器顺序、故障标志误清和末次输出后/擦除前故障被覆盖的问题，增加H573专用RNG与明确Secure MMIO边界。具体范围和实片未执行项见[专项核查](H573_CRYPTO_REVIEW.md)；[R04机器记录](r04-build-report.json)将远端新源码CI与上述本地结果分开记录。
 
 SE/密码远端[运行42575127427](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42575127427)，输入提交1ca41e3：三个原生目标及审计全部成功，81项测试通过；Linux同时编译/检查实际ARM适配。完整日志481514字节，warning行0、warning注释0；macOS有1条平台排队容量notice。完整日志SHA256及各范围见R04机器记录。
+
+最终资料续更复跑[42577949376](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42577949376)，输入提交1dc1370：三平台及审计全部成功；完整日志481498字节，warning行0、warning注释0。macOS仍仅有平台容量notice。文档记录SE持久实现约束和NACK端口缺口，不改变诊断镜像的用途。

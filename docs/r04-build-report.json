@@ -27,16 +27,16 @@
     "previous_snapshot_build_run": 42565375583,
     "previous_snapshot_build_warning_lines": 0,
     "unchanged_hardware_run": 42565375425,
-    "source_commit": "1ca41e37598bbd06f3cd32bf8a1f94ce6fb9064f",
-    "build_run": 42575127427,
+    "source_commit": "1dc1370f99921f9831452c16f7c99ec75b32b557",
+    "build_run": 42577949376,
     "native_targets": [
       "ubuntu-24.04",
       "macos-15",
       "windows-2022"
     ],
     "strict_dependency_audit": "PASS",
-    "full_log_bytes": 481514,
-    "full_log_sha256": "e2fcc7f2bff6b3c2f79684a9f45eccd2b3543afab6ca3de7cd49a7820ee80346",
+    "full_log_bytes": 481498,
+    "full_log_sha256": "cf28d1be54bca10755ddc1c9bdbe661605e609940a1711cc6f8bd1974ad5a413",
     "warning_lines": 0,
     "warning_annotations": 0,
     "notice_annotations": 1,
@@ -49,7 +49,8 @@
     "authenticated_device_management_transport",
     "actual_usb_nfc_fido_interoperability",
     "chip_known_answer_tests_and_error_tamper_paths",
-    "physical_emc_sidechannel_fault_and_assembly_qualification"
+    "physical_emc_sidechannel_fault_and_assembly_qualification",
+    "nonblocking_import_ui_privacy_before_real_backend_activation"
   ],
   "own_unsafe_boundary": "firmware/secure-mmio: five fixed-address PAC constructors in one documented function. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++."
 }
