@@ -64,3 +64,5 @@
 自查新增明确约束：阻塞HAL中的标志等待不能由事后100ms检查抢占，必须有独立硬件watchdog；H573 PAC使用非安全别名范围，不能以引脚匹配或U5专用trustzone-secure功能推定实际安全事务。SAU/GTZC/GPIO/RCC/中断/DMA配置、传感器随机IV抗故障以及配对/取消/模板管理仍未合格，生产发布继续阻止。
 
 导入解析追加自查修复：原来只拒绝bidi覆盖/隔离控制，遗漏了ALM(U+061C)、LRM(U+200E)、RLM(U+200F)，可导致标题/恢复码视觉顺序混淆。现拒绝全部Unicode Bidi_Control码点；新增恶意notes/recovery JSON回归输入。此修复不等于一般Unicode同形字符问题已消失，可信设备确认仍须绑定实际内容摘要。
+
+焦点自查追加修复：原先只在OS明确报告focused=false时撤销桌面授权，focused未知(None)仍被放行。现在只有Some(true)保持显示授权；未知焦点同样清除预览并取消/丢弃后台结果。现有焦点/休眠测试追加None输入，整套125项测试保留。

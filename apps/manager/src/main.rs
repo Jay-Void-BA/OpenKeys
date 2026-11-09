@@ -142,10 +142,10 @@ impl AuthDesk {
         self.message.clear();
         self.tab = Tab::Overview;
     }
-    fn privacy_tick(&mut self, now: Instant, wall: SystemTime, lost_focus: bool) {
+    fn privacy_tick(&mut self, now: Instant, wall: SystemTime, focused: Option<bool>) {
         if self.access.as_ref().is_some_and(|access| {
             !access.live_at(now, wall)
-                || lost_focus
+                || focused != Some(true)
                 || interrupted_frame(now, self.last_frame, wall, self.last_wall_frame)
         }) {
             self.lock();
@@ -506,8 +506,8 @@ impl eframe::App for AuthDesk {
         let ctx = root.ctx().clone();
         let now = Instant::now();
         let wall = SystemTime::now();
-        let lost_focus = ctx.input(|i| i.viewport().focused == Some(false));
-        self.privacy_tick(now, wall, lost_focus);
+        let focused = ctx.input(|i| i.viewport().focused);
+        self.privacy_tick(now, wall, focused);
         if let Some(scan) = &self.scan
             && let Ok(result) = scan.try_recv()
         {
@@ -688,7 +688,7 @@ mod tests {
     }
     #[test]
     fn focus_sleep_rollback_and_expiry_revoke_before_private_ui_or_result_polling() {
-        for case in 0..4 {
+        for case in 0..5 {
             let mut app = AuthDesk::default();
             fixture_access(&mut app);
             stage_fixture(&mut app);
@@ -697,10 +697,11 @@ mod tests {
             let wall = app.last_wall_frame;
             let generation = app.generation.unwrap();
             match case {
-                0 => app.privacy_tick(now, wall, true),
-                1 => app.privacy_tick(now, wall + Duration::from_secs(6), false),
-                2 => app.privacy_tick(now, wall - Duration::from_secs(1), false),
-                3 => app.privacy_tick(now + Duration::from_secs(15), wall, false),
+                0 => app.privacy_tick(now, wall, Some(false)),
+                1 => app.privacy_tick(now, wall + Duration::from_secs(6), Some(true)),
+                2 => app.privacy_tick(now, wall - Duration::from_secs(1), Some(true)),
+                3 => app.privacy_tick(now + Duration::from_secs(15), wall, Some(true)),
+                4 => app.privacy_tick(now, wall, None),
                 _ => unreachable!(),
             }
             assert!(app.access.is_none());
