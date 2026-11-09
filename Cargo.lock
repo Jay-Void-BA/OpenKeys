@@ -139,6 +139,7 @@ name = "authdesk"
 version = "0.1.0"
 dependencies = [
  "eframe",
+ "libc",
  "nusb",
  "rfd",
  "vault-import",

@@ -80,3 +80,9 @@ SE/密码远端[运行42575127427](https://github.com/Jay-Void-BA/OpenKeys/actio
 本地全工作区100项测试通过：新增SE状态15项、共享密码服务4项，之前81项保留。SE模型逐条APDU前后中断/应答丢失、head半写、旧head/NOR重放、请求替换、nonce不退款、失败预算与tag耗尽、schema/marker/计数回退和重入均作负向测试；真实vault核心使用新ledger及测试AES-GCM进行组合验证。模型中的counter原子/持久行为仍是实片待验证前提，不是实验结果。
 
 完整fmt、工作区/目标Clippy `-D warnings`、Cortex-M33编译及实际诊断ELF/BIN导出通过。公开SE schema由独立Python生成，与Rust固定marker向量一致；`--check`不操作设备。356个锁定依赖严格审计0已知漏洞/0维护警告，硬件89文件SHA核对通过。诊断仍为25296字节，全部私密服务关闭；新源码摘要已绑定。新提交远端CI需在上传后单独记录，不能用前述81项版本替代。
+
+持久SE远端[运行42586336802](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42586336802)，输入提交0a5c207：三平台各100项测试、编译/Clippy/格式/严格依赖审计及Linux ARM检查全部成功。从Actions ZIP取全部四个顶层任务日志、排序后以单个LF连接，共313524字节，warning行0、warning注释0；macOS有1条平台容量notice。摘要见R04机器记录。`gh run view --log`一度返回空结果，未把空文件当作已核查日志，另从完整ZIP验证。
+
+## 桌面导入隐私续更
+
+全工作区111项本地测试通过；AuthDesk从4项增至15项，覆盖遮蔽前撤销、只选路径不读文件、重新授权、真实后台fixture读取、批次总大小/条数、文件类型、取消后的单线程上限、旧结果/过期结果、焦点/休眠/回拨与代际耗尽。完整格式与工作区Clippy `-D warnings`通过。356依赖严格审计0已知漏洞/0维护警告；ARM诊断重导出并继续保持25296字节及非认证用途。新管理器源码三平台CI将在本次上传后单独记录；原生对话框/合成器/慢盘实机验证仍NOT_RUN。

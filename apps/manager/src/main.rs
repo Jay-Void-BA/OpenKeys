@@ -3,11 +3,19 @@
 
 use eframe::egui::{self, Color32, RichText};
 use std::{
+    future::Future,
     io::Read,
+    path::PathBuf,
+    pin::Pin,
+    sync::Arc,
+    task::{Context, Poll, Wake},
     time::{Duration, Instant, SystemTime},
 };
-use vault_import::{Entry, MAX_FILE_BYTES, parse_import};
+use vault_import::Entry;
 use zeroize::Zeroizing;
+
+mod import_task;
+use import_task::{ImportWorker, ReadDeadline};
 
 /// A capability must originate from a verified device channel. The integration
 /// build intentionally has no constructor that accepts a host Boolean or PIN.
@@ -49,11 +57,31 @@ struct Pending {
     selected: bool,
 }
 
+type PickerFuture = Pin<Box<dyn Future<Output = Option<Vec<rfd::FileHandle>>> + Send>>;
+enum ImportFlow {
+    Idle,
+    // Clear private content for two complete UI frames before even creating a
+    // native dialog. Some native backends can fall back to a blocking dialog.
+    Masking { started: u64 },
+    Picking(PickerFuture),
+    Selected(Vec<PathBuf>),
+    Reading,
+}
+struct PickerWake(egui::Context);
+impl Wake for PickerWake {
+    fn wake(self: Arc<Self>) {
+        self.0.request_repaint();
+    }
+    fn wake_by_ref(self: &Arc<Self>) {
+        self.0.request_repaint();
+    }
+}
+
 #[derive(Default)]
 struct HardwareBackend;
 impl HardwareBackend {
     fn unlock(&mut self) -> Result<Access, &'static str> {
-        // No authenticated sensor/channel driver exists for a selected PCB yet.
+        // The R04 authenticated sensor/device channel is not integrated yet.
         // Fail closed: discovery, a click, or an OS biometric prompt is not UV.
         Err(
             "Device authorization is not integrated. This build cannot unlock a vault or accept real secrets.",
@@ -73,6 +101,9 @@ struct AuthDesk {
     message: String,
     devices: Vec<String>,
     scan: Option<std::sync::mpsc::Receiver<Result<Vec<String>, ()>>>,
+    import_flow: ImportFlow,
+    import_worker: ImportWorker,
+    generation: Option<u64>,
     last_frame: Instant,
     last_wall_frame: SystemTime,
 }
@@ -88,6 +119,9 @@ impl Default for AuthDesk {
             message: String::new(),
             devices: Vec::new(),
             scan: None,
+            import_flow: ImportFlow::Idle,
+            import_worker: ImportWorker::default(),
+            generation: Some(0),
             last_frame: Instant::now(),
             last_wall_frame: SystemTime::now(),
         }
@@ -99,11 +133,25 @@ impl AuthDesk {
         self.access.as_ref().is_some_and(Access::live)
     }
     fn lock(&mut self) {
+        self.generation = self.generation.and_then(|value| value.checked_add(1));
+        self.import_worker.cancel();
+        self.import_flow = ImportFlow::Idle;
         self.access = None;
         self.pending.clear();
         self.query = Zeroizing::new(String::new());
         self.message.clear();
         self.tab = Tab::Overview;
+    }
+    fn privacy_tick(&mut self, now: Instant, wall: SystemTime, lost_focus: bool) {
+        if self.access.as_ref().is_some_and(|access| {
+            !access.live_at(now, wall)
+                || lost_focus
+                || interrupted_frame(now, self.last_frame, wall, self.last_wall_frame)
+        }) {
+            self.lock();
+        }
+        self.last_frame = now;
+        self.last_wall_frame = wall;
     }
     fn start_scan(&mut self) {
         let (tx, rx) = std::sync::mpsc::channel();
@@ -127,73 +175,139 @@ impl AuthDesk {
             let _ = tx.send(result);
         });
     }
-    fn request_unlock(&mut self) {
+    fn request_unlock(&mut self, ctx: &egui::Context) {
+        if self.import_worker.busy()
+            || !matches!(self.import_flow, ImportFlow::Idle | ImportFlow::Selected(_))
+        {
+            return;
+        }
+        // Retain only paths across a fresh device verification. No file is
+        // opened, parsed or previewed while the native picker is active.
+        let paths = match std::mem::replace(&mut self.import_flow, ImportFlow::Idle) {
+            ImportFlow::Selected(paths) => Some(paths),
+            _ => None,
+        };
         self.lock();
+        if self.generation.is_none() {
+            self.message = "Authorization generation exhausted. Restart the application.".into();
+            return;
+        }
         match self.backend.unlock() {
-            Ok(access) => {
+            Ok(access) if access.live() => {
                 self.access = Some(access);
                 self.tab = Tab::Import;
+                if let Some(paths) = paths {
+                    self.begin_read(paths, ctx);
+                }
             }
-            Err(message) => self.message = message.into(),
+            Ok(_) => {
+                self.lock();
+                self.message = "Device authorization already expired.".into();
+            }
+            Err(message) => {
+                if let Some(paths) = paths {
+                    self.import_flow = ImportFlow::Selected(paths);
+                }
+                self.message = message.into();
+            }
         }
     }
-    fn import_files(&mut self) {
-        if !self.unlocked() {
+    fn begin_read(&mut self, paths: Vec<PathBuf>, ctx: &egui::Context) {
+        let (Some(access), Some(generation)) = (&self.access, self.generation) else {
             self.lock();
-            return;
-        }
-        let Some(paths) = rfd::FileDialog::new()
-            .add_filter("Notes / recovery import", &["json"])
-            .pick_files()
-        else {
             return;
         };
-        // Native dialogs may remain open beyond the authorization deadline.
+        if !access.live() {
+            self.lock();
+            return;
+        }
+        let deadline = ReadDeadline {
+            expires: access.expires,
+            issued_wall: access.issued_wall,
+            expires_wall: access.expires_wall,
+        };
+        match self
+            .import_worker
+            .start(paths, deadline, generation, ctx.clone())
+        {
+            Ok(()) => {
+                self.import_flow = ImportFlow::Reading;
+                self.message = "Reading selected files. No data has been written.".into();
+            }
+            Err(error) => {
+                self.lock();
+                self.message = error.message().into();
+            }
+        }
+    }
+    fn import_files(&mut self, frame: u64) {
         if !self.unlocked() {
             self.lock();
             return;
         }
-        let mut batch = Vec::new();
-        for path in paths.iter().take(16) {
-            let result = (|| {
-                let file = std::fs::File::open(path).map_err(|_| ())?;
-                if file.metadata().map_err(|_| ())?.len() > MAX_FILE_BYTES as u64 {
-                    return Err(());
-                }
-                let mut data = Zeroizing::new(Vec::new());
-                file.take((MAX_FILE_BYTES + 1) as u64)
-                    .read_to_end(&mut data)
-                    .map_err(|_| ())?;
-                parse_import(&data).map_err(|_| ())
-            })();
-            match result {
-                Ok(entries) => batch.extend(entries.into_iter().map(|entry| Pending {
-                    entry,
-                    selected: false,
-                })),
-                Err(()) => {
-                    self.message =
-                        "Import rejected. Check the format and limits. No data was written.".into();
-                    return;
-                }
-            }
-            if batch.len() > vault_import::MAX_ENTRIES {
-                self.message = "Import batch exceeds 256 entries.".into();
-                return;
-            }
-        }
-        if paths.len() > 16 {
-            self.message = "Select at most 16 files per batch.".into();
+        if self.import_worker.busy() || !matches!(self.import_flow, ImportFlow::Idle) {
             return;
         }
-        if !self.unlocked() {
-            self.lock();
+        self.lock();
+        self.import_flow = ImportFlow::Masking { started: frame };
+    }
+    fn accept_import(&mut self, generation: u64, result: Result<Vec<Entry>, import_task::Error>) {
+        if self.generation != Some(generation)
+            || !self.unlocked()
+            || !matches!(self.import_flow, ImportFlow::Reading)
+        {
+            // In particular, never let an old completion clear or populate a
+            // newer authorization. Dropping result zeroizes Entry strings.
             return;
         }
-        self.pending = batch;
-        self.message =
-            "Prepared in memory only. Select entries, then confirm the exact import on the device."
-                .into();
+        self.import_flow = ImportFlow::Idle;
+        match result {
+            Ok(entries) => {
+                self.pending = entries
+                    .into_iter()
+                    .map(|entry| Pending {
+                        entry,
+                        selected: false,
+                    })
+                    .collect();
+                self.message = "Prepared in memory only. Confirm the exact import on the device before writing.".into();
+            }
+            Err(error) => {
+                self.lock();
+                self.message = error.message().into();
+            }
+        }
+    }
+    fn advance_import(&mut self, ctx: &egui::Context) {
+        if let Some((generation, result)) = self.import_worker.poll() {
+            self.accept_import(generation, result);
+        }
+        if let ImportFlow::Masking { started } = self.import_flow {
+            if ctx.cumulative_frame_nr().saturating_sub(started) >= 2 {
+                self.import_flow = ImportFlow::Picking(Box::pin(
+                    rfd::AsyncFileDialog::new()
+                        .add_filter("Notes / recovery import", &["json"])
+                        .pick_files(),
+                ));
+            }
+            return;
+        }
+        if let ImportFlow::Picking(future) = &mut self.import_flow {
+            let waker = Arc::new(PickerWake(ctx.clone())).into();
+            if let Poll::Ready(files) = future.as_mut().poll(&mut Context::from_waker(&waker)) {
+                self.import_flow = match files {
+                    Some(files) if !files.is_empty() && files.len() <= import_task::MAX_FILES => {
+                        self.message = "Files selected. Verify your device fingerprint again before files are read.".into();
+                        ImportFlow::Selected(files.into_iter().map(Into::into).collect())
+                    }
+                    Some(_) => {
+                        self.message = import_task::Error::Files.message().into();
+                        ImportFlow::Idle
+                    }
+                    None => ImportFlow::Idle,
+                };
+            }
+        }
     }
     fn sidebar(&mut self, root: &mut egui::Ui) {
         egui::Panel::left("navigation")
@@ -278,8 +392,18 @@ impl AuthDesk {
                 ui.label("Fingerprint is mandatory. Sensitive management also requires the device PIN, entered with its four buttons.");
                 ui.add_space(18.0);
                 ui.horizontal(|ui| {
-                    if ui.button("Request fingerprint verification").clicked(){self.request_unlock();}
+                    let can_request = !self.import_worker.busy()
+                        && matches!(self.import_flow, ImportFlow::Idle | ImportFlow::Selected(_));
+                    if ui.add_enabled(can_request, egui::Button::new("Request fingerprint verification")).clicked(){self.request_unlock(ui.ctx());}
+                    if matches!(self.import_flow, ImportFlow::Masking { .. } | ImportFlow::Selected(_))
+                        && ui.button("Cancel import selection").clicked() {self.lock();}
                 });
+                if matches!(self.import_flow, ImportFlow::Masking { .. } | ImportFlow::Picking(_)) {
+                    ui.label("Private content cleared. File selection does not read file contents.");
+                }
+                if self.import_worker.busy() {
+                    ui.label("Waiting for the previous file operation to stop.");
+                }
             });
             ui.add_space(24.0);
             ui.horizontal(|ui| {
@@ -302,10 +426,14 @@ impl AuthDesk {
             ui.colored_label(Color32::from_rgb(234,183,100),"Hardware integration is pending. Do not use real credentials with this development build.");
         } else if self.tab == Tab::Import {
             ui.label("Supported: version 2 JSON with private notes and recovery codes.");
+            let mut choose = false;
             ui.horizontal(|ui| {
-                if ui.button("Choose files").clicked() {
-                    self.import_files();
-                }
+                choose = ui
+                    .add_enabled(
+                        !self.import_worker.busy() && matches!(self.import_flow, ImportFlow::Idle),
+                        egui::Button::new("Choose files"),
+                    )
+                    .clicked();
                 if ui.button("Select all").clicked() {
                     for e in &mut self.pending {
                         e.selected = true;
@@ -317,6 +445,12 @@ impl AuthDesk {
                     }
                 }
             });
+            if choose {
+                self.import_files(ui.ctx().cumulative_frame_nr());
+                ui.ctx().request_repaint();
+                // Do not paint the old import title/filter rows in this frame.
+                return;
+            }
             ui.add_space(12.0);
             ui.add(egui::TextEdit::singleline(&mut *self.query).hint_text("Filter by title"));
             egui::ScrollArea::vertical()
@@ -342,6 +476,7 @@ impl AuthDesk {
                     )),
                 )
                 .clicked()
+                && self.unlocked()
                 && let Some(access) = &self.access
             {
                 let selected: Vec<_> = self
@@ -372,26 +507,23 @@ impl eframe::App for AuthDesk {
         let now = Instant::now();
         let wall = SystemTime::now();
         let lost_focus = ctx.input(|i| i.viewport().focused == Some(false));
-        if self.access.is_some()
-            && (!self.unlocked()
-                || lost_focus
-                || interrupted_frame(now, self.last_frame, wall, self.last_wall_frame))
-        {
-            self.lock();
-        }
-        self.last_frame = now;
-        self.last_wall_frame = wall;
+        self.privacy_tick(now, wall, lost_focus);
         if let Some(scan) = &self.scan
             && let Ok(result) = scan.try_recv()
         {
             self.devices = result.unwrap_or_default();
             self.scan = None;
         }
+        self.advance_import(&ctx);
         self.sidebar(root);
         egui::CentralPanel::default().show(root, |ui| {
             self.central(ui);
         });
-        if self.scan.is_some() || self.access.is_some() {
+        if self.scan.is_some()
+            || self.access.is_some()
+            || self.import_worker.busy()
+            || !matches!(self.import_flow, ImportFlow::Idle)
+        {
             ctx.request_repaint_after(Duration::from_millis(200));
         }
     }
@@ -458,6 +590,141 @@ fn main() -> eframe::Result {
 mod tests {
     use super::*;
     use vault_import::SecretText;
+
+    fn fixture_access(app: &mut AuthDesk) {
+        // Only tests can manufacture a lease; production has no host unlock
+        // constructor, environment switch or mock hardware backend.
+        let now = Instant::now();
+        let wall = SystemTime::now();
+        app.access = Some(Access {
+            expires: now + Duration::from_secs(15),
+            issued_wall: wall,
+            expires_wall: wall + Duration::from_secs(15),
+        });
+        app.last_frame = now;
+        app.last_wall_frame = wall;
+        app.tab = Tab::Import;
+    }
+    fn fixture_entries() -> Vec<Entry> {
+        vault_import::parse_import(br#"{"version":2,"entries":[{"type":"note","title":"SENSITIVE-TITLE-9217","body":"SENSITIVE-BODY-8426"}]}"#).unwrap()
+    }
+    fn stage_fixture(app: &mut AuthDesk) {
+        app.pending = fixture_entries()
+            .into_iter()
+            .map(|entry| Pending {
+                entry,
+                selected: true,
+            })
+            .collect();
+        app.query = Zeroizing::new("private-filter".into());
+    }
+    #[test]
+    fn choosing_files_revokes_and_clears_before_a_dialog_can_exist() {
+        let mut app = AuthDesk::default();
+        fixture_access(&mut app);
+        stage_fixture(&mut app);
+        let old = app.generation;
+        app.import_files(27);
+        assert!(app.access.is_none());
+        assert!(app.pending.is_empty());
+        assert!(app.query.is_empty());
+        assert_ne!(app.generation, old);
+        assert!(matches!(
+            app.import_flow,
+            ImportFlow::Masking { started: 27 }
+        ));
+        assert!(!app.import_worker.busy());
+        // The same/earlier frame must not construct a native dialog.
+        app.advance_import(&egui::Context::default());
+        assert!(matches!(app.import_flow, ImportFlow::Masking { .. }));
+    }
+    #[test]
+    fn a_picker_result_contains_only_paths_and_cannot_unlock_or_read_files() {
+        let mut app = AuthDesk::default();
+        let path = PathBuf::from("this-file-does-not-exist-and-must-not-be-opened.json");
+        app.import_flow = ImportFlow::Picking(Box::pin(std::future::ready(Some(vec![
+            rfd::FileHandle::from(path.clone()),
+        ]))));
+        let ctx = egui::Context::default();
+        app.advance_import(&ctx);
+        assert!(
+            matches!(&app.import_flow, ImportFlow::Selected(paths) if paths == std::slice::from_ref(&path))
+        );
+        assert!(app.pending.is_empty());
+        assert!(app.access.is_none());
+        assert!(!app.import_worker.busy());
+        app.request_unlock(&ctx);
+        assert!(!app.unlocked());
+        assert!(!app.import_worker.busy());
+        assert!(matches!(&app.import_flow, ImportFlow::Selected(paths) if paths == &[path]));
+        app.lock();
+        assert!(matches!(app.import_flow, ImportFlow::Idle));
+    }
+    #[test]
+    fn old_or_expired_import_results_cannot_enter_a_new_authorization() {
+        let mut app = AuthDesk::default();
+        fixture_access(&mut app);
+        app.import_flow = ImportFlow::Reading;
+        let old = app.generation.unwrap();
+        app.lock();
+        fixture_access(&mut app);
+        app.import_flow = ImportFlow::Reading;
+        app.accept_import(old, Ok(fixture_entries()));
+        assert!(app.pending.is_empty());
+        assert!(app.unlocked());
+        assert!(matches!(app.import_flow, ImportFlow::Reading));
+        let current = app.generation.unwrap();
+        app.access.as_mut().unwrap().expires = Instant::now();
+        app.accept_import(current, Ok(fixture_entries()));
+        assert!(app.pending.is_empty());
+        app.lock();
+        fixture_access(&mut app);
+        app.import_flow = ImportFlow::Reading;
+        app.accept_import(app.generation.unwrap(), Ok(fixture_entries()));
+        assert_eq!(app.pending.len(), 1);
+        assert!(!app.pending[0].selected);
+        app.lock();
+        assert!(app.pending.is_empty());
+    }
+    #[test]
+    fn focus_sleep_rollback_and_expiry_revoke_before_private_ui_or_result_polling() {
+        for case in 0..4 {
+            let mut app = AuthDesk::default();
+            fixture_access(&mut app);
+            stage_fixture(&mut app);
+            app.import_flow = ImportFlow::Reading;
+            let now = app.last_frame;
+            let wall = app.last_wall_frame;
+            let generation = app.generation.unwrap();
+            match case {
+                0 => app.privacy_tick(now, wall, true),
+                1 => app.privacy_tick(now, wall + Duration::from_secs(6), false),
+                2 => app.privacy_tick(now, wall - Duration::from_secs(1), false),
+                3 => app.privacy_tick(now + Duration::from_secs(15), wall, false),
+                _ => unreachable!(),
+            }
+            assert!(app.access.is_none());
+            assert!(app.pending.is_empty());
+            assert!(app.query.is_empty());
+            app.accept_import(generation, Ok(fixture_entries()));
+            assert!(app.pending.is_empty());
+        }
+    }
+    #[test]
+    fn generation_exhaustion_is_permanent_until_process_restart() {
+        let mut app = AuthDesk {
+            generation: Some(u64::MAX),
+            ..Default::default()
+        };
+        app.request_unlock(&egui::Context::default());
+        assert!(app.generation.is_none());
+        assert!(!app.unlocked());
+        assert!(app.message.contains("generation exhausted"));
+        app.lock();
+        app.request_unlock(&egui::Context::default());
+        assert!(app.generation.is_none());
+        assert!(!app.unlocked());
+    }
     #[test]
     fn paused_monotonic_clock_and_wall_rollback_cannot_extend_access() {
         let now = Instant::now();
@@ -486,7 +753,7 @@ mod tests {
     #[test]
     fn ui_cannot_fake_hardware_authorization() {
         let mut app = AuthDesk::default();
-        app.request_unlock();
+        app.request_unlock(&egui::Context::default());
         assert!(!app.unlocked());
     }
     #[test]

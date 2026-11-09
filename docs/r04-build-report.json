@@ -6,14 +6,14 @@
   "manufacturing_release_authorized": false,
   "local": {
     "rust_toolchain": "1.99.1",
-    "unit_and_integration_tests_passed": 100,
+    "unit_and_integration_tests_passed": 111,
     "workspace_fmt": true,
     "workspace_clippy_deny_warnings": true,
     "cortex_m33_checks": true,
     "diagnostic_build": true,
     "diagnostic_binary_bytes": 25296,
     "diagnostic_is_authenticator": false,
-    "cargo_lock_sha256": "205e819285354161ed514ade0cbb4f305d2fdab76bba4d5ead6de849297c0184",
+    "cargo_lock_sha256": "172b4d524da65e22e6a12aa44be58823abc0749c823b9a39d28812390bdff6df",
     "strict_dependency_audit": {
       "packages": 356,
       "known_vulnerabilities": 0,
@@ -44,6 +44,19 @@
       "notice_scope": "GitHub macOS arm64 queue-capacity notice; not a compiler/Actions warning",
       "source_commit": "1dc1370f99921f9831452c16f7c99ec75b32b557",
       "build_run": 42577949376
+    },
+    "previous_validated_100_test_version": {
+      "source_commit": "0a5c207102e3d9c0a371650bdd8f55a9b69df6a3",
+      "build_run": 42586336802,
+      "native_targets": "Linux, macOS, Windows all PASS; 100 tests each; ARM checks PASS",
+      "strict_dependency_audit": "PASS",
+      "full_log_bytes": 313524,
+      "full_log_sha256": "712b9ffbb50dc335a63340d4b756af19de27170815248bc40016d3c4c7516883",
+      "log_format": "Four complete top-level job logs from Actions ZIP, sorted by path and joined with one LF",
+      "warning_lines": 0,
+      "warning_annotations": 0,
+      "notice_annotations": 1,
+      "notice_scope": "GitHub macOS arm64 queue-capacity notice"
     }
   },
   "not_implemented_or_not_qualified": [
@@ -54,7 +67,7 @@
     "actual_usb_nfc_fido_interoperability",
     "chip_known_answer_tests_and_error_tamper_paths",
     "physical_emc_sidechannel_fault_and_assembly_qualification",
-    "nonblocking_import_ui_privacy_before_real_backend_activation",
+    "native_import_dialog_focus_suspend_and_compositor_manual_qualification",
     "eight_failure_biometric_lockout_maintenance_and_availability_review"
   ],
   "own_unsafe_boundary": "firmware/secure-mmio: five fixed-address PAC constructors in one documented function. Other own protocol/policy/crypto state machines forbid unsafe; no own C/C++."

@@ -10,6 +10,6 @@
   "database_commit_time": "2026-11-08T16:03:42-07:00",
   "database_worktree_clean": true,
   "audit_report_sha256": "b06c553c04a6cc3b98257d9ca8180121772bbd48610a230804efba3e452dabaa",
-  "cargo_lock_sha256": "205e819285354161ed514ade0cbb4f305d2fdab76bba4d5ead6de849297c0184",
+  "cargo_lock_sha256": "172b4d524da65e22e6a12aa44be58823abc0749c823b9a39d28812390bdff6df",
   "scope": "Current full lockfile, including test/target dependencies. No advisory ignore list. Unknown vulnerabilities are outside this result."
 }
