@@ -75,7 +75,7 @@ fn valid_text(s: &str, limit: usize, multiline: bool) -> bool {
         && s.len() <= limit
         && !s.chars().any(|c| {
             (c.is_control() && !(multiline && (c == '\n' || c == '\t' || c == '\r')))
-                || matches!(c, '\u{202a}'..='\u{202e}'|'\u{2066}'..='\u{2069}')
+                || matches!(c, '\u{061c}' | '\u{200e}' | '\u{200f}' | '\u{202a}'..='\u{202e}' | '\u{2066}'..='\u{2069}')
         })
 }
 
@@ -208,6 +208,10 @@ mod tests {
             b"\xff",
             br#"{"version":2,"entries":[]}"#,
             br#"{"version":2,"entries":[{"type":"note","title":"bad\u202ename","body":"x"}]}"#,
+            br#"{"version":2,"entries":[{"type":"note","title":"bad\u061cname","body":"x"}]}"#,
+            br#"{"version":2,"entries":[{"type":"note","title":"bad\u200ename","body":"x"}]}"#,
+            br#"{"version":2,"entries":[{"type":"note","title":"bad\u200fname","body":"x"}]}"#,
+            br#"{"version":2,"entries":[{"type":"recovery_codes","title":"x","codes":["a\u200fb"]}]}"#,
             br#"{"version":2,"entries":[{"type":"recovery_codes","title":"x","codes":[]}]}"#,
         ] {
             assert!(parse_import(bytes).is_err());
