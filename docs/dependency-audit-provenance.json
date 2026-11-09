@@ -8,8 +8,9 @@
   ],
   "database_commit": "d9cb059f3217db87aeccd190b81eaffe8cc29cb9",
   "database_commit_time": "2026-11-09T17:13:08+01:00",
-  "database_worktree_clean": false,
-  "audit_report_sha256": "eaf10134f4336fd0e087afec247e6d9f80efa52abc2395819a034566b8256538",
+  "database_worktree_clean": true,
+  "audit_report_sha256": "842e5d97fb9bcfe22c0c4d47d67ea7dfea774a973eb296221bb7e93e2d186d1a",
   "cargo_lock_sha256": "10669c69e7b6939633b92df3b191ec808d7d58e8a08ffb35dd94d9d8c110dc7d",
-  "scope": "Current full lockfile, including test/target dependencies. No advisory ignore list. Unknown vulnerabilities are outside this result."
+  "scope": "Current full lockfile, including test/target dependencies. No advisory ignore list. Unknown vulnerabilities are outside this result.",
+  "database_provenance": "Fresh detached clean worktree at the verified upstream HEAD; prior local cache was dirty and was not used for this audit."
 }

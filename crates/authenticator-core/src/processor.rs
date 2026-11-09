@@ -1,8 +1,11 @@
 use crate::request::Dialect;
 use crate::{Error, Prepared, Review, prepare_ctap2};
 use alloc::vec::Vec;
-use device_policy::Authorization;
 use device_policy::Operation;
+use device_policy::{
+    Authorization,
+    execution::{Execution, State as ExecutionState},
+};
 use opensk::{api::customization::Customization, ctap::CtapState, env::Env};
 use zeroize::{Zeroize, Zeroizing};
 
@@ -11,12 +14,27 @@ use zeroize::{Zeroize, Zeroizing};
 /// or public simulation backend is supplied. End must revoke ALL scope state.
 pub trait Platform: Env {
     fn check_boot_and_channel(&mut self, binding: &[u8; 32]) -> Result<(), Error>;
-    fn begin_authorized(&mut self, authorization: Authorization) -> Result<(), Error>;
+    fn authorization_generation(&self) -> u64;
+    fn begin_authorized(&mut self, execution: Execution) -> Result<(), Error>;
     fn end_authorized(&mut self);
     /// Root-owned crash-safe FIDO reset. Do not invoke OpenSK's generic reset:
     /// it can delete shared sensor templates before the vault/SE transaction.
     /// Device-level notes/fingerprint lifecycle is separate from CTAP reset.
     fn reset_fido_authorized(&mut self) -> Result<Vec<u8>, Error>;
+}
+struct Activation<'a, E> {
+    env: &'a mut E,
+    binding: [u8; 32],
+}
+impl<E: Platform> ExecutionState for Activation<'_, E> {
+    fn generation(&self) -> u64 {
+        self.env.authorization_generation()
+    }
+    fn check_security_state(&mut self) -> Result<(), device_policy::Error> {
+        self.env
+            .check_boot_and_channel(&self.binding)
+            .map_err(|_| device_policy::Error::HardwareFault)
+    }
 }
 pub struct Processor<E: Platform> {
     env: E,
@@ -130,27 +148,71 @@ impl<E: Platform> Processor<E> {
             return Err(Error::Time);
         }
         self.env.check_boot_and_channel(&expected.channel)?;
-        let issued = authorization.issued_ms();
-        let expires = authorization.expires_ms();
-        if let Err(error) = self.env.begin_authorized(authorization) {
+        let execution = authorization.activate(
+            expected,
+            &mut Activation {
+                env: &mut self.env,
+                binding: expected.channel,
+            },
+            &mut clock,
+        );
+        let execution = match execution {
+            Ok(execution) => execution,
+            Err(error) => {
+                self.env.end_authorized();
+                self.continuation = None;
+                return Err(match error {
+                    device_policy::Error::Expired | device_policy::Error::TimeWentBackwards => {
+                        Error::Time
+                    }
+                    device_policy::Error::HardwareFault => Error::State,
+                    _ => Error::Authorization,
+                });
+            }
+        };
+        let execution = if let Some(until) = continuation_expires {
+            match execution.restrict_deadline(until) {
+                Ok(execution) => execution,
+                Err(_) => {
+                    self.env.end_authorized();
+                    self.continuation = None;
+                    return Err(Error::Time);
+                }
+            }
+        } else {
+            execution
+        };
+        let issued = execution.started_ms();
+        let activated_at = execution.checked_at_ms();
+        let expires = execution.expires_ms();
+        let generation = execution.authorization().generation();
+        if let Err(error) = self.env.begin_authorized(execution) {
             self.env.end_authorized();
             return Err(error);
         }
         let before = clock();
-        if before < start
+        let same_generation = self.env.authorization_generation() == generation;
+        if !same_generation
+            || before < activated_at
             || before >= expires
             || continuation_expires.is_some_and(|until| before >= until)
         {
             self.env.end_authorized();
             self.continuation = None;
-            return Err(Error::Time);
+            return Err(if same_generation {
+                Error::Time
+            } else {
+                Error::Authorization
+            });
         }
         let previous = self.continuation.take();
         let mut dispatched = self.dispatch(&request);
         let checked = self.env.check_boot_and_channel(&expected.channel);
+        let same_generation = self.env.authorization_generation() == generation;
         let after = clock();
         self.env.end_authorized();
         if checked.is_err()
+            || !same_generation
             || after < before
             || after >= expires
             || continuation_expires.is_some_and(|until| after >= until)
@@ -158,7 +220,9 @@ impl<E: Platform> Processor<E> {
             if let Ok(response) = &mut dispatched {
                 response.zeroize();
             }
-            return Err(if checked.is_err() {
+            return Err(if !same_generation {
+                Error::Authorization
+            } else if checked.is_err() {
                 Error::State
             } else {
                 Error::Time

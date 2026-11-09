@@ -25,6 +25,8 @@ struct Stats {
     checks: u32,
     fail_check: Option<u32>,
     active: bool,
+    generation: u64,
+    revoke_check: Option<u32>,
 }
 struct Model {
     inner: TestEnv,
@@ -99,13 +101,19 @@ impl Platform for Model {
     fn check_boot_and_channel(&mut self, binding: &[u8; 32]) -> Result<(), Error> {
         let mut stats = self.stats.borrow_mut();
         stats.checks += 1;
+        if stats.revoke_check == Some(stats.checks) {
+            stats.generation += 1;
+        }
         if *binding != BINDING || stats.fail_check == Some(stats.checks) {
             Err(Error::State)
         } else {
             Ok(())
         }
     }
-    fn begin_authorized(&mut self, _: Authorization) -> Result<(), Error> {
+    fn authorization_generation(&self) -> u64 {
+        self.stats.borrow().generation
+    }
+    fn begin_authorized(&mut self, _: device_policy::execution::Execution) -> Result<(), Error> {
         let mut stats = self.stats.borrow_mut();
         stats.begins += 1;
         assert!(!stats.active);
@@ -632,9 +640,9 @@ fn rollback_or_late_platform_fault_erases_the_response_and_ends_scope() {
         let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
         let auth = authority(prepared.request().unwrap());
         if fail {
-            stats.borrow_mut().fail_check = Some(2);
+            stats.borrow_mut().fail_check = Some(3);
         }
-        let mut ticks = [10, 20, 15].into_iter();
+        let mut ticks = [10, 10, 10, 20, 15].into_iter();
         assert!(
             core.authorized(prepared, auth, || ticks.next().unwrap())
                 .is_err()
@@ -642,6 +650,50 @@ fn rollback_or_late_platform_fault_erases_the_response_and_ends_scope() {
         assert!(!stats.borrow().active);
         assert_eq!(stats.borrow().ends, 1);
     }
+}
+
+#[test]
+fn stale_generation_before_activation_or_during_dispatch_never_releases_a_response() {
+    for mode in 0..3 {
+        let (env, stats) = Model::new();
+        let mut core = Processor::new(env);
+        let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
+        let authorization = authority(prepared.request().unwrap());
+        if mode == 0 {
+            stats.borrow_mut().generation = 1;
+        } else if mode == 2 {
+            stats.borrow_mut().revoke_check = Some(3);
+        }
+        let mut revoked = false;
+        let response = core.authorized(prepared, authorization, || {
+            if mode == 1 && stats.borrow().active && !revoked {
+                stats.borrow_mut().generation += 1;
+                revoked = true;
+            }
+            10
+        });
+        assert!(matches!(response, Err(Error::Authorization)));
+        assert!(!stats.borrow().active);
+        assert_eq!(stats.borrow().ends, 1);
+        assert_eq!(stats.borrow().begins, if mode == 0 { 0 } else { 1 });
+    }
+}
+
+#[test]
+fn rollback_after_the_last_activation_check_prevents_the_first_private_operation() {
+    let (env, stats) = Model::new();
+    let mut core = Processor::new(env);
+    let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
+    let authorization = authority(prepared.request().unwrap());
+    let mut ticks = [10, 20, 25, 24, 26].into_iter();
+    assert!(matches!(
+        core.authorized(prepared, authorization, || ticks.next().unwrap()),
+        Err(Error::Time)
+    ));
+    assert!(!stats.borrow().active);
+    assert_eq!(stats.borrow().ends, 1);
+    // The early failure did not register a credential before suppressing output.
+    assert_eq!(run(&mut core, &get_assertion(0x51))[0], 0x2e);
 }
 #[test]
 fn forbidden_host_pin_mutations_bad_rp_ids_and_noncanonical_requests_are_rejected() {

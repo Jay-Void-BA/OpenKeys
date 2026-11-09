@@ -6,6 +6,7 @@
 //! integration requirements. Host code must never execute this trust boundary.
 
 pub mod biometric;
+pub mod execution;
 pub mod lcd;
 pub mod pin;
 
@@ -27,6 +28,23 @@ pub enum Operation {
     DeriveHmacSecret,
 }
 impl Operation {
+    /// Fixed maximum duration for ONE already approved operation. This is not
+    /// an unlock lease and cannot be set or renewed by the host. Slow NOR
+    /// replacement/enrollment/update needs a different budget from capture.
+    pub const fn execution_budget_ms(self) -> u64 {
+        match self {
+            Self::Import
+            | Self::Delete
+            | Self::ChangePin
+            | Self::EnrollFingerprint
+            | Self::DeleteFingerprint
+            | Self::PairHost
+            | Self::FirmwareUpdate
+            | Self::FactoryReset
+            | Self::FidoRegister => 300_000,
+            _ => 15_000,
+        }
+    }
     /// This decision is device policy; a host cannot downgrade the requirement.
     pub const fn requires_additional_pin(self) -> bool {
         matches!(
@@ -140,8 +158,14 @@ impl<V: SecureVerifier> Gate<V> {
             exhausted: false,
         }
     }
+    /// Root-only epoch source for execution guards; never a host-supplied
+    /// session number. u64::MAX is reserved as the terminal revoked epoch.
+    pub const fn generation(&self) -> u64 {
+        self.generation
+    }
     fn observe_time(&mut self, now: u64) -> Result<(), Error> {
-        if self.exhausted {
+        if self.exhausted || self.generation == u64::MAX {
+            self.exhausted = true;
             return Err(Error::CounterExhausted);
         }
         if now < self.last_time {
@@ -232,8 +256,11 @@ impl<V: SecureVerifier> Gate<V> {
     pub fn lock(&mut self) {
         self.pending = None;
         match self.generation.checked_add(1) {
-            Some(next) => self.generation = next,
-            None => self.exhausted = true,
+            Some(next) if next < u64::MAX => self.generation = next,
+            _ => {
+                self.generation = u64::MAX;
+                self.exhausted = true;
+            }
         }
     }
 }

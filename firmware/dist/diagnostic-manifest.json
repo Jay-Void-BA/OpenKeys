@@ -24,8 +24,9 @@
     "Cargo.toml": "ecf408ab647978e3ceda39fb87aafd5e472918723b3d727f818f4d16a642e179",
     "crates/device-policy/Cargo.toml": "4756365c2be53eb00a94e263ba10ccd6a563049b4d93e6ba092ea72916f91247",
     "crates/device-policy/src/biometric.rs": "2b5200740724ef7b47516cfc5ff8aecfddcd29e721084234907ed77c70b6cd64",
+    "crates/device-policy/src/execution.rs": "94d29ecffdbe2bd62cfaaad73193254628887b21be4d0774a2fa4af4f1681f18",
     "crates/device-policy/src/lcd.rs": "89e3c7f4ae7858a353ad050e5e44c783f3441ab976d54f7be6b9c2a19a52a5b4",
-    "crates/device-policy/src/lib.rs": "8024128f69522ac9ad9bdd332be4fb3129309589cfac15d3178c637807210ddc",
+    "crates/device-policy/src/lib.rs": "1c1f9822d0aed6ea099e1c4602d7d783a4558d4e6876af6296c4e39d4e722dc2",
     "crates/device-policy/src/pin.rs": "9f9235918eabccf0122b27e2d98ba390b89b41917ff93cb6507cf23ad68fe4a8",
     "crates/device-policy/tests/generate-fpc-fixtures.py": "061575df612efbfcbe08fdca4f6c76a254155076c7db8117eafc70e39aee8939",
     "crates/device-vault/Cargo.toml": "6411c314429924110c38397291751e222628a52bab70f95a270f74ced14e760d",
@@ -144,7 +145,7 @@
     "scripts/export-se-state-layout.py": "0fdcc09b56c31c6d5b1e627679fb87da184c40c2258369fbdf0bd5bc55c2a7ef"
   },
   "artifacts": {
-    "openkeys-r04-diagnostics.elf": "4ab7b4cbb3ed951460f1072cdb32523d0e4b5e9b2280ec24b0c7ab46082f3145",
+    "openkeys-r04-diagnostics.elf": "14aeaa1e88ba664023a9102e4334a57188b9f555674b5c7209be807ce3939894",
     "openkeys-r04-diagnostics.bin": "41015865321164b5d972bbb370d473749ca2d79b0671bb194ff794dd367e52fb"
   }
 }

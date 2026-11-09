@@ -112,3 +112,9 @@ SE/密码远端[运行42575127427](https://github.com/Jay-Void-BA/OpenKeys/actio
 SE schema2新增两个独立counter并拒绝schema1，marker=3c4ab91dae4b19c804e5cdfc6c82a083d442023327822d9b6d70fa8f09154fe5；只导出公开布局，没有对设备编程或自动迁移。400个锁定依赖以实际更新的RustSec数据库d9cb059f3217db87aeccd190b81eaffe8cc29cb9严格审计，0已知漏洞/0维护警告。CAD89文件摘要不变；ARM诊断仍25296字节、无私密服务。新源码远端CI另记；完整Root、生产密钥/启动、管理通道和实片资格仍未完成。对抗性复核明确拒绝据此断言整机理论安全，制造/实验室候选只代表公开能力核对。
 
 183项版本远端[42719762400](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42719762400)，输入e5340fdfc701fb3bd4a3d3b2f355ca62f95441be：三平台各183项测试、全部编译/Clippy/格式、严格依赖审计及Linux ARM检查成功。完整四任务日志379288字节，SHA256 2ee49a68d91bf03d1161d115a899c1c6d5ac6f32d20c0e1dbf873a2676eb56d5，warning行0、warning注释0、平台notice1。三个开发包及ARM诊断ZIP经GitHub连接器实际取得并匹配GitHub摘要，ELF/PE/Mach-O与构建信息相符；未执行这些二进制、未接真设备，明确保留开发/诊断用途。下载索引与机器记录更新到本版本。
+
+## 一次请求执行范围续更
+
+当前191项本地测试通过，完整fmt、工作区Clippy `-D warnings`、Cortex-M33认证核心/目标编译及诊断目标Clippy通过。新增一次消费的Execution、固定操作预算、不可续期和持续代际/时间/状态检查；FIDO网关已转移执行所有权，并测试激活回退、密码操作前撤权及输出后撤权。真实Root检查点、硬件密钥桥接和批量staging仍未接通，不能把策略库测试当成生产部署。
+
+严格依赖审计重新使用上游HEAD d9cb059f3217db87aeccd190b81eaffe8cc29cb9的独立干净工作树，400包0已知漏洞/0维护警告。先前本地数据库缓存存在未提交差异，本次未使用该缓存，来源记录已改正；不能以旧缓存的HEAD字段证明其文件内容。新源码远端CI将在实际运行后单列，前述183项结果不覆盖本次变更。

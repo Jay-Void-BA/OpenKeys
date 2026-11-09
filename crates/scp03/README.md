@@ -37,6 +37,13 @@ the all-APDU counter behavior. It does not infer that fact from untrusted
 version bytes or claim a chip was qualified. Actual E2 commissioning traces,
 SCP-only mandate/ACLs, key rotation and recovery remain required.
 
+NXP's [AN12436 Rev2.4, section3.5](https://www.nxp.com/docs/en/application-note/AN12436.pdf)
+identifies the SE050E generation as applet7.2; table2 identifies E2 OEF A921.
+This supports the selected E2 family, not a blanket qualification of an
+unidentified delivered chip. Commissioning must verify the actual product,
+OS/patch, applet, AID and provisioned key profile against the selected errata.
+An unauthenticated version response alone must not select a weaker profile.
+
 Tests use public synthetic keys and fixed transcripts generated independently
 by `tests/generate-fixtures.py` with OpenSSL3.5.7; normal tests do not execute
 OpenSSL. They cover AES128/256/random/pseudo handshake, three consecutive

@@ -27,8 +27,10 @@ entered only on the four physical buttons. GetInfo advertises alwaysUv and
 does not advertise blocked host-PIN/config/large-blob APIs.
 
 The processor consumes the opaque `device_policy::Authorization`, checks its
-exact operation/digest/channel, enters a platform scope, rechecks time/state
-around dispatch, and revokes scope before returning. Late faults, rollback or
+exact operation/digest/channel, activates a fixed request-bound `Execution`,
+transfers that scope to the platform, rechecks generation/time/state around
+dispatch, and revokes scope before returning. [Execution limits and required
+root wiring](EXECUTION_SCOPE_REVIEW.md) are explicit. Late faults, rollback or
 expiry erase the response. Every private provider must also make live checks
 around its own blocking I/O; an outer check alone cannot undo an executed
 signature or persistent write. Generation revocation and cancellation belong
