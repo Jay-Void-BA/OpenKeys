@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/device-policy", "crates/vault-import", "apps/manager", "firmware/board", "firmware/target"]
+members = ["crates/device-policy", "crates/vault-import", "crates/device-vault", "apps/manager", "firmware/board", "firmware/target"]
 default-members = ["crates/device-policy", "crates/vault-import"]
 exclude = ["firmware/vendor/cortex-m"]
 

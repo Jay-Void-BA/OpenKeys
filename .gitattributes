@@ -1,9 +1,16 @@
-# Stable byte hashes for CAD, pin contracts and reproducible cross-platform builds.
 * text=auto eol=lf
-*.png binary
-*.pdf binary
-*.zip binary
+*.rs text eol=lf
+*.toml text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.scad text eol=lf
+*.csv text eol=lf
 *.stl binary
 *.blend binary
+*.png binary
+*.pdf binary
+# Generated stroke plots: review editable schematic source and rendered pages.
+hardware/exports/schematic/*.svg -diff
+*.zip binary
 *.elf binary
 *.bin binary

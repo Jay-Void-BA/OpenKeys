@@ -42,7 +42,7 @@ def main():
     assert 0x20000000 < stack <= 0x20040000 and reset & 1
     assert 0x08000000 <= reset < 0x08000000 + len(code)
     files = [ROOT / 'Cargo.toml', ROOT / 'Cargo.lock', Path(__file__).resolve()]
-    for folder in ('firmware/board', 'firmware/target', 'firmware/vendor/cortex-m', 'crates/device-policy'):
+    for folder in ('firmware/board', 'firmware/target', 'firmware/vendor/cortex-m', 'crates/device-policy', 'crates/device-vault'):
         files.extend(p for p in (ROOT / folder).rglob('*') if p.is_file())
     report = {
         'schema': 1, 'purpose': 'R04_ELECTRICAL_DIAGNOSTIC_ONLY',

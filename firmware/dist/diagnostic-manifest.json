@@ -20,27 +20,34 @@
     "pinout": "015f236a2066e38bd63a31aea3ea134474402bfe2becfdf4af9b7557d0dacac5"
   },
   "source_sha256": {
-    "Cargo.lock": "6fc6c8ace4056a62bb248ce2eaada114f5f0cfc70c1338c5b5791a3798a69fcc",
-    "Cargo.toml": "35d26472c520723326f94813bd46a8c1164cc516fa8ea50a7eb3fea84850ac80",
+    "Cargo.lock": "6ee0001d541183cc953b28b7ca6293b26eca9bbfffea939523a094fb1590bfe4",
+    "Cargo.toml": "7615ac6609d5335a40dbbce155863ef1b78cdb8b00f2504d6b3e7f132f2a38d6",
     "crates/device-policy/Cargo.toml": "4756365c2be53eb00a94e263ba10ccd6a563049b4d93e6ba092ea72916f91247",
     "crates/device-policy/src/biometric.rs": "fc3513d03b355914c7e430c27bc45f6118597280ceab96975c389d1f25815f0e",
     "crates/device-policy/src/lcd.rs": "89e3c7f4ae7858a353ad050e5e44c783f3441ab976d54f7be6b9c2a19a52a5b4",
     "crates/device-policy/src/lib.rs": "63074f8af8c5012b6a567d2acbb261004df96c89f6e16386a9bb1d2eb1f73b93",
     "crates/device-policy/src/pin.rs": "9f9235918eabccf0122b27e2d98ba390b89b41917ff93cb6507cf23ad68fe4a8",
-    "firmware/board/Cargo.toml": "ff3c73e37772d02a752b66215fd118602776e8f18cf88bd1e0e57c193e47da95",
+    "crates/device-vault/Cargo.toml": "6411c314429924110c38397291751e222628a52bab70f95a270f74ced14e760d",
+    "crates/device-vault/README.md": "63cffedbd2a72128c041bc2d68a9d74b6c366c05cdb3ea4d75c6a2ee488820a1",
+    "crates/device-vault/src/lib.rs": "bf346fdc687c4e1e6490339cbda2f93a9059d5ea0354ac943c1f8f07924eec11",
+    "crates/device-vault/tests/snapshots.rs": "7d7dbafcab0c25daa1992255f82160aee0f961273000f8d7f54cacc3b61c0717",
+    "firmware/board/Cargo.toml": "c2f2978ad6de60ec76017b3978d2176978a4c06fca3a3dcb45a07c96a6f38428",
     "firmware/board/README.md": "a7f34c844426d9fa06d7eb0e9be0197e6ab5ac98a9c78aa811b31da7a26d855b",
     "firmware/board/build.rs": "95399bb479e4148638bdc57b3931577e8a68512bbd19a7cad0f1dc2f420f1e67",
     "firmware/board/src/buttons.rs": "32c7262433769a3c5afe8e17d30e510da57c83a8eb371b7b2131aa78c7dafb1c",
     "firmware/board/src/flash.rs": "177e359a97e55d4690fac0cb3faeec642b943190be435145ce0860a18668349f",
     "firmware/board/src/lcd.rs": "811ddf1fb7e581563d44644cf9a90270180b2301d2f0da2fe19a9f2484e6e919",
-    "firmware/board/src/lib.rs": "1d38ba705bfdda993af5e30520490a25b9111e026fd2cc2fa9bca972d0666ee8",
+    "firmware/board/src/lib.rs": "d37a8207c14aa43cc1ff62f7e40ff5677d7109de7ca69b57902faaa28d9626fe",
     "firmware/board/src/pins.rs": "fbeb982315a554dc97ddbb2e4a9e49324e1e7f457db164c810c9b80dc88a269e",
+    "firmware/board/src/storage.rs": "d00ffcb29624044bf81aa73a56f1d701f82d532558d83833c32e674d9aca2a87",
     "firmware/board/tests/critical_sections.rs": "510f388e2b1010bdbde7181153e9d9c65dd0c048bc1689d695e2d0d21fdf9a80",
     "firmware/board/tests/drivers.rs": "abc2b02e9308b51caff735bd4339c92387afd1fcd2a6584e39a156e8009941a5",
-    "firmware/target/Cargo.toml": "17a5922bbeb9d0aca5ecfff2084852f475ba0daa812def50516e40461781be59",
+    "firmware/target/Cargo.toml": "abe597a489c692c4f636929201fbf38992bc9c52e1561eed3b45da2ee3bae2eb",
     "firmware/target/README.md": "4037b0cb86569aa5e5b731291eb0a0c68cb4d88ad6606a74ca451ecdcb5d547c",
     "firmware/target/build.rs": "7ada563d340a08ef607a7255452daaefe62481d0193e1a4e7d955cf7619d40c1",
+    "firmware/target/src/lib.rs": "5e42579fc43ea428b20bb6bcc3b5c88c440e0d23ccc4ab6bcfd17cfd813dade2",
     "firmware/target/src/main.rs": "3bfeaccadf2dec03670868480be8c2ac49bd33630c24de2ab89b64102cf6450a",
+    "firmware/target/src/vault_aead.rs": "2a1d64007965b584397c62896214912f4f22c42cb26f132d3b4ca1889062f84b",
     "firmware/vendor/cortex-m/CHANGELOG.md": "67f37cfd6cb96dfe78c30c843da690747688b7ec78fc01d1553e3c9f790c5773",
     "firmware/vendor/cortex-m/Cargo.toml": "9a2d2deb063d0fb466d3ccd4088ab7c90affb37fc836a157520c462e4a327fdc",
     "firmware/vendor/cortex-m/Cargo.toml.orig": "935c7c2d519e2a84c57d8c3fad14f9ecfa2a237eac039768c8467e69a8be6962",
@@ -90,10 +97,10 @@
     "firmware/vendor/cortex-m/src/register/primask.rs": "1997e7531f68e928924bdcbc6b4084b2be4545e82ad29fed789e78b4be4fb2d6",
     "firmware/vendor/cortex-m/src/register/psp.rs": "27f35dec90fd02d7fcfdeb300ce069bde7b90fb5305c62817121ed44ee73048a",
     "firmware/vendor/cortex-m/src/register/psplim.rs": "cf62586d643032425a8247824e6c7ef8628f97d5139c087ac8c44df0f13d8f46",
-    "scripts/export-diagnostic.py": "89d54449843fad67a7e1d585fcb61a7b535ff57495be071370134837ff78bf98"
+    "scripts/export-diagnostic.py": "231c65d59f1c871770d79ecdd3dcc868cf1c9b29bc22e9f9fefdfe4778ddaf07"
   },
   "artifacts": {
-    "openkeys-r04-diagnostics.elf": "044bfd39203be7db6a35d5eb5a31f4a79f58f2787994cfb047c8d5f6c080bc18",
-    "openkeys-r04-diagnostics.bin": "39a940afdaf9c051ccef0f6d22c795e7e524ca25ebddb29295814779cde8c2ae"
+    "openkeys-r04-diagnostics.elf": "c49864ff5a216b58ffacfef272cc9ddd84d0426a32dd0e5c44774ac76e369713",
+    "openkeys-r04-diagnostics.bin": "41015865321164b5d972bbb370d473749ca2d79b0671bb194ff794dd367e52fb"
   }
 }

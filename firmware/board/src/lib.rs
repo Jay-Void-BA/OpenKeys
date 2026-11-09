@@ -7,6 +7,7 @@ pub mod buttons;
 pub mod flash;
 pub mod lcd;
 pub mod pins;
+pub mod storage;
 
 #[cfg(test)]
 extern crate std;

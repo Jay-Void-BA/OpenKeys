@@ -517,6 +517,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "device-vault"
+version = "0.1.0"
+dependencies = [
+ "aes-gcm",
+ "sha2",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2035,6 +2045,7 @@ dependencies = [
  "cortex-m",
  "critical-section",
  "device-policy",
+ "device-vault",
  "embedded-hal 1.0.0",
  "sha2",
 ]
@@ -2046,10 +2057,13 @@ dependencies = [
  "cortex-m",
  "cortex-m-rt",
  "device-policy",
+ "device-vault",
  "embassy-stm32",
  "embedded-hal 1.0.0",
  "embedded-hal-bus",
  "openkeys-board",
+ "subtle",
+ "zeroize",
 ]
 
 [[package]]

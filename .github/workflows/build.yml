@@ -50,7 +50,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           rustup target add thumbv8m.main-none-eabihf --toolchain 1.99.1
-          cargo check -p device-policy -p openkeys-board --target thumbv8m.main-none-eabihf --locked
+          cargo check -p device-policy -p device-vault -p openkeys-board --target thumbv8m.main-none-eabihf --locked
           cargo build -p openkeys-h573 --release --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked
           cargo clippy -p openkeys-h573 --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked -- -D warnings
       - name: Tests
