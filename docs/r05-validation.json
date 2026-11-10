@@ -23,7 +23,7 @@
   },
   "r05_diagnostics": "firmware/dist/r05/diagnostic-manifest.json",
   "gui_forks_reconstructed_from_original_archives": 12,
-  "ci_result": "PASSED: source 2b499b84a7cdac7969c0b4170e202c9d84b752a0; full logs and annotations checked, zero warning lines/annotations",
+  "ci_result": "PASSED: source c2b89add698a20636775f89cfc827d439bd58474; complete logs/annotations checked, zero warning lines/annotations",
   "critical_open_items": [
     "Production secure Root / boot / isolation / debug lifecycle",
     "SE native enforcement of local PIN for private-key operations",
@@ -33,7 +33,7 @@
     "Physical LCD/NTC/charging/RF/EMC/tamper/FI/SCA qualification"
   ],
   "ci_evidence": "docs/ci-evidence-r05.json",
-  "native_tests_per_platform": 240,
+  "native_tests_per_platform": 246,
   "additional_linux_wire_tests": 2,
   "additional_macos_abi_tests": 2,
   "native_uid_probe": {
@@ -45,6 +45,6 @@
     "strict_clippy": "PASSED",
     "profile_or_acl_qualification": "NOT_RUN",
     "physical_tests": "NOT_RUN",
-    "ci_for_new_probe": "PENDING"
+    "ci_for_new_probe": "PASSED: 6 new tests on macOS, Windows and Linux; source c2b89add698a20636775f89cfc827d439bd58474"
   }
 }

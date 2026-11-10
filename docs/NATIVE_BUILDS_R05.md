@@ -4,14 +4,14 @@
 
 这些是工程开发产物，**没有真实认证设备后端**。GPUI 可以查看英文界面，设备操作会明确拒绝；不能导入真实 OTP / notes，不能解锁安全密钥。没有正式签名、安装包或移动 App。
 
-源码提交 `2b499b84a7cdac7969c0b4170e202c9d84b752a0`，三平台构建与严格检查均通过；完整日志 warning 为 0。本页摘要来自 GitHub API，未下载并运行这三个发布包。另有本地 Linux 源码构建的界面启动 / 锁定视图观察，见管理器截图；它不等于发布二进制和三系统设备互通验证。
+源码提交 `c2b89add698a20636775f89cfc827d439bd58474`，三平台构建与严格检查均通过；完整日志 warning 为 0。本页摘要来自 GitHub API，未下载并运行这三个发布包。另有本地 Linux 源码构建的界面启动 / 锁定视图观察，见管理器截图；它不等于发布二进制和三系统设备互通验证。
 
 | 产物 | 下载 | GitHub 提供的 ZIP SHA-256 |
 |---|---|---|
-| openkeys-gpui-development-macos-15 | [Download](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42820995733/artifacts/13767871741) | `ae5e9b3bcaab98f4012af8696ee21cfe3b80253923782f861fab59af587eb2eb` |
-| openkeys-gpui-development-ubuntu-24.04 | [Download](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42820995733/artifacts/13767861611) | `5d32ee66834352703dea1fdd38760fd9b42eaf65529d0b6609564a0bcc9901ed` |
-| r05-diagnostic-arm-elf | [Download](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42820995733/artifacts/13767151836) | `323d470fde4046209236a10a83e1f518e46a812adfaa205fa4a7b73b7a49e42d` |
-| openkeys-gpui-development-windows-2022 | [Download](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42820995733/artifacts/13766878956) | `a3126b76c157d124add064618c38dbb742b943867505029b875decfa2abedc77` |
+| openkeys-gpui-development-macos-15 | [Download](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42923755116/artifacts/13814170400) | `c3542af39a759b3c2a22fcb64b6b81ab98799c54c03d285aab243c66ef35a955` |
+| openkeys-gpui-development-ubuntu-24.04 | [Download](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42923755116/artifacts/13812274188) | `3cdc608b64272a19d3d3fe2c1c777164e0170fdfb89377f07395977ed84c081e` |
+| openkeys-gpui-development-windows-2022 | [Download](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42923755116/artifacts/13812139485) | `555da997ffa1f11ca26e9d73c7d3ba679788e363aded4492056f01066e0fda62` |
+| r05-diagnostic-arm-elf | [Download](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42923755116/artifacts/13811849598) | `da7effedc3605bd12a07cca780d5dbb174ef5b340bb59e4b41f998b118bef751` |
 
 macOS 目标为 Apple Silicon，Windows 为 x64 MSVC，Linux 为 Ubuntu 24.04 x86_64。平台运行库、GPU 与原生对话框仍需用户系统验证。需要 GitHub 访问权限；实际有效期见[构建元数据](native-builds-r05.json)。
 

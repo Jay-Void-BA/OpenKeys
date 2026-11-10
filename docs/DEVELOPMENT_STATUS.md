@@ -23,7 +23,7 @@
 ## 证据范围
 
 - 当前 CAD：[板网报告](../hardware/r05/review/board-check.json)、[CAD 摘要](../hardware/r05/review/cad-manifest.json)。
-- 当前软件：[R05 本地验证记录](r05-validation.json)；[对应源码的 GitHub CI 记录](ci-evidence-r05.json)已核对完整日志与注释；三平台各 240 项核心测试，额外 4 项线格式 / 原生 ABI 测试，warning 均为 0。
+- 当前软件：[R05 本地验证记录](r05-validation.json)；[对应源码的 GitHub CI 记录](ci-evidence-r05.json)已核对完整日志与注释；三平台各 246 项核心与试验测试，额外 4 项线格式 / 原生 ABI 测试，warning 均为 0。
 - 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[公开 SE 布局](../manufacturing/se-pin-layout-r05.json)。
 - 诊断用途：[R05 目标说明](../firmware/r05/README.md)；公开 LCD / 键 / Flash ID，不验证真实 PIN，不启用充电或 USB/NFC 协议。
 - 旧 R04 的 [CI](ci-evidence-r04.json)、[手册](../manufacturing/BUILD_MANUAL_ZH.md)及 [预检](../manufacturing/readiness-report.json)仅供历史追溯，不能充当 R05 放行证据。
