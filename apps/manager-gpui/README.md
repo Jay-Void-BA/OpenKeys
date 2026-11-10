@@ -24,3 +24,14 @@ Desktop USB, iOS NFC/USB-C, iPadOS USB-C and Android NFC/USB-C are separate
 integration targets, not presently working app bundles. See
 [mobile constraints](../mobile/README.md). GPUI mobile source availability
 does not establish device transport, signing or platform compatibility.
+
+## Observed Linux prototype
+
+Local Rust build launched on X11/Xvfb. Navigation and the rejected connect,
+OTP-display and private-record actions were checked without a device. These
+screenshots show the locked prototype, not successful hardware authorization.
+No physical USB/NFC, code generation on hardware or authenticated import was tested.
+
+![Locked OTP panel](screenshots/otp-locked.png)
+
+![Locked notes panel](screenshots/notes-locked.png)
