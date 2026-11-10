@@ -5,7 +5,7 @@
 > **工程候选 · 尚未生产放行**
 > 已有电路、PCB、结构设计和通过测试的软件模块；完整认证固件、真实管理通道及实物安全验证仍未完成。当前开发包和诊断镜像不能用于真实账户。
 
-[文档导航](docs/README.md) · [当前进度](docs/DEVELOPMENT_STATUS.md) · [开始开发](docs/GETTING_STARTED.md) · [制造与验收](manufacturing/README.md) · [安全复核](docs/ADVERSARIAL_REVIEW_R04.md)
+[文档导航](docs/README.md) · [当前进度](docs/DEVELOPMENT_STATUS.md) · [开始开发](docs/GETTING_STARTED.md) · [术语速查](docs/GLOSSARY.md) · [制造与验收](manufacturing/README.md) · [安全复核](docs/ADVERSARIAL_REVIEW_R04.md)
 
 <img src="hardware/r04/exports/OpenKeys-assembly.png" width="480" alt="OpenKeys R0.4 CAD装配渲染，非实物照片">
 
