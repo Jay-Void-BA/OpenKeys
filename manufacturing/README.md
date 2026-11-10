@@ -6,6 +6,8 @@
 
 第一次制作先看[从原材料到验收的完整说明书](BUILD_MANUAL_ZH.md)或[11 页打印版 PDF](OpenKeys-R04-build-manual-zh.pdf)。需要直接和工厂沟通时使用[工程订购 / 代焊确认单](ORDER_SHEET_R04.md)，并附[板上采购表](procurement-r04-board.csv)与[板外采购表](procurement-r04-external.csv)。
 
+寻找元件时查看[境内采购渠道与具体料号](MAINLAND_COMPONENT_CHANNELS.md)：标明零售、装配专用库料、进口代采和 MOQ 限制；指纹、LCD、电池尚未核实能从境内现货按 1–3 件买齐。
+
 ## 按步骤准备
 
 | 步骤 | 资料 | 完成后应得到什么 |
