@@ -133,5 +133,40 @@
     "status": "BLOCKED",
     "incomplete_handoff_conditions": 13,
     "report": "manufacturing/readiness-report.json"
+  },
+  "documentation_organization": {
+    "date_utc": "2026-11-10",
+    "runtime_source_changed": false,
+    "cad_artifact_hashes_unchanged": true,
+    "diagnostic_source_and_artifact_hashes_unchanged": true,
+    "checks": [
+      {
+        "run": 42749801137,
+        "source_commit": "9f62fdc349d5515ca139645d41bbea5fea730763",
+        "status": "PASS",
+        "full_log_bytes": 383315,
+        "full_log_sha256": "be67c0a26a4474b10a0a95d30aadb51b725e2b7fb15c728e7b19879f4a181b15",
+        "warning_lines": 0,
+        "warning_annotations": 0,
+        "notice_annotations": 1,
+        "unit_and_integration_tests_each_native": 191
+      },
+      {
+        "run": 42750261958,
+        "source_commit": "acf2169600b67d6811f6acaa9561d934b0ccef86",
+        "status": "PASS",
+        "full_log_bytes": 13283,
+        "full_log_sha256": "de60c07f031ce0c7a8d96b49932487d8d3ab7b356eeeec29b62298778083c846",
+        "warning_lines": 0,
+        "warning_annotations": 0,
+        "notice_annotations": 0,
+        "documents": 51,
+        "local_file_image_links": 304,
+        "external_urls_checked": false,
+        "heading_anchors_checked": false
+      }
+    ],
+    "supplier_acceptance": "No project-specific written acceptance obtained; personal clients, quantities and scope require explicit confirmation.",
+    "outreach_messages_sent": false
   }
 }
