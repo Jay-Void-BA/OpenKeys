@@ -8,6 +8,8 @@
 //! still be qualified on the exact E2 personality; model tests do not do so.
 
 pub mod keys;
+#[cfg(feature = "native-uid-qualification")]
+pub mod native_uid;
 mod objects;
 pub mod otp;
 pub mod pin_only;

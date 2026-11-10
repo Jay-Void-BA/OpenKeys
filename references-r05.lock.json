@@ -44,5 +44,28 @@
       "repository": "https://github.com/solokeys/solo2-hw",
       "commit": "e7d964cb1ce775b1faa1c0bd1e694b6a124aa630"
     }
-  ]
+  ],
+  "native_uid_protocol_reference": {
+    "repository": "https://github.com/NXP/plug-and-trust",
+    "commit": "7102413e0457d3dfa4fc4be686ca8ec50bd9f5e2",
+    "role": "Protocol facts only; not copied or compiled runtime C",
+    "files": [
+      {
+        "path": "hostlib/hostLib/se05x_03_xx_xx/se05x_APDU_apis.h",
+        "sha256": "47b457920cd8116aa82d5a7d73ca85239c4f64696f782ab6af4983acaf464dcc"
+      },
+      {
+        "path": "hostlib/hostLib/se05x_03_xx_xx/se05x_APDU_impl.h",
+        "sha256": "165928e9088041e375e9a69636f1bd1049f7e4c5cd3c8296187a939ced125f0f"
+      },
+      {
+        "path": "hostlib/hostLib/se05x/src/se05x_tlv.c",
+        "sha256": "75444c66aebb3c723d16abc92a1cbe3141f99084a0e849afdfca0ef0c2b0a389"
+      },
+      {
+        "path": "hostlib/hostLib/inc/se05x_tlv.h",
+        "sha256": "98c1c002bd96113175c8e5481220367f3ffd182f83c138ff843ff3348ea8d82a"
+      }
+    ]
+  }
 }

@@ -63,6 +63,14 @@ jobs:
           cargo build -p openkeys-h573-r05 --release --target thumbv8m.main-none-eabihf --features r05-diagnostics,lcd-v1-0 --locked
           cp target/thumbv8m.main-none-eabihf/release/openkeys-r05-diagnostics target/r05-diagnostics/openkeys-r05-diagnostics-v1-0.elf
           cargo clippy -p openkeys-h573-r05 --target thumbv8m.main-none-eabihf --features r05-diagnostics,lcd-v1-0 --locked -- -D warnings
+      - name: Default-off native UserID probe ARM check
+        if: runner.os == 'Linux'
+        run: cargo check -p openkeys-se-state --features native-uid-qualification --target thumbv8m.main-none-eabihf --locked
+      - name: Native UserID qualification probe tests and lint
+        run: |
+          cargo test -p openkeys-se-state --features native-uid-qualification native_uid:: --locked
+          cargo clippy -p openkeys-se-state --features native-uid-qualification --all-targets --locked -- -D warnings
+          rustfmt --edition 2024 --check crates/se-state/src/native_uid.rs crates/se-state/src/native_uid_tests.rs
       - name: Tests
         run: cargo test --workspace --locked
       - name: Verify public SE schema

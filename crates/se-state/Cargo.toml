@@ -4,6 +4,10 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+# Synthetic-object lab qualification only; not a production authorization path.
+native-uid-qualification = []
+
 [dependencies]
 openkeys-scp03 = { path = "../scp03" }
 device-policy = { path = "../device-policy" }

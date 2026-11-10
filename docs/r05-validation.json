@@ -35,5 +35,16 @@
   "ci_evidence": "docs/ci-evidence-r05.json",
   "native_tests_per_platform": 240,
   "additional_linux_wire_tests": 2,
-  "additional_macos_abi_tests": 2
+  "additional_macos_abi_tests": 2,
+  "native_uid_probe": {
+    "feature": "native-uid-qualification",
+    "production_enabled": false,
+    "private_authorization_issuer": false,
+    "new_local_tests_passed": 6,
+    "cortex_m33_compile": "PASSED",
+    "strict_clippy": "PASSED",
+    "profile_or_acl_qualification": "NOT_RUN",
+    "physical_tests": "NOT_RUN",
+    "ci_for_new_probe": "PENDING"
+  }
 }
