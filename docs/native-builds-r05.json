@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "source_commit": "2b499b84a7cdac7969c0b4170e202c9d84b752a0",
+  "run_id": 42820995733,
+  "production_release": false,
+  "artifacts_downloaded_and_executed": false,
+  "note": "GitHub metadata only; local Linux source build was rendered separately. Device backend and mobile apps are not integrated.",
+  "artifacts": [
+    {
+      "id": 13767871741,
+      "name": "openkeys-gpui-development-macos-15",
+      "size_in_bytes": 6643243,
+      "digest": "sha256:ae5e9b3bcaab98f4012af8696ee21cfe3b80253923782f861fab59af587eb2eb",
+      "expires_at": "2027-02-08T13:03:08Z",
+      "expired": false
+    },
+    {
+      "id": 13767861611,
+      "name": "openkeys-gpui-development-ubuntu-24.04",
+      "size_in_bytes": 10908275,
+      "digest": "sha256:5d32ee66834352703dea1fdd38760fd9b42eaf65529d0b6609564a0bcc9901ed",
+      "expires_at": "2027-02-08T13:03:08Z",
+      "expired": false
+    },
+    {
+      "id": 13767151836,
+      "name": "r05-diagnostic-arm-elf",
+      "size_in_bytes": 43999,
+      "digest": "sha256:323d470fde4046209236a10a83e1f518e46a812adfaa205fa4a7b73b7a49e42d",
+      "expires_at": "2027-02-08T13:03:08Z",
+      "expired": false
+    },
+    {
+      "id": 13766878956,
+      "name": "openkeys-gpui-development-windows-2022",
+      "size_in_bytes": 6778053,
+      "digest": "sha256:a3126b76c157d124add064618c38dbb742b943867505029b875decfa2abedc77",
+      "expires_at": "2027-02-08T13:03:08Z",
+      "expired": false
+    }
+  ]
+}

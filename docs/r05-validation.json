@@ -23,7 +23,7 @@
   },
   "r05_diagnostics": "firmware/dist/r05/diagnostic-manifest.json",
   "gui_forks_reconstructed_from_original_archives": 12,
-  "ci_result": "PENDING final dependency repair: initial green CI exposed four Apple block future-incompatibility lines; follow-up must verify full logs",
+  "ci_result": "PASSED: source 2b499b84a7cdac7969c0b4170e202c9d84b752a0; full logs and annotations checked, zero warning lines/annotations",
   "critical_open_items": [
     "Production secure Root / boot / isolation / debug lifecycle",
     "SE native enforcement of local PIN for private-key operations",
@@ -31,5 +31,9 @@
     "Authenticated encrypted manager transport and actual device integrations",
     "OpenPGP/PIV production applications and mobile app bundles",
     "Physical LCD/NTC/charging/RF/EMC/tamper/FI/SCA qualification"
-  ]
+  ],
+  "ci_evidence": "docs/ci-evidence-r05.json",
+  "native_tests_per_platform": 240,
+  "additional_linux_wire_tests": 2,
+  "additional_macos_abi_tests": 2
 }

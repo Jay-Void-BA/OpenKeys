@@ -30,7 +30,7 @@ Apple 20 W 充电器使用 **5 V**，不申请 9 V PD。设计输入预算 **0.5
 |---|---|
 | 查看电路、PCB、BOM、结构和制造包 | [R0.5 硬件](hardware/r05/README.md) |
 | 了解哪些完成、哪些不能交付 | [状态](docs/DEVELOPMENT_STATUS.md)、[安全复查](docs/SECURITY_REVIEW_R05.md) |
-| 构建与检查 | [开发起步](docs/GETTING_STARTED.md)、[R05 目标](firmware/r05/README.md)、[GPUI 管理器](apps/manager-gpui/README.md) |
+| 构建与检查 | [开发起步](docs/GETTING_STARTED.md)、[R05 目标](firmware/r05/README.md)、[GPUI 管理器](apps/manager-gpui/README.md)、[开发包](docs/NATIVE_BUILDS_R05.md) |
 | 核查 PIN 缓存与 NFC 边界 | [会话规则](docs/PIN_SESSIONS_R05.md)、[架构](docs/ARCHITECTURE.md) |
 | 从原材料、订板到代焊和测试 | [制作手册](manufacturing/BUILD_R05_ZH.md)、[境内渠道](manufacturing/MAINLAND_COMPONENT_CHANNELS.md) |
 | 委托个人 / 小批量工厂、实验室 | [机构筛选](manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md)、[资格确认](manufacturing/REQUEST_FOR_CONFIRMATION.md) |

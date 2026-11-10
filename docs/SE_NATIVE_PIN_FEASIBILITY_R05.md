@@ -10,7 +10,7 @@
 
 来源：[NXP plug-and-trust](https://github.com/NXP/plug-and-trust/tree/7102413e0457d3dfa4fc4be686ca8ec50bd9f5e2)，
 固定提交 `7102413e0457d3dfa4fc4be686ca8ec50bd9f5e2`，
-`hostlib/hostLib/se05x_03_xx/se05x_APDU_apis.h` 中的接口说明：
+`hostlib/hostLib/se05x_03_xx_xx/se05x_APDU_apis.h` 中的接口说明：
 
 - `WriteUserID` 创建 4–16 字节的 UserID 对象，因此六个数字的编码长度在范围内。
 - 创建认证对象时可指定 `TAG_MAX_ATTEMPTS`；PIN 的最大尝试值必须小于 256。
