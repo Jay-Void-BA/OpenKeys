@@ -7,7 +7,7 @@
 | 目的 | 资料 |
 |---|---|
 | 第一次阅读 | [状态](DEVELOPMENT_STATUS.md)、[架构](ARCHITECTURE.md)、[术语](GLOSSARY.md) |
-| 审核安全 / PIN 缓存 | [R05 安全复查](SECURITY_REVIEW_R05.md)、[会话规则与测试映射](PIN_SESSIONS_R05.md) |
+| 审核安全 / PIN 缓存 | [R05 安全复查](SECURITY_REVIEW_R05.md)、[会话规则与测试映射](PIN_SESSIONS_R05.md)、[SE 原生 PIN 候选](SE_NATIVE_PIN_FEASIBILITY_R05.md) |
 | 电路、板子与固件 | [R05 硬件](../hardware/r05/README.md)、[固件导航](../firmware/README.md)、[R05 目标](../firmware/r05/README.md) |
 | 从原材料到打样、代焊和测试 | [R05 制作手册](../manufacturing/BUILD_R05_ZH.md)、[制造入口](../manufacturing/README.md) |
 | 境内供应与个人小批量 | [料号与渠道](../manufacturing/MAINLAND_COMPONENT_CHANNELS.md)、[机构筛选](../manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md)、[委托确认](../manufacturing/REQUEST_FOR_CONFIRMATION.md) |

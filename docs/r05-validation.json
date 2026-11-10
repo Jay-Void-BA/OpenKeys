@@ -22,8 +22,8 @@
     "cad_manifest": "hardware/r05/review/cad-manifest.json"
   },
   "r05_diagnostics": "firmware/dist/r05/diagnostic-manifest.json",
-  "gui_forks_reconstructed_from_original_archives": 11,
-  "ci_result": "PENDING publication; local checks are not a GitHub CI result",
+  "gui_forks_reconstructed_from_original_archives": 12,
+  "ci_result": "PENDING final dependency repair: initial green CI exposed four Apple block future-incompatibility lines; follow-up must verify full logs",
   "critical_open_items": [
     "Production secure Root / boot / isolation / debug lifecycle",
     "SE native enforcement of local PIN for private-key operations",

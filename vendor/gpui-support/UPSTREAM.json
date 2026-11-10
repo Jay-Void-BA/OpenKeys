@@ -134,5 +134,15 @@
       "Cargo.toml",
       "src/lib.rs"
     ]
+  },
+  {
+    "name": "block",
+    "version": "0.1.6",
+    "crate_sha256": "0d8c1fef690941d3e7788d328517591fecc684c084084702d6ff1641e993699a",
+    "url": "https://crates.io/api/v1/crates/block/0.1.6/download",
+    "modified_files": [
+      "Cargo.toml",
+      "src/lib.rs"
+    ]
   }
 ]

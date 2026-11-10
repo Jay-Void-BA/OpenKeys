@@ -17,6 +17,12 @@ Changes remove actual archived dependencies rather than suppressing RustSec:
   unused AVIF encoder and its dependency tree are not needed for this manager.
 - `metal` and `wgsl-rs`: use the maintained `pastey` macro implementation, aliased
   to the source's `paste` import. No copied or renamed archived `paste` source.
+- Apple `block`: replace the uninhabited foreign static with the actual
+  32-pointer Blocks ABI symbol, take its raw address, and spell the C ABI
+  explicitly in Rust FFI declarations. Replace the unavailable published
+  Objective-C test harness with pure Rust native invocation and retain/drop
+  tests against the OS runtime. This removes actual future-incompatible code;
+  the warning is not disabled. The package remains edition 2015 explicitly.
 - Linux GPUI: upgrade ashpd 0.13 to 0.14 and oo7 0.6 to 0.7; adapt inhibit flags.
 - AccessKit / AT-SPI / lockstep: migrate dependencies to zbus 6.2.1 and zbus_xml 6,
   using the maintained wire / names / derive implementations merged into zbus.

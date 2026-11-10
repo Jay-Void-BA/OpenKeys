@@ -1,0 +1,219 @@
+--- a/block-0.1.6/Cargo.toml
++++ b/block-0.1.6/Cargo.toml
+@@ -1,4 +1,5 @@
+ [package]
++edition = "2015"
+ name = "block"
+ version = "0.1.6"
+ authors = ["Steven Sheldon"]
+@@ -18,6 +19,4 @@
+   "tests-ios/**",
+ ]
+ 
+-[dev-dependencies.objc_test_utils]
+-version = "0.0"
+-path = "test_utils"
++[workspace]
+--- a/block-0.1.6/src/lib.rs
++++ b/block-0.1.6/src/lib.rs
+@@ -45,8 +45,6 @@
+ were to copy it twice we could have a double free.
+ */
+ 
+-#[cfg(test)]
+-mod test_utils;
+ 
+ use std::marker::PhantomData;
+ use std::mem;
+@@ -54,14 +52,13 @@
+ use std::os::raw::{c_int, c_ulong, c_void};
+ use std::ptr;
+ 
+-enum Class { }
+ 
+ #[cfg_attr(any(target_os = "macos", target_os = "ios"),
+            link(name = "System", kind = "dylib"))]
+ #[cfg_attr(not(any(target_os = "macos", target_os = "ios")),
+            link(name = "BlocksRuntime", kind = "dylib"))]
+-extern {
+-    static _NSConcreteStackBlock: Class;
++extern "C" {
++    static _NSConcreteStackBlock: [*const c_void; 32];
+ 
+     fn _Block_copy(block: *const c_void) -> *mut c_void;
+     fn _Block_release(block: *const c_void);
+@@ -80,7 +77,7 @@
+     ($($a:ident : $t:ident),*) => (
+         impl<$($t),*> BlockArguments for ($($t,)*) {
+             unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R {
+-                let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = {
++                let invoke: unsafe extern "C" fn(*mut Block<Self, R> $(, $t)*) -> R = {
+                     let base = block as *mut BlockBase<Self, R>;
+                     mem::transmute((*base).invoke)
+                 };
+@@ -107,10 +104,10 @@
+ 
+ #[repr(C)]
+ struct BlockBase<A, R> {
+-    isa: *const Class,
++    isa: *const c_void,
+     flags: c_int,
+     _reserved: c_int,
+-    invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
++    invoke: unsafe extern "C" fn(*mut Block<A, R>, ...) -> R,
+ }
+ 
+ /// An Objective-C block that takes arguments of `A` when called and
+@@ -200,7 +197,7 @@
+             type Ret = R;
+ 
+             fn into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
+-                unsafe extern fn $f<$($t,)* R, X>(
++                unsafe extern "C" fn $f<$($t,)* R, X>(
+                         block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
+                         $(, $a: $t)*) -> R
+                         where X: Fn($($t,)*) -> R {
+@@ -208,7 +205,7 @@
+                     (block.closure)($($a),*)
+                 }
+ 
+-                let f: unsafe extern fn(*mut ConcreteBlock<($($t,)*), R, X> $(, $a: $t)*) -> R = $f;
++                let f: unsafe extern "C" fn(*mut ConcreteBlock<($($t,)*), R, X> $(, $a: $t)*) -> R = $f;
+                 unsafe {
+                     ConcreteBlock::with_invoke(mem::transmute(f), self)
+                 }
+@@ -254,11 +251,11 @@
+     /// Constructs a `ConcreteBlock` with the given invoke function and closure.
+     /// Unsafe because the caller must ensure the invoke function takes the
+     /// correct arguments.
+-    unsafe fn with_invoke(invoke: unsafe extern fn(*mut Self, ...) -> R,
++    unsafe fn with_invoke(invoke: unsafe extern "C" fn(*mut Self, ...) -> R,
+             closure: F) -> Self {
+         ConcreteBlock {
+             base: BlockBase {
+-                isa: &_NSConcreteStackBlock,
++                isa: ptr::addr_of!(_NSConcreteStackBlock).cast::<c_void>(),
+                 // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
+                 flags: 1 << 25,
+                 _reserved: 0,
+@@ -308,12 +305,12 @@
+     }
+ }
+ 
+-unsafe extern fn block_context_dispose<B>(block: &mut B) {
++unsafe extern "C" fn block_context_dispose<B>(block: &mut B) {
+     // Read the block onto the stack and let it drop
+     ptr::read(block);
+ }
+ 
+-unsafe extern fn block_context_copy<B>(_dst: &mut B, _src: &B) {
++unsafe extern "C" fn block_context_copy<B>(_dst: &mut B, _src: &B) {
+     // The runtime memmoves the src block into the dst block, nothing to do
+ }
+ 
+@@ -321,8 +318,8 @@
+ struct BlockDescriptor<B> {
+     _reserved: c_ulong,
+     block_size: c_ulong,
+-    copy_helper: unsafe extern fn(&mut B, &B),
+-    dispose_helper: unsafe extern fn(&mut B),
++    copy_helper: unsafe extern "C" fn(&mut B, &B),
++    dispose_helper: unsafe extern "C" fn(&mut B),
+ }
+ 
+ impl<B> BlockDescriptor<B> {
+@@ -336,61 +333,43 @@
+     }
+ }
+ 
++// Pure Rust ABI tests against the OS Blocks runtime. The published crate's
++// omitted objc_test_utils C harness is not required.
+ #[cfg(test)]
+ mod tests {
+-    use test_utils::*;
+-    use super::{ConcreteBlock, RcBlock};
++    use super::*;
++    use std::{cell::Cell, rc::Rc};
+ 
+     #[test]
+-    fn test_call_block() {
+-        let block = get_int_block_with(13);
+-        unsafe {
+-            assert!(block.call(()) == 13);
+-        }
++    fn apple_64_bit_block_header_and_invocation_match_the_abi() {
++        assert_eq!(mem::size_of::<BlockBase<(), ()>>(), 24);
++        assert_eq!(mem::offset_of!(BlockBase<(), ()>, invoke), 16);
++        assert_eq!(mem::size_of::<BlockDescriptor<()>>(), 32);
++        let block = ConcreteBlock::new(|a: i64, b: i32| a + i64::from(b));
++        // The closure's Rust type and the typed call agree on both arguments.
++        assert_eq!(unsafe { block.call((37, 5)) }, 42);
++        let heap = block.copy();
++        assert_eq!(unsafe { heap.call((10, -3)) }, 7);
+     }
+ 
+     #[test]
+-    fn test_call_block_args() {
+-        let block = get_add_block_with(13);
+-        unsafe {
+-            assert!(block.call((2,)) == 15);
+-        }
+-    }
+-
+-    #[test]
+-    fn test_create_block() {
+-        let block = ConcreteBlock::new(|| 13);
+-        let result = invoke_int_block(&block);
+-        assert!(result == 13);
+-    }
+-
+-    #[test]
+-    fn test_create_block_args() {
+-        let block = ConcreteBlock::new(|a: i32| a + 5);
+-        let result = invoke_add_block(&block, 6);
+-        assert!(result == 11);
+-    }
+-
+-    #[test]
+-    fn test_concrete_block_copy() {
+-        let s = "Hello!".to_string();
+-        let expected_len = s.len() as i32;
+-        let block = ConcreteBlock::new(move || s.len() as i32);
+-        assert!(invoke_int_block(&block) == expected_len);
+-
+-        let copied = block.copy();
+-        assert!(invoke_int_block(&copied) == expected_len);
+-    }
+-
+-    #[test]
+-    fn test_concrete_block_stack_copy() {
+-        fn make_block() -> RcBlock<(), i32> {
+-            let x = 7;
+-            let block = ConcreteBlock::new(move || x);
+-            block.copy()
+-        }
+-
+-        let block = make_block();
+-        assert!(invoke_int_block(&block) == 7);
+-    }
+-}
++    fn copied_and_retained_closure_drops_exactly_once_after_last_release() {
++        struct Probe(Rc<Cell<u32>>);
++        impl Drop for Probe {
++            fn drop(&mut self) { self.0.set(self.0.get() + 1); }
++        }
++        let drops = Rc::new(Cell::new(0));
++        let probe = Probe(drops.clone());
++        let block = ConcreteBlock::new(move || {
++            let _borrow = &probe;
++            19u64
++        }).copy();
++        let retained = block.clone();
++        assert_eq!(unsafe { retained.call(()) }, 19);
++        drop(block);
++        assert_eq!(drops.get(), 0);
++        assert_eq!(unsafe { retained.call(()) }, 19);
++        drop(retained);
++        assert_eq!(drops.get(), 1);
++    }
++}

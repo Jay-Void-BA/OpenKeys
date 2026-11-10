@@ -21,6 +21,8 @@ atspi-proxies = { path = "vendor/gpui-support/atspi-proxies-0.13.0" }
 zbus-lockstep = { path = "vendor/gpui-support/zbus-lockstep-0.5.2" }
 zbus-lockstep-macros = { path = "vendor/gpui-support/zbus-lockstep-macros-0.5.2" }
 
+block = { path = "vendor/gpui-support/block-0.1.6" }
+
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
