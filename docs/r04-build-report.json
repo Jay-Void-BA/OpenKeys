@@ -167,6 +167,26 @@
       }
     ],
     "supplier_acceptance": "No project-specific written acceptance obtained; personal clients, quantities and scope require explicit confirmation.",
-    "outreach_messages_sent": false
+    "outreach_messages_sent_at_validation_time": false
+  },
+  "supplier_outreach": {
+    "date_utc": "2026-11-10",
+    "channel": "iCloud Mail",
+    "user_authorized": true,
+    "submitted_messages": 5,
+    "provider_submission_and_exact_sent_copy_verified": true,
+    "recipients": [
+      "Seeed Fusion",
+      "华秋智造",
+      "泰尔无锡",
+      "atsec 北京",
+      "SGS Brightsight"
+    ],
+    "delivery_confirmed": false,
+    "project_acceptance_confirmed": false,
+    "orders_placed": false,
+    "paid_services_authorized": false,
+    "record": "manufacturing/OUTREACH_STATUS.md",
+    "private_sender_and_message_identifiers_published": false
   }
 }
