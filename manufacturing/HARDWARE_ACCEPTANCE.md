@@ -4,6 +4,8 @@
 
 ## 1. 先做一块样板
 
+先取得工厂对[个人及小批量委托](REQUEST_FOR_CONFIRMATION.md)的书面确认，再约定首板和其余设备的数量、费用及工序。实验室另确认个人受理和各专项所需样品数，不能把候选技术能力当作已经接受委托。
+
 把 [R04制造包](../hardware/r04/exports/OpenKeys-fabrication.zip)、[BOM](../hardware/r04/BOM.csv)、[贴片坐标](../hardware/r04/exports/OpenKeys-SMD-position.csv)、[尺寸图](../hardware/r04/exports/OpenKeys-dimensions.pdf)及[关键器件表](critical-parts.csv)交给代焊厂。要求核对实际物料、封装方向、底部焊盘和指纹排线接触面，先装一块确认，验证后再完成另外两块。不要把 EVT 选型当成量产放行。
 
 工厂应提供带限流的台式电源、电池模拟器、万用表、示波器、显微镜及 SWD 调试器。你自己准备 Apple20W USB-C 充电器、合规 C-C 数据线、只测量而不主动触发高压的 USB 表、Mac 和待测 iPhone。Windows/Linux 可借电脑；无需为了三把钥匙购买 EMC 或故障注入仪器。

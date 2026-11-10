@@ -1,41 +1,27 @@
-> **R0.2 历史硬件资料**：当前电气PCB及制造数据位于 [hardware/r04](r04/README.md)。下文 USB-A、OLED、OTP 和 PIN 备用不再属于当前需求。
+# 硬件导航
 
-# OpenKeys R0 硬件交付
+[返回首页](../README.md) · [文档导航](../docs/README.md) · [制造入口](../manufacturing/README.md)
 
-版本：0.2 design review，2026-11-08。此包可用于电路/结构评审与打样准备；不应直接下单生产。尚未布线，未制造、烧录、调谐或测量。安全要求见 [发布门槛](RELEASE_GATES.md)。
+## 当前版本：R0.4
 
-## 文件
+查看 [R0.4 硬件说明](r04/README.md)，其中包含实际电路 / PCB、BOM、引脚、板层、天线、机械坐标和导出工具说明。
 
-| 文件 | 用法 |
+| 我需要 | 文件 |
 |---|---|
-| `kicad/OpenKeys.kicad_pro` | KiCad 9 项目，打开 `OpenKeys.kicad_sch` 查看全部 7 页 |
-| `kicad/OpenKeys.kicad_sym`、`sym-lib-table` | 固定库符号，原理图亦嵌入副本，可移植打开 |
-| `exports/OpenKeys-schematic.pdf` | 全部原理图，A3 矢量 PDF |
-| `exports/schematic/*.svg` | 每页独立矢量预览 |
-| `BOM.csv`、`pinout.csv` | 位号/封装状态、MCU 真实 LQFP64 引脚及复用 |
-| `kicad/OpenKeys-floorplan.kicad_pcb` | 38 × 82 × 1.0 mm 四层板分区，安装孔和 MCU 封装；**未布线** |
-| `exports/OpenKeys-dimensions.svg` | 44 × 88 × 16 mm 机身三视/剖面与部件占位尺寸 |
-| `mechanical/OpenKeys.scad` | 参数化底壳/上盖/按键/装配；尺寸单位 mm |
-| `exports/OpenKeys-{base,lid,plungers}.stl` | 3D 打印样件，上盖正面朝打印平台，未经实物公差核对 |
-| `mechanical/OpenKeys-assembly.blend` | 可编辑着色装配场景；芯片/模块为标明的包络 |
-| `exports/OpenKeys-assembly.png` | 外观模型预览，不是已制造实物照片 |
-| `review/erc.json`、`review/netlist-check.json` | 实际检查原始记录 |
+| 原理图 | [10 页 PDF](r04/exports/OpenKeys-schematic.pdf)、[KiCad 源文件](r04/kicad/OpenKeys.kicad_sch) |
+| PCB 与备料 | [KiCad PCB](r04/kicad/OpenKeys.kicad_pcb)、[BOM](r04/BOM.csv)、[引脚表](r04/pinout.csv) |
+| 制造文件 | [Gerber / 钻孔 ZIP](r04/exports/OpenKeys-fabrication.zip)、[贴片坐标](r04/exports/OpenKeys-SMD-position.csv) |
+| 外壳与装配 | [尺寸 PDF](r04/exports/OpenKeys-dimensions.pdf)、[结构源](r04/mechanical/enclosure.scad)、[STL / STEP 导出](r04/exports) |
+| 检查证据 | [ERC](r04/review/erc.json)、[DRC](r04/review/routed-drc.json)、[独立板网核对](r04/review/board-check.json)、[CAD 摘要](r04/review/cad-manifest.json) |
+| 样板验收 | [硬件步骤](../manufacturing/HARDWARE_ACCEPTANCE.md)、[完整安全测试计划](../docs/SECURITY_TEST_PLAN.md) |
 
-板分区是器件空间规划，不包含完整元件布局、走线、阻抗、层叠材料或 Gerber。USB-A/NFC/天线的 `PENDING` 封装仍未伪造；指纹目标已选FPC2534AM，SE050焊盘依据SOT1969-1而非通用QFN。不能通过删除警告来把它变成制造包。
+本版是工程候选。连通性和规则检查不能代替首板、RF、电源、防拆或物理攻击验证；完整认证固件仍在开发。
 
-真实成品缺口和价格取舍见[制造交付入口](../manufacturing/README.md)。
+## 历史版本
 
-## 重建
+| 版本 | 位置 | 使用范围 |
+|---|---|---|
+| R0.3 | [旧硬件说明](r03/README.md)及 `r03/` | 历史电路与未完成 PCB 阶段 |
+| R0.2 | [原硬件说明](HISTORY_R02.md)及本目录旧 `kicad/`、`exports/`、`mechanical/`、`tools/` | 旧 USB-A / OLED / OTP / PIN 备用方案，仅供追溯 |
 
-需要 KiCad 9 的官方符号/封装库、Python 3、OpenSCAD；渲染另需 Blender 4.3 和 DejaVu Sans 字体。Debian 的 `pcbnew` 通常只在 `/usr/bin/python3` 可用。
-
-```sh
-/usr/bin/python3 hardware/tools/footprints.py
-python3 hardware/tools/schematic.py
-/usr/bin/python3 hardware/tools/mechanical.py
-sh hardware/tools/export.sh
-# 可选，重新生成装配渲染：
-blender -b -t 2 -P hardware/tools/render.py
-```
-
-生成脚本基于此版本库符号；升级 KiCad 库后必须审阅差异。OpenSCAD `part` 可设为 `base`、`lid`、`plungers`、`assembly`、`exploded`。密钥与生产熔丝状态不属于图纸的一部分，不执行任何烧录操作。
+历史文件保留原路径以便追溯，不与 R0.4 的制造包或引脚表混用。重新导出当前板时遵循 R0.4 工具说明，不能运行旧版生成脚本覆盖当前板。

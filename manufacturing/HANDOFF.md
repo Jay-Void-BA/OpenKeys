@@ -2,6 +2,8 @@
 
 目标为3把个人使用设备。当前是待实作的工程候选设计，不能只交给普通SMT厂就取得可用认证器。源文件以[hardware/r04](../hardware/r04/README.md)为准；原R0.2双口/OLED/OTP版本仅保留历史。
 
+服务商须明确接受**个人作为合同主体、个人付款和3把项目**。按[筛选证据](MAINLAND_SUPPLIERS_AND_LABS.md)与[书面确认模板](REQUEST_FOR_CONFIRMATION.md)核对；当前没有取得本项目接单回复，技术能力或采购入口不代表已符合这些条件。
+
 固定功能：单USB-C母口兼USB2数据与5V充电、NFC、白背光16x2英文LCD、四个场景按键、强制设备指纹、仅附加的设备PIN；FIDO2/WebAuthn/Passkey、U2F、hmac-secret、凭据管理、加密notes与recovery codes。已取消动态验证码和USB-A。macOS/iOS认证分别验收；桌面管理软件覆盖macOS/Linux/Windows；手机NFC管理作为依赖设备认证协议的独立交付。
 
 推荐核心：STM32H573RIT6、SE050E、FPC2534AM、NHD-C0216CiZ-FSW-FBW-3V3、TPS259470L输入保护、四层PCB。自研运行代码Rust，按模块允许Zig，不引入自研C/C++。芯片ROM/applet与OS/第三方库记录版本和信任边界。容量约500mAh电池包必须有PCM和真实NTC；已选Adafruit1578保护500mAh包及独立Semitec103AT-2热敏线束，仍需到货验证。

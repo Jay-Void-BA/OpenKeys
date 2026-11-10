@@ -1,40 +1,72 @@
-# 中国大陆制造与安全测试候选
+# 大陆厂商与实验室：个人、3 把项目筛选
 
-公开资料核对日期：2026-11-09。以下是**能力匹配候选**，不是已接单、报价或对 OpenKeys 安全性的认可。没有替用户联系、发送项目或下单。服务页面会变化，签约前重新确认承接主体、实际测试地点、数量和范围。
+[制造入口](README.md) · [委托确认模板](REQUEST_FOR_CONFIRMATION.md) · [验收步骤](HARDWARE_ACCEPTANCE.md)
 
-## 制造厂
+核对日期：**2026-11-10**。本项目的必要条件是：**中国大陆承接、接受个人作为委托方、接受 3 把设备的工程项目**。实验室另需说明测试样品数，不能把“3 把成品”误当成破坏试验最多只能用 3 块板。
 
-| 候选 | 公开能力与本项目适配 | 三把设备的询价重点 | 官方入口 |
+> **目前没有一家完成本项目的书面接单确认。**
+> 下表是公开证据筛选和待确认对象，不是保证接单的推荐名单。没有代表用户联系、提交资料、报价或下单。
+
+## 状态定义
+
+| 状态 | 代表什么 |
+|---|---|
+| 公开支持 | 官方资料明确说明了该项政策；仍不是本项目订单确认 |
+| 部分证据 | 有个人用户 / 工程师或某项服务依据，但范围、日期或合同主体尚不完整 |
+| 待确认 | 本次官方资料中未找到足够承诺，不据此判断接受或拒绝 |
+| 数量不匹配 | 公开数量门槛超过本项目需要，未取得例外 |
+| 本项目已确认 | 须有机构书面回复，覆盖个人合同、数量、范围与费用；**当前无此状态的机构** |
+
+## 工厂筛选
+
+| 候选 | 个人客户依据 | 小数量依据 | 本项目结论 |
 |---|---|---|---|
-| 嘉立创，中国大陆生产 | PCB、SMT、BOM备料、邮寄元器件；集团另有3D打印/CNC | 先询4层68×92×1mm板及3把装配；确认所选SE特殊QFN、客供FPC模块、字符LCD引脚/背光线、真实NTC和整机手工装配；不要把SMT报价当完整成品价 | [SMT](https://www.jlc-smt.com/)、[服务范围](https://www.jlcgroup.cn/products-service) |
-| 华秋智造，深圳及大陆工厂 | 小/中/大批量PCBA、客供料、DIP插件，公开设备含AOI/X-ray | 对130个BOM位置整单报价，确认QFN底焊盘检查、LCD后焊、指纹排线及防拆触点装配；说明是否包含上电/电源测试 | [PCBA服务](https://smt.hqchip.com/)、[设备](https://smt.hqchip.com/equipment.html)、[联系](https://www.huaqiu.com/about/contactus) |
-| Seeed Fusion／矽递，深圳 | 原型到批量PCBA、非OPL料及手工通孔装配；官网有大陆业务联络 | 公开FAQ写PCB最少5片、装配可少至1片，可询“5裸板、只装3把”；该FAQ最后修改于2021年，务必以当前书面报价为准。客供料需要单独确认 | [装配服务](https://www.seeedstudio.com/pcb-assembly.html)、[数量与客供FAQ](https://support.seeed.cc/portal/en/kb/articles/seeed-fusion-pcb-assembly-service-quick-questions)、[联系](https://www.seeed.cc/contacts) |
-| PCBWay，大陆制造服务 | 客供/全代料/混合代料、SMT+通孔、QFN X-ray、按客户程序功能测试及box build | 本次核对能力页写**最低5片装配**，不假定接受3片；本板92mm边小于其列示100mm最小尺寸，需工程边/拼板审核。问清多余板、器件和整机装配费用 | [能力及数量](https://www.pcbway.com/pcb_prototype/PCB_assembly_Capabilities.html) |
+| **嘉立创 SMT** | 部分证据：平台历史协议允许个人用户；2026 招股说明书列个人工程师及个人下单 / 付款模式 | 当前 SMT 页公开支持样板 / 批量，标准型称无 PCB 数量限制；具体裸板与装配数量仍需审核 | 优先核实个人合同、3 把完整后焊 / 装配；**待书面确认** |
+| **Seeed Fusion／矽递，深圳** | 部分证据：2024 在线 ODM 定制条款明确包括个人，**不自动外推到本次 PCBA 合同** | 当前 PCBA 页写无最低订单要求；FAQ 写裸板至少 5 片、可仅装 1 片 | 可询“5 裸板、装 3 把”；个人 PCBA 合同与客供模块 **待确认** |
+| **华秋智造，深圳** | 待确认：本次未找到明确个人 PCBA 合同承诺 | 公开提供打样 / 小批量 PCBA，但不是对本板装 3 把的确认 | 保留技术候选；取得个人与数量回复后再进入可选名单 |
+| **PCBWay，大陆制造服务** | 待确认：账号 / 在线下单本身不作为证明 | 能力页最低装配 **5 片**；本板另需工程边 / 拼板审核 | **数量不匹配，移出 3 把默认选项**；仅书面同意装 3 把或用户接受装 5 把后再比较 |
 
-优先拿嘉立创与华秋的同口径报价，再用Seeed Fusion比较小数量复杂后焊的总成本；这只是采购判断，不是最低价结论。PCBWay适合作为复杂装配的备选，数量门槛必须计入。昂贵FP模块/SE不要因为裸板最小数量而默认买5套。普通PCBA厂的质量体系或X-ray能力不等于安全密钥生产/密钥注入能力。
+昂贵指纹模块与 SE 不应仅因裸板 MOQ 而多买。SMT、LCD / 指纹 / NTC 后焊、机壳装配和逐台测试须分别报价；普通 PCBA 能力不等于安全配对 / 密钥注入能力。
 
-### 可直接复制的制造询价内容
+### 工厂官方证据
 
-> OpenKeys，个人3把，四层68×92×1mm，130个BOM位置，唯一USB-C母口，NFC PCB线圈，16×2白背光字符LCD，FPC2534AM flex模块，STM32H573RIT6与SE050E2HQ1/Z01Z3Z。需报价：DFM/工程边、PCB、钢网、贴片/底焊盘检查、客供料收料、LCD及线束后焊、结构打印/装配、真实贴芯NTC、限流首板上电及逐台功能测试。请分列一次性工程费、每板装配费、采购/MOQ损耗、治具、测试、税运费和返工费用。先做一块工程样板，验证后再完成其余设备；不能代换安全芯片或指纹模块。生产密钥、指纹模板与真实恢复码不会随BOM交付。
+- **嘉立创**：[当前 SMT 服务与工艺](https://www.jlc-smt.com/)、[联系入口](https://www.jlc-smt.com/vcontact)；[平台用户协议](https://www.szlcsc.com/news/14918.html)是 2020 生效版本，不能当成现行专属 SMT 合同；[2026 招股说明书](https://disc.static.szse.cn/disc/disk03/finalpage/2026-07-30/67b3d36a-633d-4a95-9b15-d111365d4a75.PDF)正文 251–252 页涉及个人工程师及样品 / 小批量交易。个人付款也可能是替单位付款，需另问能否完全以个人签约。
+- **Seeed Fusion**：[当前 PCBA](https://www.seeedstudio.com/pcb-assembly.html)、[数量 / 客供料 FAQ](https://support.seeed.cc/portal/en/kb/articles/seeed-fusion-pcb-assembly-service-quick-questions)；FAQ 较旧，数量以当前报价为准。[在线 ODM 定制条款](https://files.seeedstudio.com/fusion/odm/TermsAndConditionsForOnlineCustomServices.pdf)更新于 2024-01-19，个人条款有服务范围，不能泛化。[大陆联系](https://www.seeed.cc/contacts)：fusion@seeed.io。
+- **华秋**：[PCBA 服务](https://smt.hqchip.com/)、[询价入口](https://smt.hqchip.com/quote/)、[设备](https://smt.hqchip.com/equipment.html)。须确认个人合同、3 把装配及安全模块客供；不套用过期活动价格。
+- **PCBWay**：[装配能力及 MOQ](https://www.pcbway.com/pcb_prototype/PCB_assembly_Capabilities.html)。页面还列最小板尺寸 50 × 100 mm；本板 68 × 92 mm，需工程审核，不能直接上传即视为可装配。
 
-附件使用仓库当前R04 Gerber/钻孔、BOM、坐标、装配尺寸图与[硬件验收](HARDWARE_ACCEPTANCE.md)。提供确切提交和SHA256。完整设备固件尚未完成时只能报价/做工程验证，不得把诊断固件当出厂认证器。安全配对/启动密钥注入需另列受控工序；普通代焊无须持有生产密钥。
+## 实验室筛选
 
-## 安全实验室
+**本次没有找到下列机构公开同时承诺“个人委托 + 3 把项目 + 本项目安全范围”的充分证据。全部保留为待核实技术候选，未列为已合格服务商。**
 
-| 候选／大陆地点 | 官方证据支持的范围 | 对本项目适合询的工作 | 核对边界与入口 |
+| 候选 | 可询的技术范围 | 个人委托 | 3 把项目 / 样品数 |
 |---|---|---|---|
-| 中国信通院／泰尔无锡，江苏无锡 | 2023-04-25官方服务页明确列出侧信道、EM/电压/激光故障注入、侵入/半侵入及配置/调试安全能力 | **优先询物理攻击专项**：H573/VCAP/SE/FP分电源域FI、功耗/EM泄漏、启动和指纹旁路、调试与探针攻击 | [官方能力和联系方式](https://gma.caict.ac.cn/plat/cttl-t/cttl-promote-the-service-capability-for-ic-industry-via-wuxi-ic-public-service-platform)。资料有年份；确认当前设备、整板/成品受理及是否接受个人3把项目 |
-| atsec中国，艾特赛克北京 | FIDO官方实验室条目为Security Testing；中国服务页列FIDO2/CTAP1/CTAP2和L2评估 | **优先询源码/架构及FIDO安全预评审**：UV/UP、凭据、固件更新、密钥/指纹、notes管理范围 | [FIDO官方条目](https://fidoalliance.org/lab/atsec-beijing-information-technology-co-ltd-atsec-china/)、[中国服务](https://www.atsec.cn/services/identity/fido/)、[联系](https://www.atsec.cn/contact/)，info_cn@atsec.com。不能把L2资质等同已确认可做全部高级SCA/FI |
-| SGS Brightsight，北京/上海/广州 | FIDO条目列Security Testing；官方地点页列北京/上海/广州，提供预评估到正式安全评估 | 硬件安全、芯片/整机边界、SCA/FI与FIDO预评估的备选或交叉复核 | [FIDO条目](https://fidoalliance.org/lab/sgs-brightsight/)、[安全评估](https://www.brightsight.com/security-evaluations)、[大陆地点](https://www.brightsight.com/locations)、[联系](https://www.brightsight.com/contact)，brs.sales@sgs.com。该FIDO条目的具体地址是西班牙，**不能据此认定大陆分部持同一认可范围**；须明确大陆承接地点、授权与分包 |
-| 中国信通院泰尔终端，北京 | 官方服务页列指纹等生物识别、活体/准确性及FIDO L2服务 | 整个指纹输入/匹配/认证链的FRR/FAR、PAD及协议/执行环境评估 | [官方业务和联系方式](https://service.caict.ac.cn/ywjs/202011/t20201130_1800.html)，ifs@caict.ac.cn。与无锡物理攻击专项分开确认团队和范围 |
-| SGS中国EMC团队，大陆实验室网络 | 官方列ESD、辐射/传导抗扰、电压骤降等测试 | **电气/抗干扰单独询价**：USB、电池供电及NFC工作时ESD/EMS、充电与电池/热；与硬件攻击报告配套 | [EMC服务](https://www.sgsgroup.com.cn/zh-cn/services/electromagnetic-compatibility-emc-testing)、[电池服务](https://www.sgsgroup.com.cn/zh-cn/services/battery-and-accumulators)。EMC合格不能代替SCA/FI或指纹安全测试 |
+| 泰尔无锡 | SCA；电压、EM、激光 FI；配置 / 调试安全 | **待确认**；官方介绍欢迎企事业单位，未据此推定包括个人 | **待确认**；“小批量产测”不是 3 把安全测试承诺 |
+| atsec 中国／北京 | 架构 / 源码、FIDO 安全预评估 | **待确认** | **待确认**；另问可否只做研发预评估、无需整套认证 |
+| SGS Brightsight／大陆地点 | 硬件预评估、SCA / FI 及 FIDO 范围核实 | **待确认** | **待确认**；明确实际实验室、样品和分包 |
+| 泰尔终端／北京 | 指纹 FAR / FRR、PAD、生物识别与执行链 | **待确认** | **待确认**；区分样机数、受试人员数和攻击样本 |
+| SGS 中国 EMC 团队 | ESD、传导 / 辐射抗扰、电源跌落、电池 / 热 | **待确认** | **待确认**；按工程摸底逐项报价，不默认送检 1 台即足够 |
 
-公开联系方式只是询价入口，不表示机构已经确认接个人项目或当前仍使用该人员邮箱。CNAS/CMA证书须核对**实际签约实验室及附件能力范围**；FIDO资质另向[联盟目录](https://fidoalliance.org/accredited-lab-finder/)核对。不要把联盟网页中的“ISCCC”等可接受基础资质列表误读成具体实验室已获FIDO授权。
+### 实验室官方范围和联系
 
-### 可直接复制的实验室需求
+- **泰尔无锡**：[官方能力](https://gma.caict.ac.cn/plat/cttl-t/cttl-promote-the-service-capability-for-ic-industry-via-wuxi-ic-public-service-platform)明确列 SCA 和电压 / EM / 激光故障注入；该页发布于 2023-04-25，需核对当前承接和设备。公开联系：zhuliang@caict.ac.cn。
+- **atsec 北京**：[中国 FIDO 服务](https://www.atsec.cn/services/identity/fido/)、[FIDO 官方条目](https://fidoalliance.org/lab/atsec-beijing-information-technology-co-ltd-atsec-china/)、[联系](https://www.atsec.cn/contact/)，info_cn@atsec.com。L2 资质不自动证明全部高级 SCA / FI 能力。
+- **SGS Brightsight**：[安全评估](https://www.brightsight.com/security-evaluations)、[大陆地点](https://www.brightsight.com/locations)、[联系](https://www.brightsight.com/contact)，brs.sales@sgs.com。[FIDO 条目](https://fidoalliance.org/lab/sgs-brightsight/)的具体地址为西班牙，不能认定大陆各点共享相同认可范围。
+- **泰尔终端北京**：[官方业务](https://service.caict.ac.cn/ywjs/202011/t20201130_1800.html)，ifs@caict.ac.cn；与无锡团队分开确认范围。
+- **SGS 中国**：[EMC](https://www.sgsgroup.com.cn/zh-cn/services/electromagnetic-compatibility-emc-testing)、[电池](https://www.sgsgroup.com.cn/zh-cn/services/battery-and-accumulators)。EMC 与电池报告不能代替 SCA / FI 或指纹安全报告。
 
-> 需要开放源码USB/NFC指纹FIDO2认证器的独立预评估。范围含PCB/电源/MCU/SE/传感器、不可绕过指纹、四键附加PIN、可信字符LCD、启动/签名更新/降级/调试、FIDO2/U2F/hmac-secret、加密notes/recovery、三平台管理及NFC管理通道。请先评估架构与源码，再报价SCA/FI/生物识别及EMC专项、修复复测；说明测试地点、认可范围、样品/牺牲板数量、可否个人委托、排期与交付原始证据。仅用合成账户和测试密钥，不要求生产私钥。
+CNAS / CMA 应核对实际签约主体及能力附件，FIDO 另查[联盟目录](https://fidoalliance.org/accredited-lab-finder/)。不把联系表单、个人信息隐私条款或“个人身份验证”业务名称误读成接受个人客户。
 
-通过判据不能只写“未发现异常”：无有效设备指纹时获得有效签名、hmac-secret、note/recovery明文或管理/调试权限均失败；旧/未签名镜像启动、重放/计数回退也失败。需记录攻击预算、时间/脉宽/温度/频段、仪器、确切固件/配置/器件、原始功耗/EM/故障波形及未覆盖项。TVLA阴性和安全复位都不能被写成绝对安全证明。
+## 怎样才算“确保支持”
 
-FIDO认证的TOE可能不包含notes/恢复码和管理器；请把这些明确写进独立评估合同。源码审计、功能互操作、物理攻击和EMC分项验收。先架构预评审，再制板和实测，避免把三把日用钥匙全部用于破坏试验。所有价格、样品数和报告资格目前均**未取得本项目正式确认**。
+先使用[确认模板](REQUEST_FOR_CONFIRMATION.md)，要求对方逐项书面回答：
+
+1. 接受不以公司 / 高校名义、无企业营业执照的个人委托与付款。
+2. 接受 3 把成品目标，写清首板、装配量和额外牺牲样品的最低数量。
+3. 接受本项目确切器件 / 服务范围，明确大陆履约地点、分包和交付物。
+4. 提供一次性费用、最低项目费、税运、返工 / 复测、排期及报价有效期。
+5. 可用测试密钥 / 合成数据完成工作，不要求生产密钥、真实指纹模板或恢复码。
+
+只有在回复中覆盖适用项目、记录确认日期 / 有效期及证据编号后，才标“本项目已确认”。拒绝个人或最低数量不合适时移出可选名单；没有回复则保持待确认。涉及个人资料或合同原件的证据私下保存，公开仓库只放脱敏摘要。
+
+实验室合同需明确覆盖 **notes、recovery codes 和管理器**；常规 FIDO 的评估对象可能不包含这些。三把日用设备与破坏试验样品分开预算。所有本项目接单、最低费用、样品数和正式报告资格目前都未获书面确认。
