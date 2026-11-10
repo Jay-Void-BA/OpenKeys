@@ -1,4 +1,5 @@
-//! Device-button PIN entry. No host PIN string or PIN-only authorization exists.
+//! Legacy R04 four-symbol PIN entry, supplementary to a fingerprint.
+//! R05 uses pin_only; ProtectedPin is the shared isolated persistence interface.
 //! Secure GPIO debouncing and persistent SE verification are platform adapters.
 use crate::{Request, biometric::VerifiedRequest};
 use zeroize::Zeroizing;
@@ -26,13 +27,15 @@ pub enum Error {
     Incomplete,
 }
 
-pub trait ProtectedPin {
-    /// Persistently debit the retry budget BEFORE accepting any button input.
+pub trait ProtectedPin<const N: usize = PIN_SYMBOLS> {
+    /// Persistently debit BEFORE verifying a completed guess. R04 calls this
+    /// at input start; R05 calls after twelve digits, immediately before verify.
     /// An uncertain write denies access. Reset/power loss cannot restore credit.
     fn reserve_attempt(&mut self, request: &Request) -> Result<(), Error>;
+    /// R04 uses twelve symbols 1..4; R05 uses six decimal digits 0..9.
     /// Compare inside the protected boundary with constant-time verification.
     /// Reset retry credit only after durable confirmed success. Never log PINs.
-    fn verify(&mut self, request: &Request, symbols: &[u8; PIN_SYMBOLS]) -> Result<(), Error>;
+    fn verify(&mut self, request: &Request, symbols: &[u8; N]) -> Result<(), Error>;
 }
 
 pub struct PinEntry {

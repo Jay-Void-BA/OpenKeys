@@ -24,13 +24,13 @@ cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo fmt --all -- --check
 ```
 
-三项分别检查行为、静态诊断和格式。它们不会烧录或配对设备。精确测试版本见[当前 CI 证据](ci-evidence-r04.json)。
+三项分别检查行为、静态诊断和格式。它们不会烧录或配对设备。旧 [R04 CI](ci-evidence-r04.json)仅作历史追溯，新版结果以对应提交为准。
 
 检查 Cortex-M33 核心与目标适配：
 
 ```sh
 rustup target add thumbv8m.main-none-eabihf --toolchain 1.99.1
-cargo check -p openkeys-authenticator-core -p openkeys-h573 --target thumbv8m.main-none-eabihf --locked
+cargo check -p openkeys-authenticator-core -p openkeys-h573-r05 --target thumbv8m.main-none-eabihf --locked
 ```
 
 目标编译成功不代表可信启动、外设隔离或实片时序已经部署。
@@ -40,17 +40,20 @@ cargo check -p openkeys-authenticator-core -p openkeys-h573 --target thumbv8m.ma
 在有图形桌面的 macOS、Linux 或 Windows 上运行：
 
 ```sh
-cargo run -p authdesk --locked
+cargo run -p openkeys-manager --features gui --locked
 ```
 
-界面为英文。真实设备后端尚未完成，保持锁定，不能通过主机按钮或测试指纹解锁。已构建的三个平台包见[开发包下载及限制](NATIVE_BUILDS.md)；导入样例只使用[合成测试数据](IMPORT_FORMAT.md)。
+界面为英文。真实设备后端尚未完成，保持锁定，不能通过主机按钮或主机 PIN 解锁。历史 R04 界面已构建的三个平台包见[开发包下载及限制](NATIVE_BUILDS.md)；导入样例只使用[合成测试数据](IMPORT_FORMAT.md)。
 
 ## 4. 查看硬件与来源检查
 
 无需 CAD 环境的摘要检查：
 
 ```sh
-python3 hardware/r04/tools/manifest.py --check
+python3 hardware/r05/tools/manifest.py --check
+python3 scripts/freeze-r05-board.py --check
+python3 scripts/export-r05-pin-layout.py --check
+python3 scripts/check-r05-diagnostic.py
 python3 scripts/check-diagnostic-manifest.py
 python3 scripts/export-se-state-layout.py --check
 python3 scripts/check-opensk-vendor.py
@@ -58,12 +61,12 @@ python3 scripts/check-opensk-vendor.py
 
 Windows 如使用 Python Launcher，可将 `python3` 换成 `py -3`。需要 Python 3.9 或更新版本。
 
-- 看图：[原理图 PDF](../hardware/r04/exports/OpenKeys-schematic.pdf)、[尺寸 PDF](../hardware/r04/exports/OpenKeys-dimensions.pdf)。
-- 编辑 / 重导出：[R0.4 工具与文件说明](../hardware/r04/README.md)。需要指定版本的 KiCad、pcbnew、OpenSCAD 等环境。
-- 电气诊断：[目标镜像说明](../firmware/target/README.md)。诊断默认关闭指纹、SE、充电和私密服务。
+- 看图：[原理图 PDF](../hardware/r05/exports/OpenKeys-schematic.pdf)、[尺寸 PDF](../hardware/r05/exports/OpenKeys-dimensions.pdf)。
+- 编辑 / 重导出：[R0.5 工具与文件说明](../hardware/r05/README.md)。需要指定版本的 KiCad、pcbnew、OpenSCAD 等环境。
+- 电气诊断：[R0.5 目标镜像说明](../firmware/r05/README.md)。诊断默认关闭 SE、充电和私密服务。
 - 制作样板：[制造入口](../manufacturing/README.md)。先取得个人、小批量接单确认和工程审核。
 
-`hardware/r04/tools/board.py` 不带参数会覆盖现有走线。仅查看或重新导出时使用硬件说明中的安全导出步骤。
+`hardware/r05/tools/board.py` 不带参数会覆盖现有走线。仅查看或重新导出时使用硬件说明中的安全导出步骤。
 
 ## 5. 查看交付门槛
 
@@ -71,4 +74,4 @@ Windows 如使用 Python Launcher，可将 `python3` 换成 `py -3`。需要 Pyt
 python3 scripts/check-production-ready.py
 ```
 
-该命令会更新 `manufacturing/readiness-report.json`。当前应返回 **退出码 2 / BLOCKED**，列出未完成项；这不是普通构建失败，也不能改写成 PASS。生产放行还需要真实固件、安装包和逐台硬件证据。
+该命令是 R0.4 历史生产预检，会更新 `manufacturing/readiness-report.json`；R0.5 的放行条件见[当前复查](SECURITY_REVIEW_R05.md)。当前应返回 **退出码 2 / BLOCKED**，列出未完成项；这不是普通构建失败，也不能改写成 PASS。生产放行还需要真实固件、安装包和逐台硬件证据。

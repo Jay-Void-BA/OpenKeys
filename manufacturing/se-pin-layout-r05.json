@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "revision": "0.5",
+  "status": "NOT_COMMISSIONED_NOT_RELEASED",
+  "fingerprint": false,
+  "pin_decimal_digits": 6,
+  "consecutive_attempt_limit": 11,
+  "attempt_charged_before_verification": true,
+  "incomplete_entry_charged": false,
+  "ambiguous_verification_refunds": false,
+  "erase_on_eleventh_wrong_guess": true,
+  "erase_on_hardware_pin_change": true,
+  "erase_completion_implemented": false,
+  "programming_performed": false,
+  "contains_production_secrets": false,
+  "objects": [
+    {
+      "role": "SPENT",
+      "id": "4F4B0501",
+      "kind": "counter",
+      "bytes": 8,
+      "persistent": true
+    },
+    {
+      "role": "CREDIT",
+      "id": "4F4B0502",
+      "kind": "counter",
+      "bytes": 8,
+      "persistent": true
+    },
+    {
+      "role": "SALT",
+      "id": "4F4B0503",
+      "kind": "binary",
+      "bytes": 32,
+      "persistent": true
+    },
+    {
+      "role": "VERIFIER",
+      "id": "4F4B0504",
+      "kind": "binary",
+      "bytes": 32,
+      "persistent": true
+    },
+    {
+      "role": "PEPPER",
+      "id": "4F4B0505",
+      "kind": "hmac-key",
+      "bytes": 32,
+      "persistent": true
+    },
+    {
+      "role": "MARKER",
+      "id": "4F4B0506",
+      "kind": "binary",
+      "bytes": 32,
+      "persistent": true
+    },
+    {
+      "role": "ERASE",
+      "id": "4F4B0507",
+      "kind": "counter",
+      "bytes": 8,
+      "persistent": true
+    }
+  ],
+  "kdf": "RFC5869 HKDF-SHA256 inside SE; secret IKM=unique random pepper32; salt=random32; info=domain || 6 numeric bytes 0..9; L=32",
+  "kdf_domain": "OpenKeys/R05/PIN-check/v2",
+  "marker_sha256": "00b729fea25dcb038311cd18c0d92aedf2bdb37371d91c2965ad1d56ea1949e4",
+  "required_acl": [
+    "Mandatory authenticated full SCP03; unique per-device ENC/MAC/DEK",
+    "Pepper non-exportable; salt/verifier never available to host or external flash",
+    "No unauthorized object overwrite/delete/recreate/counter reset",
+    "Spent increments before completed-guess check; credit only after successful local verification",
+    "A compromised authorized root remains a security boundary failure"
+  ],
+  "commissioning_constraints": [
+    "Reviewed production root and closed debug required BEFORE owner PIN entry",
+    "First boot requires two matching local six-digit entries; no factory/default PIN or host setup",
+    "Owner enters PIN locally; ten isolated GPIO; no host PIN endpoint",
+    "Refuse any pre-existing/partial namespace; marker written LAST",
+    "Actual SE050E2 APDUs, ACLs, erase and counter power-loss semantics NOT qualified",
+    "Legacy R04 counters/biometrics do not migrate or enable the R05 profile"
+  ]
+}

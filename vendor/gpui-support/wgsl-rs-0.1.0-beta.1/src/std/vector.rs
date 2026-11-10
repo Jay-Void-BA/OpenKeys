@@ -1,0 +1,2568 @@
+//! Vector implementations.
+//!
+//! Plain structs with public fields that mirror WGSL's vector types.
+//! Components are accessed directly via `.x`, `.y`, `.z`, `.w` fields,
+//! or by index with `v[0]`, `v[1]`, etc.
+//!
+//! Vectors support swizzling by method-calling. For example, [`Vec3::xxx`]
+//! and [`Vec4::bgra`].
+#![expect(
+    clippy::self_named_constructors,
+    reason = "WGSL uses self named constructors"
+)]
+
+/// A 2-dimensional vector.
+#[repr(C)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Vec2<T> {
+    pub x: T,
+    pub y: T,
+}
+
+/// A 3-dimensional vector.
+#[repr(C)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Vec3<T> {
+    pub x: T,
+    pub y: T,
+    pub z: T,
+}
+
+/// A 4-dimensional vector.
+#[repr(C)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Vec4<T> {
+    pub x: T,
+    pub y: T,
+    pub z: T,
+    pub w: T,
+}
+
+/// Concrete type alias for a 2-dimensional vector of `f32` scalar components.
+pub type Vec2f = Vec2<f32>;
+/// Concrete type alias for a 2-dimensional vector of `i32` scalar components.
+pub type Vec2i = Vec2<i32>;
+/// Concrete type alias for a 2-dimensional vector of `u32` scalar components.
+pub type Vec2u = Vec2<u32>;
+/// Concrete type alias for a 2-dimensional vector of `bool` scalar components.
+pub type Vec2b = Vec2<bool>;
+
+/// Concrete type alias for a 3-dimensional vector of `f32` scalar components.
+pub type Vec3f = Vec3<f32>;
+/// Concrete type alias for a 3-dimensional vector of `i32` scalar components.
+pub type Vec3i = Vec3<i32>;
+/// Concrete type alias for a 3-dimensional vector of `u32` scalar components.
+pub type Vec3u = Vec3<u32>;
+/// Concrete type alias for a 3-dimensional vector of `bool` scalar components.
+pub type Vec3b = Vec3<bool>;
+
+/// Concrete type alias for a 4-dimensional vector of `f32` scalar components.
+pub type Vec4f = Vec4<f32>;
+/// Concrete type alias for a 4-dimensional vector of `i32` scalar components.
+pub type Vec4i = Vec4<i32>;
+/// Concrete type alias for a 4-dimensional vector of `u32` scalar components.
+pub type Vec4u = Vec4<u32>;
+/// Concrete type alias for a 4-dimensional vector of `bool` scalar components.
+pub type Vec4b = Vec4<bool>;
+
+impl<T: super::WgslScalar> super::Wgsl for Vec2<T> {
+    fn to_ir() -> wgsl_rs_ir::Type {
+        wgsl_rs_ir::Type::Vector {
+            elements: 2,
+            scalar_ty: Some(T::to_scalar_ir()),
+        }
+    }
+}
+
+impl<T: super::WgslScalar> super::Wgsl for Vec3<T> {
+    fn to_ir() -> wgsl_rs_ir::Type {
+        wgsl_rs_ir::Type::Vector {
+            elements: 3,
+            scalar_ty: Some(T::to_scalar_ir()),
+        }
+    }
+}
+
+impl<T: super::WgslScalar> super::Wgsl for Vec4<T> {
+    fn to_ir() -> wgsl_rs_ir::Type {
+        wgsl_rs_ir::Type::Vector {
+            elements: 4,
+            scalar_ty: Some(T::to_scalar_ir()),
+        }
+    }
+}
+
+impl<T> Vec2<T> {
+    /// Construct a 2-dimensional vector from components.
+    pub const fn vec2(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+
+    /// Convert to an array of components.
+    pub fn to_array(self) -> [T; 2] {
+        [self.x, self.y]
+    }
+}
+
+impl<T: Copy> Vec2<T> {
+    /// Construct from an array of components.
+    pub fn from_array(arr: [T; 2]) -> Self {
+        Self {
+            x: arr[0],
+            y: arr[1],
+        }
+    }
+}
+
+impl<T> Vec3<T> {
+    /// Construct a 3-dimensional vector from components.
+    pub const fn vec3(x: T, y: T, z: T) -> Self {
+        Self { x, y, z }
+    }
+
+    /// Convert to an array of components.
+    pub fn to_array(self) -> [T; 3] {
+        [self.x, self.y, self.z]
+    }
+}
+
+impl<T: Copy> Vec3<T> {
+    /// Construct from an array of components.
+    pub fn from_array(arr: [T; 3]) -> Self {
+        Self {
+            x: arr[0],
+            y: arr[1],
+            z: arr[2],
+        }
+    }
+}
+
+impl<T> Vec4<T> {
+    /// Construct a 4-dimensional vector from components.
+    pub const fn vec4(x: T, y: T, z: T, w: T) -> Self {
+        Self { x, y, z, w }
+    }
+
+    /// Convert to an array of components.
+    pub fn to_array(self) -> [T; 4] {
+        [self.x, self.y, self.z, self.w]
+    }
+}
+
+impl<T: Copy> Vec4<T> {
+    /// Construct from an array of components.
+    pub fn from_array(arr: [T; 4]) -> Self {
+        Self {
+            x: arr[0],
+            y: arr[1],
+            z: arr[2],
+            w: arr[3],
+        }
+    }
+}
+
+// Const constructor functions matching WGSL naming conventions.
+
+/// Constructor for a 2-dimensional vector of `f32` scalar components.
+pub const fn vec2f(x: f32, y: f32) -> Vec2<f32> {
+    Vec2 { x, y }
+}
+
+/// Constructor for a 2-dimensional vector of `i32` scalar components.
+pub const fn vec2i(x: i32, y: i32) -> Vec2<i32> {
+    Vec2 { x, y }
+}
+
+/// Constructor for a 2-dimensional vector of `u32` scalar components.
+pub const fn vec2u(x: u32, y: u32) -> Vec2<u32> {
+    Vec2 { x, y }
+}
+
+/// Constructor for a 2-dimensional vector of `bool` scalar components.
+pub const fn vec2b(x: bool, y: bool) -> Vec2<bool> {
+    Vec2 { x, y }
+}
+
+/// Constructor for a 3-dimensional vector of `f32` scalar components.
+pub const fn vec3f(x: f32, y: f32, z: f32) -> Vec3<f32> {
+    Vec3 { x, y, z }
+}
+
+/// Constructor for a 3-dimensional vector of `i32` scalar components.
+pub const fn vec3i(x: i32, y: i32, z: i32) -> Vec3<i32> {
+    Vec3 { x, y, z }
+}
+
+/// Constructor for a 3-dimensional vector of `u32` scalar components.
+pub const fn vec3u(x: u32, y: u32, z: u32) -> Vec3<u32> {
+    Vec3 { x, y, z }
+}
+
+/// Constructor for a 3-dimensional vector of `bool` scalar components.
+pub const fn vec3b(x: bool, y: bool, z: bool) -> Vec3<bool> {
+    Vec3 { x, y, z }
+}
+
+/// Constructor for a 4-dimensional vector of `f32` scalar components.
+pub const fn vec4f(x: f32, y: f32, z: f32, w: f32) -> Vec4<f32> {
+    Vec4 { x, y, z, w }
+}
+
+/// Constructor for a 4-dimensional vector of `i32` scalar components.
+pub const fn vec4i(x: i32, y: i32, z: i32, w: i32) -> Vec4<i32> {
+    Vec4 { x, y, z, w }
+}
+
+/// Constructor for a 4-dimensional vector of `u32` scalar components.
+pub const fn vec4u(x: u32, y: u32, z: u32, w: u32) -> Vec4<u32> {
+    Vec4 { x, y, z, w }
+}
+
+/// Constructor for a 4-dimensional vector of `bool` scalar components.
+pub const fn vec4b(x: bool, y: bool, z: bool, w: bool) -> Vec4<bool> {
+    Vec4 { x, y, z, w }
+}
+
+// Index impls for `usize` and `u32`.
+
+impl<T> std::ops::Index<usize> for Vec2<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &T {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            _ => panic!("index out of bounds: Vec2 has 2 components but index is {index}"),
+        }
+    }
+}
+
+impl<T> std::ops::IndexMut<usize> for Vec2<T> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            _ => panic!("index out of bounds: Vec2 has 2 components but index is {index}"),
+        }
+    }
+}
+
+impl<T> std::ops::Index<u32> for Vec2<T> {
+    type Output = T;
+
+    fn index(&self, index: u32) -> &T {
+        &self[index as usize]
+    }
+}
+
+impl<T> std::ops::IndexMut<u32> for Vec2<T> {
+    fn index_mut(&mut self, index: u32) -> &mut T {
+        &mut self[index as usize]
+    }
+}
+
+impl<T> std::ops::Index<usize> for Vec3<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &T {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("index out of bounds: Vec3 has 3 components but index is {index}"),
+        }
+    }
+}
+
+impl<T> std::ops::IndexMut<usize> for Vec3<T> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => panic!("index out of bounds: Vec3 has 3 components but index is {index}"),
+        }
+    }
+}
+
+impl<T> std::ops::Index<u32> for Vec3<T> {
+    type Output = T;
+
+    fn index(&self, index: u32) -> &T {
+        &self[index as usize]
+    }
+}
+
+impl<T> std::ops::IndexMut<u32> for Vec3<T> {
+    fn index_mut(&mut self, index: u32) -> &mut T {
+        &mut self[index as usize]
+    }
+}
+
+impl<T> std::ops::Index<usize> for Vec4<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &T {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            3 => &self.w,
+            _ => panic!("index out of bounds: Vec4 has 4 components but index is {index}"),
+        }
+    }
+}
+
+impl<T> std::ops::IndexMut<usize> for Vec4<T> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            3 => &mut self.w,
+            _ => panic!("index out of bounds: Vec4 has 4 components but index is {index}"),
+        }
+    }
+}
+
+impl<T> std::ops::Index<u32> for Vec4<T> {
+    type Output = T;
+
+    fn index(&self, index: u32) -> &T {
+        &self[index as usize]
+    }
+}
+
+impl<T> std::ops::IndexMut<u32> for Vec4<T> {
+    fn index_mut(&mut self, index: u32) -> &mut T {
+        &mut self[index as usize]
+    }
+}
+
+// Swizzle methods (generated by proc macro).
+// These provide multi-component and single-component access using both
+// the positional (x, y, z, w) and color (r, g, b, a) naming conventions.
+
+wgsl_rs_macros::swizzle!(
+    Vec2f,
+    [f32, Vec2f, Vec3f, Vec4f],
+    [vec2f, vec3f, vec4f],
+    [x, y],
+    [r, g]
+);
+wgsl_rs_macros::swizzle!(
+    Vec2f,
+    [f32, Vec2f, Vec3f, Vec4f],
+    [vec2f, vec3f, vec4f],
+    [x, y],
+    [x, y]
+);
+wgsl_rs_macros::swizzle!(
+    Vec2i,
+    [i32, Vec2i, Vec3i, Vec4i],
+    [vec2i, vec3i, vec4i],
+    [x, y],
+    [r, g]
+);
+wgsl_rs_macros::swizzle!(
+    Vec2i,
+    [i32, Vec2i, Vec3i, Vec4i],
+    [vec2i, vec3i, vec4i],
+    [x, y],
+    [x, y]
+);
+wgsl_rs_macros::swizzle!(
+    Vec2u,
+    [u32, Vec2u, Vec3u, Vec4u],
+    [vec2u, vec3u, vec4u],
+    [x, y],
+    [r, g]
+);
+wgsl_rs_macros::swizzle!(
+    Vec2u,
+    [u32, Vec2u, Vec3u, Vec4u],
+    [vec2u, vec3u, vec4u],
+    [x, y],
+    [x, y]
+);
+wgsl_rs_macros::swizzle!(
+    Vec2b,
+    [bool, Vec2b, Vec3b, Vec4b],
+    [vec2b, vec3b, vec4b],
+    [x, y],
+    [r, g]
+);
+wgsl_rs_macros::swizzle!(
+    Vec2b,
+    [bool, Vec2b, Vec3b, Vec4b],
+    [vec2b, vec3b, vec4b],
+    [x, y],
+    [x, y]
+);
+
+wgsl_rs_macros::swizzle!(
+    Vec3f,
+    [f32, Vec2f, Vec3f, Vec4f],
+    [vec2f, vec3f, vec4f],
+    [x, y, z],
+    [r, g, b]
+);
+wgsl_rs_macros::swizzle!(
+    Vec3f,
+    [f32, Vec2f, Vec3f, Vec4f],
+    [vec2f, vec3f, vec4f],
+    [x, y, z],
+    [x, y, z]
+);
+wgsl_rs_macros::swizzle!(
+    Vec3i,
+    [i32, Vec2i, Vec3i, Vec4i],
+    [vec2i, vec3i, vec4i],
+    [x, y, z],
+    [r, g, b]
+);
+wgsl_rs_macros::swizzle!(
+    Vec3i,
+    [i32, Vec2i, Vec3i, Vec4i],
+    [vec2i, vec3i, vec4i],
+    [x, y, z],
+    [x, y, z]
+);
+wgsl_rs_macros::swizzle!(
+    Vec3u,
+    [u32, Vec2u, Vec3u, Vec4u],
+    [vec2u, vec3u, vec4u],
+    [x, y, z],
+    [r, g, b]
+);
+wgsl_rs_macros::swizzle!(
+    Vec3u,
+    [u32, Vec2u, Vec3u, Vec4u],
+    [vec2u, vec3u, vec4u],
+    [x, y, z],
+    [x, y, z]
+);
+wgsl_rs_macros::swizzle!(
+    Vec3b,
+    [bool, Vec2b, Vec3b, Vec4b],
+    [vec2b, vec3b, vec4b],
+    [x, y, z],
+    [r, g, b]
+);
+wgsl_rs_macros::swizzle!(
+    Vec3b,
+    [bool, Vec2b, Vec3b, Vec4b],
+    [vec2b, vec3b, vec4b],
+    [x, y, z],
+    [x, y, z]
+);
+
+wgsl_rs_macros::swizzle!(
+    Vec4f,
+    [f32, Vec2f, Vec3f, Vec4f],
+    [vec2f, vec3f, vec4f],
+    [x, y, z, w],
+    [r, g, b, a]
+);
+wgsl_rs_macros::swizzle!(
+    Vec4f,
+    [f32, Vec2f, Vec3f, Vec4f],
+    [vec2f, vec3f, vec4f],
+    [x, y, z, w],
+    [x, y, z, w]
+);
+wgsl_rs_macros::swizzle!(
+    Vec4i,
+    [i32, Vec2i, Vec3i, Vec4i],
+    [vec2i, vec3i, vec4i],
+    [x, y, z, w],
+    [r, g, b, a]
+);
+wgsl_rs_macros::swizzle!(
+    Vec4i,
+    [i32, Vec2i, Vec3i, Vec4i],
+    [vec2i, vec3i, vec4i],
+    [x, y, z, w],
+    [x, y, z, w]
+);
+wgsl_rs_macros::swizzle!(
+    Vec4u,
+    [u32, Vec2u, Vec3u, Vec4u],
+    [vec2u, vec3u, vec4u],
+    [x, y, z, w],
+    [r, g, b, a]
+);
+wgsl_rs_macros::swizzle!(
+    Vec4u,
+    [u32, Vec2u, Vec3u, Vec4u],
+    [vec2u, vec3u, vec4u],
+    [x, y, z, w],
+    [x, y, z, w]
+);
+wgsl_rs_macros::swizzle!(
+    Vec4b,
+    [bool, Vec2b, Vec3b, Vec4b],
+    [vec2b, vec3b, vec4b],
+    [x, y, z, w],
+    [r, g, b, a]
+);
+wgsl_rs_macros::swizzle!(
+    Vec4b,
+    [bool, Vec2b, Vec3b, Vec4b],
+    [vec2b, vec3b, vec4b],
+    [x, y, z, w],
+    [x, y, z, w]
+);
+
+// From/Into conversions for glam types and arrays.
+
+macro_rules! impl_from_vec2 {
+    ($glam_ty:ty, $scalar:ty) => {
+        impl From<$glam_ty> for Vec2<$scalar> {
+            fn from(v: $glam_ty) -> Self {
+                Vec2 { x: v.x, y: v.y }
+            }
+        }
+
+        impl From<Vec2<$scalar>> for $glam_ty {
+            fn from(v: Vec2<$scalar>) -> Self {
+                <$glam_ty>::new(v.x, v.y)
+            }
+        }
+
+        impl From<[$scalar; 2]> for Vec2<$scalar> {
+            fn from(arr: [$scalar; 2]) -> Self {
+                Vec2 {
+                    x: arr[0],
+                    y: arr[1],
+                }
+            }
+        }
+
+        impl From<Vec2<$scalar>> for [$scalar; 2] {
+            fn from(v: Vec2<$scalar>) -> [$scalar; 2] {
+                [v.x, v.y]
+            }
+        }
+    };
+}
+
+macro_rules! impl_from_vec3 {
+    ($glam_ty:ty, $scalar:ty) => {
+        impl From<$glam_ty> for Vec3<$scalar> {
+            fn from(v: $glam_ty) -> Self {
+                Vec3 {
+                    x: v.x,
+                    y: v.y,
+                    z: v.z,
+                }
+            }
+        }
+
+        impl From<Vec3<$scalar>> for $glam_ty {
+            fn from(v: Vec3<$scalar>) -> Self {
+                <$glam_ty>::new(v.x, v.y, v.z)
+            }
+        }
+
+        impl From<[$scalar; 3]> for Vec3<$scalar> {
+            fn from(arr: [$scalar; 3]) -> Self {
+                Vec3 {
+                    x: arr[0],
+                    y: arr[1],
+                    z: arr[2],
+                }
+            }
+        }
+
+        impl From<Vec3<$scalar>> for [$scalar; 3] {
+            fn from(v: Vec3<$scalar>) -> [$scalar; 3] {
+                [v.x, v.y, v.z]
+            }
+        }
+    };
+}
+
+macro_rules! impl_from_vec4 {
+    ($glam_ty:ty, $scalar:ty) => {
+        impl From<$glam_ty> for Vec4<$scalar> {
+            fn from(v: $glam_ty) -> Self {
+                Vec4 {
+                    x: v.x,
+                    y: v.y,
+                    z: v.z,
+                    w: v.w,
+                }
+            }
+        }
+
+        impl From<Vec4<$scalar>> for $glam_ty {
+            fn from(v: Vec4<$scalar>) -> Self {
+                <$glam_ty>::new(v.x, v.y, v.z, v.w)
+            }
+        }
+
+        impl From<[$scalar; 4]> for Vec4<$scalar> {
+            fn from(arr: [$scalar; 4]) -> Self {
+                Vec4 {
+                    x: arr[0],
+                    y: arr[1],
+                    z: arr[2],
+                    w: arr[3],
+                }
+            }
+        }
+
+        impl From<Vec4<$scalar>> for [$scalar; 4] {
+            fn from(v: Vec4<$scalar>) -> [$scalar; 4] {
+                [v.x, v.y, v.z, v.w]
+            }
+        }
+    };
+}
+
+impl_from_vec2!(glam::Vec2, f32);
+impl_from_vec2!(glam::IVec2, i32);
+impl_from_vec2!(glam::UVec2, u32);
+impl_from_vec2!(glam::BVec2, bool);
+
+impl_from_vec3!(glam::Vec3, f32);
+impl_from_vec3!(glam::IVec3, i32);
+impl_from_vec3!(glam::UVec3, u32);
+impl_from_vec3!(glam::BVec3, bool);
+
+impl_from_vec4!(glam::Vec4, f32);
+impl_from_vec4!(glam::IVec4, i32);
+impl_from_vec4!(glam::UVec4, u32);
+impl_from_vec4!(glam::BVec4, bool);
+
+// Arithmetic operations.
+//
+// For f32 vectors, we delegate to glam for potential SIMD optimization.
+// For integer vectors, we operate directly on fields.
+
+/// Implements vector-vector binary operations (Add, Sub, Mul, Div) for Vec2.
+macro_rules! impl_vec2_ops {
+    ($scalar:ty) => {
+        impl std::ops::Add for Vec2<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x + rhs.x,
+                    y: self.y + rhs.y,
+                }
+            }
+        }
+        impl std::ops::Sub for Vec2<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x - rhs.x,
+                    y: self.y - rhs.y,
+                }
+            }
+        }
+        impl std::ops::Mul for Vec2<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x * rhs.x,
+                    y: self.y * rhs.y,
+                }
+            }
+        }
+        impl std::ops::Div for Vec2<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x / rhs.x,
+                    y: self.y / rhs.y,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector binary operations (Add, Sub, Mul, Div) for Vec3.
+macro_rules! impl_vec3_ops {
+    ($scalar:ty) => {
+        impl std::ops::Add for Vec3<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x + rhs.x,
+                    y: self.y + rhs.y,
+                    z: self.z + rhs.z,
+                }
+            }
+        }
+        impl std::ops::Sub for Vec3<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x - rhs.x,
+                    y: self.y - rhs.y,
+                    z: self.z - rhs.z,
+                }
+            }
+        }
+        impl std::ops::Mul for Vec3<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x * rhs.x,
+                    y: self.y * rhs.y,
+                    z: self.z * rhs.z,
+                }
+            }
+        }
+        impl std::ops::Div for Vec3<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x / rhs.x,
+                    y: self.y / rhs.y,
+                    z: self.z / rhs.z,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector binary operations (Add, Sub, Mul, Div) for Vec4.
+macro_rules! impl_vec4_ops {
+    ($scalar:ty) => {
+        impl std::ops::Add for Vec4<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x + rhs.x,
+                    y: self.y + rhs.y,
+                    z: self.z + rhs.z,
+                    w: self.w + rhs.w,
+                }
+            }
+        }
+        impl std::ops::Sub for Vec4<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x - rhs.x,
+                    y: self.y - rhs.y,
+                    z: self.z - rhs.z,
+                    w: self.w - rhs.w,
+                }
+            }
+        }
+        impl std::ops::Mul for Vec4<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x * rhs.x,
+                    y: self.y * rhs.y,
+                    z: self.z * rhs.z,
+                    w: self.w * rhs.w,
+                }
+            }
+        }
+        impl std::ops::Div for Vec4<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x / rhs.x,
+                    y: self.y / rhs.y,
+                    z: self.z / rhs.z,
+                    w: self.w / rhs.w,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector binary operations (Add, Sub, Mul, Div) for Vec2
+/// with wrapping arithmetic. This is required for integer types (u32, i32) to
+/// match WGSL spec behavior.
+macro_rules! impl_vec2_ops_wrapping {
+    ($scalar:ty) => {
+        impl std::ops::Add for Vec2<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x.wrapping_add(rhs.x),
+                    y: self.y.wrapping_add(rhs.y),
+                }
+            }
+        }
+        impl std::ops::Sub for Vec2<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x.wrapping_sub(rhs.x),
+                    y: self.y.wrapping_sub(rhs.y),
+                }
+            }
+        }
+        impl std::ops::Mul for Vec2<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x.wrapping_mul(rhs.x),
+                    y: self.y.wrapping_mul(rhs.y),
+                }
+            }
+        }
+        impl std::ops::Div for Vec2<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x.wrapping_div(rhs.x),
+                    y: self.y.wrapping_div(rhs.y),
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector binary operations (Add, Sub, Mul, Div) for Vec3
+/// with wrapping arithmetic. This is required for integer types (u32, i32) to
+/// match WGSL spec behavior.
+macro_rules! impl_vec3_ops_wrapping {
+    ($scalar:ty) => {
+        impl std::ops::Add for Vec3<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x.wrapping_add(rhs.x),
+                    y: self.y.wrapping_add(rhs.y),
+                    z: self.z.wrapping_add(rhs.z),
+                }
+            }
+        }
+        impl std::ops::Sub for Vec3<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x.wrapping_sub(rhs.x),
+                    y: self.y.wrapping_sub(rhs.y),
+                    z: self.z.wrapping_sub(rhs.z),
+                }
+            }
+        }
+        impl std::ops::Mul for Vec3<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x.wrapping_mul(rhs.x),
+                    y: self.y.wrapping_mul(rhs.y),
+                    z: self.z.wrapping_mul(rhs.z),
+                }
+            }
+        }
+        impl std::ops::Div for Vec3<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x.wrapping_div(rhs.x),
+                    y: self.y.wrapping_div(rhs.y),
+                    z: self.z.wrapping_div(rhs.z),
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector binary operations (Add, Sub, Mul, Div) for Vec4
+/// with wrapping arithmetic. This is required for integer types (u32, i32) to
+/// match WGSL spec behavior.
+macro_rules! impl_vec4_ops_wrapping {
+    ($scalar:ty) => {
+        impl std::ops::Add for Vec4<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x.wrapping_add(rhs.x),
+                    y: self.y.wrapping_add(rhs.y),
+                    z: self.z.wrapping_add(rhs.z),
+                    w: self.w.wrapping_add(rhs.w),
+                }
+            }
+        }
+        impl std::ops::Sub for Vec4<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x.wrapping_sub(rhs.x),
+                    y: self.y.wrapping_sub(rhs.y),
+                    z: self.z.wrapping_sub(rhs.z),
+                    w: self.w.wrapping_sub(rhs.w),
+                }
+            }
+        }
+        impl std::ops::Mul for Vec4<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x.wrapping_mul(rhs.x),
+                    y: self.y.wrapping_mul(rhs.y),
+                    z: self.z.wrapping_mul(rhs.z),
+                    w: self.w.wrapping_mul(rhs.w),
+                }
+            }
+        }
+        impl std::ops::Div for Vec4<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x.wrapping_div(rhs.x),
+                    y: self.y.wrapping_div(rhs.y),
+                    z: self.z.wrapping_div(rhs.z),
+                    w: self.w.wrapping_div(rhs.w),
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector Rem for Vec2.
+macro_rules! impl_vec2_rem {
+    ($scalar:ty) => {
+        impl std::ops::Rem for Vec2<$scalar> {
+            type Output = Self;
+            fn rem(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x % rhs.x,
+                    y: self.y % rhs.y,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector Rem for Vec3.
+macro_rules! impl_vec3_rem {
+    ($scalar:ty) => {
+        impl std::ops::Rem for Vec3<$scalar> {
+            type Output = Self;
+            fn rem(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x % rhs.x,
+                    y: self.y % rhs.y,
+                    z: self.z % rhs.z,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector Rem for Vec4.
+macro_rules! impl_vec4_rem {
+    ($scalar:ty) => {
+        impl std::ops::Rem for Vec4<$scalar> {
+            type Output = Self;
+            fn rem(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x % rhs.x,
+                    y: self.y % rhs.y,
+                    z: self.z % rhs.z,
+                    w: self.w % rhs.w,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector bitwise operations (BitAnd, BitOr, BitXor) for
+/// Vec2.
+///
+/// WGSL defines `&`, `|`, `^` only for the integer vector types (i32, u32) —
+/// never f32 or bool — so this macro is instantiated for those scalars
+/// only. Right-hand sides are same-type only; the spec has no scalar-RHS
+/// form. Bitwise ops cannot overflow, so unlike the arithmetic ops no
+/// wrapping variants are needed: both worlds agree bit-for-bit (wgsl-rs#186).
+macro_rules! impl_vec2_bitwise_ops {
+    ($scalar:ty) => {
+        impl std::ops::BitAnd for Vec2<$scalar> {
+            type Output = Self;
+            fn bitand(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x & rhs.x,
+                    y: self.y & rhs.y,
+                }
+            }
+        }
+        impl std::ops::BitOr for Vec2<$scalar> {
+            type Output = Self;
+            fn bitor(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x | rhs.x,
+                    y: self.y | rhs.y,
+                }
+            }
+        }
+        impl std::ops::BitXor for Vec2<$scalar> {
+            type Output = Self;
+            fn bitxor(self, rhs: Self) -> Self {
+                Vec2 {
+                    x: self.x ^ rhs.x,
+                    y: self.y ^ rhs.y,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector bitwise operations (BitAnd, BitOr, BitXor) for
+/// Vec3.
+///
+/// See [`impl_vec2_bitwise_ops!`] for the integer-only scope rationale
+/// (wgsl-rs#186).
+macro_rules! impl_vec3_bitwise_ops {
+    ($scalar:ty) => {
+        impl std::ops::BitAnd for Vec3<$scalar> {
+            type Output = Self;
+            fn bitand(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x & rhs.x,
+                    y: self.y & rhs.y,
+                    z: self.z & rhs.z,
+                }
+            }
+        }
+        impl std::ops::BitOr for Vec3<$scalar> {
+            type Output = Self;
+            fn bitor(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x | rhs.x,
+                    y: self.y | rhs.y,
+                    z: self.z | rhs.z,
+                }
+            }
+        }
+        impl std::ops::BitXor for Vec3<$scalar> {
+            type Output = Self;
+            fn bitxor(self, rhs: Self) -> Self {
+                Vec3 {
+                    x: self.x ^ rhs.x,
+                    y: self.y ^ rhs.y,
+                    z: self.z ^ rhs.z,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-vector bitwise operations (BitAnd, BitOr, BitXor) for
+/// Vec4.
+///
+/// See [`impl_vec2_bitwise_ops!`] for the integer-only scope rationale
+/// (wgsl-rs#186).
+macro_rules! impl_vec4_bitwise_ops {
+    ($scalar:ty) => {
+        impl std::ops::BitAnd for Vec4<$scalar> {
+            type Output = Self;
+            fn bitand(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x & rhs.x,
+                    y: self.y & rhs.y,
+                    z: self.z & rhs.z,
+                    w: self.w & rhs.w,
+                }
+            }
+        }
+        impl std::ops::BitOr for Vec4<$scalar> {
+            type Output = Self;
+            fn bitor(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x | rhs.x,
+                    y: self.y | rhs.y,
+                    z: self.z | rhs.z,
+                    w: self.w | rhs.w,
+                }
+            }
+        }
+        impl std::ops::BitXor for Vec4<$scalar> {
+            type Output = Self;
+            fn bitxor(self, rhs: Self) -> Self {
+                Vec4 {
+                    x: self.x ^ rhs.x,
+                    y: self.y ^ rhs.y,
+                    z: self.z ^ rhs.z,
+                    w: self.w ^ rhs.w,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector binary operations for Vec2.
+macro_rules! impl_vec2_scalar_ops {
+    ($scalar:ty) => {
+        impl std::ops::Add<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x + rhs,
+                    y: self.y + rhs,
+                }
+            }
+        }
+        impl std::ops::Sub<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x - rhs,
+                    y: self.y - rhs,
+                }
+            }
+        }
+        impl std::ops::Mul<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x * rhs,
+                    y: self.y * rhs,
+                }
+            }
+        }
+        impl std::ops::Div<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x / rhs,
+                    y: self.y / rhs,
+                }
+            }
+        }
+        impl std::ops::Add<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn add(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self + rhs.x,
+                    y: self + rhs.y,
+                }
+            }
+        }
+        impl std::ops::Sub<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn sub(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self - rhs.x,
+                    y: self - rhs.y,
+                }
+            }
+        }
+        impl std::ops::Mul<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn mul(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self * rhs.x,
+                    y: self * rhs.y,
+                }
+            }
+        }
+        impl std::ops::Div<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn div(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self / rhs.x,
+                    y: self / rhs.y,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector binary operations for Vec3.
+macro_rules! impl_vec3_scalar_ops {
+    ($scalar:ty) => {
+        impl std::ops::Add<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x + rhs,
+                    y: self.y + rhs,
+                    z: self.z + rhs,
+                }
+            }
+        }
+        impl std::ops::Sub<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x - rhs,
+                    y: self.y - rhs,
+                    z: self.z - rhs,
+                }
+            }
+        }
+        impl std::ops::Mul<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x * rhs,
+                    y: self.y * rhs,
+                    z: self.z * rhs,
+                }
+            }
+        }
+        impl std::ops::Div<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x / rhs,
+                    y: self.y / rhs,
+                    z: self.z / rhs,
+                }
+            }
+        }
+        impl std::ops::Add<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn add(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self + rhs.x,
+                    y: self + rhs.y,
+                    z: self + rhs.z,
+                }
+            }
+        }
+        impl std::ops::Sub<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn sub(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self - rhs.x,
+                    y: self - rhs.y,
+                    z: self - rhs.z,
+                }
+            }
+        }
+        impl std::ops::Mul<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn mul(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self * rhs.x,
+                    y: self * rhs.y,
+                    z: self * rhs.z,
+                }
+            }
+        }
+        impl std::ops::Div<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn div(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self / rhs.x,
+                    y: self / rhs.y,
+                    z: self / rhs.z,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector binary operations for Vec4.
+macro_rules! impl_vec4_scalar_ops {
+    ($scalar:ty) => {
+        impl std::ops::Add<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x + rhs,
+                    y: self.y + rhs,
+                    z: self.z + rhs,
+                    w: self.w + rhs,
+                }
+            }
+        }
+        impl std::ops::Sub<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x - rhs,
+                    y: self.y - rhs,
+                    z: self.z - rhs,
+                    w: self.w - rhs,
+                }
+            }
+        }
+        impl std::ops::Mul<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x * rhs,
+                    y: self.y * rhs,
+                    z: self.z * rhs,
+                    w: self.w * rhs,
+                }
+            }
+        }
+        impl std::ops::Div<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x / rhs,
+                    y: self.y / rhs,
+                    z: self.z / rhs,
+                    w: self.w / rhs,
+                }
+            }
+        }
+        impl std::ops::Add<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn add(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self + rhs.x,
+                    y: self + rhs.y,
+                    z: self + rhs.z,
+                    w: self + rhs.w,
+                }
+            }
+        }
+        impl std::ops::Sub<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn sub(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self - rhs.x,
+                    y: self - rhs.y,
+                    z: self - rhs.z,
+                    w: self - rhs.w,
+                }
+            }
+        }
+        impl std::ops::Mul<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn mul(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self * rhs.x,
+                    y: self * rhs.y,
+                    z: self * rhs.z,
+                    w: self * rhs.w,
+                }
+            }
+        }
+        impl std::ops::Div<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn div(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self / rhs.x,
+                    y: self / rhs.y,
+                    z: self / rhs.z,
+                    w: self / rhs.w,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector binary operations for Vec2 with
+/// wrapping arithmetic. This is required for integer types (u32, i32) to match
+/// WGSL spec behavior.
+macro_rules! impl_vec2_scalar_ops_wrapping {
+    ($scalar:ty) => {
+        impl std::ops::Add<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x.wrapping_add(rhs),
+                    y: self.y.wrapping_add(rhs),
+                }
+            }
+        }
+        impl std::ops::Sub<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x.wrapping_sub(rhs),
+                    y: self.y.wrapping_sub(rhs),
+                }
+            }
+        }
+        impl std::ops::Mul<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x.wrapping_mul(rhs),
+                    y: self.y.wrapping_mul(rhs),
+                }
+            }
+        }
+        impl std::ops::Div<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x.wrapping_div(rhs),
+                    y: self.y.wrapping_div(rhs),
+                }
+            }
+        }
+        impl std::ops::Add<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn add(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self.wrapping_add(rhs.x),
+                    y: self.wrapping_add(rhs.y),
+                }
+            }
+        }
+        impl std::ops::Sub<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn sub(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self.wrapping_sub(rhs.x),
+                    y: self.wrapping_sub(rhs.y),
+                }
+            }
+        }
+        impl std::ops::Mul<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn mul(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self.wrapping_mul(rhs.x),
+                    y: self.wrapping_mul(rhs.y),
+                }
+            }
+        }
+        impl std::ops::Div<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn div(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self.wrapping_div(rhs.x),
+                    y: self.wrapping_div(rhs.y),
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector binary operations for Vec3 with
+/// wrapping arithmetic. This is required for integer types (u32, i32) to match
+/// WGSL spec behavior.
+macro_rules! impl_vec3_scalar_ops_wrapping {
+    ($scalar:ty) => {
+        impl std::ops::Add<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x.wrapping_add(rhs),
+                    y: self.y.wrapping_add(rhs),
+                    z: self.z.wrapping_add(rhs),
+                }
+            }
+        }
+        impl std::ops::Sub<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x.wrapping_sub(rhs),
+                    y: self.y.wrapping_sub(rhs),
+                    z: self.z.wrapping_sub(rhs),
+                }
+            }
+        }
+        impl std::ops::Mul<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x.wrapping_mul(rhs),
+                    y: self.y.wrapping_mul(rhs),
+                    z: self.z.wrapping_mul(rhs),
+                }
+            }
+        }
+        impl std::ops::Div<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x.wrapping_div(rhs),
+                    y: self.y.wrapping_div(rhs),
+                    z: self.z.wrapping_div(rhs),
+                }
+            }
+        }
+        impl std::ops::Add<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn add(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self.wrapping_add(rhs.x),
+                    y: self.wrapping_add(rhs.y),
+                    z: self.wrapping_add(rhs.z),
+                }
+            }
+        }
+        impl std::ops::Sub<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn sub(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self.wrapping_sub(rhs.x),
+                    y: self.wrapping_sub(rhs.y),
+                    z: self.wrapping_sub(rhs.z),
+                }
+            }
+        }
+        impl std::ops::Mul<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn mul(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self.wrapping_mul(rhs.x),
+                    y: self.wrapping_mul(rhs.y),
+                    z: self.wrapping_mul(rhs.z),
+                }
+            }
+        }
+        impl std::ops::Div<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn div(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self.wrapping_div(rhs.x),
+                    y: self.wrapping_div(rhs.y),
+                    z: self.wrapping_div(rhs.z),
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector binary operations for Vec4 with
+/// wrapping arithmetic. This is required for integer types (u32, i32) to match
+/// WGSL spec behavior.
+macro_rules! impl_vec4_scalar_ops_wrapping {
+    ($scalar:ty) => {
+        impl std::ops::Add<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn add(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x.wrapping_add(rhs),
+                    y: self.y.wrapping_add(rhs),
+                    z: self.z.wrapping_add(rhs),
+                    w: self.w.wrapping_add(rhs),
+                }
+            }
+        }
+        impl std::ops::Sub<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn sub(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x.wrapping_sub(rhs),
+                    y: self.y.wrapping_sub(rhs),
+                    z: self.z.wrapping_sub(rhs),
+                    w: self.w.wrapping_sub(rhs),
+                }
+            }
+        }
+        impl std::ops::Mul<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn mul(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x.wrapping_mul(rhs),
+                    y: self.y.wrapping_mul(rhs),
+                    z: self.z.wrapping_mul(rhs),
+                    w: self.w.wrapping_mul(rhs),
+                }
+            }
+        }
+        impl std::ops::Div<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn div(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x.wrapping_div(rhs),
+                    y: self.y.wrapping_div(rhs),
+                    z: self.z.wrapping_div(rhs),
+                    w: self.w.wrapping_div(rhs),
+                }
+            }
+        }
+        impl std::ops::Add<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn add(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self.wrapping_add(rhs.x),
+                    y: self.wrapping_add(rhs.y),
+                    z: self.wrapping_add(rhs.z),
+                    w: self.wrapping_add(rhs.w),
+                }
+            }
+        }
+        impl std::ops::Sub<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn sub(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self.wrapping_sub(rhs.x),
+                    y: self.wrapping_sub(rhs.y),
+                    z: self.wrapping_sub(rhs.z),
+                    w: self.wrapping_sub(rhs.w),
+                }
+            }
+        }
+        impl std::ops::Mul<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn mul(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self.wrapping_mul(rhs.x),
+                    y: self.wrapping_mul(rhs.y),
+                    z: self.wrapping_mul(rhs.z),
+                    w: self.wrapping_mul(rhs.w),
+                }
+            }
+        }
+        impl std::ops::Div<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn div(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self.wrapping_div(rhs.x),
+                    y: self.wrapping_div(rhs.y),
+                    z: self.wrapping_div(rhs.z),
+                    w: self.wrapping_div(rhs.w),
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector Rem for Vec2.
+macro_rules! impl_vec2_scalar_rem {
+    ($scalar:ty) => {
+        impl std::ops::Rem<$scalar> for Vec2<$scalar> {
+            type Output = Self;
+            fn rem(self, rhs: $scalar) -> Self {
+                Vec2 {
+                    x: self.x % rhs,
+                    y: self.y % rhs,
+                }
+            }
+        }
+        impl std::ops::Rem<Vec2<$scalar>> for $scalar {
+            type Output = Vec2<$scalar>;
+            fn rem(self, rhs: Vec2<$scalar>) -> Vec2<$scalar> {
+                Vec2 {
+                    x: self % rhs.x,
+                    y: self % rhs.y,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector Rem for Vec3.
+macro_rules! impl_vec3_scalar_rem {
+    ($scalar:ty) => {
+        impl std::ops::Rem<$scalar> for Vec3<$scalar> {
+            type Output = Self;
+            fn rem(self, rhs: $scalar) -> Self {
+                Vec3 {
+                    x: self.x % rhs,
+                    y: self.y % rhs,
+                    z: self.z % rhs,
+                }
+            }
+        }
+        impl std::ops::Rem<Vec3<$scalar>> for $scalar {
+            type Output = Vec3<$scalar>;
+            fn rem(self, rhs: Vec3<$scalar>) -> Vec3<$scalar> {
+                Vec3 {
+                    x: self % rhs.x,
+                    y: self % rhs.y,
+                    z: self % rhs.z,
+                }
+            }
+        }
+    };
+}
+
+/// Implements vector-scalar and scalar-vector Rem for Vec4.
+macro_rules! impl_vec4_scalar_rem {
+    ($scalar:ty) => {
+        impl std::ops::Rem<$scalar> for Vec4<$scalar> {
+            type Output = Self;
+            fn rem(self, rhs: $scalar) -> Self {
+                Vec4 {
+                    x: self.x % rhs,
+                    y: self.y % rhs,
+                    z: self.z % rhs,
+                    w: self.w % rhs,
+                }
+            }
+        }
+        impl std::ops::Rem<Vec4<$scalar>> for $scalar {
+            type Output = Vec4<$scalar>;
+            fn rem(self, rhs: Vec4<$scalar>) -> Vec4<$scalar> {
+                Vec4 {
+                    x: self % rhs.x,
+                    y: self % rhs.y,
+                    z: self % rhs.z,
+                    w: self % rhs.w,
+                }
+            }
+        }
+    };
+}
+
+/// Implements compound assignment operations (AddAssign, SubAssign,
+/// MulAssign, DivAssign) for Vec2, for both same-type and scalar right-hand
+/// sides.
+///
+/// These delegate to the binary operators defined above so that integer
+/// vectors automatically inherit the wrapping arithmetic WGSL requires.
+macro_rules! impl_vec2_assign_ops {
+    ($scalar:ty) => {
+        impl std::ops::AddAssign for Vec2<$scalar> {
+            fn add_assign(&mut self, rhs: Self) {
+                *self = *self + rhs;
+            }
+        }
+        impl std::ops::SubAssign for Vec2<$scalar> {
+            fn sub_assign(&mut self, rhs: Self) {
+                *self = *self - rhs;
+            }
+        }
+        impl std::ops::MulAssign for Vec2<$scalar> {
+            fn mul_assign(&mut self, rhs: Self) {
+                *self = *self * rhs;
+            }
+        }
+        impl std::ops::DivAssign for Vec2<$scalar> {
+            fn div_assign(&mut self, rhs: Self) {
+                *self = *self / rhs;
+            }
+        }
+        impl std::ops::AddAssign<$scalar> for Vec2<$scalar> {
+            fn add_assign(&mut self, rhs: $scalar) {
+                *self = *self + rhs;
+            }
+        }
+        impl std::ops::SubAssign<$scalar> for Vec2<$scalar> {
+            fn sub_assign(&mut self, rhs: $scalar) {
+                *self = *self - rhs;
+            }
+        }
+        impl std::ops::MulAssign<$scalar> for Vec2<$scalar> {
+            fn mul_assign(&mut self, rhs: $scalar) {
+                *self = *self * rhs;
+            }
+        }
+        impl std::ops::DivAssign<$scalar> for Vec2<$scalar> {
+            fn div_assign(&mut self, rhs: $scalar) {
+                *self = *self / rhs;
+            }
+        }
+    };
+}
+
+/// Implements compound assignment operations (AddAssign, SubAssign,
+/// MulAssign, DivAssign) for Vec3, for both same-type and scalar right-hand
+/// sides.
+///
+/// These delegate to the binary operators defined above so that integer
+/// vectors automatically inherit the wrapping arithmetic WGSL requires.
+macro_rules! impl_vec3_assign_ops {
+    ($scalar:ty) => {
+        impl std::ops::AddAssign for Vec3<$scalar> {
+            fn add_assign(&mut self, rhs: Self) {
+                *self = *self + rhs;
+            }
+        }
+        impl std::ops::SubAssign for Vec3<$scalar> {
+            fn sub_assign(&mut self, rhs: Self) {
+                *self = *self - rhs;
+            }
+        }
+        impl std::ops::MulAssign for Vec3<$scalar> {
+            fn mul_assign(&mut self, rhs: Self) {
+                *self = *self * rhs;
+            }
+        }
+        impl std::ops::DivAssign for Vec3<$scalar> {
+            fn div_assign(&mut self, rhs: Self) {
+                *self = *self / rhs;
+            }
+        }
+        impl std::ops::AddAssign<$scalar> for Vec3<$scalar> {
+            fn add_assign(&mut self, rhs: $scalar) {
+                *self = *self + rhs;
+            }
+        }
+        impl std::ops::SubAssign<$scalar> for Vec3<$scalar> {
+            fn sub_assign(&mut self, rhs: $scalar) {
+                *self = *self - rhs;
+            }
+        }
+        impl std::ops::MulAssign<$scalar> for Vec3<$scalar> {
+            fn mul_assign(&mut self, rhs: $scalar) {
+                *self = *self * rhs;
+            }
+        }
+        impl std::ops::DivAssign<$scalar> for Vec3<$scalar> {
+            fn div_assign(&mut self, rhs: $scalar) {
+                *self = *self / rhs;
+            }
+        }
+    };
+}
+
+/// Implements compound assignment operations (AddAssign, SubAssign,
+/// MulAssign, DivAssign) for Vec4, for both same-type and scalar right-hand
+/// sides.
+///
+/// These delegate to the binary operators defined above so that integer
+/// vectors automatically inherit the wrapping arithmetic WGSL requires.
+macro_rules! impl_vec4_assign_ops {
+    ($scalar:ty) => {
+        impl std::ops::AddAssign for Vec4<$scalar> {
+            fn add_assign(&mut self, rhs: Self) {
+                *self = *self + rhs;
+            }
+        }
+        impl std::ops::SubAssign for Vec4<$scalar> {
+            fn sub_assign(&mut self, rhs: Self) {
+                *self = *self - rhs;
+            }
+        }
+        impl std::ops::MulAssign for Vec4<$scalar> {
+            fn mul_assign(&mut self, rhs: Self) {
+                *self = *self * rhs;
+            }
+        }
+        impl std::ops::DivAssign for Vec4<$scalar> {
+            fn div_assign(&mut self, rhs: Self) {
+                *self = *self / rhs;
+            }
+        }
+        impl std::ops::AddAssign<$scalar> for Vec4<$scalar> {
+            fn add_assign(&mut self, rhs: $scalar) {
+                *self = *self + rhs;
+            }
+        }
+        impl std::ops::SubAssign<$scalar> for Vec4<$scalar> {
+            fn sub_assign(&mut self, rhs: $scalar) {
+                *self = *self - rhs;
+            }
+        }
+        impl std::ops::MulAssign<$scalar> for Vec4<$scalar> {
+            fn mul_assign(&mut self, rhs: $scalar) {
+                *self = *self * rhs;
+            }
+        }
+        impl std::ops::DivAssign<$scalar> for Vec4<$scalar> {
+            fn div_assign(&mut self, rhs: $scalar) {
+                *self = *self / rhs;
+            }
+        }
+    };
+}
+
+/// Implements bitwise compound assignment operations (BitAndAssign,
+/// BitOrAssign, BitXorAssign) for Vec2 with same-type right-hand sides.
+///
+/// `&=`, `|=`, `^=` are valid WGSL wherever the bitwise binary ops are
+/// (wgsl-rs#186). These delegate to the binary operators defined above.
+macro_rules! impl_vec2_bitwise_assign_ops {
+    ($scalar:ty) => {
+        impl std::ops::BitAndAssign for Vec2<$scalar> {
+            fn bitand_assign(&mut self, rhs: Self) {
+                *self = *self & rhs;
+            }
+        }
+        impl std::ops::BitOrAssign for Vec2<$scalar> {
+            fn bitor_assign(&mut self, rhs: Self) {
+                *self = *self | rhs;
+            }
+        }
+        impl std::ops::BitXorAssign for Vec2<$scalar> {
+            fn bitxor_assign(&mut self, rhs: Self) {
+                *self = *self ^ rhs;
+            }
+        }
+    };
+}
+
+/// Implements bitwise compound assignment operations (BitAndAssign,
+/// BitOrAssign, BitXorAssign) for Vec3 with same-type right-hand sides
+/// (wgsl-rs#186).
+macro_rules! impl_vec3_bitwise_assign_ops {
+    ($scalar:ty) => {
+        impl std::ops::BitAndAssign for Vec3<$scalar> {
+            fn bitand_assign(&mut self, rhs: Self) {
+                *self = *self & rhs;
+            }
+        }
+        impl std::ops::BitOrAssign for Vec3<$scalar> {
+            fn bitor_assign(&mut self, rhs: Self) {
+                *self = *self | rhs;
+            }
+        }
+        impl std::ops::BitXorAssign for Vec3<$scalar> {
+            fn bitxor_assign(&mut self, rhs: Self) {
+                *self = *self ^ rhs;
+            }
+        }
+    };
+}
+
+/// Implements bitwise compound assignment operations (BitAndAssign,
+/// BitOrAssign, BitXorAssign) for Vec4 with same-type right-hand sides
+/// (wgsl-rs#186).
+macro_rules! impl_vec4_bitwise_assign_ops {
+    ($scalar:ty) => {
+        impl std::ops::BitAndAssign for Vec4<$scalar> {
+            fn bitand_assign(&mut self, rhs: Self) {
+                *self = *self & rhs;
+            }
+        }
+        impl std::ops::BitOrAssign for Vec4<$scalar> {
+            fn bitor_assign(&mut self, rhs: Self) {
+                *self = *self | rhs;
+            }
+        }
+        impl std::ops::BitXorAssign for Vec4<$scalar> {
+            fn bitxor_assign(&mut self, rhs: Self) {
+                *self = *self ^ rhs;
+            }
+        }
+    };
+}
+
+// Float vectors: Add, Sub, Mul, Div, Rem
+impl_vec2_ops!(f32);
+impl_vec3_ops!(f32);
+impl_vec4_ops!(f32);
+impl_vec2_rem!(f32);
+impl_vec3_rem!(f32);
+impl_vec4_rem!(f32);
+impl_vec2_scalar_ops!(f32);
+impl_vec3_scalar_ops!(f32);
+impl_vec4_scalar_ops!(f32);
+impl_vec2_scalar_rem!(f32);
+impl_vec3_scalar_rem!(f32);
+impl_vec4_scalar_rem!(f32);
+
+// Signed integer vectors: Add, Sub, Mul, Div (no Rem) with wrapping arithmetic
+// WGSL spec requires integer operations to wrap on overflow (modulo 2^32)
+impl_vec2_ops_wrapping!(i32);
+impl_vec3_ops_wrapping!(i32);
+impl_vec4_ops_wrapping!(i32);
+impl_vec2_scalar_ops_wrapping!(i32);
+impl_vec3_scalar_ops_wrapping!(i32);
+impl_vec4_scalar_ops_wrapping!(i32);
+
+// Unsigned integer vectors: Add, Sub, Mul, Div (no Rem) with wrapping
+// arithmetic WGSL spec requires integer operations to wrap on overflow (modulo
+// 2^32)
+impl_vec2_ops_wrapping!(u32);
+impl_vec3_ops_wrapping!(u32);
+impl_vec4_ops_wrapping!(u32);
+impl_vec2_scalar_ops_wrapping!(u32);
+impl_vec3_scalar_ops_wrapping!(u32);
+impl_vec4_scalar_ops_wrapping!(u32);
+
+// Compound assignment ops for all vector scalar types. These delegate to the
+// binary operators above, so integer vectors wrap on overflow as WGSL
+// requires.
+impl_vec2_assign_ops!(f32);
+impl_vec3_assign_ops!(f32);
+impl_vec4_assign_ops!(f32);
+impl_vec2_assign_ops!(i32);
+impl_vec3_assign_ops!(i32);
+impl_vec4_assign_ops!(i32);
+impl_vec2_assign_ops!(u32);
+impl_vec3_assign_ops!(u32);
+impl_vec4_assign_ops!(u32);
+
+// Bitwise vector ops (wgsl-rs#186): `&`, `|`, `^` and `&=`, `|=`, `^=`,
+// componentwise. WGSL defines these only for the integer vector types
+// (i32, u32) — not f32, not bool — so they are instantiated for those
+// scalars only, with same-type right-hand sides (the spec has no
+// scalar-RHS form). Bitwise ops cannot overflow, so no wrapping variants
+// are needed; both worlds agree bit-for-bit.
+impl_vec2_bitwise_ops!(i32);
+impl_vec3_bitwise_ops!(i32);
+impl_vec4_bitwise_ops!(i32);
+impl_vec2_bitwise_ops!(u32);
+impl_vec3_bitwise_ops!(u32);
+impl_vec4_bitwise_ops!(u32);
+impl_vec2_bitwise_assign_ops!(i32);
+impl_vec3_bitwise_assign_ops!(i32);
+impl_vec4_bitwise_assign_ops!(i32);
+impl_vec2_bitwise_assign_ops!(u32);
+impl_vec3_bitwise_assign_ops!(u32);
+impl_vec4_bitwise_assign_ops!(u32);
+
+// Neg impls for signed types.
+
+impl std::ops::Neg for Vec2<f32> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Vec2 {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+}
+
+impl std::ops::Neg for Vec3<f32> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
+impl std::ops::Neg for Vec4<f32> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Vec4 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+            w: -self.w,
+        }
+    }
+}
+
+impl std::ops::Neg for Vec2<i32> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Vec2 {
+            x: self.x.wrapping_neg(),
+            y: self.y.wrapping_neg(),
+        }
+    }
+}
+
+impl std::ops::Neg for Vec3<i32> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Vec3 {
+            x: self.x.wrapping_neg(),
+            y: self.y.wrapping_neg(),
+            z: self.z.wrapping_neg(),
+        }
+    }
+}
+
+impl std::ops::Neg for Vec4<i32> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Vec4 {
+            x: self.x.wrapping_neg(),
+            y: self.y.wrapping_neg(),
+            z: self.z.wrapping_neg(),
+            w: self.w.wrapping_neg(),
+        }
+    }
+}
+
+#[crate::wgsl(crate_path = crate)]
+pub mod builtin_vector_constants {
+    #[crate::wgsl_ignore]
+    use crate::std::*;
+
+    impl Vec2f {
+        pub const ZERO: Vec2f = vec2f(0.0, 0.0);
+        pub const ONE: Vec2f = vec2f(1.0, 1.0);
+        pub const NEG_ONE: Vec2f = vec2f(-1.0, -1.0);
+        pub const X: Vec2f = vec2f(1.0, 0.0);
+        pub const Y: Vec2f = vec2f(0.0, 1.0);
+    }
+
+    impl Vec3f {
+        pub const ZERO: Vec3f = vec3f(0.0, 0.0, 0.0);
+        pub const ONE: Vec3f = vec3f(1.0, 1.0, 1.0);
+        pub const NEG_ONE: Vec3f = vec3f(-1.0, -1.0, -1.0);
+        pub const X: Vec3f = vec3f(1.0, 0.0, 0.0);
+        pub const Y: Vec3f = vec3f(0.0, 1.0, 0.0);
+        pub const Z: Vec3f = vec3f(0.0, 0.0, 1.0);
+    }
+
+    impl Vec4f {
+        pub const ZERO: Vec4f = vec4f(0.0, 0.0, 0.0, 0.0);
+        pub const ONE: Vec4f = vec4f(1.0, 1.0, 1.0, 1.0);
+        pub const NEG_ONE: Vec4f = vec4f(-1.0, -1.0, -1.0, -1.0);
+        pub const X: Vec4f = vec4f(1.0, 0.0, 0.0, 0.0);
+        pub const Y: Vec4f = vec4f(0.0, 1.0, 0.0, 0.0);
+        pub const Z: Vec4f = vec4f(0.0, 0.0, 1.0, 0.0);
+        pub const W: Vec4f = vec4f(0.0, 0.0, 0.0, 1.0);
+    }
+
+    impl Vec2u {
+        pub const ZERO: Vec2u = vec2u(0, 0);
+        pub const ONE: Vec2u = vec2u(1, 1);
+        pub const X: Vec2u = vec2u(1, 0);
+        pub const Y: Vec2u = vec2u(0, 1);
+    }
+
+    impl Vec3u {
+        pub const ZERO: Vec3u = vec3u(0, 0, 0);
+        pub const ONE: Vec3u = vec3u(1, 1, 1);
+        pub const X: Vec3u = vec3u(1, 0, 0);
+        pub const Y: Vec3u = vec3u(0, 1, 0);
+        pub const Z: Vec3u = vec3u(0, 0, 1);
+    }
+
+    impl Vec4u {
+        pub const ZERO: Vec4u = vec4u(0, 0, 0, 0);
+        pub const ONE: Vec4u = vec4u(1, 1, 1, 1);
+        pub const X: Vec4u = vec4u(1, 0, 0, 0);
+        pub const Y: Vec4u = vec4u(0, 1, 0, 0);
+        pub const Z: Vec4u = vec4u(0, 0, 1, 0);
+        pub const W: Vec4u = vec4u(0, 0, 0, 1);
+    }
+
+    impl Vec2i {
+        pub const ZERO: Vec2i = vec2i(0, 0);
+        pub const ONE: Vec2i = vec2i(1, 1);
+        pub const NEG_ONE: Vec2i = vec2i(-1, -1);
+        pub const X: Vec2i = vec2i(1, 0);
+        pub const Y: Vec2i = vec2i(0, 1);
+    }
+
+    impl Vec3i {
+        pub const ZERO: Vec3i = vec3i(0, 0, 0);
+        pub const ONE: Vec3i = vec3i(1, 1, 1);
+        pub const NEG_ONE: Vec3i = vec3i(-1, -1, -1);
+        pub const X: Vec3i = vec3i(1, 0, 0);
+        pub const Y: Vec3i = vec3i(0, 1, 0);
+        pub const Z: Vec3i = vec3i(0, 0, 1);
+    }
+
+    impl Vec4i {
+        pub const ZERO: Vec4i = vec4i(0, 0, 0, 0);
+        pub const ONE: Vec4i = vec4i(1, 1, 1, 1);
+        pub const NEG_ONE: Vec4i = vec4i(-1, -1, -1, -1);
+        pub const X: Vec4i = vec4i(1, 0, 0, 0);
+        pub const Y: Vec4i = vec4i(0, 1, 0, 0);
+        pub const Z: Vec4i = vec4i(0, 0, 1, 0);
+        pub const W: Vec4i = vec4i(0, 0, 0, 1);
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn vec_n_can_be_used_as_hashmap_and_hashset_keys() {
+        use std::collections::{HashMap, HashSet};
+
+        let mut map: HashMap<Vec3u, &str> = HashMap::new();
+        map.insert(vec3u(1, 2, 3), "one");
+        map.insert(vec3u(4, 5, 6), "two");
+        assert_eq!(map.get(&vec3u(1, 2, 3)), Some(&"one"));
+        assert_eq!(map.get(&vec3u(4, 5, 6)), Some(&"two"));
+        assert_eq!(map.len(), 2);
+
+        let mut set: HashSet<Vec2i> = HashSet::new();
+        set.insert(Vec2i::X);
+        set.insert(Vec2i::Y);
+        set.insert(Vec2i::X);
+        assert_eq!(set.len(), 2);
+
+        // `bool` components implement `Hash`/`Eq` as well.
+        let mut bool_map: HashMap<Vec4b, u32> = HashMap::new();
+        bool_map.insert(vec4b(true, true, true, true), 42);
+        assert_eq!(bool_map.get(&vec4b(true, true, true, true)), Some(&42));
+    }
+
+    #[test]
+    fn can_compile_module_with_all_vector_aliases() {
+        #[crate::wgsl(crate_path = crate)]
+        mod vectors {
+            use crate::std::*;
+
+            pub fn _main() {
+                // 2D vectors - floating point
+                let _v2f = vec2f(1.0, 2.0);
+
+                // 2D vectors - signed integer
+                let _v2i = vec2i(1, 2);
+
+                // 2D vectors - unsigned integer
+                let _v2u = vec2u(1u32, 2u32);
+
+                // 2D vectors - boolean
+                // Note: WGSL does not have vec2b as a predeclared alias,
+                // but wgsl-rs provides it for Rust-side convenience.
+                let _v2b = vec2b(true, false);
+
+                // 3D vectors - floating point
+                let _v3f = vec3f(1.0, 2.0, 3.0);
+
+                // 3D vectors - signed integer
+                let _v3i = vec3i(1, 2, 3);
+
+                // 3D vectors - unsigned integer
+                let _v3u = vec3u(1u32, 2u32, 3u32);
+
+                // 3D vectors - boolean
+                let _v3b = vec3b(true, false, true);
+
+                // 4D vectors - floating point
+                let _v4f = vec4f(1.0, 2.0, 3.0, 4.0);
+
+                // 4D vectors - signed integer
+                let _v4i = vec4i(1, 2, 3, 4);
+
+                // 4D vectors - unsigned integer
+                let _v4u = vec4u(1u32, 2u32, 3u32, 4u32);
+
+                // 4D vectors - boolean
+                let _v4b = vec4b(true, false, true, false);
+            }
+        }
+    }
+
+    #[test]
+    fn can_compile_module_with_compound_assignment() {
+        #[crate::wgsl(crate_path = crate)]
+        mod compound_assign {
+            use crate::std::*;
+
+            pub fn _main() {
+                let mut _v = vec2f(1.0, 2.0);
+                _v += vec2f(0.5, 0.5);
+                _v -= vec2f(0.25, 0.25);
+                _v *= vec2f(2.0, 2.0);
+                _v /= vec2f(2.0, 4.0);
+                _v += 1.0;
+                _v -= 0.5;
+                _v *= 4.0;
+                _v /= 2.0;
+
+                let mut _w = vec3i(1, 2, 3);
+                _w += vec3i(1, 1, 1);
+                _w -= 1;
+                _w *= 2;
+                _w /= 3;
+
+                let mut _u = vec4u(1u32, 2u32, 3u32, 4u32);
+                _u += vec4u(1u32, 1u32, 1u32, 1u32);
+                _u *= 2u32;
+            }
+        }
+
+        // The lowering must emit WGSL compound assignment operators rather
+        // than expanded `x = x op y` forms.
+        let src = compound_assign::WGSL_SOURCE.wgsl_source().unwrap();
+        assert!(src.contains("+="));
+        assert!(src.contains("-="));
+        assert!(src.contains("*="));
+        assert!(src.contains("/="));
+        #[cfg(feature = "validation")]
+        compound_assign::WGSL_SOURCE.validate().unwrap();
+    }
+
+    #[test]
+    fn compound_assign_f32_matches_binary_ops() {
+        let mut v = Vec2 { x: 1.0, y: 2.0 };
+        v += Vec2 { x: 0.5, y: 0.5 };
+        assert_eq!(v, Vec2 { x: 1.5, y: 2.5 });
+        v *= 2.0;
+        assert_eq!(v, Vec2 { x: 3.0, y: 5.0 });
+        v -= Vec2 { x: 1.0, y: 1.0 };
+        assert_eq!(v, Vec2 { x: 2.0, y: 4.0 });
+        v /= 4.0;
+        assert_eq!(v, Vec2 { x: 0.5, y: 1.0 });
+    }
+
+    #[test]
+    fn compound_assign_int_wraps_on_overflow() {
+        // WGSL requires integer arithmetic to wrap on overflow; the assign
+        // impls must inherit the wrapping binary operators.
+        let mut v = Vec3 {
+            x: i32::MAX,
+            y: 1,
+            z: 0,
+        };
+        v += Vec3 {
+            x: 1,
+            y: i32::MAX,
+            z: 1,
+        };
+        assert_eq!(
+            v,
+            Vec3 {
+                x: i32::MIN,
+                y: i32::MIN,
+                z: 1
+            }
+        );
+
+        let mut u = Vec2 { x: u32::MAX, y: 2 };
+        u += 1u32;
+        assert_eq!(u, Vec2 { x: 0, y: 3 });
+
+        let mut m = Vec2 { x: i32::MIN, y: 1 };
+        m *= -1;
+        assert_eq!(m, Vec2 { x: i32::MIN, y: -1 });
+    }
+
+    #[test]
+    fn can_compile_module_with_bitwise_vector_ops() {
+        #[crate::wgsl(crate_path = crate)]
+        mod bitwise_vector_ops {
+            use crate::std::*;
+
+            pub fn _main() {
+                let a2 = vec2i(0b1100, 0b1010);
+                let b2 = vec2i(0b0110, 0b0001);
+                let _and2 = a2 & b2;
+                let _or2 = a2 | b2;
+                let _xor2 = a2 ^ b2;
+
+                let a3 = vec3u(0xF0u32, 0x0Fu32, 0xFFu32);
+                let b3 = vec3u(0x0Fu32, 0xF0u32, 0x0Fu32);
+                let _and3 = a3 & b3;
+                let _or3 = a3 | b3;
+                let _xor3 = a3 ^ b3;
+
+                let a4 = vec4u(0xF0F0u32, 0x0F0Fu32, 0xFFFFu32, 0x1234u32);
+                let b4 = vec4u(0x0FF0u32, 0xF00Fu32, 0x00FFu32, 0x4321u32);
+                let _and4 = a4 & b4;
+                let _or4 = a4 | b4;
+                let _xor4 = a4 ^ b4;
+
+                // Compound assignment (wgsl-rs#186): `&=`, `|=`, `^=` are
+                // valid WGSL wherever the bitwise binary ops are.
+                let mut c = a4;
+                c &= b4;
+                let mut d = a3;
+                d |= b3;
+                let mut e = a2;
+                e ^= b2;
+
+                // Mixed precedence (wgsl-rs#159): parses as
+                // `(a4 & b4) == b4` in Rust. The renderer parenthesizes so
+                // WGSL re-parses the same tree, and the vector `==`
+                // lowering (wgsl-rs#164) wraps it in `all(...)`.
+                let _cmp = select(0u32, 1u32, a4 & b4 == b4);
+            }
+        }
+
+        // The lowering must emit the WGSL bitwise compound assignment
+        // operators rather than expanded `x = x op y` forms, and binary
+        // expressions must render parenthesized (wgsl-rs#159) so the
+        // bitwise/comparison precedence divergence cannot re-bind them.
+        let src = bitwise_vector_ops::WGSL_SOURCE.wgsl_source().unwrap();
+        assert!(src.contains("&="));
+        assert!(src.contains("|="));
+        assert!(src.contains("^="));
+        assert!(src.contains("(a4 & b4)"));
+        assert!(src.contains("(a4 | b4)"));
+        assert!(src.contains("(a4 ^ b4)"));
+        #[cfg(feature = "validation")]
+        bitwise_vector_ops::WGSL_SOURCE.validate().unwrap();
+    }
+
+    #[test]
+    fn bitwise_vector_ops_match_componentwise_scalars() {
+        let a = vec4u(0xF0F0F0F0, 0x0F0F0F0F, 0xFFFF0000, 0x12345678);
+        let b = vec4u(0x0FF00FF0, 0xF00FF00F, 0x00FFFF00, 0x87654321);
+        assert_eq!(
+            a & b,
+            vec4u(a.x() & b.x(), a.y() & b.y(), a.z() & b.z(), a.w() & b.w())
+        );
+        assert_eq!(
+            a | b,
+            vec4u(a.x() | b.x(), a.y() | b.y(), a.z() | b.z(), a.w() | b.w())
+        );
+        assert_eq!(
+            a ^ b,
+            vec4u(a.x() ^ b.x(), a.y() ^ b.y(), a.z() ^ b.z(), a.w() ^ b.w())
+        );
+
+        let mut c = a;
+        c &= b;
+        assert_eq!(c, a & b);
+        let mut d = a;
+        d |= b;
+        assert_eq!(d, a | b);
+        let mut e = a;
+        e ^= b;
+        assert_eq!(e, a ^ b);
+
+        // Signed vectors, including negative components.
+        let si = vec3i(-1, i32::MIN, 0x55555555);
+        let sj = vec3i(0x0F0F0F0F, -1, i32::MAX);
+        assert_eq!(
+            si & sj,
+            vec3i(si.x() & sj.x(), si.y() & sj.y(), si.z() & sj.z())
+        );
+        assert_eq!(
+            si | sj,
+            vec3i(si.x() | sj.x(), si.y() | sj.y(), si.z() | sj.z())
+        );
+        assert_eq!(
+            si ^ sj,
+            vec3i(si.x() ^ sj.x(), si.y() ^ sj.y(), si.z() ^ sj.z())
+        );
+
+        // Vec3 compound assignment — the one instantiation family the GPU
+        // modules check only partially — all three ops, both signs.
+        let mut h = si;
+        h &= sj;
+        assert_eq!(h, si & sj);
+        h = si;
+        h |= sj;
+        assert_eq!(h, si | sj);
+        h = si;
+        h ^= sj;
+        assert_eq!(h, si ^ sj);
+
+        let v3 = vec3u(0xF0F0F0F0, 0x0F0F0F0F, 0x12345678);
+        let w3 = vec3u(0x0F0F0F0F, 0xF0F0F0F0, 0x87654321);
+        let mut j = v3;
+        j &= w3;
+        assert_eq!(j, v3 & w3);
+        j = v3;
+        j |= w3;
+        assert_eq!(j, v3 | w3);
+        j = v3;
+        j ^= w3;
+        assert_eq!(j, v3 ^ w3);
+
+        let mut f = vec2i(0x7FFFFFFF, i32::MIN);
+        f &= vec2i(0x0F0F0F0F, 0xFF00FF00u32 as i32);
+        assert_eq!(
+            f,
+            vec2i(0x7FFFFFFF & 0x0F0F0F0F, i32::MIN & 0xFF00FF00u32 as i32)
+        );
+        f |= vec2i(0x70007000, 0x00FF00FF);
+        assert_eq!(
+            f,
+            vec2i(
+                (0x7FFFFFFF & 0x0F0F0F0F) | 0x70007000,
+                (i32::MIN & 0xFF00FF00u32 as i32) | 0x00FF00FF
+            )
+        );
+        f ^= vec2i(-1, -1);
+        assert_eq!(
+            f,
+            vec2i(
+                ((0x7FFFFFFF & 0x0F0F0F0F) | 0x70007000) ^ -1,
+                ((i32::MIN & 0xFF00FF00u32 as i32) | 0x00FF00FF) ^ -1
+            )
+        );
+    }
+
+    #[test]
+    fn can_compile_module_with_all_vector_consts() {
+        #[crate::wgsl(crate_path = crate)]
+        mod vectors {
+            use crate::std::*;
+
+            pub fn _main() {
+                let _v2f_zero = Vec2f::ZERO;
+                let _v2f_one = Vec2f::ONE;
+                let _v2f_neg_one = Vec2f::NEG_ONE;
+                let _v2f_x = Vec2f::X;
+                let _v2f_y = Vec2f::Y;
+
+                let _v3f_zero = Vec3f::ZERO;
+                let _v3f_one = Vec3f::ONE;
+                let _v3f_neg_one = Vec3f::NEG_ONE;
+                let _v3f_x = Vec3f::X;
+                let _v3f_y = Vec3f::Y;
+                let _v3f_z = Vec3f::Z;
+
+                let _v4f_zero = Vec4f::ZERO;
+                let _v4f_one = Vec4f::ONE;
+                let _v4f_neg_one = Vec4f::NEG_ONE;
+                let _v4f_x = Vec4f::X;
+                let _v4f_y = Vec4f::Y;
+                let _v4f_z = Vec4f::Z;
+                let _v4f_w = Vec4f::W;
+
+                let _v2u_zero = Vec2u::ZERO;
+                let _v2u_one = Vec2u::ONE;
+                let _v2u_x = Vec2u::X;
+                let _v2u_y = Vec2u::Y;
+
+                let _v3u_zero = Vec3u::ZERO;
+                let _v3u_one = Vec3u::ONE;
+                let _v3u_x = Vec3u::X;
+                let _v3u_y = Vec3u::Y;
+                let _v3u_z = Vec3u::Z;
+
+                let _v4u_zero = Vec4u::ZERO;
+                let _v4u_one = Vec4u::ONE;
+                let _v4u_x = Vec4u::X;
+                let _v4u_y = Vec4u::Y;
+                let _v4u_z = Vec4u::Z;
+                let _v4u_w = Vec4u::W;
+
+                let _v2i_zero = Vec2i::ZERO;
+                let _v2i_one = Vec2i::ONE;
+                let _v2i_neg_one = Vec2i::NEG_ONE;
+                let _v2i_x = Vec2i::X;
+                let _v2i_y = Vec2i::Y;
+
+                let _v3i_zero = Vec3i::ZERO;
+                let _v3i_one = Vec3i::ONE;
+                let _v3i_neg_one = Vec3i::NEG_ONE;
+                let _v3i_x = Vec3i::X;
+                let _v3i_y = Vec3i::Y;
+                let _v3i_z = Vec3i::Z;
+
+                let _v4i_zero = Vec4i::ZERO;
+                let _v4i_one = Vec4i::ONE;
+                let _v4i_neg_one = Vec4i::NEG_ONE;
+                let _v4i_x = Vec4i::X;
+                let _v4i_y = Vec4i::Y;
+                let _v4i_z = Vec4i::Z;
+                let _v4i_w = Vec4i::W;
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+// The regression module deliberately reuses the WGSL-style lowercase
+// const name that collides with the builtin constant.
+#[allow(non_upper_case_globals)]
+mod builtin_import_regression_tests {
+    #[crate::wgsl(crate_path = crate)]
+    mod std_import_no_const_usage {
+        use crate::std::*;
+
+        pub const vec2f_ZERO: Vec2f = vec2f(9.0, 9.0);
+
+        pub fn _main() {
+            let _used = vec2f_ZERO;
+        }
+    }
+
+    #[test]
+    fn std_import_without_const_usage_skips_builtin_constants_import() {
+        // The user const must not collide with the builtin `vec2f_ZERO`,
+        // which is only imported when a builtin constant is used.
+        let src = std_import_no_const_usage::WGSL_SOURCE
+            .wgsl_source()
+            .unwrap();
+        assert_eq!(src.matches("const vec2f_ZERO").count(), 1);
+        assert!(src.contains("9.0"));
+        assert_eq!(std_import_no_const_usage::vec2f_ZERO.x, 9.0);
+        // Validation needs the optional `validation` feature (naga); the
+        // import/source assertions above run unconditionally.
+        #[cfg(feature = "validation")]
+        std_import_no_const_usage::WGSL_SOURCE.validate().unwrap();
+    }
+
+    #[crate::wgsl(crate_path = crate)]
+    mod std_import_const_usage {
+        use crate::std::*;
+
+        pub fn _main() {
+            let _used = Vec4f::X + Vec4f::ONE;
+        }
+    }
+
+    #[test]
+    fn std_import_with_const_usage_imports_builtin_constants() {
+        let src = std_import_const_usage::WGSL_SOURCE.wgsl_source().unwrap();
+        assert!(src.contains("vec4f_X + vec4f_ONE"));
+        #[cfg(feature = "validation")]
+        std_import_const_usage::WGSL_SOURCE.validate().unwrap();
+    }
+}

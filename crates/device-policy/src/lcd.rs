@@ -20,9 +20,17 @@ pub enum Decision {
 pub const fn locked() -> Frame {
     [*b"OpenKeys        ", *b"Use fingerprint "]
 }
+pub const fn locked_pin() -> Frame {
+    [*b"OpenKeys R05    ", *b"Enter device PIN"]
+}
 pub fn pin_progress(filled: usize) -> Frame {
     let mut frame = [*b"Enter device PIN", *b"____________    "];
     frame[1][..filled.min(12)].fill(b'*');
+    frame
+}
+pub fn pin_only_progress(filled: usize) -> Frame {
+    let mut frame = [*b"Enter device PIN", *b"______          "];
+    frame[1][..filled.min(crate::pin_only::PIN_DIGITS)].fill(b'*');
     frame
 }
 fn operation_label(op: Operation) -> &'static [u8; COLUMNS] {
@@ -41,6 +49,18 @@ fn operation_label(op: Operation) -> &'static [u8; COLUMNS] {
         Operation::FidoRegister => b"Create passkey  ",
         Operation::FidoSign => b"Sign in         ",
         Operation::DeriveHmacSecret => b"Derive secret   ",
+        Operation::ShowTotp => b"Show TOTP       ",
+        Operation::ShowHotp => b"Show HOTP       ",
+        Operation::ImportOtp => b"Import OTP seed ",
+        Operation::DeleteOtp => b"Delete OTP seed ",
+        Operation::SetTime => b"Set device time ",
+        Operation::OpenPgp => b"OpenPGP action  ",
+        Operation::Piv => b"PIV operation   ",
+        Operation::ProtocolPin => b"Protocol PIN    ",
+        Operation::GenerateKey => b"Generate key    ",
+        Operation::ImportKey => b"Import key      ",
+        Operation::DeleteKey => b"Delete key      ",
+        Operation::UnlockSession => b"Unlock session  ",
     }
 }
 /// Identity must be derived by secure code from the exact canonical request:
@@ -55,6 +75,8 @@ pub struct Review<'a> {
     expires: u64,
     last_time: u64,
     awaiting_ack: bool,
+    locked_frame: Frame,
+    pin_change_erases: bool,
 }
 impl<'a> Review<'a> {
     /// ASCII display identity only. Use validated ASCII/Punycode RP IDs, or an
@@ -79,6 +101,36 @@ impl<'a> Review<'a> {
             expires: fingerprint.expires,
             last_time: now,
             awaiting_ack: false,
+            locked_frame: locked(),
+            pin_change_erases: false,
+        })
+    }
+    /// R05 entry point: a fresh verified local decimal PIN replaces biometrics.
+    pub fn for_pin(
+        pin: &crate::pin_only::VerifiedPinRequest,
+        identity: &'a [u8],
+        now: u64,
+    ) -> Result<Self, Error> {
+        if now >= pin.expires_ms() {
+            return Err(Error::Expired);
+        }
+        if identity.is_empty()
+            || identity.len() > 253
+            || !identity.iter().all(|c| matches!(c, 0x21..=0x7e))
+        {
+            return Err(Error::InvalidIdentity);
+        }
+        Ok(Self {
+            request: *pin.request(),
+            identity,
+            page: 0,
+            seen: 0,
+            ended: false,
+            expires: pin.expires_ms(),
+            last_time: now,
+            awaiting_ack: false,
+            locked_frame: locked_pin(),
+            pin_change_erases: true,
         })
     }
     fn pages(&self) -> usize {
@@ -89,10 +141,15 @@ impl<'a> Review<'a> {
     pub fn frame(&mut self, now: u64) -> Frame {
         self.observe_time(now);
         if self.ended {
-            return locked();
+            return self.locked_frame;
         }
         self.awaiting_ack = true;
-        let mut frame = [*operation_label(self.request.operation), [b' '; COLUMNS]];
+        let label = if self.pin_change_erases && self.request.operation == Operation::ChangePin {
+            *b"Erase+change PIN"
+        } else {
+            *operation_label(self.request.operation)
+        };
+        let mut frame = [label, [b' '; COLUMNS]];
         let start = self.page * COLUMNS;
         let end = (start + COLUMNS).min(self.identity.len());
         frame[1][..end - start].copy_from_slice(&self.identity[start..end]);
@@ -114,6 +171,35 @@ impl<'a> Review<'a> {
         if !self.ended {
             self.awaiting_ack = false;
             self.page = (self.page + self.pages() - 1) % self.pages();
+        }
+    }
+    /// R05 contextual mapping, using new debounced device RELEASE events.
+    /// The caller discards held keys on entry to this scene. Digits entered
+    /// for the PIN must never carry over into a confirmation.
+    pub fn press_digit(
+        &mut self,
+        digit: crate::pin_only::Digit,
+        press: crate::pin::Press,
+        now: u64,
+    ) -> Result<Decision, Error> {
+        use crate::{pin::Press, pin_only::Digit};
+        self.observe_time(now);
+        if self.ended {
+            return Ok(Decision::Cancelled);
+        }
+        match (digit, press) {
+            (Digit::Zero, _) => Ok(self.cancel()),
+            (_, Press::Long) => Ok(Decision::Pending),
+            (Digit::Two, Press::Short) => {
+                self.previous_page();
+                Ok(Decision::Pending)
+            }
+            (Digit::Eight, Press::Short) => {
+                self.next_page();
+                Ok(Decision::Pending)
+            }
+            (Digit::Five, Press::Short) => self.confirm(now),
+            _ => Ok(Decision::Pending),
         }
     }
     fn observe_time(&mut self, now: u64) {

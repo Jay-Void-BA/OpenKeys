@@ -1,5 +1,5 @@
-//! One-shot, request-bound execution after fingerprint/PIN/full confirmation.
-//! The 15s fingerprint/approval use-by deadline is not a blanket unlocked state.
+//! One-shot, request-bound execution after local authorization and confirmation.
+//! A use-by deadline authorizes only one exact operation, not blanket access.
 use crate::{Authorization, Error, Request};
 
 /// Trusted root state only: generation changes on cancel/disconnect/suspend/
@@ -18,6 +18,13 @@ pub struct Execution {
     deadline: u64,
     last_time: u64,
     closed: bool,
+}
+/// Successful end of one checked execution. Not cloneable, serializable or
+/// constructible by a host. Only a matching active session may consume it to
+/// renew idle time; status/keepalive packets cannot produce this capability.
+pub struct Completed {
+    pub(crate) authorization: Authorization,
+    pub(crate) finished_ms: u64,
 }
 impl Authorization {
     /// Consumes the original authority before its use-by deadline. Extends
@@ -60,6 +67,9 @@ impl Authorization {
         let deadline = start
             .checked_add(expected.operation.execution_budget_ms())
             .ok_or(Error::CounterExhausted)?;
+        let deadline = self
+            .execution_deadline
+            .map_or(deadline, |fixed| deadline.min(fixed));
         if now >= deadline {
             return Err(Error::Expired);
         }
@@ -73,6 +83,19 @@ impl Authorization {
     }
 }
 impl Execution {
+    pub fn finish(
+        mut self,
+        expected: &Request,
+        state: &mut impl State,
+        clock: impl FnMut() -> u64,
+    ) -> Result<Completed, Error> {
+        self.check(expected, state, clock)?;
+        self.closed = true;
+        Ok(Completed {
+            authorization: self.authorization,
+            finished_ms: self.last_time,
+        })
+    }
     pub fn authorization(&self) -> &Authorization {
         &self.authorization
     }
@@ -89,7 +112,7 @@ impl Execution {
         self.last_time
     }
     /// Root continuation policy may only narrow the original deadline. A new
-    /// fingerprint cannot extend a previous multi-response transaction.
+    /// local proof cannot extend a previous multi-response transaction.
     pub fn restrict_deadline(mut self, until: u64) -> Result<Self, Error> {
         self.deadline = self.deadline.min(until);
         if self.deadline <= self.last_time {
@@ -184,6 +207,7 @@ mod tests {
             issued: 10,
             expires: 20,
             generation: 3,
+            execution_deadline: None,
         }
     }
     fn live(clock: &Cell<u64>) -> Live<'_> {

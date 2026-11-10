@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/device-policy", "crates/vault-import", "crates/device-vault", "crates/device-records", "crates/se-transport", "crates/scp03", "crates/h573-crypto", "crates/se-state", "crates/authenticator-core", "apps/manager", "firmware/board", "firmware/target", "firmware/secure-mmio"]
+members = ["crates/device-policy", "crates/vault-import", "crates/device-vault", "crates/device-records", "crates/se-transport", "crates/scp03", "crates/h573-crypto", "crates/se-state", "crates/authenticator-core", "apps/manager", "firmware/board", "firmware/target", "firmware/secure-mmio", "firmware/r05", "apps/manager-gpui"]
 default-members = ["crates/device-policy", "crates/vault-import"]
 exclude = ["firmware/vendor/cortex-m", "vendor/opensk/libraries/opensk", "vendor/opensk/libraries/cbor"]
 
@@ -8,6 +8,18 @@ exclude = ["firmware/vendor/cortex-m", "vendor/opensk/libraries/opensk", "vendor
 # Remove the archived bare-metal compatibility layer; documented maintained
 # critical-section replacement, not a RustSec warning exception.
 cortex-m = { path = "firmware/vendor/cortex-m" }
+
+gpui-ce = { path = "vendor/gpui-support/gpui-ce-0.3.0" }
+gpui_ce_linux = { path = "vendor/gpui-support/gpui_ce_linux-0.3.0" }
+metal = { path = "vendor/gpui-support/metal-0.33.0" }
+wgsl-rs = { path = "vendor/gpui-support/wgsl-rs-0.1.0-beta.1" }
+accesskit_unix = { path = "vendor/gpui-support/accesskit_unix-0.22.1" }
+accesskit_atspi_common = { path = "vendor/gpui-support/accesskit_atspi_common-0.19.1" }
+atspi = { path = "vendor/gpui-support/atspi-0.29.0" }
+atspi-common = { path = "vendor/gpui-support/atspi-common-0.13.0" }
+atspi-proxies = { path = "vendor/gpui-support/atspi-proxies-0.13.0" }
+zbus-lockstep = { path = "vendor/gpui-support/zbus-lockstep-0.5.2" }
+zbus-lockstep-macros = { path = "vendor/gpui-support/zbus-lockstep-macros-0.5.2" }
 
 [workspace.package]
 version = "0.1.0"

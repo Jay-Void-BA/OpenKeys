@@ -1,66 +1,56 @@
 # OpenKeys
 
-开源 USB / NFC 指纹认证器，面向个人自制的 3 把安全密钥。当前硬件版本为 **R0.4**，自研运行代码使用 Rust。
+开源 USB / NFC 认证器，面向个人制作的 **3 把密钥**。当前电路为 **R0.5：本地六位 PIN、十个数字实体键、DFR0555 双行 LCD**；自研运行代码采用 Rust。
 
-> **工程候选 · 尚未生产放行**
-> 已有电路、PCB、结构设计和通过测试的软件模块；完整认证固件、真实管理通道及实物安全验证仍未完成。当前开发包和诊断镜像不能用于真实账户。
+> **工程候选，生产放行 BLOCKED。** 已有已布线电路板、制造文件、板级诊断和经过测试的安全模块。完整生产 Root、认证协议与管理通道的实机集成尚未完成，不能将当前诊断固件用于真实账户。
 
-[文档导航](docs/README.md) · [当前进度](docs/DEVELOPMENT_STATUS.md) · [开始开发](docs/GETTING_STARTED.md) · [术语速查](docs/GLOSSARY.md) · [制造与验收](manufacturing/README.md) · [安全复核](docs/ADVERSARIAL_REVIEW_R04.md)
+[当前进度](docs/DEVELOPMENT_STATUS.md) · [文档导航](docs/README.md) · [硬件与图纸](hardware/r05/README.md) · [从原材料开始制作](manufacturing/BUILD_R05_ZH.md) · [安全复查](docs/SECURITY_REVIEW_R05.md)
 
-<img src="hardware/r04/exports/OpenKeys-assembly.png" width="480" alt="OpenKeys R0.4 CAD装配渲染，非实物照片">
+<img src="hardware/r05/exports/OpenKeys-dimensions.png" width="720" alt="R0.5 实际 PCB、十键、LCD 和外壳尺寸候选图">
 
-*CAD 渲染：外壳 74 × 98 × 20 mm，需工程样板试装。*
+*工程图，非实物照片。板体 96 × 112 mm；外壳候选 102 × 118 × 30 mm，待试装。*
 
-## 项目目标
+## 当前固定需求
 
-| 项目 | 固定范围 |
+| 项目 | 设计目标与现状 |
 |---|---|
-| 身份验证 | 设备指纹必需；四键 PIN 仅作附加验证，不能单独解锁 |
-| 设备交互 | 白色背光 16 × 2 英文字符 LCD，四个场景按键 |
-| 接口与供电 | 唯一 USB-C 母口，USB 2.0 数据 / 5 V 充电；NFC；500 mAh 保护电池及真实 NTC |
-| 认证与存储 | FIDO2 / WebAuthn / Passkey、U2F、hmac-secret、凭据管理、加密 notes / recovery codes |
-| 管理软件 | macOS / Linux / Windows；Android / iOS NFC 管理作为独立交付目标 |
+| 本地身份验证 | 首次开机在钥匙设置六位数字 PIN，十个独立 GPIO 键；没有指纹。改硬件 PIN 清空全部用户数据，第 11 次完整错误猜测触发清空；完整销毁服务尚待集成 |
+| 会话授权 | 硬件 PIN 与各协议 PIN 分别缓存，同一已配对认证会话中 30 秒无有效操作锁定；连接 / 保活不续期，断连 / NFC 离场立即锁定，敏感操作仍需实体确认 |
+| 显示 | 英文 16 × 2 LCD，DFRobot DFR0555 蓝底白字；现货及版本说明见硬件页 |
+| 认证 | FIDO2 / WebAuthn / Passkey、U2F、hmac-secret、凭据管理；OpenPGP / PIV / SSH 为新增待集成目标 |
+| OTP 与记录 | TOTP / HOTP 种子不可导出，六位码仅钥匙 LCD 显示；加密 notes / recovery codes；均受本地 PIN 约束 |
+| 接口 / 电源 | 唯一外部 USB-C 母口，USB 2.0 数据兼 5 V 充电，另有 NFC；保护型 500 mAh 电池与真实 NTC |
+| 管理器 | GPUI 英文桌面原型；macOS / Windows / Linux USB，iOS NFC / USB-C、iPadOS USB-C、Android NFC / USB-C 为交付目标，真实设备后端和移动安装包尚未完成 |
 
-授权顺序：**设备指纹 → 必要时设备 PIN → 完整请求与实体确认 → 一次操作**。私密标题和列表也需要设备授权。已取消动态验证码、图形屏幕及 USB-A。
-
-Apple 20 W 充电器使用 **5 V** 档；设计输入预算约 **0.50 W**，电池侧充电目标上限约 **0.42 W**，实际受系统负载与电量影响。[供电和器件说明](hardware/r04/README.md)
+Apple 20 W 充电器使用 **5 V**，不申请 9 V PD。设计输入预算 **0.50 W**，电池侧充电目标上限约 **0.42 W**，实际受负载、温度和限流影响；诊断镜像关闭充电。
 
 ## 从这里开始
 
-| 我想做什么 | 阅读入口 |
+| 目的 | 入口 |
 |---|---|
-| 了解哪些已经完成 | [当前状态与交付缺口](docs/DEVELOPMENT_STATUS.md) |
-| 查看原理图、PCB 和外壳 | [R0.4 硬件文件](hardware/r04/README.md) |
-| 构建代码或运行开发界面 | [开发起步](docs/GETTING_STARTED.md)、[开发包下载](docs/NATIVE_BUILDS.md) |
-| 了解代码和安全边界 | [架构](docs/ARCHITECTURE.md)、[固件模块](firmware/README.md) |
-| 找个人、小批量服务商 | [大陆厂商和实验室筛选](manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md) |
-| 从零准备材料、订板和代焊 | [完整制作说明书](manufacturing/BUILD_MANUAL_ZH.md)、[打印版 PDF](manufacturing/OpenKeys-R04-build-manual-zh.pdf)、[工厂确认单](manufacturing/ORDER_SHEET_R04.md) |
-| 验收样板和安全测试 | [硬件验收步骤](manufacturing/HARDWARE_ACCEPTANCE.md)、[测试计划](docs/SECURITY_TEST_PLAN.md) |
-| 修改或参与项目 | [贡献指南](CONTRIBUTING.md)、[安全问题报告](SECURITY.md) |
+| 查看电路、PCB、BOM、结构和制造包 | [R0.5 硬件](hardware/r05/README.md) |
+| 了解哪些完成、哪些不能交付 | [状态](docs/DEVELOPMENT_STATUS.md)、[安全复查](docs/SECURITY_REVIEW_R05.md) |
+| 构建与检查 | [开发起步](docs/GETTING_STARTED.md)、[R05 目标](firmware/r05/README.md)、[GPUI 管理器](apps/manager-gpui/README.md) |
+| 核查 PIN 缓存与 NFC 边界 | [会话规则](docs/PIN_SESSIONS_R05.md)、[架构](docs/ARCHITECTURE.md) |
+| 从原材料、订板到代焊和测试 | [制作手册](manufacturing/BUILD_R05_ZH.md)、[境内渠道](manufacturing/MAINLAND_COMPONENT_CHANNELS.md) |
+| 委托个人 / 小批量工厂、实验室 | [机构筛选](manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md)、[资格确认](manufacturing/REQUEST_FOR_CONFIRMATION.md) |
+| 比较已拉取的开源实现 | [PicoKeys / OpenSK / CanoKey / SoloKeys 参考](docs/UPSTREAM_REVIEW_R05.md) |
 
-## 当前验证
+## 检查的含义
 
-- 硬件：10 页原理图、130 个 BOM 位置、四层 PCB；ERC / DRC 零错误、零警告、零未连接；624 项独立板网检查，89 个 CAD 文件摘要。
-- 软件：macOS、Linux、Windows **各 191 项测试通过**，严格 Clippy、ARM 编译及依赖审计通过；[该源码的 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42723819737) 完整日志和注释均为 0 条 warning。
-- 边界：上述是源码、连通性和模型证据。实物指纹、防拆、抗干扰、侧信道及故障注入尚未通过；生产预检仍为 **BLOCKED**。
+R05 当前有 10 页原理图、151 个 BOM 位置、四层已布线 PCB；ERC / DRC 零错误、零警告、零未连接，705 项独立板网核对通过。[CAD 清单](hardware/r05/review/cad-manifest.json)绑定导出文件。它们验证设计文件的规则和连通性，不能证明实物抗侧信道、故障注入、EMC、RF、充电或抗拆安全。
 
-[证据与精确提交](docs/ci-evidence-r04.json) · [未关闭安全风险](docs/ADVERSARIAL_REVIEW_R04.md) · [交付预检](manufacturing/readiness-report.json)
-
-## 仓库结构
+新代码的[本地检查记录](docs/r05-validation.json)与 CI 以对应提交为准；[R04 的历史 CI](docs/ci-evidence-r04.json)不能作为 R05 的通过证明。[生产缺口](docs/DEVELOPMENT_STATUS.md)逐项列出，完整 Root 和硬件 PIN 的 SE 原生强制仍是关键未关闭项。
 
 ```text
-hardware/r04/   当前电路、PCB、BOM、结构与制造导出
-firmware/      板级驱动、目标适配和电气诊断镜像
-crates/        授权、认证、密码通信与加密存储模块
-apps/          桌面管理器，以及移动端实现前提
-manufacturing/ 委托范围、供应商筛选和验收资料
-docs/          状态、架构、开发指南、安全审查与验证记录
-scripts/       来源、摘要、布局及交付检查
-vendor/        固定版本的第三方源码及明确补丁
+hardware/r05/      当前电路、PCB、BOM、机械和制造导出
+firmware/r05/      与 R05 已保存板绑定的 ARM 电气诊断
+firmware/board/    LCD、十键、PIN 输入、OTP 等候选驱动
+crates/           授权、协议适配、SE、加密通信和存储模块
+apps/manager-gpui/ GPUI 管理器原型；设备后端尚未接通
+manufacturing/    制作、渠道、委托和验收资料
+docs/             状态、安全边界、会话和参考复核
+vendor/           固定第三方来源、许可和可核查补丁
 ```
 
-## 许可与版本
-
-自研运行源码采用 [MIT](LICENSE)，硬件采用 [CERN-OHL-S-2.0](hardware/LICENSE-CERN-OHL-S-2.0.txt)。[OpenSK 子集及补丁](vendor/opensk/README.md) 保留 Apache-2.0；其他第三方材料保留各自许可。
-
-[参考版本](references.lock.tsv) 包含 Solo2、OpenSK / Wasefire、Nitrokey / Trussed 等。旧版资料从[硬件历史入口](hardware/README.md)和[文档索引](docs/README.md)查阅；R0.2 / R0.3 文件不能与 R0.4 混用。
+自研源码采用 [MIT](LICENSE)，硬件采用 [CERN-OHL-S-2.0](hardware/LICENSE-CERN-OHL-S-2.0.txt)；第三方代码保留各自许可。历史 R04 指纹 / 四键资料从[硬件导航](hardware/README.md)进入，不能与 R05 混用。

@@ -1,10 +1,10 @@
-name: R04 electrical CAD checks
+name: Saved electrical CAD checks
 on:
   workflow_dispatch:
   push:
-    paths: ['.gitattributes', 'hardware/r04/**', '.github/workflows/hardware.yml']
+    paths: ['.gitattributes', 'hardware/r04/**', 'hardware/r05/**', '.github/workflows/hardware.yml']
   pull_request:
-    paths: ['.gitattributes', 'hardware/r04/**', '.github/workflows/hardware.yml']
+    paths: ['.gitattributes', 'hardware/r04/**', 'hardware/r05/**', '.github/workflows/hardware.yml']
 permissions:
   contents: read
 jobs:
@@ -36,12 +36,27 @@ jobs:
           python3 hardware/r04/tools/check_netlist.py
           kicad-cli pcb drc --format json --severity-all --output hardware/r04/review/routed-drc.json hardware/r04/kicad/OpenKeys.kicad_pcb
           /usr/bin/python3 hardware/r04/tools/check_board.py
+      - name: Verify R05 delivered hashes
+        run: python3 hardware/r05/tools/manifest.py --check
+      - name: Check saved R05 electrical rules and schematic parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          kicad-cli sch erc --format json --severity-all --output hardware/r05/review/erc.json hardware/r05/kicad/OpenKeys.kicad_sch
+          kicad-cli sch export netlist --format kicadxml --output hardware/r05/exports/OpenKeys-netlist.xml hardware/r05/kicad/OpenKeys.kicad_sch
+          python3 hardware/r05/tools/check_netlist.py
+          kicad-cli pcb drc --format json --severity-all --output hardware/r05/review/routed-drc.json hardware/r05/kicad/OpenKeys.kicad_pcb
+          /usr/bin/python3 hardware/r05/tools/check_board.py
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: r04-electrical-checks
+          name: r04-r05-electrical-checks
           path: |
             hardware/r04/review/erc.json
             hardware/r04/review/netlist-check.json
             hardware/r04/review/routed-drc.json
             hardware/r04/review/board-check.json
+            hardware/r05/review/erc.json
+            hardware/r05/review/netlist-check.json
+            hardware/r05/review/routed-drc.json
+            hardware/r05/review/board-check.json
           if-no-files-found: error

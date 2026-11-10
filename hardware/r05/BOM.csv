@@ -1,0 +1,152 @@
+ref,value,footprint,sheet,dnp,note
+J1,HRO TYPE-C-31-M-12,Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12,01-usb,False,Only external data socket; qualify manufacturer drawing and sample
+U1,USBLC6-2SC6,Package_TO_SOT_SMD:SOT-23-6,01-usb,False,
+R1,5.1k 1%,Resistor_SMD:R_0603_1608Metric,01-usb,False,
+R2,5.1k 1%,Resistor_SMD:R_0603_1608Metric,01-usb,False,
+R3,1M,Resistor_SMD:R_0603_1608Metric,01-usb,False,
+C1,1nF / 2kV,Capacitor_SMD:C_1206_3216Metric,01-usb,False,KEMET C1206C102KGRACTU;1206;2kV X7R10percent
+Q1,2N7002,Package_TO_SOT_SMD:SOT-23,01-usb,False,
+R4,100k,Resistor_SMD:R_0603_1608Metric,01-usb,False,
+R5,1M,Resistor_SMD:R_0603_1608Metric,01-usb,False,
+D1,SMF5.0A,Diode_SMD:D_SOD-123F,01-usb,False,
+D2,PESD5V0S1BA,Diode_SMD:D_SOD-323,01-usb,False,
+D3,PESD5V0S1BA,Diode_SMD:D_SOD-323,01-usb,False,
+F1,250mA hold - qualify I2t,Fuse:Fuse_1206_3216Metric,02-power,False,
+U2,BQ25185DLHR,Package_DFN_QFN:Texas_DLH0010A_WSON-10-1EP_2.2x2mm_P0.4mm_EP0.9x1.5mm,02-power,False,TI SLUSF65B table6-1:24k=4.2V/input100mA; ISET3k=target100mA before input DPM
+J2,Adafruit 1578 protected 1S 500mAh,Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal,02-power,False,Factory-protected pack; JST-PH2 polarity must be measured before mating. Pack body29x36x4.75mm; reserve32x40x6.5mm. No bare-cell substitution
+J6,103AT-2 external battery thermistor,Connector_JST:JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal,02-power,False,"Semitec103AT-2 10k/B3435 insulated thermal contact to pouch, factory crimped SH harness. Not an ambient-only board thermistor"
+R6,24k 1%,Resistor_SMD:R_0603_1608Metric,02-power,False,
+R7,3.00k 1%,Resistor_SMD:R_0603_1608Metric,02-power,False,
+R8,100k,Resistor_SMD:R_0603_1608Metric,02-power,False,
+Q2,2N7002,Package_TO_SOT_SMD:SOT-23,02-power,False,
+R9,100k,Resistor_SMD:R_0603_1608Metric,02-power,False,
+C2,1uF 10V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
+C3,10uF 6.3V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
+C4,10uF 10V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
+SW1,OFF / ON,Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN,02-power,False,
+U3,TPS63031DSK (3.3 V),Package_SON:WSON-10-1EP_2.5x2.5mm_P0.5mm_EP1.2x2mm,02-power,False,
+R10,0R,Resistor_SMD:R_0603_1608Metric,02-power,False,
+L1,1.5uH Isat>=1.5A,Inductor_SMD:L_Sunlord_SWPA3015S,02-power,False,
+C5,10uF 10V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
+C6,100nF,Capacitor_SMD:C_0603_1608Metric,02-power,False,
+C7,10uF 6.3V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
+C8,10uF 6.3V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
+U4,STM32H573RIT6,Package_QFP:LQFP-64_10x10mm_P0.5mm,03-mcu,False,"H573 pin62=VCAP2, no PB9; SE PB6/PB7; LCD PA8/PC9. Recheck complete alternate functions before firmware target release"
+C9,100nF,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+C10,100nF,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+C11,100nF,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+C12,100nF,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+C13,100nF,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+C14,4.7uF,Capacitor_SMD:C_0805_2012Metric,03-mcu,False,
+C15,2.2uF low ESR,Capacitor_SMD:C_0805_2012Metric,03-mcu,False,
+C16,2.2uF low ESR,Capacitor_SMD:C_0805_2012Metric,03-mcu,False,
+C17,100nF,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+C18,1uF,Capacitor_SMD:C_0805_2012Metric,03-mcu,False,
+FB1,600R@100MHz,Inductor_SMD:L_0603_1608Metric,03-mcu,False,
+R11,10k,Resistor_SMD:R_0603_1608Metric,03-mcu,False,
+C19,10nF - qualify reset timing,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+R12,10k,Resistor_SMD:R_0603_1608Metric,03-mcu,False,
+J3,Internal SWD - DNP production,Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical,03-mcu,True,Internal manufacturing access only; close debug lifecycle before user secrets
+Y1,ABS07-32.768KHZ-6-T,Crystal:Crystal_SMD_3215-2Pin_3.2x1.5mm,03-mcu,False,LSE for backup RTC and tamper. RTC validity/rollback must be qualified. 9pF loading provisional; qualify startup/drive across temperature
+C20,9pF C0G - tune,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+C21,9pF C0G - tune,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
+U5,SE050E2HQ1/Z01Z3Z,OpenKeys:SE050_SOT1969-1_HX2QFN20,04-se-storage,False,"VOUT to local VCC only. Per-device pairing, persistent attempts and anti-rollback need validated provisioning"
+U6,W25Q64JVSSIQ,Package_SO:SOIC-8_5.3x5.3mm_P1.27mm,04-se-storage,False,
+R13,4.7k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
+R14,4.7k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
+R15,100k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
+R16,47k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
+R17,47k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
+R18,47k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
+R19,10k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
+R20,10k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
+C22,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
+C23,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
+C24,1uF,Capacitor_SMD:C_0805_2012Metric,04-se-storage,False,
+C25,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
+U7,FM11NC08S (DFN10 + EP),OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4,05-nfc,False,"Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM"
+J4,Integral 13.56MHz PCB loop,OpenKeys:NFC_PCB_Loop_4T_62x15,05-nfc,False,Integral copper4-turn coil; no purchased connector. Separate RF-only region. Initial matching model must be measured in assembled shell.
+C26,100nF,Capacitor_SMD:C_0603_1608Metric,05-nfc,False,
+C27,1uF,Capacitor_SMD:C_0805_2012Metric,05-nfc,False,
+C28,100nF 10V,Capacitor_SMD:C_0603_1608Metric,05-nfc,False,
+C29,56pF C0G 50V initial match,Capacitor_SMD:C_0603_1608Metric,05-nfc,False,
+R21,47k,Resistor_SMD:R_0603_1608Metric,05-nfc,False,
+R22,47k,Resistor_SMD:R_0603_1608Metric,05-nfc,False,
+J7,DFR0555 V1.1 - OFFBOARD MODULE,Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical,06-trusted-ui,False,Internal keyed harness must follow VCC/GND/SCL/SDA; no external second data port. Module87x32x13mm. Qualify actual supply tolerance and revision.
+R23,4.7k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+R24,4.7k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+SW2,KEY 1,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R25,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C30,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW3,KEY 2,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R26,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C31,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW4,KEY 3,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R27,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C32,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW5,KEY 4,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R28,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C33,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW6,KEY 5,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R29,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C34,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW7,KEY 6,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R30,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C35,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW8,KEY 7,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R31,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C36,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW9,KEY 8,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R32,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C37,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW10,KEY 9,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R33,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C38,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+SW11,KEY 0,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
+R34,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
+C39,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
+U13,MCP1700T-3002E/TT,Package_TO_SOT_SMD:SOT-23,07-fault-tamper,False,Always-on3.0V supplies VBAT/case circuit when main switch is OFF; qualify reverse injection and backup switchover
+C40,1uF,Capacitor_SMD:C_0805_2012Metric,07-fault-tamper,False,
+C41,1uF,Capacitor_SMD:C_0805_2012Metric,07-fault-tamper,False,
+U10,TPS3702CX33DDCR,Package_TO_SOT_SMD:TSOT-23-6,07-fault-tamper,False,SET high: nominal UV3.17V/OV3.43V; open-drain reset independent of ADC/software. Not nanosecond fault protection
+SW12,LID CLOSED contact,Button_Switch_SMD:SW_SPST_TL3342,07-fault-tamper,False,Lid actuator closes contact; open wire pulls low => independent reset. Travel/contact reliability unvalidated
+R35,100k,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,
+U11,SN74LVC1G07DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,07-fault-tamper,False,Open-drain case-open reset; cannot drive reset high against supervisor
+U12,SN74LVC1G08DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,07-fault-tamper,False,Fault/reset disables SE_EN independently of request. Fault interlock only; not a PIN authorization gate
+R36,100k,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,
+C42,100nF 10V,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
+C43,100nF,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
+C44,100nF,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
+U14,TPS259470LRPWR,OpenKeys:TPS25947_RPW0010A,08-input-guard,False,"Adjustable OVLO, latch-off variant for latched faults, true reverse-current blocking. Follow datasheet fault-specific recovery; do not infer all OV events latch. Input abs28V is not a system surge rating."
+R37,22.1k 1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R38,10k 1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R39,374k 0.1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R40,100k 0.1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R41,6.49k 1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+R42,47k,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
+D4,"BZT52-C5V1,115",Diode_SMD:D_SOD-123,08-input-guard,False,Protect EN/UVLO absolute maximum6.5V; not tied directly to raw VBUS. Verify leakage/temp and dynamic clamp.
+D5,SMF16A,Diode_SMD:D_SOD-123F,08-input-guard,False,"Input surge TVS AFTER F1. Nominal datasheet clamp26V vs eFuse28Vabs is not an IEC guarantee; qualify actual diode supplier, layout and I2t."
+C45,100nF 50V,Capacitor_SMD:C_0603_1608Metric,08-input-guard,False,
+C46,1nF C0G,Capacitor_SMD:C_0603_1608Metric,08-input-guard,False,
+U15,SN74LVC1G07DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,09-display-power,False,NRST low asynchronously clears display power latch via U17. PC3 is open-drain; no repower without a new PC4 edge.
+R43,10k,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
+R44,100k,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
+R45,100k,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
+C47,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
+U17,SN74LVC1G17DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,09-display-power,False,
+U16,SN74LVC1G74DCUR,Package_SO:VSSOP-8_2.3x2mm_P0.5mm,09-display-power,False,
+U18,TPS22919DCKR,Package_TO_SOT_SMD:SOT-363_SC-70-6,09-display-power,False,
+U19,SN74LVC1G17DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,09-display-power,False,
+U20,SN74LVC1G08DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,09-display-power,False,
+U21,SN74LVC2G66DCUR,Package_SO:VSSOP-8_2.3x2mm_P0.5mm,09-display-power,False,
+R46,220k 1%,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
+R47,1k 1% 0.1W,Resistor_SMD:R_0603_1608Metric,09-display-power,False,"Bleeder required even without input power. Total module+board capacitance <=100uF is a qualification condition, not a module datasheet claim."
+R48,100k,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
+C48,100nF 10% X7R 16V,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
+C49,1uF 10V,Capacitor_SMD:C_0805_2012Metric,09-display-power,False,
+C50,1uF 10V,Capacitor_SMD:C_0805_2012Metric,09-display-power,False,
+C51,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
+C52,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
+C53,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
+C54,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
+C55,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,

@@ -1,0 +1,1988 @@
+[
+  {
+    "ref": "J1",
+    "value": "HRO TYPE-C-31-M-12",
+    "footprint": "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12",
+    "sheet": "01-usb",
+    "nets": {
+      "A1": "GND",
+      "A4": "VBUS_RAW",
+      "A5": "CC1",
+      "A6": "USB_DP",
+      "A7": "USB_DM",
+      "A8": null,
+      "A9": "VBUS_RAW",
+      "A12": "GND",
+      "B1": "GND",
+      "B4": "VBUS_RAW",
+      "B5": "CC2",
+      "B6": "USB_DP",
+      "B7": "USB_DM",
+      "B8": null,
+      "B9": "VBUS_RAW",
+      "B12": "GND",
+      "S1": "SHIELD"
+    },
+    "note": "Only external data socket; qualify manufacturer drawing and sample",
+    "dnp": false
+  },
+  {
+    "ref": "U1",
+    "value": "USBLC6-2SC6",
+    "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "USB_DP",
+      "6": "USB_DP",
+      "3": "USB_DM",
+      "4": "USB_DM",
+      "2": "GND",
+      "5": "USB_5V"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R1",
+    "value": "5.1k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "CC1",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R2",
+    "value": "5.1k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "CC2",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R3",
+    "value": "1M",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "SHIELD",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C1",
+    "value": "1nF / 2kV",
+    "footprint": "Capacitor_SMD:C_1206_3216Metric",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "SHIELD",
+      "2": "GND"
+    },
+    "note": "KEMET C1206C102KGRACTU;1206;2kV X7R10percent",
+    "dnp": false
+  },
+  {
+    "ref": "Q1",
+    "value": "2N7002",
+    "footprint": "Package_TO_SOT_SMD:SOT-23",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "USB_5V",
+      "2": "GND",
+      "3": "VBUS_PRESENT_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R4",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "+3V3",
+      "2": "VBUS_PRESENT_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R5",
+    "value": "1M",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "VBUS_RAW",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "D1",
+    "value": "SMF5.0A",
+    "footprint": "Diode_SMD:D_SOD-123F",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "USB_5V",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "D2",
+    "value": "PESD5V0S1BA",
+    "footprint": "Diode_SMD:D_SOD-323",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "CC1",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "D3",
+    "value": "PESD5V0S1BA",
+    "footprint": "Diode_SMD:D_SOD-323",
+    "sheet": "01-usb",
+    "nets": {
+      "1": "CC2",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "F1",
+    "value": "250mA hold - qualify I2t",
+    "footprint": "Fuse:Fuse_1206_3216Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "VBUS_RAW",
+      "2": "VBUS_FUSED"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U2",
+    "value": "BQ25185DLHR",
+    "footprint": "Package_DFN_QFN:Texas_DLH0010A_WSON-10-1EP_2.2x2mm_P0.4mm_EP0.9x1.5mm",
+    "sheet": "02-power",
+    "nets": {
+      "1": "SYS",
+      "2": "BAT",
+      "3": "CHG_STAT2_N",
+      "4": "CHARGE_DISABLE",
+      "5": "GND",
+      "6": "BAT_NTC",
+      "7": "CHG_ILIM_VSET",
+      "8": "CHG_ISET",
+      "9": "CHG_STAT1_N",
+      "10": "USB_5V",
+      "11": "GND"
+    },
+    "note": "TI SLUSF65B table6-1:24k=4.2V/input100mA; ISET3k=target100mA before input DPM",
+    "dnp": false
+  },
+  {
+    "ref": "J2",
+    "value": "Adafruit 1578 protected 1S 500mAh",
+    "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+    "sheet": "02-power",
+    "nets": {
+      "1": "BAT",
+      "2": "GND"
+    },
+    "note": "Factory-protected pack; JST-PH2 polarity must be measured before mating. Pack body29x36x4.75mm; reserve32x40x6.5mm. No bare-cell substitution",
+    "dnp": false
+  },
+  {
+    "ref": "J6",
+    "value": "103AT-2 external battery thermistor",
+    "footprint": "Connector_JST:JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal",
+    "sheet": "02-power",
+    "nets": {
+      "1": "BAT_NTC",
+      "2": "GND"
+    },
+    "note": "Semitec103AT-2 10k/B3435 insulated thermal contact to pouch, factory crimped SH harness. Not an ambient-only board thermistor",
+    "dnp": false
+  },
+  {
+    "ref": "R6",
+    "value": "24k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "CHG_ILIM_VSET",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R7",
+    "value": "3.00k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "CHG_ISET",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R8",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "SYS",
+      "2": "CHARGE_DISABLE"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "Q2",
+    "value": "2N7002",
+    "footprint": "Package_TO_SOT_SMD:SOT-23",
+    "sheet": "02-power",
+    "nets": {
+      "1": "CHARGE_ENABLE",
+      "2": "GND",
+      "3": "CHARGE_DISABLE"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R9",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "CHARGE_ENABLE",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C2",
+    "value": "1uF 10V",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "USB_5V",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C3",
+    "value": "10uF 6.3V",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "BAT",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C4",
+    "value": "10uF 10V",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "SYS",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW1",
+    "value": "OFF / ON",
+    "footprint": "Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN",
+    "sheet": "02-power",
+    "nets": {
+      "1": "SYS",
+      "2": "REG_EN",
+      "3": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U3",
+    "value": "TPS63031DSK (3.3 V)",
+    "footprint": "Package_SON:WSON-10-1EP_2.5x2.5mm_P0.5mm_EP1.2x2mm",
+    "sheet": "02-power",
+    "nets": {
+      "5": "SYS",
+      "8": "REG_VINA",
+      "6": "REG_EN",
+      "7": "GND",
+      "4": "SW_L1",
+      "2": "SW_L2",
+      "9": "GND",
+      "11": "GND",
+      "3": "GND",
+      "1": "+3V3",
+      "10": "+3V3"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R10",
+    "value": "0R",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "SYS",
+      "2": "REG_VINA"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "L1",
+    "value": "1.5uH Isat>=1.5A",
+    "footprint": "Inductor_SMD:L_Sunlord_SWPA3015S",
+    "sheet": "02-power",
+    "nets": {
+      "1": "SW_L1",
+      "2": "SW_L2"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C5",
+    "value": "10uF 10V",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "SYS",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C6",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "REG_VINA",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C7",
+    "value": "10uF 6.3V",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C8",
+    "value": "10uF 6.3V",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "02-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U4",
+    "value": "STM32H573RIT6",
+    "footprint": "Package_QFP:LQFP-64_10x10mm_P0.5mm",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "TAMP_3V0",
+      "19": "+3V3",
+      "32": "+3V3",
+      "18": "GND",
+      "31": "GND",
+      "47": "GND",
+      "63": "GND",
+      "48": "+3V3",
+      "12": "GND",
+      "64": "+3V3",
+      "13": "VDDA",
+      "7": "NRST",
+      "60": "BOOT0",
+      "16": "CHG_STAT1_N",
+      "17": "CHG_STAT2_N",
+      "20": "NFC_CS_N",
+      "21": "NFC_SCK",
+      "22": "NFC_MISO",
+      "23": "NFC_MOSI",
+      "41": "LCD_HOST_SCL",
+      "44": "USB_DM",
+      "45": "USB_DP",
+      "46": "SWDIO",
+      "49": "SWCLK",
+      "50": "BTN7_N",
+      "26": "BTN1_N",
+      "27": "BTN2_N",
+      "28": "BTN3_N",
+      "55": "SWO",
+      "56": "CHARGE_ENABLE",
+      "57": "BTN4_N",
+      "58": "SE_SCL",
+      "59": "SE_SDA",
+      "29": "NFC_IRQ_N",
+      "33": "FLASH_CS_N",
+      "34": "FLASH_SCK",
+      "36": "FLASH_MOSI",
+      "8": "USB_GUARD_FAULT_N",
+      "9": "NRST",
+      "10": "FLASH_MISO",
+      "11": "LCD_RELEASE",
+      "24": "LCD_ARM_CLK",
+      "25": "VBUS_PRESENT_N",
+      "37": "BTN5_N",
+      "38": "BTN6_N",
+      "39": "SE_ENABLE_REQUEST",
+      "40": "LCD_HOST_SDA",
+      "51": "BTN8_N",
+      "52": "BTN9_N",
+      "53": "BTN0_N",
+      "2": "CASE_CLOSED",
+      "3": "LSE_IN",
+      "4": "LSE_OUT",
+      "30": "VCAP1",
+      "62": "VCAP2"
+    },
+    "note": "H573 pin62=VCAP2, no PB9; SE PB6/PB7; LCD PA8/PC9. Recheck complete alternate functions before firmware target release",
+    "dnp": false
+  },
+  {
+    "ref": "C9",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C10",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C11",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C12",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C13",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C14",
+    "value": "4.7uF",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C15",
+    "value": "2.2uF low ESR",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "VCAP1",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C16",
+    "value": "2.2uF low ESR",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "VCAP2",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C17",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "VDDA",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C18",
+    "value": "1uF",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "VDDA",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "FB1",
+    "value": "600R@100MHz",
+    "footprint": "Inductor_SMD:L_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "VDDA"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R11",
+    "value": "10k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "NRST"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C19",
+    "value": "10nF - qualify reset timing",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "NRST",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R12",
+    "value": "10k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "BOOT0",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "J3",
+    "value": "Internal SWD - DNP production",
+    "footprint": "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "+3V3",
+      "2": "SWDIO",
+      "3": "GND",
+      "4": "SWCLK",
+      "5": "GND",
+      "6": "SWO",
+      "7": null,
+      "8": null,
+      "9": "GND",
+      "10": "NRST"
+    },
+    "note": "Internal manufacturing access only; close debug lifecycle before user secrets",
+    "dnp": true
+  },
+  {
+    "ref": "Y1",
+    "value": "ABS07-32.768KHZ-6-T",
+    "footprint": "Crystal:Crystal_SMD_3215-2Pin_3.2x1.5mm",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "LSE_IN",
+      "2": "LSE_OUT"
+    },
+    "note": "LSE for backup RTC and tamper. RTC validity/rollback must be qualified. 9pF loading provisional; qualify startup/drive across temperature",
+    "dnp": false
+  },
+  {
+    "ref": "C20",
+    "value": "9pF C0G - tune",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "LSE_IN",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C21",
+    "value": "9pF C0G - tune",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "03-mcu",
+    "nets": {
+      "1": "LSE_OUT",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U5",
+    "value": "SE050E2HQ1/Z01Z3Z",
+    "footprint": "OpenKeys:SE050_SOT1969-1_HX2QFN20",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "GND",
+      "9": "SE_SDA",
+      "10": "SE_SCL",
+      "11": "SE_EN",
+      "12": "+3V3",
+      "14": "GND",
+      "15": "SE_CORE",
+      "17": "GND",
+      "18": "SE_CORE",
+      "19": "GND",
+      "21": "GND"
+    },
+    "note": "VOUT to local VCC only. Per-device pairing, persistent attempts and anti-rollback need validated provisioning",
+    "dnp": false
+  },
+  {
+    "ref": "U6",
+    "value": "W25Q64JVSSIQ",
+    "footprint": "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "FLASH_CS_N",
+      "6": "FLASH_SCK",
+      "5": "FLASH_MOSI",
+      "2": "FLASH_MISO",
+      "3": "FLASH_WP_N",
+      "7": "FLASH_HOLD_N",
+      "8": "+3V3",
+      "4": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R13",
+    "value": "4.7k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "SE_SCL"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R14",
+    "value": "4.7k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "SE_SDA"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R15",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "SE_EN",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R16",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "FLASH_CS_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R17",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "FLASH_WP_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R18",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "FLASH_HOLD_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R19",
+    "value": "10k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "CHG_STAT1_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R20",
+    "value": "10k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "CHG_STAT2_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C22",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C23",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "SE_CORE",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C24",
+    "value": "1uF",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "SE_CORE",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C25",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "04-se-storage",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U7",
+    "value": "FM11NC08S (DFN10 + EP)",
+    "footprint": "OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4",
+    "sheet": "05-nfc",
+    "nets": {
+      "1": "+3V3",
+      "2": "NFC_VOUT",
+      "3": "ANT1",
+      "4": "ANT2",
+      "5": "GND",
+      "6": "NFC_CS_N",
+      "7": "NFC_SCK",
+      "8": "NFC_MOSI",
+      "9": "NFC_MISO",
+      "10": "NFC_IRQ_N",
+      "11": "GND"
+    },
+    "note": "Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM",
+    "dnp": false
+  },
+  {
+    "ref": "J4",
+    "value": "Integral 13.56MHz PCB loop",
+    "footprint": "OpenKeys:NFC_PCB_Loop_4T_62x15",
+    "sheet": "05-nfc",
+    "nets": {
+      "1": "ANT1",
+      "2": "ANT2"
+    },
+    "note": "Integral copper4-turn coil; no purchased connector. Separate RF-only region. Initial matching model must be measured in assembled shell.",
+    "dnp": false
+  },
+  {
+    "ref": "C26",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "05-nfc",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C27",
+    "value": "1uF",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "05-nfc",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C28",
+    "value": "100nF 10V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "05-nfc",
+    "nets": {
+      "1": "NFC_VOUT",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C29",
+    "value": "56pF C0G 50V initial match",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "05-nfc",
+    "nets": {
+      "1": "ANT1",
+      "2": "ANT2"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R21",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "05-nfc",
+    "nets": {
+      "1": "+3V3",
+      "2": "NFC_IRQ_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R22",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "05-nfc",
+    "nets": {
+      "1": "+3V3",
+      "2": "NFC_CS_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "J7",
+    "value": "DFR0555 V1.1 - OFFBOARD MODULE",
+    "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "LCD_VCC_SW",
+      "2": "GND",
+      "3": "LCD_SCL",
+      "4": "LCD_SDA"
+    },
+    "note": "Internal keyed harness must follow VCC/GND/SCL/SDA; no external second data port. Module87x32x13mm. Qualify actual supply tolerance and revision.",
+    "dnp": false
+  },
+  {
+    "ref": "R23",
+    "value": "4.7k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "LCD_HOST_SCL"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R24",
+    "value": "4.7k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "LCD_HOST_SDA"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW2",
+    "value": "KEY 1",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN1_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R25",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN1_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C30",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN1_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW3",
+    "value": "KEY 2",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN2_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R26",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN2_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C31",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN2_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW4",
+    "value": "KEY 3",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN3_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R27",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN3_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C32",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN3_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW5",
+    "value": "KEY 4",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN4_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R28",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN4_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C33",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN4_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW6",
+    "value": "KEY 5",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN5_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R29",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN5_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C34",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN5_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW7",
+    "value": "KEY 6",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN6_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R30",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN6_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C35",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN6_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW8",
+    "value": "KEY 7",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN7_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R31",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN7_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C36",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN7_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW9",
+    "value": "KEY 8",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN8_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R32",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN8_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C37",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN8_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW10",
+    "value": "KEY 9",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN9_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R33",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN9_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C38",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN9_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "SW11",
+    "value": "KEY 0",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN0_N",
+      "2": "GND"
+    },
+    "note": "Independent GPIO; physical release events only. No matrix and no host key injection.",
+    "dnp": false
+  },
+  {
+    "ref": "R34",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "+3V3",
+      "2": "BTN0_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C39",
+    "value": "10nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "06-trusted-ui",
+    "nets": {
+      "1": "BTN0_N",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U13",
+    "value": "MCP1700T-3002E/TT",
+    "footprint": "Package_TO_SOT_SMD:SOT-23",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "3": "BAT",
+      "1": "GND",
+      "2": "TAMP_3V0"
+    },
+    "note": "Always-on3.0V supplies VBAT/case circuit when main switch is OFF; qualify reverse injection and backup switchover",
+    "dnp": false
+  },
+  {
+    "ref": "C40",
+    "value": "1uF",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "BAT",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C41",
+    "value": "1uF",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "TAMP_3V0",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U10",
+    "value": "TPS3702CX33DDCR",
+    "footprint": "Package_TO_SOT_SMD:TSOT-23-6",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "3": "+3V3",
+      "4": "+3V3",
+      "5": "SYS",
+      "2": "GND",
+      "6": "NRST",
+      "1": "NRST"
+    },
+    "note": "SET high: nominal UV3.17V/OV3.43V; open-drain reset independent of ADC/software. Not nanosecond fault protection",
+    "dnp": false
+  },
+  {
+    "ref": "SW12",
+    "value": "LID CLOSED contact",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "TAMP_3V0",
+      "2": "CASE_CLOSED"
+    },
+    "note": "Lid actuator closes contact; open wire pulls low => independent reset. Travel/contact reliability unvalidated",
+    "dnp": false
+  },
+  {
+    "ref": "R35",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "CASE_CLOSED",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U11",
+    "value": "SN74LVC1G07DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": null,
+      "2": "CASE_CLOSED",
+      "3": "GND",
+      "4": "NRST",
+      "5": "+3V3"
+    },
+    "note": "Open-drain case-open reset; cannot drive reset high against supervisor",
+    "dnp": false
+  },
+  {
+    "ref": "U12",
+    "value": "SN74LVC1G08DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "NRST",
+      "2": "SE_ENABLE_REQUEST",
+      "3": "GND",
+      "4": "SE_EN",
+      "5": "+3V3"
+    },
+    "note": "Fault/reset disables SE_EN independently of request. Fault interlock only; not a PIN authorization gate",
+    "dnp": false
+  },
+  {
+    "ref": "R36",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "SE_ENABLE_REQUEST",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C42",
+    "value": "100nF 10V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "SYS",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C43",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C44",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U14",
+    "value": "TPS259470LRPWR",
+    "footprint": "OpenKeys:TPS25947_RPW0010A",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_EN",
+      "2": "USB_GUARD_OV",
+      "3": null,
+      "4": "USB_GUARD_FAULT_N",
+      "5": "VBUS_FUSED",
+      "6": "USB_5V",
+      "7": "USB_GUARD_DVDT",
+      "8": "GND",
+      "9": "USB_GUARD_ILM",
+      "10": null
+    },
+    "note": "Adjustable OVLO, latch-off variant for latched faults, true reverse-current blocking. Follow datasheet fault-specific recovery; do not infer all OV events latch. Input abs28V is not a system surge rating.",
+    "dnp": false
+  },
+  {
+    "ref": "R37",
+    "value": "22.1k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "VBUS_FUSED",
+      "2": "USB_GUARD_EN"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R38",
+    "value": "10k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_EN",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R39",
+    "value": "374k 0.1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "VBUS_FUSED",
+      "2": "USB_GUARD_OV"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R40",
+    "value": "100k 0.1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_OV",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R41",
+    "value": "6.49k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_ILM",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R42",
+    "value": "47k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "+3V3",
+      "2": "USB_GUARD_FAULT_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "D4",
+    "value": "BZT52-C5V1,115",
+    "footprint": "Diode_SMD:D_SOD-123",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_EN",
+      "2": "GND"
+    },
+    "note": "Protect EN/UVLO absolute maximum6.5V; not tied directly to raw VBUS. Verify leakage/temp and dynamic clamp.",
+    "dnp": false
+  },
+  {
+    "ref": "D5",
+    "value": "SMF16A",
+    "footprint": "Diode_SMD:D_SOD-123F",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "VBUS_FUSED",
+      "2": "GND"
+    },
+    "note": "Input surge TVS AFTER F1. Nominal datasheet clamp26V vs eFuse28Vabs is not an IEC guarantee; qualify actual diode supplier, layout and I2t.",
+    "dnp": false
+  },
+  {
+    "ref": "C45",
+    "value": "100nF 50V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "VBUS_FUSED",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C46",
+    "value": "1nF C0G",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "08-input-guard",
+    "nets": {
+      "1": "USB_GUARD_DVDT",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U15",
+    "value": "SN74LVC1G07DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": null,
+      "2": "NRST",
+      "3": "GND",
+      "4": "LCD_RELEASE",
+      "5": "+3V3"
+    },
+    "note": "NRST low asynchronously clears display power latch via U17. PC3 is open-drain; no repower without a new PC4 edge.",
+    "dnp": false
+  },
+  {
+    "ref": "R43",
+    "value": "10k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "LCD_RELEASE"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R44",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "LCD_RELEASE",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R45",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "LCD_ARM_CLK",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C47",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U17",
+    "value": "SN74LVC1G17DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": null,
+      "2": "LCD_RELEASE",
+      "3": "GND",
+      "4": "CLEAR_N",
+      "5": "+3V3"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U16",
+    "value": "SN74LVC1G74DCUR",
+    "footprint": "Package_SO:VSSOP-8_2.3x2mm_P0.5mm",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "LCD_ARM_CLK",
+      "2": "+3V3",
+      "3": null,
+      "4": "GND",
+      "5": "POWER_LATCH",
+      "6": "CLEAR_N",
+      "7": "+3V3",
+      "8": "+3V3"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U18",
+    "value": "TPS22919DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND",
+      "3": "POWER_LATCH",
+      "4": null,
+      "5": "LCD_VCC_SW",
+      "6": "LCD_VCC_SW"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U19",
+    "value": "SN74LVC1G17DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": null,
+      "2": "CONNECT_DELAY",
+      "3": "GND",
+      "4": "DELAY_READY",
+      "5": "+3V3"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U20",
+    "value": "SN74LVC1G08DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "POWER_LATCH",
+      "2": "DELAY_READY",
+      "3": "GND",
+      "4": "BUS_ENABLE",
+      "5": "+3V3"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U21",
+    "value": "SN74LVC2G66DCUR",
+    "footprint": "Package_SO:VSSOP-8_2.3x2mm_P0.5mm",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "LCD_HOST_SCL",
+      "2": "LCD_SCL",
+      "3": "BUS_ENABLE",
+      "4": "GND",
+      "5": "LCD_HOST_SDA",
+      "6": "LCD_SDA",
+      "7": "BUS_ENABLE",
+      "8": "+3V3"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R46",
+    "value": "220k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "POWER_LATCH",
+      "2": "CONNECT_DELAY"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R47",
+    "value": "1k 1% 0.1W",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "LCD_VCC_SW",
+      "2": "GND"
+    },
+    "note": "Bleeder required even without input power. Total module+board capacitance <=100uF is a qualification condition, not a module datasheet claim.",
+    "dnp": false
+  },
+  {
+    "ref": "R48",
+    "value": "100k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "BUS_ENABLE",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C48",
+    "value": "100nF 10% X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "CONNECT_DELAY",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C49",
+    "value": "1uF 10V",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C50",
+    "value": "1uF 10V",
+    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "LCD_VCC_SW",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C51",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C52",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C53",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C54",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C55",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  }
+]

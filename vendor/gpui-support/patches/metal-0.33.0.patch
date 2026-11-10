@@ -1,0 +1,18 @@
+--- a/metal-0.33.0/Cargo.toml
++++ b/metal-0.33.0/Cargo.toml
+@@ -158,7 +158,8 @@
+ version = "0.2.4"
+ 
+ [dependencies.paste]
+-version = "1"
++package = "pastey"
++version = "=0.2.3"
+ 
+ [dev-dependencies.cocoa]
+ version = "0.26.0"
+@@ -177,3 +178,5 @@
+ 
+ [dev-dependencies.winit]
+ version = "0.29"
++
++[workspace]

@@ -1,53 +1,31 @@
-# R0.4 当前状态
+# R0.5 当前状态
 
-[文档导航](README.md) · [开发起步](GETTING_STARTED.md) · [对抗性复核](ADVERSARIAL_REVIEW_R04.md) · [制造入口](../manufacturing/README.md)
+[首页](../README.md) · [硬件](../hardware/r05/README.md) · [安全复查](SECURITY_REVIEW_R05.md) · [制作手册](../manufacturing/BUILD_R05_ZH.md)
 
-**阶段：工程候选。生产放行：BLOCKED。** 完整认证运行时和真实管理通道尚未完成；当前无法作为三把正式安全密钥交付。
+**工程候选；生产放行 BLOCKED。** 当前不是可用于三个真实账户密钥的生产认证器。下表区分候选源码、软件检查和未实现的实机功能。
 
-## 状态怎么读
-
-| 标记 | 含义 |
-|---|---|
-| 已有设计 / 源码 | 文件或候选实现存在；不表示完成实物集成 |
-| 软件检查通过 | 对明确提交的源码、模型或构建验证通过 |
-| 待集成 | 尚未接入完整受保护目标运行时 |
-| NOT_RUN | 尚未进行所需实物测试，不能视为通过 |
-| BLOCKED | 缺少交付条件；不放行生产认证器 |
-
-## 各部分进度
-
-| 部分 | 已完成 | 还需要完成 |
+| 部分 | 已有 | 未完成 |
 |---|---|---|
-| 电路 / PCB / 结构 | 10 页原理图、130 个 BOM 位置、完整四层布线、制造导出和结构源；ERC / DRC 与 624 项独立核对通过 | 首板装配、DFM、结构公差、电源 / RF / 热及实物安全资格 |
-| 授权 / 指纹 / PIN / LCD | 认证帧校验、持久尝试接口、四键 PIN、完整身份分页、一次请求执行范围及撤权检查 | 真实配对 / 模板 / PIN / 可信显示运行时和安全 GPIO 路径 |
-| SE 通信 / 密钥 | 有界 T=1、SCP03、I2C 进度状态机；SE 对象 / 计数 / 签名 / HKDF 候选 APDU | 实片身份、profile / ACL、计数与掉电语义、容量、配对和密钥生命周期 |
-| MCU 密码 | H573 SAES / RNG、共享所有权与故障关闭、明确 Secure MMIO 边界；ARM 编译通过 | 芯片 KAT、实际 Secure 地址 / SAU / GTZC / DMA / watchdog 核查及侧信道测试 |
-| FIDO 核心 | 固定 OpenSK、UV / UP 网关、注册 / 登录 / U2F / hmac-secret、连续请求和持久适配测试 | 生产硬件 Env、硬件密钥桥接、USB / NFC、完整 Root dispatcher |
-| 加密存储 | 两区快照、流式编辑、记录隔离、notes / recovery 校验、SE 提交锚点模型 | Root 检查点、批量 staging、可取消长事务、安全删除 / 重置生命周期 |
-| 桌面管理器 | 英文 GUI、三平台开发包、受限导入、失焦 / 休眠 / 过期遮蔽 | 认证加密管理通道、真实设备导入和三系统交互验收、正式安装包 |
-| 手机管理器 | Android / iOS NFC 实现前提 | 设备协议、可用 APK / IPA、签名与真机 NFC 管理验证 |
-| 启动 / 更新 / 防拆 | 架构约束、复位 / 供电门控和测试计划 | 生产可信启动、签名更新、防降级、调试闭合及防拆策略部署 |
-| 实物抗攻击 | 已列验收步骤和失败判据 | EMC / ESD、故障注入、SCA、PAD 等均 NOT_RUN |
+| 电路 / PCB / 结构 | R05 十键、H573、SE050、DFR0555、NFC、供电 / LCD 故障互锁；10 页 / 151 BOM / 四层，ERC / DRC 零问题，705 项核对，制造导出 | 首板 DFM、LCD 电压下限 / 电容 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
+| 本地六位 PIN | 6+6 首次设置策略、独立十键、完整猜测持久预扣、SE HKDF / 比较、11 次失败擦除锁存、改 PIN 擦除锁存 | 真实首次初始化器、完整 ALL-DATA 擦除事务、SE 原生 ACL 强制；当前锁存不等于数据已全部删除 |
+| PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试 | 真实加密握手、可信时间、射频离场 IRQ、USB reset / suspend 及各协议实际验证状态的 Root 接线 |
+| LCD / 十键 / 诊断 | 独立 Rust 驱动、版本明确、断电故障锁存、按键去抖 / 组合键拒绝；真实 R05 引脚构建约束 | 生产 Secure 归属、板上时序与故障响应；ARM 诊断没有认证功能 |
+| SE / MCU 密码 | T=1、SCP03、HKDF / 签名 / 持久计数、OTP MACOneShot 候选；H573 SAES / RNG 与受限 MMIO | 实片身份、唯一配对、profile / ACL、容量与耗尽、掉电原子性、KAT 和时钟 / DMA / GTZC / 调试配置 |
+| FIDO | 已固定并修改的 OpenSK 子集与注册 / 登录 / U2F / hmac-secret 网关 | 真实 H573 Env / 硬件密钥、CTAPHID / NFC 和完整 Root dispatcher |
+| TOTP / HOTP | 6 位设备显示、RFC 测试、SE MAC 不读取种子、HOTP 持久预增、不导出验证码的 API | 种子导入 / 删除、密封账户目录、受保护 RTC / 时间管理、Root 适配和真机互通 |
+| OpenPGP / PIV / SSH | 已拉取上游研究；协议角色与会话权限边界；管理器入口 | 真正的 OpenPGP / PIV 应用、导入 / 生成 / 证书管理与 CCID；SSH FIDO / PIV / OpenPGP 分别验证，不能视为已有可用实现 |
+| notes / recovery | 加密快照、记录隔离、解析 / 事务模块 | Root 真实密钥、管理器私密数据通道、完整销毁和端到端验收 |
+| GPUI 管理器 | 英文桌面界面源码；所有设备操作在缺失真实安全后端时明确拒绝 | 认证加密连接、真实导入 / 设备操作、三桌面安装包；iOS / iPadOS / Android App、权限、签名与真机测试 |
+| 生产安全 | 设计约束和负向测试计划 | 可信启动、签名升级、防回滚、调试关闭、完整受保护 Root、实物防拆 / SCA / FI；均不得以模型代替 |
 
-## 当前证据
+六位 PIN 只有一百万种组合，不能靠 PIN 长度抵挡离线提取。在线限次、不可导出 SE 对象、真实硬件隔离及物理测试缺一不可。SE_EN 逻辑只做故障互锁，不独立判断 PIN 正确。
 
-- **软件提交**：`029ca7f4ded00bc4fc7c4ddc8fabeeff9405c559`，三平台各 **191** 项测试；[CI 42723819737](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42723819737) 全部成功，完整日志和注释中 warning 均为 0。
-- **CAD**：89 个文件摘要保持绑定；[板网核对](../hardware/r04/review/board-check.json)和[CAD 清单](../hardware/r04/review/cad-manifest.json)。
-- **产物**：三平台锁定开发包和电气诊断；已核对下载摘要 / 架构，未执行这些发布二进制或连接真实设备。见[开发包记录](NATIVE_BUILDS.md)。
-- **交付**：[生产预检](../manufacturing/readiness-report.json)仍有 13 项未完成条件。它们不等于下述安全风险的数量。
+## 证据范围
 
-机器证据：[CI 摘要](ci-evidence-r04.json)、[构建记录](r04-build-report.json)、[依赖审计来源](dependency-audit-provenance.json)。历次结果保留在[验证时间线](VALIDATION.md)，旧结果不覆盖后续源码。
+- 当前 CAD：[板网报告](../hardware/r05/review/board-check.json)、[CAD 摘要](../hardware/r05/review/cad-manifest.json)。
+- 当前软件：[R05 本地验证记录](r05-validation.json)；GitHub CI 须对实际上传提交另行核对，不能用本地记录替代。
+- 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[公开 SE 布局](../manufacturing/se-pin-layout-r05.json)。
+- 诊断用途：[R05 目标说明](../firmware/r05/README.md)；公开 LCD / 键 / Flash ID，不验证真实 PIN，不启用充电或 USB/NFC 协议。
+- 旧 R04 的 [CI](ci-evidence-r04.json)、[手册](../manufacturing/BUILD_MANUAL_ZH.md)及 [预检](../manufacturing/readiness-report.json)仅供历史追溯，不能充当 R05 放行证据。
 
-## 交付前的关键工作
-
-1. 完成生产启动、隔离、真实 Root 与硬件密钥 / 授权路径。
-2. 完成 SE / 传感器配对、持久 PIN、模板 / 重置及可用性策略。
-3. 接通 USB / NFC 认证、认证加密管理和真实桌面操作。
-4. 完成首板、三平台 / 手机互通和独立安全测试，修复后复测。
-5. 冻结生产资料，再对 K01 / K02 / K03 逐台验收。
-
-电路中的 SE 使能门不是独立指纹证明。八次指纹失败锁定、标签 / 密钥槽耗尽、对称配对密钥、LCD 路径和触点桥接等仍需评审；完整事项见[对抗性复核](ADVERSARIAL_REVIEW_R04.md)。
-
-## 固定需求
-
-设备指纹必须先通过，PIN 仅附加；白背光 16 × 2 英文字符 LCD、四键、唯一 USB-C 母口兼充电、NFC；FIDO2 / U2F / hmac-secret、凭据、notes / recovery codes；无 OTP。自研运行代码采用 Rust，允许按模块使用 Zig，不引入自写 C / C++。
+生产前须完成上述缺口、合成数据负向测试、独立实物审查、修复复测，再分别验收 K01 / K02 / K03。当前不应把诊断镜像刷进三把最终密钥并存入真实秘密。

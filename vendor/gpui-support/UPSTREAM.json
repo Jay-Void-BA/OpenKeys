@@ -1,0 +1,138 @@
+[
+  {
+    "name": "gpui-ce",
+    "version": "0.3.0",
+    "crate_sha256": "7691a905fc9b283228c14b9b5ca93d002be88e203aa5878746152210b33c8dbf",
+    "url": "https://crates.io/api/v1/crates/gpui-ce/0.3.0/download",
+    "modified_files": [
+      "Cargo.toml"
+    ]
+  },
+  {
+    "name": "gpui_ce_linux",
+    "version": "0.3.0",
+    "crate_sha256": "e471c10455ec436ba6d9a41f2e08db60576283ccd1f51a844e4d72810a297e28",
+    "url": "https://crates.io/api/v1/crates/gpui_ce_linux/0.3.0/download",
+    "modified_files": [
+      "Cargo.toml",
+      "src/linux/platform.rs"
+    ]
+  },
+  {
+    "name": "metal",
+    "version": "0.33.0",
+    "crate_sha256": "c7047791b5bc903b8cd963014b355f71dc9864a9a0b727057676c1dcae5cbc15",
+    "url": "https://crates.io/api/v1/crates/metal/0.33.0/download",
+    "modified_files": [
+      "Cargo.toml"
+    ]
+  },
+  {
+    "name": "wgsl-rs",
+    "version": "0.1.0-beta.1",
+    "crate_sha256": "20205e0ed5ccc5543652a6e5699455da154d9dc722c74e9e33f8514260d710e1",
+    "url": "https://crates.io/api/v1/crates/wgsl-rs/0.1.0-beta.1/download",
+    "modified_files": [
+      "Cargo.toml"
+    ]
+  },
+  {
+    "name": "accesskit_unix",
+    "version": "0.22.1",
+    "crate_sha256": "03e156ed3802e35eefe894ef2671bc6c889303d8a7e110b5e1b48f504b91362f",
+    "url": "https://crates.io/api/v1/crates/accesskit_unix/0.22.1/download",
+    "modified_files": [
+      "Cargo.toml",
+      "src/atspi/bus.rs",
+      "src/atspi/object_address.rs",
+      "src/atspi/object_id.rs",
+      "src/context.rs",
+      "src/executor.rs"
+    ]
+  },
+  {
+    "name": "accesskit_atspi_common",
+    "version": "0.19.1",
+    "crate_sha256": "023da0e5097f46df7092d5280b02efb9bbf8d93298daeced42652463e357d636",
+    "url": "https://crates.io/api/v1/crates/accesskit_atspi_common/0.19.1/download",
+    "modified_files": [
+      "Cargo.toml",
+      "src/action.rs",
+      "src/rect.rs"
+    ]
+  },
+  {
+    "name": "atspi",
+    "version": "0.29.0",
+    "crate_sha256": "c77886257be21c9cd89a4ae7e64860c6f0eefca799bb79127913052bd0eefb3d",
+    "url": "https://crates.io/api/v1/crates/atspi/0.29.0/download",
+    "modified_files": [
+      "Cargo.toml"
+    ]
+  },
+  {
+    "name": "atspi-common",
+    "version": "0.13.0",
+    "crate_sha256": "20c5617155740c98003016429ad13fe43ce7a77b007479350a9f8bf95a29f63d",
+    "url": "https://crates.io/api/v1/crates/atspi-common/0.13.0/download",
+    "modified_files": [
+      "Cargo.toml",
+      "src/action.rs",
+      "src/cache.rs",
+      "src/error.rs",
+      "src/events/cache.rs",
+      "src/events/event_body.rs",
+      "src/events/event_wrappers.rs",
+      "src/events/keyboard.rs",
+      "src/events/mouse.rs",
+      "src/events/object.rs",
+      "src/events/registry.rs",
+      "src/events/traits.rs",
+      "src/events/window.rs",
+      "src/interface.rs",
+      "src/lib.rs",
+      "src/macros.rs",
+      "src/object_match.rs",
+      "src/object_ref.rs",
+      "src/relation_type.rs",
+      "src/role.rs",
+      "src/state.rs"
+    ]
+  },
+  {
+    "name": "atspi-proxies",
+    "version": "0.13.0",
+    "crate_sha256": "2230e48787ed3eb4088996eab66a32ca20c0b67bbd4fd6cdfe79f04f1f04c9fc",
+    "url": "https://crates.io/api/v1/crates/atspi-proxies/0.13.0/download",
+    "modified_files": [
+      "Cargo.toml",
+      "src/accessible.rs",
+      "src/collection.rs",
+      "src/device_event_controller.rs",
+      "src/proxy_ext.rs",
+      "src/socket.rs",
+      "src/text.rs"
+    ]
+  },
+  {
+    "name": "zbus-lockstep",
+    "version": "0.5.2",
+    "crate_sha256": "6998de05217a084b7578728a9443d04ea4cd80f2a0839b8d78770b76ccd45863",
+    "url": "https://crates.io/api/v1/crates/zbus-lockstep/0.5.2/download",
+    "modified_files": [
+      "Cargo.toml",
+      "src/lib.rs",
+      "src/macros.rs"
+    ]
+  },
+  {
+    "name": "zbus-lockstep-macros",
+    "version": "0.5.2",
+    "crate_sha256": "10da05367f3a7b7553c8cdf8fa91aee6b64afebe32b51c95177957efc47ca3a0",
+    "url": "https://crates.io/api/v1/crates/zbus-lockstep-macros/0.5.2/download",
+    "modified_files": [
+      "Cargo.toml",
+      "src/lib.rs"
+    ]
+  }
+]

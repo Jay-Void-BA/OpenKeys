@@ -1,11 +1,39 @@
-# Android / iOS NFC manager feasibility
+# Mobile manager integration targets
 
-This is an integration specification, **not a working mobile app**. No APK/IPA or mobile device security test has been delivered. Product UI must be English; own portable logic should use Rust. Native OS bindings remain platform code that must be reviewed separately.
+This is a specification, **not a working APK/IPA**. English UI and portable own
+logic use Rust; native OS bindings, app signing and hardware tests remain separate
+work. GPUI CE mobile source availability does not establish a working transport.
 
-Android can exchange ISO-DEP data using [`IsoDep.transceive`](https://developer.android.com/reference/android/nfc/tech/IsoDep), with reader mode, bounded APDU size/timeouts and cancellation when the tag is removed. iOS offers [`NFCISO7816Tag`](https://developer.apple.com/documentation/corenfc/nfciso7816tag) and APDU commands; the app needs the NFC capability, usage description and declared application identifiers. These APIs establish a possible transport, not device authentication or guaranteed access to every FIDO/security-key AID. Validate the actual selected management AID, OS versions, session duration and NFC controller behavior.
+| Platform | Requested transport | Required API / qualification |
+|---|---|---|
+| iOS | NFC and USB-C | CoreNFC ISO7816 foreground sessions; USB-C CCID / CryptoTokenKit with smartcard entitlement, supported device and OS |
+| iPadOS | USB-C | CCID / CryptoTokenKit and entitlement; no NFC claim |
+| Android | NFC and USB-C | IsoDep reader mode and USB Host permission / CCID support; OTG and device tests |
+| macOS / Windows / Linux | USB | Standard FIDO HID plus CCID / management AID design; verify composite interfaces and driver access separately |
 
-A dedicated management application/protocol is required alongside standard FIDO. It must authenticate the device and host, encrypt and sequence every record, bind each operation to the current connection, and reject replay/truncation. Do not invent an unaudited crypto handshake or treat UID/AID/VID/PID as device identity. No plaintext NDEF notes, recovery codes, PINs or secrets.
+iOS does not offer a general-purpose desktop USB HID API. The
+[YubiKit iOS reference](https://github.com/Yubico/yubikit-ios) documents NFC and
+USB-C CCID / CryptoTokenKit on iOS 16+, and the
+[registration guidance](https://developers.yubico.com/Mobile/iOS/App_Registration_Process/)
+distinguishes Lightning MFi requirements from NFC / USB-C. This is API precedent,
+not confirmation that Apple's entitlement or arbitrary OpenKeys AID is already
+approved. Xcode, the owner's signing team and actual devices are required.
 
-Flow: start foreground scan → authenticate device channel → device fingerprint → optional **device-button** PIN → on-device request review/confirmation → one operation → revoke on timeout/removal/suspend. Phone biometrics do not satisfy the hardware fingerprint condition. Lists/titles/import previews require authorization; no automatic private refresh while locked. Large imports need resumable encrypted transactions, bounded storage and new confirmation for commit.
+A dedicated ISO7816 management AID must authenticate both device and paired host,
+encrypt and sequence every message, bind version / transcript / peer / transport
+epoch, reject replay/truncation and limit input sizes. UID, AID and USB descriptors
+are discovery metadata, never authentication. SE-side SCP03 does not by itself
+provide a phone-to-key secure channel.
 
-A usable implementation depends on the not-yet-implemented device APDU handler, authenticated channel and vault backend. iOS builds/signing also require Xcode and the user's signing team; neither a simulator nor this Linux environment can validate NFC interaction with an iPhone. Three-platform desktop GUI code does not imply mobile NFC support.
+Both local hardware PIN and separate protocol PINs use the
+[30-second paired-session rules](../../docs/PIN_SESSIONS_R05.md). USB attachment,
+NFC polling and keepalive do not extend them. Field loss, reconnect, suspend,
+manual lock or a fault revokes immediately. Sensitive requests require a new
+on-key confirmation. Standard third-party FIDO / CCID clients must not inherit a
+manager lease. Phone biometrics or an OS PIN cannot replace the key's local PIN.
+
+OTP import is bounded and encrypted; no seed export, raw MAC, calculate-all or
+keyboard output. Six-digit codes appear only on the key LCD. Notes / recovery
+lists and titles remain inaccessible before hardware authorization. Implementing
+all this depends on the missing production device handlers and authenticated
+channel, not just a phone UI or an NFC transceive call.

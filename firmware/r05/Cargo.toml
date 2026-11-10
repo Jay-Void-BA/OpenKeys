@@ -1,0 +1,33 @@
+[package]
+name = "openkeys-h573-r05"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+build = "build.rs"
+
+[features]
+r05-diagnostics = []
+# Explicit physical LCD revision; the diagnostic defaults to the R05 BOM V1.1.
+lcd-v1-0 = []
+
+[[bin]]
+name = "openkeys-r05-diagnostics"
+path = "src/main.rs"
+required-features = ["r05-diagnostics"]
+test = false
+bench = false
+
+[target.'cfg(target_arch = "arm")'.dependencies]
+openkeys-board = { path = "../board" }
+device-policy = { path = "../../crates/device-policy" }
+embassy-stm32 = { version = "=0.6.0", features = ["stm32h573ri", "unstable-pac"] }
+cortex-m = { version = "=0.7.10", features = ["critical-section-single-core"] }
+cortex-m-rt = "=0.7.7"
+embedded-hal-bus = "=0.3.0"
+embedded-hal = "=1.0.0"
+
+[build-dependencies]
+sha2 = "=0.10.9"
+
+[lints]
+workspace = true

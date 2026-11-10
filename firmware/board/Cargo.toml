@@ -10,6 +10,8 @@ device-policy = { path = "../../crates/device-policy" }
 device-vault = { path = "../../crates/device-vault" }
 openkeys-se-transport = { path = "../../crates/se-transport" }
 embedded-hal = "=1.0.0"
+zeroize = { version = "1.9", default-features = false }
+sha2 = { version = "=0.10.9", default-features = false }
 
 [build-dependencies]
 sha2 = "=0.10.9"
@@ -19,6 +21,8 @@ cortex-m = { version = "=0.7.10", features = ["std"] }
 critical-section = { version = "=1.2.0", features = ["std"] }
 embedded-hal-bus = "=0.3.0"
 aes-gcm = { version = "=0.10.3", default-features = false, features = ["aes"] }
+hmac = { version = "=0.12.1", default-features = false }
+sha1 = { version = "=0.10.6", default-features = false }
 
 [lints]
 workspace = true

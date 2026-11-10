@@ -1,0 +1,20 @@
+OpenKeys reset RC - independent open-drain input, not supervisor model
+* R11=10k, C19=10n. Driver10ohm and input20pF are explicit assumptions.
+Vrail supply 0 3.3
+Rpull supply nrst 10k
+Creset nrst 0 10n
+Cinput nrst 0 20p
+Vfault fault 0 PULSE(0 3.3 1m 1n 1n 20u 2m)
+Sfault nrst 0 fault 0 reset_switch
+.model reset_switch SW(Ron=10 Roff=1e12 Vt=1.65 Vh=0)
+.control
+set noaskquit
+set wr_singlescale
+set wr_vecnames
+tran 20n 1.5m
+meas tran nrst_fall WHEN v(nrst)=0.99 FALL=1
+meas tran nrst_recover WHEN v(nrst)=2.31 RISE=1
+wrdata reset-transient.txt v(nrst) v(fault)
+quit
+.endc
+.end

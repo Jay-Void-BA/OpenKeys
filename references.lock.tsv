@@ -9,3 +9,14 @@ zig-keylib	https://github.com/Zig-Sec/keylib.git	f887bde9ef010dfdede84cf3c62adba
 zig-passkeez	https://github.com/Zig-Sec/PassKeeZ.git	dc5fd189366ff19b9a1d3d91709d64bb4b08aea5	master
 sparkfun-fpc2534-lib	https://github.com/sparkfun/SparkFun_FPC2534_Arduino_Library.git	5d0d1727ea05e79ad3c2e3c84fb933dba37f2723	main
 nxp-nano-reference-only	https://github.com/NXPPlugNTrust/nano-package.git	26d55b43225bc84de364057660cba676fa69f6e4	master
+dfrobot-dfr0555-register-reference-only	https://github.com/DFRobot/DFRobot_RGBLCD1602.git	8e2b24daf12847dc1ebe6405580c7e8b1101551f	master
+
+# R05 read-only comparison; does not replace the separately vendored OpenSK commit
+pico-fido-r05-study	https://github.com/polhenarejos/pico-fido	99337e1204348921452a3ce6613e8e17617d4c7d	read-only study; own Rust runtime not copied from C/C++
+pico-hsm-r05-study	https://github.com/polhenarejos/pico-hsm	5d6a32c81b2367fb83e5320400f61217d2bd0d2f	read-only study; own Rust runtime not copied from C/C++
+pico-keys-sdk-r05-study	https://github.com/polhenarejos/pico-keys-sdk	abf333946af04b13f2ab8f4ed05bbb5f1de5765b	read-only study; own Rust runtime not copied from C/C++
+opensk-r05-study	https://github.com/google/OpenSK	f53621c33a02eee001cae82a87aa719fca61565b	read-only study; own Rust runtime not copied from C/C++
+canokey-core-r05-study	https://github.com/canokeys/canokey-core	a349b268e12953dd85169e9649091c4f91ce7c68	read-only study; own Rust runtime not copied from C/C++
+canokey-stm32-r05-study	https://github.com/canokeys/canokey-stm32	350deb9bc4c9618882b53e9337dc1d642df1a035	read-only study; own Rust runtime not copied from C/C++
+solo2-r05-study	https://github.com/solokeys/solo2	45311f0b6761187d409ea3e7ea34f896810eb156	read-only study; own Rust runtime not copied from C/C++
+solo2-hw-r05-study	https://github.com/solokeys/solo2-hw	e7d964cb1ce775b1faa1c0bd1e694b6a124aa630	read-only study; own Rust runtime not copied from C/C++

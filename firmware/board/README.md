@@ -1,3 +1,5 @@
+> R05 adds `dfr0555`, `ten_keys`, `pin_ui` and `otp`; see [R05 target](../r05/README.md). The four-key, FPC and old LCD paths below belong to historical R04. The shared crate retains its R04 build contract; the actual R05 target independently binds R05 PCB/pinout. Production Root is not integrated.
+
 # R04 protected-domain board drivers
 
 This no_std Rust crate is written for the actual routed R04 PCB, not an arbitrary development board. The build checks SHA256 of that PCB and pinout and compares every GPIO/package-pin/alternate-function mapping. The policy, drivers and boot/security configuration must be reviewed again when any of these change.

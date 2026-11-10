@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "checked_utc": "2026-11-10",
+  "purpose": "Read-only source study; not a firmware build or certification",
+  "recursive_submodules_fetched": false,
+  "repositories": [
+    {
+      "name": "pico-fido",
+      "repository": "https://github.com/polhenarejos/pico-fido",
+      "commit": "99337e1204348921452a3ce6613e8e17617d4c7d"
+    },
+    {
+      "name": "pico-hsm",
+      "repository": "https://github.com/polhenarejos/pico-hsm",
+      "commit": "5d6a32c81b2367fb83e5320400f61217d2bd0d2f"
+    },
+    {
+      "name": "pico-keys-sdk",
+      "repository": "https://github.com/polhenarejos/pico-keys-sdk",
+      "commit": "abf333946af04b13f2ab8f4ed05bbb5f1de5765b"
+    },
+    {
+      "name": "opensk",
+      "repository": "https://github.com/google/OpenSK",
+      "commit": "f53621c33a02eee001cae82a87aa719fca61565b"
+    },
+    {
+      "name": "canokey-core",
+      "repository": "https://github.com/canokeys/canokey-core",
+      "commit": "a349b268e12953dd85169e9649091c4f91ce7c68"
+    },
+    {
+      "name": "canokey-stm32",
+      "repository": "https://github.com/canokeys/canokey-stm32",
+      "commit": "350deb9bc4c9618882b53e9337dc1d642df1a035"
+    },
+    {
+      "name": "solo2",
+      "repository": "https://github.com/solokeys/solo2",
+      "commit": "45311f0b6761187d409ea3e7ea34f896810eb156"
+    },
+    {
+      "name": "solo2-hw",
+      "repository": "https://github.com/solokeys/solo2-hw",
+      "commit": "e7d964cb1ce775b1faa1c0bd1e694b6a124aa630"
+    }
+  ]
+}

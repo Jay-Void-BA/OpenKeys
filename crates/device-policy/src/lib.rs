@@ -9,6 +9,9 @@ pub mod biometric;
 pub mod execution;
 pub mod lcd;
 pub mod pin;
+pub mod pin_only;
+pub mod pin_setup;
+pub mod session;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Operation {
@@ -26,6 +29,18 @@ pub enum Operation {
     FidoRegister,
     FidoSign,
     DeriveHmacSecret,
+    ShowTotp,
+    ShowHotp,
+    ImportOtp,
+    DeleteOtp,
+    SetTime,
+    OpenPgp,
+    Piv,
+    ProtocolPin,
+    GenerateKey,
+    ImportKey,
+    DeleteKey,
+    UnlockSession,
 }
 impl Operation {
     /// Fixed maximum duration for ONE already approved operation. This is not
@@ -42,8 +57,32 @@ impl Operation {
             | Self::FirmwareUpdate
             | Self::FactoryReset
             | Self::FidoRegister => 300_000,
+            Self::ImportOtp
+            | Self::DeleteOtp
+            | Self::SetTime
+            | Self::ProtocolPin
+            | Self::GenerateKey
+            | Self::ImportKey
+            | Self::DeleteKey => 300_000,
             _ => 15_000,
         }
+    }
+    pub const fn is_r05_only(self) -> bool {
+        matches!(
+            self,
+            Self::ShowTotp
+                | Self::ShowHotp
+                | Self::ImportOtp
+                | Self::DeleteOtp
+                | Self::SetTime
+                | Self::OpenPgp
+                | Self::Piv
+                | Self::ProtocolPin
+                | Self::GenerateKey
+                | Self::ImportKey
+                | Self::DeleteKey
+                | Self::UnlockSession
+        )
     }
     /// This decision is device policy; a host cannot downgrade the requirement.
     pub const fn requires_additional_pin(self) -> bool {
@@ -125,6 +164,9 @@ pub struct Authorization {
     issued: u64,
     expires: u64,
     generation: u64,
+    // Session consumption fixes this before dispatch; delayed activation
+    // must never create another full operation time budget.
+    execution_deadline: Option<u64>,
 }
 impl Authorization {
     pub fn request(&self) -> &Request {
@@ -204,6 +246,9 @@ impl<V: SecureVerifier> Gate<V> {
         mut clock: impl FnMut() -> u64,
     ) -> Result<(), Error> {
         self.pending = None;
+        if request.operation.is_r05_only() {
+            return Err(Error::Rejected);
+        }
         let start = clock();
         self.observe_time(start)?;
         let mut expires = start.checked_add(15_000).ok_or(Error::CounterExhausted)?;
@@ -250,6 +295,7 @@ impl<V: SecureVerifier> Gate<V> {
             issued: self.last_time,
             expires: grant.expires,
             generation: grant.generation,
+            execution_deadline: None,
         })
     }
     /// Invoke on disconnect, suspend, reset, cancellation, error or lock.

@@ -28195,3 +28195,5 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+R05 GPUI CE 0.3.0 and host support forks: original crates.io sources, copyright and licenses retained in vendor/gpui-support. Exact patches and SHA-256 archive/source inventories are included there; no RustSec warning exemptions. PicoKeys, CanoKey, new OpenSK and SoloKeys commits in references-r05.lock.json are source-study references, not newly copied C/C++ runtime code. NXP plug-and-trust 7102413e0457d3dfa4fc4be686ca8ec50bd9f5e2 supplies OTP APDU facts; own Rust encoding, no NXP C compiled.

@@ -1,5 +1,7 @@
 # R0.4 元器件与结构件：境内采购渠道
 
+> **版本更新：R0.5 已正式取消指纹、改为十键和 DFR0555 LCD。** 当前屏幕从 [DFRobot 中国商城](https://www.dfrobot.com.cn/goods-1697.html)核验为 ¥55、显示有货（2026-11-10，未下单）。R0.5 以[新版制作说明](BUILD_R05_ZH.md)和[新版 BOM](../hardware/r05/BOM.csv)为准。下表旧指纹 / Newhaven LCD / 外壳仅属 R0.4 历史采购表，不要购买来混装。
+
 [制造入口](README.md) · [完整制作说明](BUILD_MANUAL_ZH.md) · [板上采购表](procurement-r04-board.csv) · [板外采购表](procurement-r04-external.csv)
 
 核对日期：**2026-11-10**。适用于先做 1 块工程样板、最终制作 3 把的采购评审。当前生产放行仍为 **BLOCKED**；本页不改变硬件、固件或安全资格状态，也没有下单、锁库存或取得专项报价。

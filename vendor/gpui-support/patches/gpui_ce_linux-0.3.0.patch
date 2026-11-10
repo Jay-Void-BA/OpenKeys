@@ -1,0 +1,45 @@
+--- a/gpui_ce_linux-0.3.0/Cargo.toml
++++ b/gpui_ce_linux-0.3.0/Cargo.toml
+@@ -93,7 +93,7 @@
+ optional = true
+ 
+ [target.'cfg(any(target_os = "linux", target_os = "freebsd"))'.dependencies.ashpd]
+-version = "0.13"
++version = "0.14"
+ features = [
+     "async-io",
+     "notification",
+@@ -179,7 +179,7 @@
+ version = "4"
+ 
+ [target.'cfg(any(target_os = "linux", target_os = "freebsd"))'.dependencies.oo7]
+-version = "0.6"
++version = "0.7"
+ features = [
+     "async-std",
+     "native_crypto",
+@@ -322,3 +322,5 @@
+ [lints.rust.unexpected_cfgs]
+ level = "allow"
+ priority = 0
++
++[workspace]
+--- a/gpui_ce_linux-0.3.0/src/linux/platform.rs
++++ b/gpui_ce_linux-0.3.0/src/linux/platform.rs
+@@ -23,7 +23,6 @@
+         Request,
+         inhibit::{InhibitFlags, InhibitOptions, InhibitProxy},
+     },
+-    enumflags2::BitFlags,
+ };
+ use calloop::{EventLoop, LoopHandle, LoopSignal, channel::Sender};
+ use futures::channel::oneshot;
+@@ -1753,7 +1752,7 @@
+     let request = proxy
+         .inhibit(
+             None,
+-            BitFlags::from(InhibitFlags::Suspend),
++            InhibitFlags::SUSPEND,
+             InhibitOptions::default().set_reason(reason.as_str()),
+         )
+         .await

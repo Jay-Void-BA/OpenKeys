@@ -1,3 +1,5 @@
+> Historical R04 egui prototype. The current R05 UI target is [GPUI](../manager-gpui/README.md); neither has a production device backend.
+
 # AuthDesk development build
 
 English Rust/egui GUI for macOS, Windows and Linux. This is **not a usable
@@ -14,10 +16,10 @@ default key. Never use this build for real recovery codes or credentials.
    synchronous fallback; compositor presentation still needs platform testing.
 3. The asynchronous picker returns paths only. No file contents are read and
    no path is displayed by AuthDesk while the picker is open or after it closes.
-4. A fresh device fingerprint verification is required before a background
+4. A fresh device PIN verification is required before a background
    worker opens the selected files. A path, picker completion or UI click does
-   not manufacture a lease. Sensitive device writes additionally require the
-   four-button PIN, an import digest bound to the device request, and fresh
+   not manufacture a lease. Every private operation uses the ten physical decimal keys on R05,
+   an import digest bound to the device request, and fresh
    physical confirmation; this backend/protocol is **not implemented**.
 5. The one worker checks cancellation and both clocks between bounded reads,
    after parsing and before handing over a result. The UI accepts results only
@@ -53,4 +55,4 @@ Input/entry strings are zeroized on drop on a best-effort basis. OS paging,
 core dumps, parser temporaries, GUI text/texture caches and compositor memory
 are outside that guarantee. This application cannot protect secrets from a
 compromised host or erase a screenshot. The device must independently enforce
-fingerprint/PIN/request binding and never trust this host privacy guard as UV.
+local PIN/request binding and never trust this host privacy guard as UV.

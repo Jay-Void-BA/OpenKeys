@@ -1,0 +1,28 @@
+[package]
+name = "openkeys-manager"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+gui = ["dep:gpui", "dep:gpui_platform"]
+wire-tests = ["dep:atspi-common", "dep:zbus"]
+
+[dependencies]
+gpui = { package = "gpui-ce", version = "=0.3.0", default-features = false, optional = true }
+gpui_platform = { package = "gpui_ce_platform", version = "=0.3.0", features = ["x11", "wayland"], optional = true }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# Exercise the patched accessibility wire boundary in GUI integration tests.
+atspi-common = { version = "=0.13.0", optional = true }
+zbus = { version = "=6.2.1", optional = true }
+
+[[bin]]
+name = "openkeys-manager"
+path = "src/main.rs"
+required-features = ["gui"]
+test = false
+bench = false
+
+[lints]
+workspace = true

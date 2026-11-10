@@ -81,7 +81,7 @@ impl Wake for PickerWake {
 struct HardwareBackend;
 impl HardwareBackend {
     fn unlock(&mut self) -> Result<Access, &'static str> {
-        // The R04 authenticated sensor/device channel is not integrated yet.
+        // The R05 authenticated PIN/device channel is not integrated yet.
         // Fail closed: discovery, a click, or an OS biometric prompt is not UV.
         Err(
             "Device authorization is not integrated. This build cannot unlock a vault or accept real secrets.",
@@ -297,7 +297,9 @@ impl AuthDesk {
             if let Poll::Ready(files) = future.as_mut().poll(&mut Context::from_waker(&waker)) {
                 self.import_flow = match files {
                     Some(files) if !files.is_empty() && files.len() <= import_task::MAX_FILES => {
-                        self.message = "Files selected. Verify your device fingerprint again before files are read.".into();
+                        self.message =
+                            "Files selected. Enter your device PIN again before files are read."
+                                .into();
                         ImportFlow::Selected(files.into_iter().map(Into::into).collect())
                     }
                     Some(_) => {
@@ -388,13 +390,13 @@ impl AuthDesk {
         if !self.unlocked() {
             egui::Frame::group(ui.style()).inner_margin(24.0).show(ui,|ui| {
                 ui.heading("Private by default"); ui.add_space(10.0);
-                ui.label("Verify your fingerprint on the hardware key to view private records.");
-                ui.label("Fingerprint is mandatory. Sensitive management also requires the device PIN, entered with its four buttons.");
+                ui.label("Enter your PIN on the hardware key to view private records.");
+                ui.label("Use the ten physical keys (0-9). The computer never accepts your device PIN.");
                 ui.add_space(18.0);
                 ui.horizontal(|ui| {
                     let can_request = !self.import_worker.busy()
                         && matches!(self.import_flow, ImportFlow::Idle | ImportFlow::Selected(_));
-                    if ui.add_enabled(can_request, egui::Button::new("Request fingerprint verification")).clicked(){self.request_unlock(ui.ctx());}
+                    if ui.add_enabled(can_request, egui::Button::new("Request device PIN verification")).clicked(){self.request_unlock(ui.ctx());}
                     if matches!(self.import_flow, ImportFlow::Masking { .. } | ImportFlow::Selected(_))
                         && ui.button("Cancel import selection").clicked() {self.lock();}
                 });
@@ -492,7 +494,9 @@ impl AuthDesk {
             }
         } else {
             ui.label("Device-private records are retrieved only through an authenticated, authorized hardware connection.");
-            ui.label("Each operation requires a fresh device fingerprint and confirmation. Deletion also requires the device PIN.");
+            ui.label(
+                "Each operation requires a fresh device PIN and confirmation on the hardware key.",
+            );
         }
         if !self.message.is_empty() {
             ui.add_space(20.0);

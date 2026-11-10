@@ -1,0 +1,49 @@
+{
+  "revision": "0.5",
+  "simulator": "** ngspice-47 : Circuit level simulation program",
+  "antenna": {
+    "method": "finite-cross-section Neumann centerline estimate",
+    "segments": [
+      2362,
+      4719
+    ],
+    "step_mm": [
+      0.25,
+      0.125
+    ],
+    "L_h": [
+      1.2047496443680777e-06,
+      1.1965148426754242e-06
+    ],
+    "numerical_delta_fraction": 0.00688232305939502,
+    "estimated_length_m": 0.5888892775020028,
+    "trace_width_mm": 0.5,
+    "copper_um": 35,
+    "dc_resistance_ohm_at_20C_estimate": 0.580140065379116,
+    "fm11_internal_nominal_pf": 50,
+    "external_initial_pf": 56,
+    "assumed_parasitic_pf": 5,
+    "nominal_resonance_hz": 13810188.20136497,
+    "illustrative_corner_resonance_hz": [
+      11739929.221309487,
+      16432477.833484624
+    ],
+    "corner_assumptions": "L estimate +/-20%; chip40..60pF and parasitic2..12pF are exploration assumptions, not manufacturer tolerance bounds",
+    "qualified": false
+  },
+  "reset_rc": {
+    "r_ohm": 10000,
+    "c_f": 1e-08,
+    "assumed_pin_c_f": 2e-11,
+    "assumed_driver_ohm": 10,
+    "threshold_measurements_s": {
+      "nrst_fall": 0.00100012,
+      "nrst_recover": 0.00114054
+    },
+    "supervisor_delay_included": false,
+    "tps3702_typical_hl_delay_s": 1.9e-05,
+    "tps3702_guaranteed_max_delay_available": false
+  },
+  "scope": "Passive network and approximate inductance only; no IC switcher, battery chemistry, EMC, ESD, SCA or fault-injection qualification",
+  "manufacturing_security_release": false
+}

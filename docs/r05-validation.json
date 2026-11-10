@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "revision": "0.5",
+  "stage": "ENGINEERING_CANDIDATE",
+  "production_release": false,
+  "physical_test_result": "NOT_RUN",
+  "workspace_tests_passed": 240,
+  "dbus_wire_fixture_tests_passed": 2,
+  "strict_clippy": "PASSED (workspace and both R05 ARM LCD profiles)",
+  "dependency_audit": {
+    "cargo_audit": "0.22.2",
+    "deny_warnings": true,
+    "result": "PASSED",
+    "packages": 840,
+    "rustsec_commit": "58a64e69d7a08a2b83a80efa6e4b018a9acb51fc"
+  },
+  "r05_cad": {
+    "board_sha256": "ea044bf4997073a4f13ba3af3ebe06452fceee466e52a8a6e2bc61bb07f890d3",
+    "independent_checks": 705,
+    "drc_violations": 0,
+    "unconnected": 0,
+    "cad_manifest": "hardware/r05/review/cad-manifest.json"
+  },
+  "r05_diagnostics": "firmware/dist/r05/diagnostic-manifest.json",
+  "gui_forks_reconstructed_from_original_archives": 11,
+  "ci_result": "PENDING publication; local checks are not a GitHub CI result",
+  "critical_open_items": [
+    "Production secure Root / boot / isolation / debug lifecycle",
+    "SE native enforcement of local PIN for private-key operations",
+    "Complete all-user-data erasure and first-boot commissioning services",
+    "Authenticated encrypted manager transport and actual device integrations",
+    "OpenPGP/PIV production applications and mobile app bundles",
+    "Physical LCD/NTC/charging/RF/EMC/tamper/FI/SCA qualification"
+  ]
+}

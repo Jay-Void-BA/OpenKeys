@@ -1,0 +1,43 @@
+--- a/atspi-0.29.0/Cargo.toml
++++ b/atspi-0.29.0/Cargo.toml
+@@ -50,6 +50,7 @@
+ repository = "https://github.com/odilia-app/atspi"
+ 
+ [features]
++zbus = ["zbus/default-rt"]
+ connection = ["dep:atspi-connection"]
+ default = [
+     "connection",
+@@ -58,7 +59,7 @@
+     "wrappers",
+ ]
+ p2p = ["atspi-connection/p2p"]
+-proxies = ["dep:atspi-proxies"]
++proxies = ["dep:atspi-proxies", "zbus"]
+ tokio = ["zbus/tokio"]
+ tracing = ["atspi-connection/tracing"]
+ wrappers = ["atspi-common/wrappers"]
+@@ -80,10 +81,9 @@
+ optional = true
+ 
+ [dependencies.zbus]
+-version = "5.5"
+-features = ["async-io"]
+-optional = true
++version = "6.2.1"
+ default-features = false
++features = ["default-rt", "proxy", "service", "object-manager"]
+ 
+ [dev-dependencies.criterion]
+ version = "=0.5.0"
+@@ -118,6 +118,8 @@
+ version = "0.1.1"
+ 
+ [dev-dependencies.zbus]
+-version = "5.5"
+-features = ["async-io"]
++version = "6.2.1"
+ default-features = false
++features = ["default-rt", "proxy", "service", "object-manager"]
++
++[workspace]
