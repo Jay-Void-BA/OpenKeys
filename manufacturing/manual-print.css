@@ -1,0 +1,28 @@
+@page {
+  size: A4; margin: 16mm 14mm 17mm;
+  @bottom-left { content: "OpenKeys R0.4 · 工程样板制作指南"; font-family: "Noto Sans CJK SC", sans-serif; font-size: 8pt; color: #587080; }
+  @bottom-right { content: "第 " counter(page) " / " counter(pages) " 页"; font-family: "Noto Sans CJK SC", sans-serif; font-size: 8pt; color: #587080; }
+}
+html { color: #17212b; background: white; }
+body { font-family: "Noto Sans CJK SC", sans-serif; font-size: 9.7pt; line-height: 1.65; margin: 0; }
+h1 { font-size: 23pt; color: #102e48; line-height: 1.35; margin: 0 0 8mm; }
+h2 { font-size: 15pt; color: #123e60; margin-top: 8mm; break-after: avoid; }
+h3 { font-size: 11pt; color: #174e70; margin-top: 5mm; break-after: avoid; }
+p { margin: 2.5mm 0; orphans: 3; widows: 3; }
+a { color: #125f93; text-decoration: none; overflow-wrap: anywhere; }
+blockquote { border-left: 3px solid #a45d19; padding: 2mm 4mm; margin: 4mm 0; background: #fff7ed; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 4mm 0; font-size: 8.3pt; }
+thead { display: table-header-group; }
+th { background: #e8eff5; text-align: left; color: #173b57; }
+td, th { border: 0.25mm solid #c6d2dc; padding: 1.6mm 2mm; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
+tr { break-inside: avoid; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; border: 0.25mm solid #ccd6df; background: #f5f7fa; padding: 3mm; break-inside: avoid; }
+code { font-family: "Noto Sans Mono CJK SC", monospace; font-size: 8pt; overflow-wrap: anywhere; }
+ul, ol { padding-left: 6mm; }
+li { margin: 1.5mm 0; }
+strong { color: #122e45; }
+nav#TOC { padding: 3mm 5mm; background: #f3f6fa; margin-bottom: 7mm; }
+nav#TOC ul { list-style: none; padding-left: 4mm; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { font-size: 8.5pt; line-height: 1.4; margin: 1.5mm 0; }
+img { max-width: 100%; height: auto; }

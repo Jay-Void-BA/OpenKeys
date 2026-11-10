@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "purpose": "ENGINEERING_BUILD_INSTRUCTIONS_ONLY",
+  "production_release": false,
+  "hardware_manufactured_or_tested": false,
+  "exported_at_utc": "2026-11-10T08:10:40.323314+00:00",
+  "pandoc": "pandoc 3.1.11.1",
+  "weasyprint": "70.0",
+  "source_sha256": {
+    "manufacturing/BUILD_MANUAL_ZH.md": "a0a12cfc81e32809d49c5919216f871f3d9247d5d9d4fcc8fb89aed2ab8a1964",
+    "manufacturing/manual-print.css": "61fd67f91a86ec3ab71eaed055e482a002b85cdfcef0ddd41aa19335392d20cc",
+    "manufacturing/manual-renderer-requirements.txt": "d4cb086f576b1c596b1cd2a4b1e1187739d313ee119e8061209e1e17b310ab22",
+    "manufacturing/ORDER_SHEET_R04.md": "647285ba524e1ff3084f6bf036d43d2d964f8a619a8a4f4fbdd1a79a51db8c74",
+    "manufacturing/procurement-r04-board.csv": "a02c790f39d12e9df5008effaf83330f1164a4f4234d5a0043cc65ee7fd8a30c",
+    "manufacturing/procurement-r04-external.csv": "dd519b377411296501cd1b825f94973836fc8a486cdc9794aeb2ca8160a8f5de",
+    "manufacturing/procurement-r04-manifest.json": "c53eaf27865421c5d9bda383572c4748f2cbb22a3cd8b43a15d0225883d93822",
+    "scripts/export-build-manual.py": "34e107a75256172b458d606ef4b312b7f3e01ea8dc5bb59d52113894941cdda7",
+    "scripts/export-manufacturing-worksheet.py": "1a0be3503e9b453ad66d3e20e1c69a4c2e90d282c81f03d49ba950bd6d7e78f5",
+    "hardware/r04/BOM.csv": "961394d1949b5f86e42d99c3772350bf48aff0a0e6e43b2662c5082ae55435eb",
+    "hardware/r04/pinout.csv": "015f236a2066e38bd63a31aea3ea134474402bfe2becfdf4af9b7557d0dacac5",
+    "hardware/r04/exports/OpenKeys-fabrication.zip": "880c401ad76b383e54d83c7ad916c5c77d5f4f04a4cf7d4a6dbc4e3e8fa6e66e"
+  },
+  "pdf_sha256": "0c67381d8be52bb23d048ca63f2b7f54a747eccea630f2d74a0c7168e9ef658f",
+  "pdf_bytes": 669670,
+  "limits": "Source/PDF consistency only; physical fit, assembly, electrical operation and security remain unqualified."
+}

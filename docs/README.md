@@ -11,6 +11,7 @@
 | 第一次了解项目 | [首页](../README.md) → [当前状态](DEVELOPMENT_STATUS.md) → [架构与授权规则](ARCHITECTURE.md) |
 | 本地构建 / 阅读源码 | [开发起步](GETTING_STARTED.md) → [固件模块](../firmware/README.md) → [贡献指南](../CONTRIBUTING.md) |
 | 查看或评审硬件 | [硬件文件](../hardware/r04/README.md) → [对抗性复核](ADVERSARIAL_REVIEW_R04.md) → [验收步骤](../manufacturing/HARDWARE_ACCEPTANCE.md) |
+| 第一次委托制作 | [完整制作说明书](../manufacturing/BUILD_MANUAL_ZH.md)、[打印版 PDF](../manufacturing/OpenKeys-R04-build-manual-zh.pdf) → [工厂确认单](../manufacturing/ORDER_SHEET_R04.md) → [采购表](../manufacturing/procurement-r04-board.csv) |
 | 委托工厂 / 实验室 | [制造入口](../manufacturing/README.md) → [服务商筛选](../manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md) → [委托确认模板](../manufacturing/REQUEST_FOR_CONFIRMATION.md)；[联系进度](../manufacturing/OUTREACH_STATUS.md) |
 | 查看管理软件 | [桌面管理器](../apps/manager/README.md)、[开发包](NATIVE_BUILDS.md)、[导入格式](IMPORT_FORMAT.md)、[移动端前提](../apps/mobile/README.md) |
 | 审核测试证据 | [当前 CI 摘要](ci-evidence-r04.json)、[机器构建记录](r04-build-report.json)、[验证时间线](VALIDATION.md) |

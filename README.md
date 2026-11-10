@@ -34,7 +34,8 @@ Apple 20 W 充电器使用 **5 V** 档；设计输入预算约 **0.50 W**，电�
 | 构建代码或运行开发界面 | [开发起步](docs/GETTING_STARTED.md)、[开发包下载](docs/NATIVE_BUILDS.md) |
 | 了解代码和安全边界 | [架构](docs/ARCHITECTURE.md)、[固件模块](firmware/README.md) |
 | 找个人、小批量服务商 | [大陆厂商和实验室筛选](manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md) |
-| 准备样板和安全测试 | [硬件验收步骤](manufacturing/HARDWARE_ACCEPTANCE.md)、[测试计划](docs/SECURITY_TEST_PLAN.md) |
+| 从零准备材料、订板和代焊 | [完整制作说明书](manufacturing/BUILD_MANUAL_ZH.md)、[打印版 PDF](manufacturing/OpenKeys-R04-build-manual-zh.pdf)、[工厂确认单](manufacturing/ORDER_SHEET_R04.md) |
+| 验收样板和安全测试 | [硬件验收步骤](manufacturing/HARDWARE_ACCEPTANCE.md)、[测试计划](docs/SECURITY_TEST_PLAN.md) |
 | 修改或参与项目 | [贡献指南](CONTRIBUTING.md)、[安全问题报告](SECURITY.md) |
 
 ## 当前验证

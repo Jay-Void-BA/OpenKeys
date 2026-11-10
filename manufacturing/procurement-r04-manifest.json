@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "purpose": "ENGINEERING_SOURCING_WORKSHEET_ONLY",
+  "production_order_authorized": false,
+  "prices_or_stock_confirmed": false,
+  "quantities_exclude_evt_extra_boards_and_assembler_loss": true,
+  "bom_positions": 130,
+  "smt_positions": 126,
+  "smt_top": 50,
+  "smt_bottom": 76,
+  "tht_positions": [
+    "J2",
+    "U8"
+  ],
+  "production_dnp": [
+    "J3"
+  ],
+  "integral_copper": [
+    "J4"
+  ],
+  "board_purchased_positions_per_unit": 128,
+  "board_outline_body_mm": [
+    68,
+    92
+  ],
+  "top_tab_mm": [
+    12,
+    2.5
+  ],
+  "maximum_outline_centerline_envelope_mm": [
+    68,
+    94.5
+  ],
+  "minimum_track_clearance_mm": 0.15,
+  "via_copper_drill_mm": [
+    0.6,
+    0.3
+  ],
+  "sources_sha256": {
+    "hardware/r04/BOM.csv": "961394d1949b5f86e42d99c3772350bf48aff0a0e6e43b2662c5082ae55435eb",
+    "hardware/r04/exports/OpenKeys-SMD-position.csv": "118ba56b771c2b22b380439c7f2a4d9ef6ad9c7132fb34934d7dc9c69869b10a",
+    "hardware/r04/kicad/OpenKeys.kicad_pcb": "6c2a93a63f343cf0401eae8c92dc1da6f5db145604ee9b0e8b9bd08b76f4bde4",
+    "hardware/r04/pinout.csv": "015f236a2066e38bd63a31aea3ea134474402bfe2becfdf4af9b7557d0dacac5",
+    "hardware/r04/exports/OpenKeys-netlist.xml": "643cbbaa95a816c9fdd6109d94518d2cfbf8488b118016826548ec48fb21a51d",
+    "manufacturing/critical-parts.csv": "21961977ffe8e5626d6cc3ea6290717e8d63f69a26e182db92aaf1a8f74b3998"
+  },
+  "worksheet_sha256": {
+    "manufacturing/procurement-r04-board.csv": "a02c790f39d12e9df5008effaf83330f1164a4f4234d5a0043cc65ee7fd8a30c",
+    "manufacturing/procurement-r04-external.csv": "dd519b377411296501cd1b825f94973836fc8a486cdc9794aeb2ca8160a8f5de"
+  },
+  "limits": "Full orderable MPNs, ratings, sourcing, process losses, DFM, security integration and physical qualification still require review."
+}

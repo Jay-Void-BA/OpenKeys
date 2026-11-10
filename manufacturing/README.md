@@ -4,6 +4,8 @@
 
 **当前生产放行：BLOCKED。** R0.4 已有电路、完整布线和制造导出；完整认证固件、真实管理通道、生产配置与实物资格仍未完成。
 
+第一次制作先看[从原材料到验收的完整说明书](BUILD_MANUAL_ZH.md)或[11 页打印版 PDF](OpenKeys-R04-build-manual-zh.pdf)。需要直接和工厂沟通时使用[工程订购 / 代焊确认单](ORDER_SHEET_R04.md)，并附[板上采购表](procurement-r04-board.csv)与[板外采购表](procurement-r04-external.csv)。
+
 ## 按步骤准备
 
 | 步骤 | 资料 | 完成后应得到什么 |
@@ -30,3 +32,16 @@ python3 scripts/check-production-ready.py
 该命令更新 `readiness-report.json`，当前应返回 **2 / BLOCKED**。缺少生产固件、签名更新、启动配置、正式管理器或实物证据时不放行。
 
 `release-manifest.json` 只记录真实存在的文件和摘要；诊断 ELF、空占位或测试通过的库不能代替对应成品。自动预检不烧录、不注入密钥，也不是最终生产批准。
+
+## 采购表与打印手册维护
+
+普通阅读不需要安装 PDF 生成工具。下面的检查只使用 Python 标准库：
+
+```sh
+python3 scripts/export-manufacturing-worksheet.py --check
+python3 scripts/export-build-manual.py --check
+```
+
+采购表由原始 BOM / CPL 分类生成；带报价的填写副本私下另存，不覆盖仓库模板。PDF 的[来源清单](build-manual-manifest.json)绑定手册、工厂确认单、采购模板、生成脚本和原始制造文件。
+
+需要重生成时先运行 `python3 scripts/export-manufacturing-worksheet.py`。PDF 使用 Pandoc、Pango、Noto CJK 字体及[锁定的 Python 文档依赖](manual-renderer-requirements.txt)；在独立 Python 环境安装这些依赖后运行 `python scripts/export-build-manual.py`，再检查中文、表格和分页。仅核对摘要不等于完成排版或硬件验收。

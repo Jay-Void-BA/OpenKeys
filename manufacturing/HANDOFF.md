@@ -2,6 +2,8 @@
 
 目标为3把个人使用设备。当前是待实作的工程候选设计，不能只交给普通SMT厂就取得可用认证器。源文件以[hardware/r04](../hardware/r04/README.md)为准；原R0.2双口/OLED/OTP版本仅保留历史。
 
+从下载、采购、订板到代焊 / 验收的具体操作见[完整制作说明书](BUILD_MANUAL_ZH.md)及[工厂确认单](ORDER_SHEET_R04.md)。
+
 服务商须明确接受**个人作为合同主体、个人付款和3把项目**。按[筛选证据](MAINLAND_SUPPLIERS_AND_LABS.md)与[书面确认模板](REQUEST_FOR_CONFIRMATION.md)核对；当前没有取得本项目接单回复，技术能力或采购入口不代表已符合这些条件。
 
 固定功能：单USB-C母口兼USB2数据与5V充电、NFC、白背光16x2英文LCD、四个场景按键、强制设备指纹、仅附加的设备PIN；FIDO2/WebAuthn/Passkey、U2F、hmac-secret、凭据管理、加密notes与recovery codes。已取消动态验证码和USB-A。macOS/iOS认证分别验收；桌面管理软件覆盖macOS/Linux/Windows；手机NFC管理作为依赖设备认证协议的独立交付。
@@ -34,7 +36,7 @@
 
 上述不含完整固件与管理软件研发、认证、签名服务或不可预见返板。2026-11-08已核对FPC2534AM模块MOQ1含税快照为¥246.53/颗，3颗¥739.59；不是锁库存承诺。其他新器件尚无本项目正式采购报价。旧R0.2的¥2100–3600预留不套用到新版LCD/备用电源方案。
 
-大陆入口：[嘉立创](https://www.jlc.com/)、[立创商城](https://www.szlcsc.com/)、[华秋PCB](https://www.hqpcb.com/)、[华秋商城](https://www.hqchip.com/)；需Rust/安全认证器定制研发的部分另找具备能力的团队。已有安全密钥/OEM方案可核查[飞天诚信](https://www.ftsafe.com/)与[文鼎创](https://www.excelsecu.com/)是否接受开放源码/图纸/验证条款，不能把商用品默认称作开源替代。未代表用户联系、下单或取得这些厂商承诺。
+大陆入口：[嘉立创](https://www.jlc.com/)、[立创商城](https://www.szlcsc.com/)、[华秋PCB](https://www.hqpcb.com/)、[华秋商城](https://www.hqchip.com/)；需Rust/安全认证器定制研发的部分另找具备能力的团队。已有安全密钥/OEM方案可核查[飞天诚信](https://www.ftsafe.com/)与[文鼎创](https://www.excelsecu.com/)是否接受开放源码/图纸/验证条款，不能把商用品默认称作开源替代。已经授权提交的资格询问见[联系进度](OUTREACH_STATUS.md)；没有下单或取得本项目接单承诺，OEM入口亦不是个人、小批量受理的证明。
 
 当前完整未决清单见[SECURITY_REVIEW_R04](../docs/SECURITY_REVIEW_R04.md)与[readiness-report](readiness-report.json)。没有目标样板、手机连接和物理测试仪器，不能验收真实指纹强制授权或抗物理攻击性能。
 

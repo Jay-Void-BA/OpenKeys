@@ -1,9 +1,9 @@
 name: Documentation links
 on:
   push:
-    paths: ['**/*.md', 'scripts/check-doc-links.py', '.github/workflows/docs.yml']
+    paths: ['**/*.md', 'scripts/check-doc-links.py', 'scripts/export-manufacturing-worksheet.py', 'scripts/export-build-manual.py', 'hardware/r04/BOM.csv', 'hardware/r04/exports/OpenKeys-SMD-position.csv', 'manufacturing/procurement-r04-*', 'manufacturing/OpenKeys-R04-build-manual-zh.pdf', 'manufacturing/build-manual-manifest.json', 'manufacturing/manual-print.css', 'manufacturing/manual-renderer-requirements.txt', '.github/workflows/docs.yml']
   pull_request:
-    paths: ['**/*.md', 'scripts/check-doc-links.py', '.github/workflows/docs.yml']
+    paths: ['**/*.md', 'scripts/check-doc-links.py', 'scripts/export-manufacturing-worksheet.py', 'scripts/export-build-manual.py', 'hardware/r04/BOM.csv', 'hardware/r04/exports/OpenKeys-SMD-position.csv', 'manufacturing/procurement-r04-*', 'manufacturing/OpenKeys-R04-build-manual-zh.pdf', 'manufacturing/build-manual-manifest.json', 'manufacturing/manual-print.css', 'manufacturing/manual-renderer-requirements.txt', '.github/workflows/docs.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,3 +18,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Check first-party document links and images
         run: python3 scripts/check-doc-links.py
+      - name: Check sourcing worksheet against original BOM and CPL
+        run: python3 scripts/export-manufacturing-worksheet.py --check
+      - name: Check manual source and PDF digest binding
+        run: python3 scripts/export-build-manual.py --check
