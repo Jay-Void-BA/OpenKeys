@@ -9,7 +9,7 @@
 | 第一次阅读 | [状态](DEVELOPMENT_STATUS.md)、[架构](ARCHITECTURE.md)、[术语](GLOSSARY.md) |
 | 经典版优先 / 后量子版隔离 | [分版、功能范围与同步规则](EDITIONS.md)、[版本元数据](../edition.json)；[双 SE 评估](DUAL_SE_REVIEW_R05.md)仅属历史研究 |
 | 审核安全 / PIN 缓存 | [R05 安全复查](SECURITY_REVIEW_R05.md)、[会话规则与测试映射](PIN_SESSIONS_R05.md)、[SE 原生 PIN 候选](SE_NATIVE_PIN_FEASIBILITY_R05.md)、[样板会话探针](NATIVE_UID_QUALIFICATION_R05.md) |
-| 电路、板子与固件 | [经典 SE / 无电池供电修订](CLASSICAL_SE_POWER_R05.md)、[R05 硬件](../hardware/r05/README.md)、[固件导航](../firmware/README.md)、[R05 目标](../firmware/r05/README.md) |
+| 电路、板子与固件 | [经典 SE / 无电池供电修订](CLASSICAL_SE_POWER_R05.md)、[长 APDU 边界](CLASSICAL_APDU_R05.md)、[R05 硬件](../hardware/r05/README.md)、[固件导航](../firmware/README.md)、[R05 目标](../firmware/r05/README.md) |
 | 从原材料到打样、代焊和测试 | [R05 制作手册](../manufacturing/BUILD_R05_ZH.md)、[制造入口](../manufacturing/README.md) |
 | 境内供应与个人小批量 | [料号与渠道](../manufacturing/MAINLAND_COMPONENT_CHANNELS.md)、[机构筛选](../manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md)、[委托确认](../manufacturing/REQUEST_FOR_CONFIRMATION.md) |
 | 管理器 / 手机 | [GPUI](../apps/manager-gpui/README.md)、[移动平台约束](../apps/mobile/README.md)、[现有 notes 导入格式](IMPORT_FORMAT.md) |

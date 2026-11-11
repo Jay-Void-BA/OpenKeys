@@ -1,7 +1,9 @@
 //! Protected-domain composition of bounded T=1 and authenticated SCP03. It is
 //! not an exported USB/NFC raw-APDU API. Callers must bind each guard to the
 //! internal boot/provisioning phase or the exact consumed user grant.
-use crate::{Channel, Command, Crypto, Error, Handshake, SecretResponse, StaticKeys};
+use crate::{
+    Channel, Command, Crypto, Error, Handshake, MAX_RESPONSE_WIRE, SecretResponse, StaticKeys,
+};
 use openkeys_se_transport::transport::{Clock, Io, Transport};
 use zeroize::Zeroizing;
 
@@ -20,7 +22,7 @@ impl<I: Io, C: Clock> Link for Transport<I, C> {
 
 /// Live trusted clock, cancellation, hardware faults and the exact policy
 /// context. A host Boolean or cached "unlocked" state is not an adapter.
-/// Internal sensor verification/attempt precharge may precede a match; those
+/// Internal local verification/attempt precharge may precede PIN success; those
 /// phases must not reveal secrets or act as a general private-command grant.
 pub trait Guard {
     fn check(&mut self) -> Result<(), Error>;
@@ -111,7 +113,7 @@ impl<L: Link, const N: usize> Client<L, N> {
         guard.check().map_err(|_| Error::Authorization)?;
         let command = self.channel.wrap(crypto, command)?;
         guard.check().map_err(|_| Error::Authorization)?;
-        let mut reply = Zeroizing::new([0; 256]);
+        let mut reply = Zeroizing::new([0; MAX_RESPONSE_WIRE]);
         let length = self.link.exchange(command.wire_bytes(), &mut reply[..])?;
         guard.check().map_err(|_| Error::Authorization)?;
         let response = reply.get(..length).ok_or(Error::Link)?;

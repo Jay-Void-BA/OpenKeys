@@ -12,7 +12,7 @@ New host challenges require the checked hardware entropy source. INITIALIZE
 UPDATE enforces key version, SCP03/i60 or70, exact lengths, card cryptogram,
 and, for pseudo challenges, the complete selected AID/sequence binding.
 EXTERNAL AUTHENTICATE has a status-only acknowledgement; it does not itself
-authenticate application data or prove a fingerprint. The first private
+authenticate application data or prove owner PIN verification. The first private
 result still needs a valid R-MAC. KDD/ATR is not trusted identity.
 
 Every command advances the counter and full16-byte MAC chain. The response
@@ -20,34 +20,38 @@ MAC is compared in constant time **before** CBC decryption/unpadding. Only
 authenticated9000 responses produce a zeroizing private response. Bare
 errors, malformed replies, warnings62/63, invalid MACs and ambiguous I/O
 close the client; they never become a trusted "missing object/empty vault".
-Private command data is bounded to239bytes; larger objects require reviewed
-application chunking, not an unbounded raw-APDU escape.
+Command and response plaintext is bounded to2015bytes within a2048-byte T=1
+APDU. Short/extended Lc and explicit `Le::Short` / `Le::Extended` are supported;
+short zero remains256 when converted to extended form. Authenticated output
+cannot exceed the requested Le. Native-PIN PROCESS uses canonical BER81/82
+with up to1994 inner data bytes. See the [bounds, fixtures and limits](../../docs/CLASSICAL_APDU_R05.md).
+Larger objects still require reviewed application chunking; no raw host escape.
 
 `client::Client` composes T=1 and SCP03 with required live checkpoints before
 and after blocking crypto/I/O, including after decryption. A closed instance
 cannot be reused. It borrows crypto for each transaction so the single SAES
 owner can also serve the vault. Guards must be actual protected-runtime
-policy/fault checks, not host Booleans. Internal fingerprint attempt/crypto
-verification precedes a match; that phase never authorizes arbitrary private
+policy/fault checks, not host Booleans. Internal local verification/attempt
+precharge may precede PIN success; that phase never authorizes arbitrary private
 operations. A channel alone is not a user grant.
 
 The selected application, full AID, provisioned key version and applet profile
 must be qualified beforehand. This SE050 client requires applet>=4.3.0 for
 the all-APDU counter behavior. It does not infer that fact from untrusted
-version bytes or claim a chip was qualified. Actual E2 commissioning traces,
+version bytes or claim a chip was qualified. Actual C2 commissioning traces,
 SCP-only mandate/ACLs, key rotation and recovery remain required.
 
-NXP's [AN12436 Rev2.4, section3.5](https://www.nxp.com/docs/en/application-note/AN12436.pdf)
-identifies the SE050E generation as applet7.2; table2 identifies E2 OEF A921.
-This supports the selected E2 family, not a blanket qualification of an
-unidentified delivered chip. Commissioning must verify the actual product,
-OS/patch, applet, AID and provisioned key profile against the selected errata.
-An unauthenticated version response alone must not select a weaker profile.
+The classical PCB now selects SE051C2HQ1/Z01XDZ / OEF A8FA / Applet7.2;
+[NXP AN12973](https://www.nxp.com/docs/en/application-note/AN12973.pdf) identifies
+that C2 configuration. The previous E2 selection is historical. Neither a
+family data sheet nor an unauthenticated version reply qualifies a received
+chip. Verify product/OS/patch/applet/AID/key profile and native PIN/ACL behavior
+against the actual delivery and selected errata.
 
-Tests use public synthetic keys and fixed transcripts generated independently
+Tests use public synthetic keys and fixed short/extended transcripts generated independently
 by `tests/generate-fixtures.py` with OpenSSL3.5.7; normal tests do not execute
-OpenSSL. They cover AES128/256/random/pseudo handshake, three consecutive
-commands including empty/full-boundary payloads, NIST CMAC, downgrade,
+OpenSSL. They cover AES128/256/random/pseudo handshake, eight consecutive
+commands including empty/full-boundary payloads and512-byte replies, NIST CMAC, downgrade,
 replay/reorder/bit mutation, bad padding, primitive faults, authorization
 expiry and length/error ambiguity. Software AES/CMAC is `cfg(test)` only.
 Hardware SAES/SCA/fault/interoperability testing remains **NOT_RUN**.

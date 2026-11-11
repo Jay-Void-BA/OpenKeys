@@ -4,6 +4,79 @@ use super::*;
 use std::{cell::RefCell, rc::Rc, vec, vec::Vec};
 const PIN: [u8; 6] = [9, 2, 7, 0, 4, 6];
 const SID: [u8; 8] = [1, 2, 3, 4, 5, 6, 7, 8];
+
+#[test]
+fn process_envelope_uses_canonical_ber_and_inner_lc_at_independent_boundaries() {
+    // Literal lengths from NXP se05x_Transform, including its >=255 extended
+    // inner-Lc rule. These expected fields are not produced by the encoder.
+    let cases: &[(usize, &[u8], usize)] = &[
+        (0, &[0x41, 0x04, 0x80, 3, 0x0c, 9], 16),
+        (122, &[0x41, 0x7f, 0x80, 3, 0x0c, 9, 0x7a], 139),
+        (123, &[0x41, 0x81, 0x80, 0x80, 3, 0x0c, 9, 0x7b], 141),
+        (250, &[0x41, 0x81, 0xff, 0x80, 3, 0x0c, 9, 0xfa], 268),
+        (251, &[0x41, 0x82, 1, 0, 0x80, 3, 0x0c, 9, 0xfb], 270),
+        (254, &[0x41, 0x82, 1, 3, 0x80, 3, 0x0c, 9, 0xfe], 273),
+        (255, &[0x41, 0x82, 1, 6, 0x80, 3, 0x0c, 9, 0, 0, 0xff], 276),
+        (512, &[0x41, 0x82, 2, 7, 0x80, 3, 0x0c, 9, 0, 2, 0], 533),
+        (
+            1994,
+            &[0x41, 0x82, 7, 0xd1, 0x80, 3, 0x0c, 9, 0, 7, 0xca],
+            2015,
+        ),
+    ];
+    for &(length, fields, expected_end) in cases {
+        let input = vec![0x5a; length];
+        let command = Command {
+            class: 0x80,
+            instruction: 3,
+            p1: 0x0c,
+            p2: 9,
+            data: &input,
+            le: None,
+        };
+        let mut wire = [0xa5; MAX_DATA];
+        let end = process_envelope(&SID, &command, &mut wire).unwrap();
+        assert_eq!(end, expected_end);
+        assert_eq!(&wire[..10], &[0x10, 8, 1, 2, 3, 4, 5, 6, 7, 8]);
+        assert_eq!(&wire[10..10 + fields.len()], fields);
+        assert_eq!(&wire[10 + fields.len()..end], input);
+        assert!(wire[end..].iter().all(|&byte| byte == 0));
+    }
+    let command = Command {
+        class: 0x80,
+        instruction: 3,
+        p1: 0x0c,
+        p2: 9,
+        data: &[0x5a],
+        le: Some(openkeys_scp03::Le::Extended(512)),
+    };
+    let mut wire = [0xa5; MAX_DATA];
+    let end = process_envelope(&SID, &command, &mut wire).unwrap();
+    assert_eq!(&wire[10..end], &[0x41, 8, 0x80, 3, 0x0c, 9, 0, 0, 1, 0x5a]);
+}
+
+#[test]
+fn process_envelope_rejects_invalid_or_overflowing_input_before_copy() {
+    for (class, sid, length) in [
+        (0, SID, 0),
+        (0x80, [0; 8], 0),
+        (0x80, SID, 1995),
+        (0x80, SID, MAX_DATA + 1),
+    ] {
+        let input = vec![0x5a; length];
+        let command = Command {
+            class,
+            instruction: 3,
+            p1: 0x0c,
+            p2: 9,
+            data: &input,
+            le: None,
+        };
+        let mut wire = [0xa5; MAX_DATA];
+        assert!(process_envelope(&sid, &command, &mut wire).is_err());
+        assert!(wire.iter().all(|&byte| byte == 0));
+    }
+}
 #[derive(Default)]
 struct Db {
     spent: u64,
@@ -40,16 +113,30 @@ impl Io {
             db.packets.push(c.data.to_vec());
             assert_eq!(c.data[..10], [0x10, 8, 1, 2, 3, 4, 5, 6, 7, 8]);
             assert_eq!(c.data[10], 0x41);
-            let (n, at) = if c.data[11] == 0x81 {
-                (c.data[12] as usize, 13)
-            } else {
-                (c.data[11] as usize, 12)
+            let (n, at) = match c.data[11] {
+                0x81 => {
+                    assert!(c.data[12] >= 128);
+                    (usize::from(c.data[12]), 13)
+                }
+                0x82 => {
+                    let n = usize::from(u16::from_be_bytes([c.data[12], c.data[13]]));
+                    assert!(n >= 256);
+                    (n, 14)
+                }
+                length => {
+                    assert!(length < 128);
+                    (usize::from(length), 12)
+                }
             };
             let inner = &c.data[at..];
             assert_eq!(inner.len(), n);
             assert_eq!(inner[0], 0x80);
             let data = if inner.len() == 4 {
                 &[][..]
+            } else if inner[4] == 0 {
+                let n = usize::from(u16::from_be_bytes([inner[5], inner[6]]));
+                assert_eq!(n, inner.len() - 7);
+                &inner[7..]
             } else {
                 assert_eq!(inner[4] as usize, inner.len() - 5);
                 &inner[5..]
@@ -85,6 +172,13 @@ impl Io {
                     assert!(db.native_verified);
                     db.private += 1;
                     Ok(vec![0x41, 2, 0, 32])
+                }
+                (2, 0, 0) => {
+                    assert!(db.native_verified);
+                    db.private += 1;
+                    let mut reply = vec![0x41, 0x82, 2, 0];
+                    reply.extend((0..512).map(|i| i as u8));
+                    Ok(reply)
                 }
                 _ => panic!("unexpected native command"),
             }
@@ -208,8 +302,51 @@ fn private_command() -> Command<'static> {
         p1: 0,
         p2: 7,
         data: &[0x41, 4, 0x4f, 0x4b, 0x10, 0],
-        le: Some(0),
+        le: Some(openkeys_scp03::Le::Short(0)),
     }
+}
+
+#[test]
+fn extended_private_read_still_requires_native_pin_and_caps_its_reply() {
+    let db = Shared::default();
+    let mut pin = open(&db).unwrap();
+    let mut command = private_command();
+    command.p2 = 0;
+    command.le = Some(openkeys_scp03::Le::Extended(1024));
+    let mut out = [0xa5; 1024];
+    let calls = db.borrow().calls;
+    assert_eq!(pin.exchange(&command, &mut out), Err(Error::Authorization));
+    assert_eq!(db.borrow().calls, calls);
+    assert!(out.iter().all(|&byte| byte == 0));
+    pin.reserve_attempt(&request()).unwrap();
+    pin.verify(&request(), &PIN).unwrap();
+    assert_eq!(pin.exchange(&command, &mut out), Ok(516));
+    assert_eq!(&out[..4], &[0x41, 0x82, 2, 0]);
+    for (index, &byte) in out[4..516].iter().enumerate() {
+        assert_eq!(byte, index as u8);
+    }
+    command.le = Some(openkeys_scp03::Le::Extended(515));
+    assert_eq!(pin.exchange(&command, &mut out), Err(Error::Schema));
+    assert!(out.iter().all(|&byte| byte == 0));
+    assert!(!db.borrow().native_verified);
+    assert!(db.borrow().cuts > 0);
+}
+
+#[test]
+fn verified_session_cannot_send_oversized_native_envelope() {
+    let db = Shared::default();
+    let mut pin = open(&db).unwrap();
+    pin.reserve_attempt(&request()).unwrap();
+    pin.verify(&request(), &PIN).unwrap();
+    let mut command = private_command();
+    command.data = &[0x5a; 1995];
+    let mut out = [0xa5; 16];
+    let calls = db.borrow().calls;
+    assert_eq!(pin.exchange(&command, &mut out), Err(Error::Schema));
+    assert_eq!(db.borrow().calls, calls);
+    assert!(out.iter().all(|&byte| byte == 0));
+    assert!(!db.borrow().native_verified);
+    assert!(db.borrow().cuts > 0);
 }
 
 #[test]

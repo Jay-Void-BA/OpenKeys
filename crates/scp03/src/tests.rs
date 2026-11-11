@@ -132,7 +132,7 @@ fn command(data: &[u8]) -> Command<'_> {
         p1: 0,
         p2: 0,
         data,
-        le: Some(0),
+        le: Some(Le::Short(0)),
     }
 }
 fn established() -> (Software, Channel<16>) {
@@ -236,12 +236,191 @@ macro_rules! transcript {
             );
             assert_eq!(c.counter, 3);
             assert!(!c.pending);
+            let data240: [u8; 240] = core::array::from_fn(|i| i as u8);
+            let mut extended = command(&data240);
+            extended.le = Some(Le::Extended(1024));
+            assert_eq!(
+                c.wrap(&mut crypto, &extended).unwrap().wire_bytes(),
+                v::COMMAND_4
+            );
+            let reply512: [u8; 512] = core::array::from_fn(|i| i as u8);
+            assert_eq!(
+                c.unwrap(&mut crypto, &v::RESPONSE_4).unwrap().expose(),
+                reply512
+            );
+            let data_max: [u8; 2015] = core::array::from_fn(|i| i as u8);
+            assert_eq!(data_max.len(), MAX_DATA);
+            extended.data = &data_max;
+            extended.le = Some(Le::Extended(0));
+            let wire = c.wrap(&mut crypto, &extended).unwrap();
+            assert_eq!(wire.wire_bytes(), v::COMMAND_5);
+            assert_eq!(wire.wire_bytes().len(), MAX_WIRE);
+            let reply_max: [u8; 2015] = core::array::from_fn(|i| (i * 7) as u8);
+            assert_eq!(
+                c.unwrap(&mut crypto, &v::RESPONSE_5).unwrap().expose(),
+                reply_max
+            );
+            extended.data = b"X";
+            extended.le = Some(Le::Extended(512));
+            assert_eq!(
+                c.wrap(&mut crypto, &extended).unwrap().wire_bytes(),
+                v::COMMAND_6
+            );
+            assert_eq!(
+                c.unwrap(&mut crypto, &v::RESPONSE_6).unwrap().expose(),
+                reply512
+            );
+            extended.data = &data240;
+            extended.le = Some(Le::Short(0));
+            let wire = c.wrap(&mut crypto, &extended).unwrap();
+            assert_eq!(wire.wire_bytes(), v::COMMAND_7);
+            assert_eq!(&wire.wire_bytes()[wire.wire_bytes().len() - 2..], &[1, 0]);
+            assert!(
+                c.unwrap(&mut crypto, &v::RESPONSE_7)
+                    .unwrap()
+                    .expose()
+                    .is_empty()
+            );
+            extended.le = None;
+            assert_eq!(
+                c.wrap(&mut crypto, &extended).unwrap().wire_bytes(),
+                v::COMMAND_8
+            );
+            assert!(
+                c.unwrap(&mut crypto, &v::RESPONSE_8)
+                    .unwrap()
+                    .expose()
+                    .is_empty()
+            );
+            assert_eq!(c.counter, 8);
+            assert!(!c.pending);
         }
     };
 }
 transcript!(aes128_random_openssl_transcript, 16, aes128_random);
 transcript!(aes128_pseudo_openssl_transcript, 16, aes128_pseudo);
 transcript!(aes256_random_openssl_transcript, 32, aes256_random);
+
+fn pending_large(le: Le) -> (Software, Channel<16>) {
+    use vectors::aes128_random as v;
+    let (mut crypto, mut channel) = established();
+    let boundary: [u8; 239] = core::array::from_fn(|i| i as u8);
+    for (data, reply) in [
+        (&[][..], &v::RESPONSE_1[..]),
+        (&b"public test data"[..], &v::RESPONSE_2[..]),
+        (&boundary[..], &v::RESPONSE_3[..]),
+    ] {
+        channel.wrap(&mut crypto, &command(data)).unwrap();
+        channel.unwrap(&mut crypto, reply).unwrap();
+    }
+    let data: [u8; 240] = core::array::from_fn(|i| i as u8);
+    let mut c = command(&data);
+    c.le = Some(le);
+    channel.wrap(&mut crypto, &c).unwrap();
+    (crypto, channel)
+}
+
+#[test]
+fn long_response_mutation_never_reaches_cbc_or_reuses_session() {
+    use vectors::aes128_random as v;
+    // Independently generated 512-byte response plus padding, R-MAC and SW.
+    for index in 0..v::RESPONSE_4.len() {
+        let (mut crypto, mut channel) = pending_large(Le::Extended(1024));
+        let decrypts = crypto.decrypt_calls;
+        let mut reply = v::RESPONSE_4;
+        reply[index] ^= 1;
+        assert!(channel.unwrap(&mut crypto, &reply).is_err());
+        assert_eq!(crypto.decrypt_calls, decrypts);
+        assert!(channel.faulted);
+        assert!(channel.chain.iter().all(|&byte| byte == 0));
+        assert!(channel.keys.enc.iter().all(|&byte| byte == 0));
+        assert!(matches!(
+            channel.unwrap(&mut crypto, &v::RESPONSE_4),
+            Err(Error::State)
+        ));
+    }
+}
+
+#[test]
+fn authenticated_reply_cannot_exceed_requested_le() {
+    use vectors::aes128_random as v;
+    // Le itself is outside C-MAC, so the same authenticated server response
+    // independently exercises both explicit 511 and converted short maximum.
+    for le in [Le::Extended(511), Le::Short(0)] {
+        let (mut crypto, mut channel) = pending_large(le);
+        let decrypts = crypto.decrypt_calls;
+        assert!(matches!(
+            channel.unwrap(&mut crypto, &v::RESPONSE_4),
+            Err(Error::Input)
+        ));
+        assert_eq!(crypto.decrypt_calls, decrypts + 1);
+        assert!(channel.faulted);
+    }
+}
+
+#[test]
+fn long_reply_size_and_alignment_fail_closed_before_decryption() {
+    use vectors::aes128_random as v;
+    for reply in [
+        v::RESPONSE_4[..v::RESPONSE_4.len() - 1].to_vec(),
+        std::vec![0x90; MAX_RESPONSE_WIRE + 1],
+    ] {
+        let (mut crypto, mut channel) = pending_large(Le::Extended(0));
+        let decrypts = crypto.decrypt_calls;
+        assert!(channel.unwrap(&mut crypto, &reply).is_err());
+        assert_eq!(crypto.decrypt_calls, decrypts);
+        assert!(channel.faulted);
+    }
+}
+
+#[test]
+fn private_client_carries_large_authenticated_response() {
+    use vectors::aes128_random as v;
+    struct Link(usize);
+    impl client::Link for Link {
+        fn exchange(&mut self, input: &[u8], output: &mut [u8]) -> Result<usize, Error> {
+            let (expected, response): (&[u8], &[u8]) = match self.0 {
+                0 => (&v::INITIALIZE, &v::IU_RESPONSE),
+                1 => (&v::EXTERNAL, &[0x90, 0]),
+                2 => (&v::COMMAND_1, &v::RESPONSE_1),
+                3 => (&v::COMMAND_2, &v::RESPONSE_2),
+                4 => (&v::COMMAND_3, &v::RESPONSE_3),
+                5 => (&v::COMMAND_4, &v::RESPONSE_4),
+                _ => panic!("Unexpected/replayed private transaction"),
+            };
+            assert_eq!(input, expected);
+            output[..response.len()].copy_from_slice(response);
+            self.0 += 1;
+            Ok(response.len())
+        }
+    }
+    let mut crypto = Software::new();
+    let mut guard = LiveGuard::live();
+    let mut client = client::Client::establish(
+        Link(0),
+        &mut crypto,
+        &masters::<16>(),
+        &client::Profile {
+            key_version: 1,
+            full_selected_aid: &AID,
+            qualified_applet_version: 0x0702_0000,
+        },
+        &mut guard,
+    )
+    .unwrap();
+    let data239: [u8; 239] = core::array::from_fn(|i| i as u8);
+    for data in [&[][..], &b"public test data"[..], &data239[..]] {
+        client
+            .exchange(&mut crypto, &command(data), &mut guard)
+            .unwrap();
+    }
+    let data240: [u8; 240] = core::array::from_fn(|i| i as u8);
+    let mut c = command(&data240);
+    c.le = Some(Le::Extended(1024));
+    let response = client.exchange(&mut crypto, &c, &mut guard).unwrap();
+    let expected: [u8; 512] = core::array::from_fn(|i| i as u8);
+    assert_eq!(response.expose(), expected);
+}
 
 #[test]
 fn handshake_rejects_downgrade_replay_wrong_aid_and_forgery() {
@@ -389,7 +568,7 @@ fn invalid_inputs_and_primitive_errors_latch_closed() {
     }
     let (mut crypto, mut channel) = established();
     assert!(matches!(
-        channel.wrap(&mut crypto, &command(&[0; 240])),
+        channel.wrap(&mut crypto, &command(&[0; MAX_DATA + 1])),
         Err(Error::Input)
     ));
     let (mut crypto, mut channel) = established();
@@ -478,7 +657,7 @@ fn client() -> (TestClient, std::rc::Rc<core::cell::Cell<usize>>) {
     let c = TestClient::establish(
         link,
         &mut Software::new(),
-        &masters(),
+        &masters::<16>(),
         &profile(),
         &mut LiveGuard::live(),
     )
@@ -538,7 +717,7 @@ fn private_client_does_not_replay_ambiguous_link_or_trust_an_impossible_length()
         let mut c = TestClient::establish(
             link,
             &mut Software::new(),
-            &masters(),
+            &masters::<16>(),
             &profile(),
             &mut LiveGuard::live(),
         )
@@ -572,7 +751,7 @@ fn establishment_requires_qualified_profile_and_each_guard_checkpoint() {
             TestClient::establish(
                 link,
                 &mut Software::new(),
-                &masters(),
+                &masters::<16>(),
                 &profile(),
                 &mut guard
             ),
@@ -599,7 +778,7 @@ fn establishment_requires_qualified_profile_and_each_guard_checkpoint() {
         TestClient::establish(
             link,
             &mut Software::new(),
-            &masters(),
+            &masters::<16>(),
             &p,
             &mut LiveGuard::live()
         ),

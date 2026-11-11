@@ -135,7 +135,7 @@ impl<X: Exchange> PinState<X> {
                 p1,
                 p2,
                 data,
-                le: Some(0),
+                le: Some(openkeys_scp03::Le::Short(0)),
             },
             out,
         );

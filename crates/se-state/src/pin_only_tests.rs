@@ -32,7 +32,7 @@ impl Exchange for Link {
     fn exchange(&mut self, c: &Command<'_>, out: &mut [u8]) -> Result<usize, Error> {
         let mut d = self.0.borrow_mut();
         assert_eq!(c.class, 0x80);
-        assert_eq!(c.le, Some(0));
+        assert_eq!(c.le, Some(openkeys_scp03::Le::Short(0)));
         assert_eq!(c.data[..2], [0x41, 4]);
         let id = u32::from_be_bytes(c.data[2..6].try_into().unwrap());
         let (kind, size) = match id {

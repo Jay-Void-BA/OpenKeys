@@ -4,7 +4,7 @@
 //! request/response state. References: Amendment D and NXP nano-package
 //! 26d55b43225bc84de364057660cba676fa69f6e4. Primitives are injected; no
 //! software-key/default-key/RNG fallback is provided for production.
-//! A channel is not fingerprint authorization. Private clients must enforce
+//! A channel is not owner-PIN authorization. Private clients must enforce
 //! device policy and accept only authenticated responses from this API.
 use subtle::ConstantTimeEq;
 use zeroize::Zeroizing;
@@ -12,8 +12,12 @@ use zeroize::Zeroizing;
 pub mod client;
 
 pub const SECURITY_LEVEL: u8 = 0x33;
-pub const MAX_DATA: usize = 239;
-pub const MAX_WIRE: usize = 261;
+// Reserve the longest ISO7816 header, S8 MAC and extended Le within the
+// underlying T=1 bound. Padding always adds at least one byte.
+const MAX_PADDED: usize = (openkeys_se_transport::transport::MAX_APDU - 17) / 16 * 16;
+pub const MAX_DATA: usize = MAX_PADDED - 1;
+pub const MAX_WIRE: usize = 7 + MAX_PADDED + 8 + 2;
+pub const MAX_RESPONSE_WIRE: usize = MAX_PADDED + 8 + 2;
 /// Rekey well before the counter or a long-lived S8 authentication budget is
 /// exhausted. Lifetime/system-wide 64-bit-tag risk still needs review.
 pub const MAX_COMMANDS: u32 = 4096;
@@ -219,8 +223,28 @@ impl<const N: usize> Pending<N> {
             chain: self.chain,
             counter: 0,
             pending: false,
+            response_limit: 0,
             faulted: false,
         })
+    }
+}
+
+/// ISO7816 expected response length. A zero field has its specified maximum:
+/// Short(0) means 256, Extended(0) means 65536 (still capped by MAX_DATA).
+/// A Short(0) in an otherwise extended command is encoded 0x0100, never 0x0000.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Le {
+    Short(u8),
+    Extended(u16),
+}
+impl Le {
+    pub fn maximum(self) -> usize {
+        match self {
+            Self::Short(0) => 256,
+            Self::Short(n) => usize::from(n),
+            Self::Extended(0) => 65536,
+            Self::Extended(n) => usize::from(n),
+        }
     }
 }
 
@@ -230,7 +254,7 @@ pub struct Command<'a> {
     pub p1: u8,
     pub p2: u8,
     pub data: &'a [u8],
-    pub le: Option<u8>,
+    pub le: Option<Le>,
 }
 pub struct WireCommand {
     bytes: Zeroizing<[u8; MAX_WIRE]>,
@@ -242,7 +266,7 @@ impl WireCommand {
     }
 }
 pub struct SecretResponse {
-    bytes: Zeroizing<[u8; 240]>,
+    bytes: Zeroizing<[u8; MAX_PADDED]>,
     len: usize,
 }
 impl SecretResponse {
@@ -256,6 +280,7 @@ pub struct Channel<const N: usize> {
     chain: Zeroizing<[u8; 16]>,
     counter: u32,
     pending: bool,
+    response_limit: usize,
     faulted: bool,
 }
 impl<const N: usize> Channel<N> {
@@ -267,6 +292,7 @@ impl<const N: usize> Channel<N> {
     fn fault(&mut self) {
         self.faulted = true;
         self.pending = false;
+        self.response_limit = 0;
         self.keys.enc.fill(0);
         self.keys.mac.fill(0);
         self.keys.rmac.fill(0);
@@ -325,29 +351,49 @@ impl<const N: usize> Channel<N> {
         } else {
             (c.data.len() + 1).next_multiple_of(16)
         };
-        out.bytes[..5].copy_from_slice(&[
-            c.class | 4,
-            c.instruction,
-            c.p1,
-            c.p2,
-            (body_len + 8) as u8,
-        ]);
+        let lc = body_len + 8;
+        let extended = lc > 255 || matches!(c.le, Some(Le::Extended(_)));
+        out.bytes[..4].copy_from_slice(&[c.class | 4, c.instruction, c.p1, c.p2]);
+        let header_len = if extended {
+            out.bytes[4] = 0;
+            out.bytes[5..7].copy_from_slice(&(lc as u16).to_be_bytes());
+            7
+        } else {
+            out.bytes[4] = lc as u8;
+            5
+        };
         if body_len != 0 {
-            out.bytes[5..5 + c.data.len()].copy_from_slice(c.data);
-            out.bytes[5 + c.data.len()] = 0x80;
+            out.bytes[header_len..header_len + c.data.len()].copy_from_slice(c.data);
+            out.bytes[header_len + c.data.len()] = 0x80;
             let iv = self.iv(crypto, false)?;
-            crypto.encrypt_cbc(&self.keys.enc, &iv, &mut out.bytes[5..5 + body_len])?;
+            crypto.encrypt_cbc(
+                &self.keys.enc,
+                &iv,
+                &mut out.bytes[header_len..header_len + body_len],
+            )?;
         }
-        let mut input = Zeroizing::new([0; 288]);
+        let end = header_len + body_len;
+        let mut input = Zeroizing::new([0; 16 + 7 + MAX_PADDED]);
         input[..16].copy_from_slice(&self.chain[..]);
-        input[16..21 + body_len].copy_from_slice(&out.bytes[..5 + body_len]);
-        crypto.cmac(&self.keys.mac, &input[..21 + body_len], &mut self.chain)?;
-        out.bytes[5 + body_len..13 + body_len].copy_from_slice(&self.chain[..8]);
-        out.len = 13 + body_len;
+        input[16..16 + end].copy_from_slice(&out.bytes[..end]);
+        crypto.cmac(&self.keys.mac, &input[..16 + end], &mut self.chain)?;
+        out.bytes[end..end + 8].copy_from_slice(&self.chain[..8]);
+        out.len = end + 8;
         if let Some(le) = c.le {
-            out.bytes[out.len] = le;
-            out.len += 1;
+            if extended {
+                // Convert a short maximum to 256, preserving its meaning.
+                out.bytes[out.len..out.len + 2]
+                    .copy_from_slice(&(le.maximum() as u16).to_be_bytes());
+                out.len += 2;
+            } else {
+                let Le::Short(value) = le else {
+                    return Err(Error::State);
+                };
+                out.bytes[out.len] = value;
+                out.len += 1;
+            }
         }
+        self.response_limit = c.le.map_or(MAX_DATA, Le::maximum).min(MAX_DATA);
         self.pending = true;
         Ok(out)
     }
@@ -376,7 +422,7 @@ impl<const N: usize> Channel<N> {
         // Bare errors are unauthenticated in SCP03. They can fail a session,
         // but MUST NOT become a trusted missing-object/blank-device result.
         if response.len() < 10
-            || response.len() > 250
+            || response.len() > MAX_RESPONSE_WIRE
             || response[response.len() - 2..] != [0x90, 0]
         {
             return Err(Error::Rejected);
@@ -385,7 +431,7 @@ impl<const N: usize> Channel<N> {
         if !end.is_multiple_of(16) {
             return Err(Error::Input);
         }
-        let mut input = Zeroizing::new([0; 258]);
+        let mut input = Zeroizing::new([0; 16 + MAX_PADDED + 2]);
         input[..16].copy_from_slice(&self.chain[..]);
         input[16..16 + end].copy_from_slice(&response[..end]);
         input[16 + end..18 + end].copy_from_slice(&[0x90, 0]);
@@ -395,7 +441,7 @@ impl<const N: usize> Channel<N> {
             return Err(Error::Integrity);
         }
         let mut out = SecretResponse {
-            bytes: Zeroizing::new([0; 240]),
+            bytes: Zeroizing::new([0; MAX_PADDED]),
             len: 0,
         };
         if end != 0 {
@@ -410,9 +456,13 @@ impl<const N: usize> Channel<N> {
                 return Err(Error::Integrity);
             }
             out.len = at - 1;
+            if out.len > self.response_limit {
+                return Err(Error::Input);
+            }
             out.bytes[out.len..].fill(0);
         }
         self.pending = false;
+        self.response_limit = 0;
         Ok(out)
     }
 }

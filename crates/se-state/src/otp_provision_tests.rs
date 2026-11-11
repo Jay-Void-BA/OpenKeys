@@ -24,7 +24,7 @@ impl Exchange for Script {
         let step = t.steps.pop_front().expect("unexpected APDU/retry");
         assert_eq!([c.instruction, c.p1, c.p2], step.header);
         assert_eq!(c.class, 0x80);
-        assert_eq!(c.le, Some(0));
+        assert_eq!(c.le, Some(openkeys_scp03::Le::Short(0)));
         assert_eq!(c.data, step.data);
         // No ReadObject(seed), including during import verification/deletion.
         if c.instruction == 2 && c.p2 == 0 {

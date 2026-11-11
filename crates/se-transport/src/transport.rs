@@ -6,7 +6,9 @@ use crate::{
     atr::Atr,
 };
 
-pub const MAX_APDU: usize = 1024;
+/// Includes the complete command/response, not only its plaintext. T=1 still
+/// uses normal 254-byte INF frames; larger APDUs require bounded chaining.
+pub const MAX_APDU: usize = 2048;
 const OPERATION_US: u64 = 5_000_000;
 const MAX_RECEIVED_FRAMES: u8 = 32;
 const MAX_WTX: u8 = 4;

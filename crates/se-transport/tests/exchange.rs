@@ -1,4 +1,4 @@
-use openkeys_se_transport::transport::{Clock, Io, IoError, Transport};
+use openkeys_se_transport::transport::{Clock, Io, IoError, MAX_APDU, Transport};
 use openkeys_se_transport::{Control, Direction, Error, Kind, MAX_INF, ReceiveError, WireFrame};
 use std::{
     cell::{Cell, RefCell},
@@ -127,6 +127,56 @@ fn chained_command_ack_and_response_are_strict() {
     assert_eq!(s.writes[2][1], 0x20);
     assert_eq!(s.writes[3][1], 0x40);
     assert_eq!(s.writes[4][1], 0x90);
+}
+
+#[test]
+fn complete_2048_byte_apdus_chain_with_normal_inf_and_keep_sequence_state() {
+    let (mut t, s, _) = setup();
+    let chunks = MAX_APDU.div_ceil(MAX_INF);
+    for index in 0..chunks - 1 {
+        queue(
+            &s,
+            Kind::Receive {
+                next_sequence: index % 2 == 0,
+                error: ReceiveError::None,
+            },
+            &[],
+        );
+    }
+    let reply: Vec<u8> = (0..MAX_APDU).map(|i| i as u8).collect();
+    for (index, bytes) in reply.chunks(MAX_INF).enumerate() {
+        queue(&s, info(index % 2 != 0, index + 1 < chunks), bytes);
+    }
+    let mut out = [0; MAX_APDU];
+    assert_eq!(
+        t.exchange_untrusted(&[0x55; MAX_APDU], &mut out)
+            .unwrap()
+            .wire_bytes(),
+        reply
+    );
+    assert!(s.borrow().reads.is_empty());
+    // Nine command and response frames leave both independent sequences set.
+    queue(&s, info(true, false), &[0x90, 0]);
+    assert_eq!(
+        t.exchange_untrusted(&[0x80, 0xca, 0, 0], &mut out)
+            .unwrap()
+            .wire_bytes(),
+        [0x90, 0]
+    );
+    assert_eq!(s.borrow().writes.last().unwrap()[1], 0x40);
+}
+
+#[test]
+fn apdu_overflow_is_rejected_before_io_and_zeroizes_output() {
+    let (mut t, s, _) = setup();
+    let calls = s.borrow().writes.len();
+    let mut out = [0xa5; MAX_APDU];
+    assert!(matches!(
+        t.exchange_untrusted(&[0; MAX_APDU + 1], &mut out),
+        Err(Error::Length)
+    ));
+    assert_eq!(s.borrow().writes.len(), calls);
+    assert!(out.iter().all(|&byte| byte == 0));
 }
 #[test]
 fn valid_crc_wrong_sequence_is_rejected_and_session_latches() {

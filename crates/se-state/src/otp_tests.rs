@@ -88,7 +88,7 @@ impl Exchange for Io {
         let mut d = self.0.borrow_mut();
         d.calls += 1;
         assert_eq!(c.class, 0x80);
-        assert_eq!(c.le, Some(0));
+        assert_eq!(c.le, Some(openkeys_scp03::Le::Short(0)));
         assert_eq!(&c.data[..2], &[0x41, 4]);
         let id = u32::from_be_bytes(c.data[2..6].try_into().unwrap());
         assert!(id == SEED_BASE || id == HOTP_BASE);

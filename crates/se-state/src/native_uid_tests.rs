@@ -12,7 +12,7 @@ enum Reply {
 struct Packet {
     header: [u8; 4],
     data: Vec<u8>,
-    le: Option<u8>,
+    le: Option<openkeys_scp03::Le>,
 }
 #[derive(Default)]
 struct Db {

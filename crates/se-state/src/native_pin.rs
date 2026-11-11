@@ -244,37 +244,21 @@ impl<X: Exchange, P: PowerCut> NativePin<X, P> {
         if self.closed || *self.sid == [0; 8] {
             return Err(Error::Closed);
         }
-        if command.class != 0x80
-            || command.data.len() > 216
-            || !matches!(command.le, None | Some(0))
-        {
-            self.close();
-            return Err(Error::Authorization);
-        }
-        // NXP se05x_Transform: embedded APDU carries Lc, no Le. Ordinary case4
-        // API uses hasle=0; >=255 is extended, but our fixed SCP envelope fits
-        // only short inner commands. BER length is canonical for TAG_1.
-        let inner_len = 4 + usize::from(!command.data.is_empty()) + command.data.len();
         let mut wire = Zeroizing::new([0; MAX_DATA]);
-        wire[..2].copy_from_slice(&[0x10, 8]);
-        wire[2..10].copy_from_slice(&*self.sid);
-        wire[10] = 0x41;
-        let at = if inner_len < 128 {
-            wire[11] = inner_len as u8;
-            12
-        } else {
-            wire[11..13].copy_from_slice(&[0x81, inner_len as u8]);
-            13
+        let end = match process_envelope(&self.sid, command, &mut wire) {
+            Ok(end) => end,
+            Err(error) => {
+                self.close();
+                return Err(error);
+            }
         };
-        wire[at..at + 4].copy_from_slice(&[0x80, command.instruction, command.p1, command.p2]);
-        let mut end = at + 4;
-        if !command.data.is_empty() {
-            wire[end] = command.data.len() as u8;
-            end += 1;
-            wire[end..end + command.data.len()].copy_from_slice(command.data);
-            end += command.data.len();
+        let length = self.raw(5, 0, 0, &wire[..end], out)?;
+        if command.le.is_some_and(|le| length > le.maximum()) {
+            out.fill(0);
+            self.close();
+            return Err(Error::Schema);
         }
-        self.raw(5, 0, 0, &wire[..end], out)
+        Ok(length)
     }
     fn reserve(&mut self, request: &Request) -> Result<(), Error> {
         self.pending = None;
@@ -375,6 +359,63 @@ impl<X: Exchange, P: PowerCut> NativePin<X, P> {
         }
         Ok(())
     }
+}
+
+/// NXP se05x_Transform/ProcessSessionCmd encoding, inside authenticated SCP03.
+/// The embedded APDU has Lc but no Le; an extended response hint selects the
+/// SDK's extended-Lc form. Canonical BER 0x81/0x82 lengths include the complete
+/// inner header. No arbitrary host APDU entry point is exposed.
+fn process_envelope(
+    sid: &[u8; 8],
+    command: &Command<'_>,
+    wire: &mut [u8; MAX_DATA],
+) -> Result<usize, Error> {
+    wire.fill(0);
+    if command.class != 0x80 || *sid == [0; 8] || command.data.len() > MAX_DATA {
+        return Err(Error::Authorization);
+    }
+    let lc_bytes = if command.data.is_empty() {
+        0
+    } else if command.data.len() < 255
+        && !matches!(command.le, Some(openkeys_scp03::Le::Extended(_)))
+    {
+        1
+    } else {
+        3
+    };
+    let inner_len = 4 + lc_bytes + command.data.len();
+    let ber_bytes = if inner_len < 128 {
+        1
+    } else if inner_len <= 255 {
+        2
+    } else {
+        3
+    };
+    let at = 11 + ber_bytes;
+    let end = at + inner_len;
+    if end > wire.len() {
+        return Err(Error::Schema);
+    }
+    wire[..2].copy_from_slice(&[0x10, 8]);
+    wire[2..10].copy_from_slice(sid);
+    wire[10] = 0x41;
+    match ber_bytes {
+        1 => wire[11] = inner_len as u8,
+        2 => wire[11..13].copy_from_slice(&[0x81, inner_len as u8]),
+        _ => {
+            wire[11] = 0x82;
+            wire[12..14].copy_from_slice(&(inner_len as u16).to_be_bytes());
+        }
+    }
+    wire[at..at + 4].copy_from_slice(&[0x80, command.instruction, command.p1, command.p2]);
+    let data_at = at + 4 + lc_bytes;
+    match lc_bytes {
+        1 => wire[at + 4] = command.data.len() as u8,
+        3 => wire[at + 5..at + 7].copy_from_slice(&(command.data.len() as u16).to_be_bytes()),
+        _ => {}
+    }
+    wire[data_at..end].copy_from_slice(command.data);
+    Ok(end)
 }
 fn id_tlv(id: u32) -> [u8; 6] {
     let mut out = [0x41, 4, 0, 0, 0, 0];

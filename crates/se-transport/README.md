@@ -1,7 +1,7 @@
 # Bounded SE050 T=1-over-I2C
 
 Own Rust `no_std`, no heap/unsafe/dependencies. Normal frames only: NAD5A/A5,
-INF<=254, canonical I/R/S controls and CRC16/X25 (reflected8408, init/xorFFFF,
+INF<=254, complete APDU<=2048 through bounded chaining, canonical I/R/S controls and CRC16/X25 (reflected8408, init/xorFFFF,
 little-endian wire). CRC is error detection, **never authentication**. The
 exact vendor/profile ATR is parsed without fallback defaults. An ATR never
 provides trusted chip identity or an applet-version/security assertion.
