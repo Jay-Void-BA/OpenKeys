@@ -1,9 +1,9 @@
 name: OpenKeys development checks
 on:
   push:
-    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'manufacturing/se-native-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
   pull_request:
-    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'manufacturing/se-native-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
   workflow_dispatch:
     inputs:
       target:
@@ -50,7 +50,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           rustup target add thumbv8m.main-none-eabihf --toolchain 1.99.1
-          cargo check -p device-policy -p device-vault -p openkeys-board -p openkeys-se-transport -p openkeys-scp03 -p openkeys-h573-crypto -p openkeys-se-state -p openkeys-authenticator-core --target thumbv8m.main-none-eabihf --locked
+          cargo check -p device-policy -p device-vault -p device-records -p openkeys-board -p openkeys-se-transport -p openkeys-scp03 -p openkeys-h573-crypto -p openkeys-se-state -p openkeys-authenticator-core -p openkeys-secure-channel --target thumbv8m.main-none-eabihf --locked
           cargo build -p openkeys-h573 --release --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked
           cargo clippy -p openkeys-h573 --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked -- -D warnings
       - name: R05 Cortex-M33 diagnostics and LCD variants
@@ -78,6 +78,7 @@ jobs:
         run: |
           python3 scripts/export-se-state-layout.py --check
           python3 scripts/export-r05-pin-layout.py --check
+          python3 scripts/export-r05-native-pin-layout.py --check
           python3 scripts/freeze-r05-board.py --check
       - name: Verify diagnostic source and artifact inventory
         if: runner.os == 'Linux'

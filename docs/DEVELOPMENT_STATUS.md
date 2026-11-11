@@ -7,12 +7,12 @@
 | 部分 | 已有 | 未完成 |
 |---|---|---|
 | 电路 / PCB / 结构 | R05 十键、H573、SE050、DFR0555、NFC、供电 / LCD 故障互锁；10 页 / 151 BOM / 四层，ERC / DRC 零问题，705 项核对，制造导出 | 首板 DFM、LCD 电压下限 / 电容 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
-| 本地六位 PIN | 6+6 首次设置策略、独立十键、完整猜测持久预扣、SE HKDF / 比较、11 次失败擦除锁存、改 PIN 擦除锁存 | 真实首次初始化器、完整 ALL-DATA 擦除事务、SE 原生 ACL 强制；已有[默认关闭的原生会话样板探针](NATIVE_UID_QUALIFICATION_R05.md)，不是生产 PIN 后端；当前锁存不等于数据已全部删除 |
-| PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试 | 真实加密握手、可信时间、射频离场 IRQ、USB reset / suspend 及各协议实际验证状态的 Root 接线 |
+| 本地六位 PIN | 6+6 首次设置策略、独立十键、持久预扣 / 擦除锁存；新增[原生 PIN v3 后端](NATIVE_PIN_RUNTIME_R05.md)、原生会话内 credit、密封私钥接口；新签名对象 ACL 限定 PIN AuthID | 真实首次初始化器、完整 ALL-DATA 擦除事务、生产 Root 接线、SE profile / 真实 ACL / 原生限次资格验证；标记摘要不证明 ACL，锁存不等于全部删除 |
+| PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试；[Noise XX 与 AEAD 通道内核](../crates/secure-channel/README.md)及 CCID / NFC 共用分片编码 | 可信时间、射频离场 IRQ、USB reset / suspend、原生 PIN 会话撤权及各协议实际验证状态的 Root 接线；真实 OS 连接 / 配对存储与通道集成 |
 | LCD / 十键 / 诊断 | 独立 Rust 驱动、版本明确、断电故障锁存、按键去抖 / 组合键拒绝；真实 R05 引脚构建约束 | 生产 Secure 归属、板上时序与故障响应；ARM 诊断没有认证功能 |
 | SE / MCU 密码 | T=1、SCP03、HKDF / 签名 / 持久计数、OTP MACOneShot 候选；H573 SAES / RNG 与受限 MMIO | 实片身份、唯一配对、profile / ACL、容量与耗尽、掉电原子性、KAT 和时钟 / DMA / GTZC / 调试配置 |
 | FIDO | 已固定并修改的 OpenSK 子集与注册 / 登录 / U2F / hmac-secret 网关 | 真实 H573 Env / 硬件密钥、CTAPHID / NFC 和完整 Root dispatcher |
-| TOTP / HOTP | 6 位设备显示、RFC 测试、SE MAC 不读取种子、HOTP 持久预增、不导出验证码的 API | 种子导入 / 删除、密封账户目录、受保护 RTC / 时间管理、Root 适配和真机互通 |
+| TOTP / HOTP | 6 位设备显示、RFC 测试、SE MAC 不读种子、HOTP 持久预增；新增严格 URI / 设备解析与[SE 导入 / 删除](OTP_PROVISIONING_R05.md)，精确账户 / 种子 / 槽位 / 代际绑定 | 密封账户目录、pending / tombstone 跨介质事务与恢复、受保护 RTC / 时间管理、Root / 管理器适配和真机互通 |
 | OpenPGP / PIV / SSH | 已拉取上游研究；协议角色与会话权限边界；管理器入口 | 真正的 OpenPGP / PIV 应用、导入 / 生成 / 证书管理与 CCID；SSH FIDO / PIV / OpenPGP 分别验证，不能视为已有可用实现 |
 | notes / recovery | 加密快照、记录隔离、解析 / 事务模块 | Root 真实密钥、管理器私密数据通道、完整销毁和端到端验收 |
 | GPUI 管理器 | 英文桌面界面源码；所有设备操作在缺失真实安全后端时明确拒绝 | 认证加密连接、真实导入 / 设备操作、三桌面安装包；iOS / iPadOS / Android App、权限、签名与真机测试 |
@@ -23,7 +23,7 @@
 ## 证据范围
 
 - 当前 CAD：[板网报告](../hardware/r05/review/board-check.json)、[CAD 摘要](../hardware/r05/review/cad-manifest.json)。
-- 当前软件：[R05 本地验证记录](r05-validation.json)；[对应源码的 GitHub CI 记录](ci-evidence-r05.json)已核对完整日志与注释；三平台各 246 项核心与试验测试，额外 4 项线格式 / 原生 ABI 测试，warning 均为 0。
+- 已发布的软件证据：[R05 本地验证记录](r05-validation.json)、[GitHub CI 记录](ci-evidence-r05.json)均注明对应提交；后续修改不得借用旧提交的通过结果。新内核须重新完成全仓库 / ARM / 三平台 CI 和日志核对。
 - 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[公开 SE 布局](../manufacturing/se-pin-layout-r05.json)。
 - 诊断用途：[R05 目标说明](../firmware/r05/README.md)；公开 LCD / 键 / Flash ID，不验证真实 PIN，不启用充电或 USB/NFC 协议。
 - 旧 R04 的 [CI](ci-evidence-r04.json)、[手册](../manufacturing/BUILD_MANUAL_ZH.md)及 [预检](../manufacturing/readiness-report.json)仅供历史追溯，不能充当 R05 放行证据。

@@ -1,6 +1,7 @@
 //! Synthetic RFC secret/MAC fixture and a model of the sealed SE exchange.
 extern crate std;
 use super::*;
+use crate::Exchange;
 use device_policy::{
     Error as PolicyError,
     execution::State,
@@ -75,8 +76,13 @@ struct Db {
     bad_type: bool,
 }
 type Shared = Rc<RefCell<Db>>;
+
+#[path = "otp_provision_tests.rs"]
+mod provision;
 struct Io(Shared);
 impl crate::private::Sealed for Io {}
+impl crate::private::PinBound for Io {}
+impl PinBoundExchange for Io {}
 impl Exchange for Io {
     fn exchange(&mut self, c: &Command<'_>, out: &mut [u8]) -> Result<usize, Error> {
         let mut d = self.0.borrow_mut();

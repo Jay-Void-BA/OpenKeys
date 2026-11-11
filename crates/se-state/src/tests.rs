@@ -119,7 +119,10 @@ impl Silicon {
                 return Ok(out);
             }
             let file = file.unwrap();
-            assert_eq!(&c.data[6..], &[0x43, 2, 0, file.length() as u8]);
+            assert_eq!(
+                &c.data[6..],
+                &[0x42, 2, 0, 0, 0x43, 2, 0, file.length() as u8]
+            );
             let bytes = self.files[file as usize].as_ref().unwrap();
             let mut out = std::vec![0x41, bytes.len() as u8];
             out.extend_from_slice(bytes);

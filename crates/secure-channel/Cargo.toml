@@ -1,0 +1,22 @@
+[package]
+name = "openkeys-secure-channel"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+device-policy = { path = "../device-policy" }
+noise-protocol = { version = "=0.2.1", default-features = false }
+noise-rust-crypto = { version = "=0.6.2", default-features = false, features = ["use-chacha20poly1305"] }
+x25519-dalek = { version = "=2.0.1", default-features = false, features = ["static_secrets", "zeroize"] }
+sha2 = { version = "=0.10.9", default-features = false }
+sha2-secret = { package = "sha2", version = "=0.11.1", default-features = false, features = ["zeroize"] }
+subtle = { version = "=2.6.1", default-features = false }
+zeroize = { version = "1.9", default-features = false, features = ["alloc"] }
+
+[dev-dependencies]
+# Independent Noise implementation for wire/transcript interoperability tests.
+snow = { version = "=0.10.0", default-features = false, features = ["use-curve25519", "use-chacha20poly1305", "use-sha2", "use-getrandom", "risky-raw-split"] }
+
+[lints]
+workspace = true

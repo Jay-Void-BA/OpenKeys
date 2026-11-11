@@ -162,9 +162,9 @@ impl<X: Exchange> PinState<X> {
         Ok(())
     }
     fn file(&mut self, id: u32) -> Result<Zeroizing<[u8; 32]>, Error> {
-        let mut data = [0; 10];
+        let mut data = [0; 14];
         data[..6].copy_from_slice(&Self::id(id));
-        data[6..].copy_from_slice(&[0x43, 2, 0, 32]);
+        data[6..].copy_from_slice(&[0x42, 2, 0, 0, 0x43, 2, 0, 32]);
         let mut out = Zeroizing::new([0; 40]);
         let n = self.call(2, 0, 0, &data, &mut out[..])?;
         if n != 34 || out[..2] != [0x41, 32] {

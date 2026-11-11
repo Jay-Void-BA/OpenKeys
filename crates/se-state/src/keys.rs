@@ -5,7 +5,7 @@
 //! operations belong ONLY to the protected root; they are not a host APDU API.
 //! The SCP03 guard must check the SAME authorization and its live cancellation,
 //! generation, clock and hardware state before/after every exchange.
-use crate::{Error, Exchange};
+use crate::{Error, PinBoundExchange};
 use device_policy::{Authorization, Operation};
 use openkeys_scp03::Command;
 use p256::ecdsa::{Signature, VerifyingKey, signature::hazmat::PrehashVerifier};
@@ -38,11 +38,11 @@ impl SigningKey {
 
 /// No software implementation of the authenticated Exchange is available in
 /// production. Ambiguous I/O, invalid objects or malformed replies close it.
-pub struct Keys<X: Exchange> {
+pub struct Keys<X: PinBoundExchange> {
     io: X,
     faulted: bool,
 }
-impl<X: Exchange> Keys<X> {
+impl<X: PinBoundExchange> Keys<X> {
     pub fn new(io: X) -> Self {
         Self { io, faulted: false }
     }
@@ -147,12 +147,10 @@ impl<X: Exchange> Keys<X> {
             self.close();
             return Err(Error::Record);
         }
-        let mut data = [0; 20];
-        data[..3].copy_from_slice(&[0x11, 9, 8]);
-        // Auth object ID=0: all other users, restricted to protected SCP access.
-        data[7..11].copy_from_slice(&SIGN_POLICY.to_be_bytes());
-        data[11..17].copy_from_slice(&Self::id_tlv(id));
-        data[17..].copy_from_slice(&[0x42, 1, 3]); // NIST P-256, no private TLV.
+        let mut data = [0; 29];
+        data[..20].copy_from_slice(&crate::native_pin::owner_policy(SIGN_POLICY));
+        data[20..26].copy_from_slice(&Self::id_tlv(id));
+        data[26..].copy_from_slice(&[0x42, 1, 3]); // NIST P-256, no private TLV.
         let n = self.call(1, 0x61, 0, &data, &mut out)?;
         if n != 0 {
             self.close();
@@ -227,7 +225,8 @@ impl<X: Exchange> Keys<X> {
     /// RFC5869 Extract-and-Expand, SHA256, salt=per-credential random salt,
     /// info="credRandom", L=32, exactly matching OpenSK's helper.
     /// The non-UV root is retained for format compatibility, but OpenKeys
-    /// requests always have mandatory fingerprint UV.
+    /// hardware-PIN authorization is always required. CTAP UV/protocol-PIN
+    /// status is tracked independently; a local-PIN lease must not forge it.
     pub fn derive_cred_random(
         &mut self,
         auth: &Authorization,
@@ -262,9 +261,9 @@ impl<X: Exchange> Keys<X> {
         Ok(secret)
     }
 }
-impl<X: Exchange> Drop for Keys<X> {
+impl<X: PinBoundExchange> Drop for Keys<X> {
     fn drop(&mut self) {
-        self.close();
+        self.io.release();
     }
 }
 

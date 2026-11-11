@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "revision": "0.5",
+  "native_pin_profile": 3,
+  "status": "CANDIDATE_NOT_COMMISSIONED_NOT_QUALIFIED",
+  "production_root_integrated": false,
+  "commissioner_implemented": false,
+  "all_data_erasure_implemented": false,
+  "programming_performed": false,
+  "contains_production_secrets": false,
+  "pin_decimal_digits": 6,
+  "maximum_failed_or_ambiguous_completed_guesses": 11,
+  "objects": [
+    {
+      "role": "PIN",
+      "id": "4F4B0801",
+      "kind": "userid",
+      "bytes": 6,
+      "persistent": true
+    },
+    {
+      "role": "SPENT",
+      "id": "4F4B0501",
+      "kind": "counter",
+      "bytes": 8,
+      "persistent": true
+    },
+    {
+      "role": "CREDIT",
+      "id": "4F4B0502",
+      "kind": "counter",
+      "bytes": 8,
+      "persistent": true
+    },
+    {
+      "role": "ERASE",
+      "id": "4F4B0507",
+      "kind": "counter",
+      "bytes": 8,
+      "persistent": true
+    },
+    {
+      "role": "MARKER",
+      "id": "4F4B0506",
+      "kind": "binary",
+      "bytes": 32,
+      "persistent": true
+    }
+  ],
+  "marker_sha256": "ba65388a90faa904cd64b2c297ee2648947e281f5dd98f8c4bc6b8d11bc34583",
+  "signing_owner_policy_tlv_hex": "1112084f4b080110260000080000000020000000",
+  "required_acl": {
+    "PIN": "Explicit auth flag + maxAttempts11; immutable/no delete or rebind; full platform SCP03",
+    "SPENT": "Monotonic precharge; no decrement/reset/delete",
+    "CREDIT": "Only PIN-authenticated native session may WRITE; platform may READ only",
+    "ERASE": "Monotonic nonzero latch refuses ordinary access; survives until qualified ALL-DATA wipe",
+    "MARKER": "Written LAST; no runtime WRITE/DELETE; digest is not an ACL proof",
+    "ALL_PRIVATE_OBJECTS": "Explicit PIN AuthID policy, no default/all-other-user private operations"
+  },
+  "native_userid_counter_readback": "Not a retry counter: AN12413 3.2.4.4 says UserID reports zero",
+  "userid_read_size": "Not supported; never used as a length/PIN-strength proof",
+  "migration": "No automatic migration from legacy HKDF v2; full verified destruction first",
+  "physical_results": "NOT_RUN",
+  "source_sha256": {
+    "crates/se-state/src/native_pin.rs": "818fbb899a6c990423e5b3fe2af2d7dffe783c0235e50c9daf3954095099d2d0",
+    "crates/se-state/src/pin_only.rs": "3b6baf1f444827d88e1a6abf980d167b4b38de7908e983286146ff5477113cd6"
+  }
+}

@@ -5,6 +5,7 @@
 //! Every operation, including index/count access, needs the live root checkpoint.
 extern crate alloc;
 pub mod item;
+pub mod otp;
 use alloc::vec::Vec;
 use device_vault::{
     Aead, Checkpoint, CiphertextStorage, Ledger, PAYLOAD_BYTES, SnapshotReader, SnapshotSource,

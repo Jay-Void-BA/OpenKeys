@@ -1,6 +1,6 @@
 extern crate std;
 use super::*;
-use crate::private;
+use crate::{Exchange, private};
 use aes_gcm::{Aes256Gcm, KeyInit, aead::AeadInPlace};
 use device_policy::{Gate, Request, SecureVerifier, biometric};
 use std::{cell::RefCell, collections::VecDeque, rc::Rc, vec, vec::Vec};
@@ -43,6 +43,8 @@ struct Trace {
 }
 struct Model(Rc<RefCell<Trace>>);
 impl private::Sealed for Model {}
+impl private::PinBound for Model {}
+impl PinBoundExchange for Model {}
 impl Exchange for Model {
     fn exchange(&mut self, c: &Command<'_>, out: &mut [u8]) -> Result<usize, Error> {
         let mut t = self.0.borrow_mut();
@@ -171,7 +173,7 @@ fn generated_key_has_explicit_restrictive_policy_and_never_contains_a_private_ke
         step([4, 0, 0x27], &hex("41044f4b1007"), &hex("410102")),
         step(
             [1, 0x61, 0],
-            &hex("110908000000001026000041044f4b1007420103"),
+            &hex("1112084f4b08011026000008000000002000000041044f4b1007420103"),
             &[],
         ),
     ];

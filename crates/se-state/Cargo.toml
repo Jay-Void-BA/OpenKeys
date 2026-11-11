@@ -12,6 +12,7 @@ native-uid-qualification = []
 openkeys-scp03 = { path = "../scp03" }
 device-policy = { path = "../device-policy" }
 device-vault = { path = "../device-vault" }
+openkeys-otp-format = { path = "../otp-format", default-features = false }
 sha2 = { version = "=0.10.9", default-features = false }
 subtle = { version = "=2.6.1", default-features = false }
 zeroize = { version = "1.9", default-features = false }

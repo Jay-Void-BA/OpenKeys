@@ -8,6 +8,8 @@ use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use zeroize::Zeroizing;
 
+pub mod otp;
+
 pub const MAX_FILE_BYTES: usize = 1_048_576;
 pub const MAX_ENTRIES: usize = 256;
 pub const MAX_NOTE_BYTES: usize = 16_384;

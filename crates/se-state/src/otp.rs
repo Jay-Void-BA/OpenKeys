@@ -3,14 +3,49 @@
 //! MACOneShot_G / P1_MAC=0x0d / P2_GENERATE_ONESHOT=0x45.
 //! Actual E2 support, policies, provisioning and power-loss semantics require
 //! silicon qualification. There is no runtime creation/default/seed export.
-use crate::{Error, Exchange};
+use crate::{Error, PinBoundExchange};
 use device_policy::{Operation, Request, execution::Execution};
+use openkeys_otp_format::Import;
 use openkeys_scp03::Command;
 use sha2::{Digest, Sha256};
 use zeroize::Zeroizing;
 
 pub const SEED_BASE: u32 = 0x4f4b_0600;
 pub const HOTP_BASE: u32 = 0x4f4b_0700;
+pub fn import_request(
+    slot: u8,
+    generation: u64,
+    input: &Import<'_>,
+    channel: [u8; 32],
+) -> Result<Request, Error> {
+    if slot >= 32 || generation == 0 {
+        return Err(Error::Schema);
+    }
+    let mut h = Sha256::new();
+    h.update(b"OpenKeys/OTP/import/v1");
+    h.update([slot]);
+    h.update(generation.to_be_bytes());
+    h.update(input.digest());
+    Ok(Request {
+        operation: Operation::ImportOtp,
+        digest: h.finalize().into(),
+        channel,
+    })
+}
+pub fn delete_request(slot: u8, generation: u64, channel: [u8; 32]) -> Result<Request, Error> {
+    if slot >= 32 || generation == 0 {
+        return Err(Error::Schema);
+    }
+    let mut h = Sha256::new();
+    h.update(b"OpenKeys/OTP/delete/v1");
+    h.update([slot]);
+    h.update(generation.to_be_bytes());
+    Ok(Request {
+        operation: Operation::DeleteOtp,
+        digest: h.finalize().into(),
+        channel,
+    })
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Algorithm {
@@ -27,12 +62,12 @@ impl Algorithm {
         }
     }
 }
-pub struct OtpKeys<X: Exchange> {
+pub struct OtpKeys<X: PinBoundExchange> {
     io: X,
     closed: bool,
     pending: Option<(Request, u8, Algorithm, u64)>,
 }
-impl<X: Exchange> OtpKeys<X> {
+impl<X: PinBoundExchange> OtpKeys<X> {
     pub const fn new(io: X) -> Self {
         Self {
             io,
@@ -126,6 +161,99 @@ impl<X: Exchange> OtpKeys<X> {
             out[2..10].try_into().map_err(|_| Error::Schema)?,
         ))
     }
+    fn exists(&mut self, id: u32) -> Result<bool, Error> {
+        let mut out = [0; 8];
+        let n = self.call(4, 0, 0x27, &Self::id(id), &mut out)?;
+        match &out[..n] {
+            [0x41, 1, 1] => Ok(true),
+            [0x41, 1, 2] => Ok(false),
+            _ => Err(Error::Schema),
+        }
+    }
+    /// The root first durably reserves slot+generation and a pending catalog
+    /// intent. It publishes metadata ONLY after this succeeds and the final
+    /// live scope check. An uncertain import is never retried/overwritten: a
+    /// reboot hides the pending entry and requires authorized cleanup.
+    /// No installed seed can be read back; only type/size/counter are checked.
+    pub fn install(
+        &mut self,
+        scope: &Execution,
+        slot: u8,
+        generation: u64,
+        input: &Import<'_>,
+    ) -> Result<(), Error> {
+        let result = (|| {
+            let expected = import_request(slot, generation, input, scope.request().channel)?;
+            if scope.request() != &expected || scope.checked_at_ms() >= scope.expires_ms() {
+                return Err(Error::Authorization);
+            }
+            let seed_id = SEED_BASE + u32::from(slot);
+            let counter_id = HOTP_BASE + u32::from(slot);
+            if self.exists(seed_id)? || self.exists(counter_id)? {
+                return Err(Error::Record);
+            }
+            // Counter is created first for both modes. A cut can leave an
+            // orphan, never an active catalog record with no persistent count.
+            let mut data = Zeroizing::new([0; 36]);
+            data[..20].copy_from_slice(&crate::native_pin::owner_policy(0x0034_0000)); // read/write/delete
+            data[20..26].copy_from_slice(&Self::id(counter_id));
+            // TAG_3 supplies the initial eight-byte value/width; TAG_2 is
+            // conditional on TAG_3 being absent (AN12413 table99).
+            data[26..28].copy_from_slice(&[0x43, 8]);
+            data[28..36].copy_from_slice(&input.initial_counter().to_be_bytes());
+            let mut out = [0; 8];
+            if self.call(1, 8, 0, &*data, &mut out)? != 0 {
+                return Err(Error::Schema);
+            }
+            if self.schema(counter_id, 0x0d)? != 8
+                || self.counter(counter_id)? != input.initial_counter()
+            {
+                return Err(Error::Counter);
+            }
+            let seed = input.seed_for_provisioning();
+            let mut data = Zeroizing::new([0; 92]);
+            data[..20].copy_from_slice(&crate::native_pin::owner_policy(0x1004_0000)); // HMAC sign + delete; no read/export/update
+            data[20..26].copy_from_slice(&Self::id(seed_id));
+            data[26..28].copy_from_slice(&[0x43, seed.len() as u8]);
+            data[28..28 + seed.len()].copy_from_slice(seed);
+            if self.call(1, 5, 0, &data[..28 + seed.len()], &mut out)? != 0
+                || self.schema(seed_id, 0x11)? != seed.len()
+            {
+                return Err(Error::Schema);
+            }
+            Ok(())
+        })();
+        if result.is_err() {
+            self.close();
+        }
+        result
+    }
+    /// First persist a tombstone that hides the account and invalidates every
+    /// pending operation for its generation. Delete seed BEFORE its counter;
+    /// any cut stays tombstoned. Success does not itself commit a vault catalog.
+    pub fn delete(&mut self, scope: &Execution, slot: u8, generation: u64) -> Result<(), Error> {
+        let result = (|| {
+            let expected = delete_request(slot, generation, scope.request().channel)?;
+            if scope.request() != &expected || scope.checked_at_ms() >= scope.expires_ms() {
+                return Err(Error::Authorization);
+            }
+            for id in [SEED_BASE + u32::from(slot), HOTP_BASE + u32::from(slot)] {
+                // Explicit authenticated absence is safe on resuming a
+                // tombstoned deletion; an error is never interpreted as absent.
+                if self.exists(id)? {
+                    let mut out = [0; 8];
+                    if self.call(4, 0, 0x28, &Self::id(id), &mut out)? != 0 || self.exists(id)? {
+                        return Err(Error::Record);
+                    }
+                }
+            }
+            Ok(())
+        })();
+        if result.is_err() {
+            self.close();
+        }
+        result
+    }
     /// The protected root checks the live execution generation/time before and
     /// after this call. It returns a consumed OLD counter, never a guess at an
     /// uncertain write. No response can be shown if later HMAC/display fails.
@@ -195,9 +323,10 @@ impl<X: Exchange> OtpKeys<X> {
         result
     }
 }
-impl<X: Exchange> Drop for OtpKeys<X> {
+impl<X: PinBoundExchange> Drop for OtpKeys<X> {
     fn drop(&mut self) {
-        self.close();
+        self.pending = None;
+        self.io.release();
     }
 }
 

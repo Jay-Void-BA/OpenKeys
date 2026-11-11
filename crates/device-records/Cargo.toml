@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+openkeys-otp-format = { path = "../otp-format", features = ["alloc"] }
 device-vault = { path = "../device-vault" }
 sha2 = { version = "=0.10.9", default-features = false }
 zeroize = { version = "1.9", default-features = false, features = ["alloc"] }

@@ -60,7 +60,7 @@ impl Exchange for Link {
                     v
                 } else {
                     assert_ne!(id, PEPPER_ID, "pepper is never read");
-                    assert_eq!(&c.data[6..], &[0x43, 2, 0, 32]);
+                    assert_eq!(&c.data[6..], &[0x42, 2, 0, 0, 0x43, 2, 0, 32]);
                     let mut v = std::vec![0x41, 32];
                     match id {
                         SALT_ID => v.extend(0_u8..32),

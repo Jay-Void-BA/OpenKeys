@@ -18,7 +18,16 @@ pub trait Exchange: private::Sealed {
     /// Body only, status already authenticated/stripped by strict SCP03.
     fn exchange(&mut self, command: &Command<'_>, out: &mut [u8]) -> Result<usize, Error>;
     fn close(&mut self);
+    /// Normal provider destruction. Borrowed native-PIN ports may retain the
+    /// authenticated session until Root's idle/link policy revokes it. Fault
+    /// paths MUST call close instead, which disables the entire native session.
+    fn release(&mut self) {
+        self.close();
+    }
 }
+/// Only an authenticated native local-PIN session can supply private-key/OTP
+/// exchanges. Plain platform SCP03 proves MCU identity, never the owner's PIN.
+pub trait PinBoundExchange: Exchange + private::PinBound {}
 pub struct ScpSession<'a, L, C, G, const N: usize> {
     client: &'a mut Client<L, N>,
     crypto: &'a mut C,
@@ -307,9 +316,13 @@ impl<X: Exchange> Objects<X> {
             self.close();
             return Err(Error::Schema);
         }
-        let mut data = [0; 10];
+        // AN12413 table105 requires offset and length either BOTH present or
+        // BOTH absent for a binary read. Never rely on an omitted offset
+        // default while sending a length. SDK optional-zero helpers omit it;
+        // this explicit form follows the paired-field constraint in the spec.
+        let mut data = [0; 14];
         data[..6].copy_from_slice(&Self::id(file.id()));
-        data[6..].copy_from_slice(&[0x43, 2, 0, file.length() as u8]);
+        data[6..].copy_from_slice(&[0x42, 2, 0, 0, 0x43, 2, 0, file.length() as u8]);
         let mut response = Zeroizing::new([0; RESPONSE_BYTES]);
         let n = self.call(2, 0, 0, &data, &mut response[..])?;
         if n != out.len() + 2 || response[..2] != [0x41, out.len() as u8] {
