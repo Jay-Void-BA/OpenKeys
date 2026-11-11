@@ -121,8 +121,23 @@ jobs:
       - name: Linux native development libraries
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq libfontconfig1-dev libfreetype-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-dev libx11-xcb-dev libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libwayland-dev libxkbfile-dev libvulkan-dev libxi-dev libxcursor-dev libxrandr-dev libxext-dev libxfixes-dev
+          # Avoid the runner image's Azure mirror after a recorded DNS failure.
+          # Keep Ubuntu's signing configuration; partial index updates must fail.
+          sudo python3 - <<'PY'
+          from pathlib import Path
+          paths = [Path('/etc/apt/sources.list')]
+          paths += list(Path('/etc/apt/sources.list.d').glob('*.list'))
+          paths += list(Path('/etc/apt/sources.list.d').glob('*.sources'))
+          for path in paths:
+              if path.is_file():
+                  old = path.read_text()
+                  new = old.replace('http://azure.archive.ubuntu.com/ubuntu', 'https://archive.ubuntu.com/ubuntu')
+                  new = new.replace('https://azure.archive.ubuntu.com/ubuntu', 'https://archive.ubuntu.com/ubuntu')
+                  if new != old:
+                      path.write_text(new)
+          PY
+          sudo apt-get -o APT::Update::Error-Mode=any -o Acquire::Retries=3 -o Acquire::https::Timeout=20 update
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::https::Timeout=20 install -y --no-install-recommends libfontconfig1-dev libfreetype-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-dev libx11-xcb-dev libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libwayland-dev libxkbfile-dev libvulkan-dev libxi-dev libxcursor-dev libxrandr-dev libxext-dev libxfixes-dev
       - name: Format feature-gated GPUI view
         run: rustfmt --edition 2024 --check apps/manager-gpui/src/ui.rs
       - name: Check GPUI native backend
