@@ -1,6 +1,6 @@
 {
   "revision": "0.5",
-  "board_sha256": "ea044bf4997073a4f13ba3af3ebe06452fceee466e52a8a6e2bc61bb07f890d3",
+  "board_sha256": "d6278f2e471fbc458ca9c3e9df6af21929153fb99c5f37df0c1bd28e5340a3ff",
   "checks": [
     "Every schematic component is physically placed",
     "Package J1",
@@ -512,6 +512,9 @@
     "Package C41",
     "Pad/net C41.1",
     "Pad/net C41.2",
+    "Package C56",
+    "Pad/net C56.1",
+    "Pad/net C56.2",
     "Package U10",
     "Pad/net U10.1",
     "Pad/net U10.2",
@@ -692,6 +695,10 @@
     "Pad/net C55.2",
     "No schematic pin omitted from PCB",
     "Four-layer1.0mm board",
+    "Backup LDO input decoupling within 3mm of VI",
+    "Backup LDO output decoupling within 3mm of VO",
+    "MCU VBAT has separate decoupling within 3mm",
+    "Backup decouplers use the component copper side",
     "In1 and In2 contain only GND zones",
     "Plane excludes rotated RF winding",
     "Plane excludes rotated RF winding",
@@ -708,9 +715,9 @@
     "No fingerprint footprint placed",
     "No unreviewed DRC exclusions"
   ],
-  "components": 151,
-  "segments": 1724,
-  "vias": 279,
+  "components": 152,
+  "segments": 1742,
+  "vias": 282,
   "short_power_net_lengths_mm": {
     "SW_L1": 3.5572388155425108,
     "SW_L2": 3.5572388155425108,

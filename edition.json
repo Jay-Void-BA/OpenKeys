@@ -10,7 +10,7 @@
   "excluded_algorithms": ["SM2", "ML-DSA-65", "ML-KEM-768"],
   "component_preference": ["foreign_manufacturer", "chinese_manufacturer_fallback"],
   "procurement_requirement": "Mainland China delivery and personal 3-unit order must be verified",
-  "saved_hardware": "R05 H573 / SE050E2 engineering baseline; RSA coverage unresolved",
+  "saved_hardware": "R05 H573 / SE051C2 candidate; native profile qualification and RSA firmware integration pending",
   "production_release": false,
   "physical_qualification": "NOT_RUN",
   "metadata_only": "This file describes edition scope; it does not enable or implement firmware algorithms"

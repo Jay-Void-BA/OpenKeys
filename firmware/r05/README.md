@@ -1,6 +1,8 @@
 # R05 STM32H573 target
 
-The active PCB uses a device PIN and ten decimal keys. No fingerprint sensor,
+The active PCB uses a device PIN and ten decimal keys. U5 is the SE051C2
+full-feature candidate; [selection and SYS backup corrections](../../docs/CLASSICAL_SE_POWER_R05.md)
+require Applet 7.2/native-PIN qualification before any private service is enabled. No fingerprint sensor,
 default PIN, or host hardware-PIN entry exists in this profile. TOTP/HOTP
 and OpenPGP/PIV/SSH are production integration targets, not diagnostic features.
 

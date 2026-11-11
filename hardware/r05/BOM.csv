@@ -50,7 +50,7 @@ J3,Internal SWD - DNP production,Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27
 Y1,ABS07-32.768KHZ-6-T,Crystal:Crystal_SMD_3215-2Pin_3.2x1.5mm,03-mcu,False,LSE for backup RTC and tamper. RTC validity/rollback must be qualified. 9pF loading provisional; qualify startup/drive across temperature
 C20,9pF C0G - tune,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
 C21,9pF C0G - tune,Capacitor_SMD:C_0603_1608Metric,03-mcu,False,
-U5,SE050E2HQ1/Z01Z3Z,OpenKeys:SE050_SOT1969-1_HX2QFN20,04-se-storage,False,"VOUT to local VCC only. Per-device pairing, persistent attempts and anti-rollback need validated provisioning"
+U5,SE051C2HQ1/Z01XDZ,OpenKeys:SE050_SOT1969-1_HX2QFN20,04-se-storage,False,"SE051 Rev2.0 table3/SOT1969-1: unused RF1/17 and RST14 grounded; VOUT15 to VCC18 only. Target C2 OEF A8FA/Applet7.2 full feature. Identity, PIN ACL/retries, RSA4096 and per-device SCP commissioning still require qualification"
 U6,W25Q64JVSSIQ,Package_SO:SOIC-8_5.3x5.3mm_P1.27mm,04-se-storage,False,
 R13,4.7k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
 R14,4.7k,Resistor_SMD:R_0603_1608Metric,04-se-storage,False,
@@ -105,9 +105,10 @@ C38,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
 SW11,KEY 0,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
 R34,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
 C39,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
-U13,MCP1700T-3002E/TT,Package_TO_SOT_SMD:SOT-23,07-fault-tamper,False,Always-on3.0V supplies VBAT/case circuit when main switch is OFF; qualify reverse injection and backup switchover
-C40,1uF,Capacitor_SMD:C_0805_2012Metric,07-fault-tamper,False,
-C41,1uF,Capacitor_SMD:C_0805_2012Metric,07-fault-tamper,False,
+U13,MCP1700T-3002E/TT,Package_TO_SOT_SMD:SOT-23,07-fault-tamper,False,"Always-on3.0V from charger SYS: USB or battery, independent of main switch. SYS must stay within MCP1700 6V maximum. Qualify reverse injection and source transitions"
+C40,4.7uF 10V X7R,Capacitor_SMD:C_0805_2012Metric,07-fault-tamper,False,
+C41,4.7uF 10V X7R,Capacitor_SMD:C_0805_2012Metric,07-fault-tamper,False,
+C56,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,"Local U4.1 VBAT decoupling, separate from U13 output capacitor. Both U13 capacitors must retain effective capacitance >=1uF across bias/temperature/tolerance"
 U10,TPS3702CX33DDCR,Package_TO_SOT_SMD:TSOT-23-6,07-fault-tamper,False,SET high: nominal UV3.17V/OV3.43V; open-drain reset independent of ADC/software. Not nanosecond fault protection
 SW12,LID CLOSED contact,Button_Switch_SMD:SW_SPST_TL3342,07-fault-tamper,False,Lid actuator closes contact; open wire pulls low => independent reset. Travel/contact reliability unvalidated
 R35,100k,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,

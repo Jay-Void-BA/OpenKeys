@@ -85,11 +85,11 @@ def mcu():
   for num,net in sorted(nets.items(),key=lambda p:int(p[0])):w.writerow([num,pm[num],net,af.get(pm[num],'power / GPIO / dedicated')])
 def storage():
  s=sheet('04-se-storage','Secure element, protected keys and encrypted records')
- s.comp('SE','U5','SE050E2HQ1/Z01Z3Z',78.74,83.82,{'1':'GND','9':'SE_SDA','10':'SE_SCL','11':'SE_EN','12':'+3V3','14':'GND','15':'SE_CORE','17':'GND','18':'SE_CORE','19':'GND','21':'GND'},'OpenKeys:SE050_SOT1969-1_HX2QFN20',note='VOUT to local VCC only. Per-device pairing, persistent attempts and anti-rollback need validated provisioning')
+ s.comp('SE','U5','SE051C2HQ1/Z01XDZ',78.74,83.82,{'1':'GND','9':'SE_SDA','10':'SE_SCL','11':'SE_EN','12':'+3V3','14':'GND','15':'SE_CORE','17':'GND','18':'SE_CORE','19':'GND','21':'GND'},'OpenKeys:SE050_SOT1969-1_HX2QFN20',note='SE051 Rev2.0 table3/SOT1969-1: unused RF1/17 and RST14 grounded; VOUT15 to VCC18 only. Target C2 OEF A8FA/Applet7.2 full feature. Identity, PIN ACL/retries, RSA4096 and per-device SCP commissioning still require qualification')
  s.comp('FLASH','U6','W25Q64JVSSIQ',236.22,83.82,named('FLASH',{'VCC':'+3V3','GND':'GND','~{CS}':'FLASH_CS_N','CLK':'FLASH_SCK','DI/IO_{0}':'FLASH_MOSI','DO/IO_{1}':'FLASH_MISO','~{WP}/IO_{2}':'FLASH_WP_N','~{HOLD}/~{RESET}/IO_{3}':'FLASH_HOLD_N'}))
  for i,(a,b,v) in enumerate([('+3V3','SE_SCL','4.7k'),('+3V3','SE_SDA','4.7k'),('SE_EN','GND','100k'),('+3V3','FLASH_CS_N','47k'),('+3V3','FLASH_WP_N','47k'),('+3V3','FLASH_HOLD_N','47k'),('+3V3','CHG_STAT1_N','10k'),('+3V3','CHG_STAT2_N','10k')]):passive(s,'R',v,30.48+i*48.26,154.94,a,b)
  caps(s,[('100nF','+3V3','GND'),('100nF','SE_CORE','GND'),('1uF','SE_CORE','GND'),('100nF','+3V3','GND')],50.8,215.9)
- s.text('Each user security operation: fresh six-digit device PIN + confirmation.\nNo biometric path. PIN verification and persistent retries remain in protected root.\nPrecharge attempts durably; uncertain writes deny. AEAD does not alone prevent rollback.\nSE certification does not certify MCU, PCB, PIN execution path or complete product.',184,264)
+ s.text('Private operations: valid local six-digit PIN grant + per-request confirmation.\nNo biometric path. SE-native PIN ACLs and durable retries must be qualified; Root owns keypad.\nPrecharge attempts durably; uncertain writes deny. AEAD does not alone prevent rollback.\nSE certification does not certify MCU, PCB, PIN execution path or complete product.',184,264)
 def nfc():
  s=sheet('05-nfc','NFC Type4 card interface - battery-powered local PIN UI')
  s.comp('NFC','U7','FM11NC08S (DFN10 + EP)',114.3,91.44,{'1':'+3V3','2':'NFC_VOUT','3':'ANT1','4':'ANT2','5':'GND','6':'NFC_CS_N','7':'NFC_SCK','8':'NFC_MOSI','9':'NFC_MISO','10':'NFC_IRQ_N','11':'GND'},'OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4',note='Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM')
@@ -106,11 +106,12 @@ def trusted_ui():
   xx=35.56+(i%5)*73.66; yy=172.72+(i//5)*66.04; net='BTN'+str(digit)+'_N'
   s.comp('SW','SW'+str(i+2),'KEY '+str(digit),xx,yy,{'1':net,'2':'GND'},'Button_Switch_SMD:SW_SPST_TL3342',note='Independent GPIO; physical release events only. No matrix and no host key injection.')
   passive(s,'R','47k',xx,yy+20.32,'+3V3',net);passive(s,'C','10nF',xx+25.4,yy+20.32,net,'GND')
- s.text('ENGLISH 16x2, blue background / white text. No fingerprint parts.\nPIN:6 decimal digits, masked. Hold9=erase; hold0=cancel.\nReview:2=previous,8=next,5=confirm,0=cancel. New release required.\nAll private operations require a fresh device PIN plus exact request review.\nNo PIN from USB/NFC/desktop. No factory/default unlock PIN.',195,283,1.1)
+ s.text('ENGLISH 16x2, blue background / white text. No fingerprint parts.\nPIN:6 decimal digits, masked. Hold9=erase; hold0=cancel.\nReview:2=previous,8=next,5=confirm,0=cancel. New release required.\nPrivate operations require a valid paired30s local PIN grant and exact review.\nNo PIN from USB/NFC/desktop. No factory/default unlock PIN.',195,283,1.1)
 def fault_tamper():
  s=sheet('07-fault-tamper','Independent reset, battery-backed case tamper and SE interlock')
- s.comp('AON','U13','MCP1700T-3002E/TT',337.82,40.64,named('AON',{'VI':'BAT','VO':'TAMP_3V0','GND':'GND'}),note='Always-on3.0V supplies VBAT/case circuit when main switch is OFF; qualify reverse injection and backup switchover')
- caps(s,[('1uF','BAT','GND'),('1uF','TAMP_3V0','GND')],335.28,96.52)
+ s.comp('AON','U13','MCP1700T-3002E/TT',337.82,40.64,named('AON',{'VI':'SYS','VO':'TAMP_3V0','GND':'GND'}),note='Always-on3.0V from charger SYS: USB or battery, independent of main switch. SYS must stay within MCP1700 6V maximum. Qualify reverse injection and source transitions')
+ caps(s,[('4.7uF 10V X7R','SYS','GND'),('4.7uF 10V X7R','TAMP_3V0','GND')],335.28,96.52)
+ s.comp('C','C56','100nF X7R 16V',393.7,40.64,{'1':'TAMP_3V0','2':'GND'},'Capacitor_SMD:C_0603_1608Metric',note='Local U4.1 VBAT decoupling, separate from U13 output capacitor. Both U13 capacitors must retain effective capacitance >=1uF across bias/temperature/tolerance')
  s.comp('SUP','U10','TPS3702CX33DDCR',99.06,78.74,named('SUP',{'SENSE':'+3V3','SET':'+3V3','VDD':'SYS','GND':'GND','UV':'NRST','OV':'NRST'}),'Package_TO_SOT_SMD:TSOT-23-6',note='SET high: nominal UV3.17V/OV3.43V; open-drain reset independent of ADC/software. Not nanosecond fault protection')
  s.comp('SW','SW12','LID CLOSED contact',246.38,68.58,{'1':'TAMP_3V0','2':'CASE_CLOSED'},'Button_Switch_SMD:SW_SPST_TL3342',note='Lid actuator closes contact; open wire pulls low => independent reset. Travel/contact reliability unvalidated')
  passive(s,'R','100k',292.1,68.58,'CASE_CLOSED','GND')

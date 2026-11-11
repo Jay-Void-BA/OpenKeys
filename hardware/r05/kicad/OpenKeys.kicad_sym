@@ -5648,7 +5648,7 @@
     )
     (embedded_fonts no)
   )
-  (symbol "SE050E"
+  (symbol "SE051C2"
     (pin_names
       (offset 0.7)
     )
@@ -5662,7 +5662,7 @@
         )
       )
     )
-    (property "Value" "SE050E"
+    (property "Value" "SE051C2"
       (at 0 17.51 0)
       (effects
         (font
@@ -5670,7 +5670,7 @@
         )
       )
     )
-    (symbol "SE050E_0_1"
+    (symbol "SE051C2_0_1"
       (rectangle
         (start -10.16 16.51)
         (end 10.16 -16.51)
@@ -5683,7 +5683,7 @@
         )
       )
     )
-    (symbol "SE050E_1_1"
+    (symbol "SE051C2_1_1"
       (pin passive line
         (at -12.7 13.97 0)
         (length 2.54)

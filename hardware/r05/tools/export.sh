@@ -17,6 +17,7 @@ kicad-cli sch export netlist --format kicadxml --output "$openkeys_r05/exports/O
 python3 "$openkeys_r05/tools/check_netlist.py"
 kicad-cli pcb drc --format json --severity-all --output "$openkeys_r05/review/routed-drc.json" "$openkeys_board"
 /usr/bin/python3 "$openkeys_r05/tools/check_board.py"
+/usr/bin/python3 "$openkeys_r05/tools/ground_report.py"
 python3 "$openkeys_r05/tools/calculate_protection.py"
 kicad-cli sch export pdf --output "$openkeys_r05/exports/OpenKeys-schematic.pdf" "$openkeys_schematic"
 kicad-cli sch export svg --output "$openkeys_r05/exports/schematic/" "$openkeys_schematic"

@@ -4697,13 +4697,13 @@
       (uuid "76f4299a-b72d-5496-aa37-2c3f04557245")
     )
   )
-  (text "ENGLISH 16x2, blue background / white text. No fingerprint parts.\nPIN:6 decimal digits, masked. Hold9=erase; hold0=cancel.\nReview:2=previous,8=next,5=confirm,0=cancel. New release required.\nAll private operations require a fresh device PIN plus exact request review.\nNo PIN from USB/NFC/desktop. No factory/default unlock PIN."
+  (text "ENGLISH 16x2, blue background / white text. No fingerprint parts.\nPIN:6 decimal digits, masked. Hold9=erase; hold0=cancel.\nReview:2=previous,8=next,5=confirm,0=cancel. New release required.\nPrivate operations require a valid paired30s local PIN grant and exact review.\nNo PIN from USB/NFC/desktop. No factory/default unlock PIN."
     (at 195 283 0)
     (effects
       (font
         (size 1.1 1.1)
       )
     )
-    (uuid "bdf740bf-c8d8-5a4b-8ca3-689177898d52")
+    (uuid "b37d4352-cfaa-5495-858d-c00204d4d291")
   )
 )

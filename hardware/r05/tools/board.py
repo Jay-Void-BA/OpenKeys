@@ -36,6 +36,9 @@ PLACEMENT={
  'SW12':(90,102,0,'F'),'FB1':(40,16,90,'B'),
  'C29':(29,47,0,'F'),'R21':(29,54,0,'F'),
  'R37':(25,10,0,'B'),'R1':(43,12,0,'B'),'R2':(46,12.5,0,'B'),
+ # Backup LDO needs local input/output capacitance; MCU VBAT has its own cap.
+ 'C40':(12,31,0,'B'),'C41':(4,30,180,'B'),'C56':(41.5,28,180,'B'),
+ 'R12':(38.75,30,0,'B'),
 }
 PLACEMENT.update({'SW'+ref:(x,y,0,'F') for ref,(x,y) in KEYS.items()})
 def courtyard(f):
@@ -57,7 +60,7 @@ def pack_passives(b,fps):
  Courts remain real library courtyards. This is placement assistance, not a
  DRC waiver: the final KiCad DRC is run independently after routing.
  """
- fixed=[f for f in b.GetFootprints() if f.GetReference().startswith(('U','J','SW','H','L','Y','Q','D','F')) or f.GetReference() in ('C29','R21','R37','R1','R2')]
+ fixed=[f for f in b.GetFootprints() if f.GetReference().startswith(('U','J','SW','H','L','Y','Q','D','F')) or f.GetReference() in ('C29','R21','R37','R1','R2','R12','C40','C41','C56')]
  fixed=[f for f in fixed if f.GetReference() not in ('J4',) and not f.GetReference().startswith('FB')]
  movable=[f for f in fps.values() if f not in fixed and f.GetReference()!='J4']
  priority=['C15','C16','C9','C10','C11','C12','C13','C17','C18','C20','C21','C2','C3','C4','C5','C6','C7','C8','C45','C46']

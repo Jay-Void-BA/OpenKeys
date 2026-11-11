@@ -6,7 +6,7 @@
 
 [当前进度](docs/DEVELOPMENT_STATUS.md) · [文档导航](docs/README.md) · [硬件与图纸](hardware/r05/README.md) · [从原材料开始制作](manufacturing/BUILD_R05_ZH.md) · [安全复查](docs/SECURITY_REVIEW_R05.md)
 
-**当前 `main` 为优先开发的经典版，不含 SM2 或后量子算法。** ML-DSA-65 / ML-KEM-768 留在独立的 [PQC 分支](https://github.com/Jay-Void-BA/OpenKeys/tree/pqc)，暂缓实现。两版都优先选择外国芯片，中国芯片作为备选，并核实大陆交付 / 个人三件采购；见[分版规则](docs/EDITIONS.md)。现有 SE050E2 不支持 RSA，这项传统算法覆盖缺口仍须解决。
+**当前 `main` 为优先开发的经典版，不含 SM2 或后量子算法。** ML-DSA-65 / ML-KEM-768 留在独立的 [PQC 分支](https://github.com/Jay-Void-BA/OpenKeys/tree/pqc)，暂缓实现。两版都优先选择外国芯片，中国芯片作为备选，并核实大陆交付 / 个人三件采购；见[分版规则](docs/EDITIONS.md)。已将安全芯片候选调整为支持传统 RSA 的 SE051C2；见[选型与供电修订](docs/CLASSICAL_SE_POWER_R05.md)。实片 profile / PIN 权限及 RSA 固件仍待集成验证。
 
 <img src="hardware/r05/exports/OpenKeys-dimensions.png" width="720" alt="R0.5 实际 PCB、十键、LCD 和外壳尺寸候选图">
 
@@ -40,7 +40,7 @@ Apple 20 W 充电器使用 **5 V**，不申请 9 V PD。设计输入预算 **0.5
 
 ## 检查的含义
 
-R05 当前有 10 页原理图、151 个 BOM 位置、四层已布线 PCB；ERC / DRC 零错误、零警告、零未连接，705 项独立板网核对通过。[CAD 清单](hardware/r05/review/cad-manifest.json)绑定导出文件。它们验证设计文件的规则和连通性，不能证明实物抗侧信道、故障注入、EMC、RF、充电或抗拆安全。
+R05 当前有 10 页原理图、152 个 BOM 位置、四层已布线 PCB；ERC / DRC 零错误、零警告、零未连接，712 项独立板网核对通过。[CAD 清单](hardware/r05/review/cad-manifest.json)绑定导出文件。它们验证设计文件的规则和连通性，不能证明实物抗侧信道、故障注入、EMC、RF、充电或抗拆安全。
 
 新代码的[本地检查记录](docs/r05-validation.json)与 CI 以对应提交为准；[R04 的历史 CI](docs/ci-evidence-r04.json)不能作为 R05 的通过证明。[生产缺口](docs/DEVELOPMENT_STATUS.md)逐项列出，完整 Root 和硬件 PIN 的 SE 原生强制仍是关键未关闭项。
 

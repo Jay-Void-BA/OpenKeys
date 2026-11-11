@@ -77,7 +77,7 @@ SPECS={
 'CONN4':('Connector_Generic','Conn_01x04'),'CONN12':('Connector_Generic','Conn_01x12'),'CONN10':('Connector_Generic','Conn_02x05_Odd_Even'),
 'TVS':('Device','D_TVS'),'PWR':('power','PWR_FLAG')}
 LIB={k:library(*v) for k,v in SPECS.items()}
-LIB['SE']=custom('SE050E',[(1,'LB','passive'),(2,'NC','no_connect'),(3,'IO1','bidirectional'),(4,'NC','no_connect'),(5,'NC','no_connect'),(6,'NC','no_connect'),(7,'NC','no_connect'),(8,'NC','no_connect'),(9,'SDA','bidirectional'),(10,'SCL','input'),(11,'ENA','input'),(12,'VIN','power_in'),(13,'CLK','input'),(14,'RST_N','input'),(15,'VOUT','power_out'),(16,'IO2','bidirectional'),(17,'LA','passive'),(18,'VCC','power_in'),(19,'VSS','power_in'),(20,'NC','no_connect'),(21,'EP','passive')])
+LIB['SE']=custom('SE051C2',[(1,'LB','passive'),(2,'NC','no_connect'),(3,'IO1','bidirectional'),(4,'NC','no_connect'),(5,'NC','no_connect'),(6,'NC','no_connect'),(7,'NC','no_connect'),(8,'NC','no_connect'),(9,'SDA','bidirectional'),(10,'SCL','input'),(11,'ENA','input'),(12,'VIN','power_in'),(13,'CLK','input'),(14,'RST_N','input'),(15,'VOUT','power_out'),(16,'IO2','bidirectional'),(17,'LA','passive'),(18,'VCC','power_in'),(19,'VSS','power_in'),(20,'NC','no_connect'),(21,'EP','passive')])
 LIB['NFC']=custom('FM11NC08S',[(1,'VCC','power_in'),(2,'VOUT','power_out'),(3,'LC1','passive'),(4,'LC2','passive'),(5,'VSS','power_in'),(6,'SSN','input'),(7,'SCLK','input'),(8,'MOSI','input'),(9,'MISO','tri_state'),(10,'IRQ_N','open_collector'),(11,'EP','passive')])
 def pins(lib):
     return [x for unit in nodes(lib,'symbol') for x in nodes(unit,'pin')]

@@ -18,7 +18,7 @@
   "fingerprint_hardware": false,
   "physical_test_result": "NOT_RUN",
   "hardware_sha256": {
-    "hardware/r05/kicad/OpenKeys.kicad_pcb": "ea044bf4997073a4f13ba3af3ebe06452fceee466e52a8a6e2bc61bb07f890d3",
+    "hardware/r05/kicad/OpenKeys.kicad_pcb": "d6278f2e471fbc458ca9c3e9df6af21929153fb99c5f37df0c1bd28e5340a3ff",
     "hardware/r05/pinout.csv": "193e41123500e1d14e853004f86404a986fca6b5f81c620643de85144c7c1599"
   },
   "source_sha256": {
@@ -70,8 +70,8 @@
     "firmware/board/tests/r05_pin_ui.rs": "331e4b24568b8a97c32392c5a8f90d1820d9c0c7858dceef002682fc61b57c13",
     "firmware/board/tests/se_i2c.rs": "5ec0d55595f367de48cf39da0aa8afc70178995175c68881f8fb7ada74d87227",
     "firmware/r05/Cargo.toml": "7e3c52010717adaaf0d4b83f31aa29242058bba883f37a680ae0a558d016de5c",
-    "firmware/r05/README.md": "a6ad18c6fcea8b0f9bb999418dcb325124753beaa307f24d79596f5bc3def232",
-    "firmware/r05/board-contract.sha256": "c51e754f00b121b4f7575cbd36268af249c8ffe1425fe505457ccc9947cfa710",
+    "firmware/r05/README.md": "90737b43612ffb8301f53b1c58c3ea9a9a51bccc8f16b0275d1bdc0ceebc0002",
+    "firmware/r05/board-contract.sha256": "49cc3ff5e993d9562eda34e5f4dcb466f828c2eaa690c6d93d5da9f37e26a36c",
     "firmware/r05/build.rs": "546cf2e4a53f5205b32d2a141265d0c7dee20d6587e0b089b83b3eb38ec9dd7e",
     "firmware/r05/src/lib.rs": "b6ce7e55b55e3a48cc261adedf44e732feea0e81c5ba7d9df7589c6bde1b22e3",
     "firmware/r05/src/main.rs": "23b60cd699ea4e939c8f5b3a38af1578900595be7741d67d0cd1419715193161",

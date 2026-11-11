@@ -1172,7 +1172,7 @@
     )
     (uuid "ce1669ea-d324-516c-8e16-fe72026be538")
   )
-  (global_label "BAT"
+  (global_label "SYS"
     (shape input)
     (at 325.12 40.64 180)
     (effects
@@ -1325,7 +1325,7 @@
     )
     (uuid "c748f1e1-b70c-519e-9b1f-78f9a8fc56be")
   )
-  (global_label "BAT"
+  (global_label "SYS"
     (shape input)
     (at 335.28 87.63 90)
     (effects
@@ -1393,7 +1393,7 @@
         (justify left)
       )
     )
-    (property "Value" "1uF"
+    (property "Value" "4.7uF 10V X7R"
       (at 339.28 98.02 0)
       (effects
         (font
@@ -1514,7 +1514,7 @@
         (justify left)
       )
     )
-    (property "Value" "1uF"
+    (property "Value" "4.7uF 10V X7R"
       (at 372.3 98.02 0)
       (effects
         (font
@@ -1554,6 +1554,127 @@
     )
     (pin "2"
       (uuid "6f3de945-ae8c-57c1-9674-cbb129dfbefe")
+    )
+  )
+  (wire
+    (pts
+      (xy 393.7 36.83)
+      (xy 393.7 31.75)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "a404761e-2b1b-5872-bf40-b0d5e62a42b6")
+  )
+  (global_label "TAMP_3V0"
+    (shape input)
+    (at 393.7 31.75 90)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify left)
+    )
+    (uuid "8c96ebbd-e40e-560c-80b3-5a70fc298ae4")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 393.7 31.75 90)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (wire
+    (pts
+      (xy 393.7 44.45)
+      (xy 393.7 49.53)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "45a6b2f5-948e-5db8-9316-333b72da653c")
+  )
+  (global_label "GND"
+    (shape input)
+    (at 393.7 49.53 270)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify right)
+    )
+    (uuid "ac484afe-bd93-56dd-9e70-95aee5e573fe")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 393.7 49.53 270)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (symbol
+    (lib_id "OpenKeys:C")
+    (at 393.7 40.64 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "d40e4aee-ecd3-5c9b-9f57-c8798588f17a")
+    (property "Reference" "C56"
+      (at 397.7 39.14 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF X7R 16V"
+      (at 397.7 42.14 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 397.7 40.64 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 397.7 40.64 0)
+      (effects
+        (font
+          (size 1 1)
+        )
+        (hide yes)
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2/28731aa8-5e70-5192-825d-f85b9d235c73"
+          (reference "C56")
+          (unit 1)
+        )
+      )
+    )
+    (pin "1"
+      (uuid "30fd4714-975e-5355-b660-babfc2b946ea")
+    )
+    (pin "2"
+      (uuid "b0b6b629-7988-5fc1-b07e-006811a4d665")
     )
   )
   (wire

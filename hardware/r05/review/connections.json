@@ -714,7 +714,7 @@
   },
   {
     "ref": "U5",
-    "value": "SE050E2HQ1/Z01Z3Z",
+    "value": "SE051C2HQ1/Z01XDZ",
     "footprint": "OpenKeys:SE050_SOT1969-1_HX2QFN20",
     "sheet": "04-se-storage",
     "nets": {
@@ -730,7 +730,7 @@
       "19": "GND",
       "21": "GND"
     },
-    "note": "VOUT to local VCC only. Per-device pairing, persistent attempts and anti-rollback need validated provisioning",
+    "note": "SE051 Rev2.0 table3/SOT1969-1: unused RF1/17 and RST14 grounded; VOUT15 to VCC18 only. Target C2 OEF A8FA/Applet7.2 full feature. Identity, PIN ACL/retries, RSA4096 and per-device SCP commissioning still require qualification",
     "dnp": false
   },
   {
@@ -1404,20 +1404,20 @@
     "footprint": "Package_TO_SOT_SMD:SOT-23",
     "sheet": "07-fault-tamper",
     "nets": {
-      "3": "BAT",
+      "3": "SYS",
       "1": "GND",
       "2": "TAMP_3V0"
     },
-    "note": "Always-on3.0V supplies VBAT/case circuit when main switch is OFF; qualify reverse injection and backup switchover",
+    "note": "Always-on3.0V from charger SYS: USB or battery, independent of main switch. SYS must stay within MCP1700 6V maximum. Qualify reverse injection and source transitions",
     "dnp": false
   },
   {
     "ref": "C40",
-    "value": "1uF",
+    "value": "4.7uF 10V X7R",
     "footprint": "Capacitor_SMD:C_0805_2012Metric",
     "sheet": "07-fault-tamper",
     "nets": {
-      "1": "BAT",
+      "1": "SYS",
       "2": "GND"
     },
     "note": "",
@@ -1425,7 +1425,7 @@
   },
   {
     "ref": "C41",
-    "value": "1uF",
+    "value": "4.7uF 10V X7R",
     "footprint": "Capacitor_SMD:C_0805_2012Metric",
     "sheet": "07-fault-tamper",
     "nets": {
@@ -1433,6 +1433,18 @@
       "2": "GND"
     },
     "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C56",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "TAMP_3V0",
+      "2": "GND"
+    },
+    "note": "Local U4.1 VBAT decoupling, separate from U13 output capacitor. Both U13 capacitors must retain effective capacitance >=1uF across bias/temperature/tolerance",
     "dnp": false
   },
   {

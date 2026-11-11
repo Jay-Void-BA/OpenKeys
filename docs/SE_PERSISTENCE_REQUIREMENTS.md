@@ -1,5 +1,7 @@
 # SE持久状态：实现与实测前的约束
 
+
+当前经典版已改选 SE051C2 / OEF A8FA / Applet 7.2；本页旧 E2 / 通用 SE05x API 研究不能视为新实片资格证明。见[选型与待验项目](CLASSICAL_SE_POWER_R05.md)。
 **现已有候选实现，尚未通过实片生产资格。** [openkeys-se-state](../crates/se-state/README.md)实现实际对象APDU、双head/提交锚点和持久生物重试适配，生产I/O接严格SCP03；普通NOR整数、测试RAM计数器或桌面状态没有生产后端。以下条件仍须在真实硬件上验证。
 
 原始依据：[NXP AN12413](https://www.nxp.com/docs/en/application-note/AN12413.pdf)，Rev2.12，2021-03-24，PDF SHA256 `e98a72e4215ba2886d777509f066ff620925ae65999d9c28cbcf24b7f2cf5622`，§3.2.1.7、表45、99、105–107。该公开旧版规范允许1–8字节单调counter，达到上限后不能再增加；与所选E2实际applet版本及断电行为仍须交叉验证，不能由旧PDF推定实片资格。

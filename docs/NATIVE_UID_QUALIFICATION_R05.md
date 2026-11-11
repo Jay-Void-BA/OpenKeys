@@ -1,5 +1,7 @@
 # R05 原生 UserID 会话：样板验证模块
 
+
+当前经典版已改选 SE051C2 / OEF A8FA / Applet 7.2；本页旧 E2 / 通用 SE05x API 研究不能视为新实片资格证明。见[选型与待验项目](CLASSICAL_SE_POWER_R05.md)。
 [原生 PIN 候选评估](SE_NATIVE_PIN_FEASIBILITY_R05.md) · [源码](../crates/se-state/src/native_uid.rs) · [测试](../crates/se-state/src/native_uid_tests.rs)
 
 新增 `native-uid-qualification` 功能，**默认关闭**。它仅创建临时会话、提交一次六位

@@ -7,7 +7,8 @@
 本分支为[经典版](EDITIONS.md)，先推进 CanoKey 的传统协议 / 算法兼容；排除 SM2、
 ML-DSA-65 与 ML-KEM-768。后两项只留在 `pqc` 分支的后续目标中。尽量保留当前 H573
 与单 SE 分工；外国芯片优先，中国芯片备选，且须确认大陆交付与个人三件采购。
-SE050E2 不支持 RSA，不能单独覆盖要求的 OpenPGP / PIV RSA；移出 PQC 不解决这个缺口。
+当前 U5 候选为 SE051C2HQ1/Z01XDZ / OEF A8FA / Applet 7.2，覆盖传统 RSA 的芯片能力；
+[选型与 SYS 辅助供电修订](CLASSICAL_SE_POWER_R05.md)不能代替实片 PIN / ACL 与 RSA 固件集成。
 [旧双 SE 评估](DUAL_SE_REVIEW_R05.md)作为历史研究，不是本版已采用的电路。
 
 ```mermaid

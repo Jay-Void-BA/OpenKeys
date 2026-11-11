@@ -54,7 +54,10 @@ require('NFC VOUT isolated from main/battery',net('U7',2) not in {net('U3',1),ne
 require('UV and OV directly drive reset',same(('U10',1),('U10',6),('U4',7),('U11',4),('U12',1)))
 require('Supervisor monitors3.3V, powered from SYS',same(('U10',3),('U3',1),('U10',4)) and same(('U10',5),('U2',1)))
 require('SE interlock cannot bypass reset',same(('U12',4),('U5',11)) and same(('U12',2),('U4',39)))
-require('VBAT is isolated from switchable main3.3V',same(('U4',1),('U13',2)) and net('U4',1)!=net('U4',19) and same(('U13',3),('J2',1)))
+require('Backup LDO is supplied by USB/battery SYS, never BAT only',same(('U13',3),('U2',1),('C40',1)) and net('U13',3)!=net('J2',1) and net('C40',2)=='GND')
+require('VBAT is isolated from switchable main3.3V and locally decoupled',same(('U4',1),('U13',2),('C41',1),('C56',1)) and net('U4',1)!=net('U4',19) and net('C41',2)==net('C56',2)=='GND')
+require('Classical SE is the explicitly selected SE051C2 package',value('U5')=='SE051C2HQ1/Z01XDZ' and components['U5'].findtext('footprint')=='OpenKeys:SE050_SOT1969-1_HX2QFN20')
+require('SE051 unused RF and reset grounded, NC pads remain unused',all(net('U5',pin)=='GND' for pin in (1,14,17,19,21)) and all(not net('U5',pin) or net('U5',pin).startswith('unconnected-') for pin in (2,3,4,5,6,7,8,13,16,20)))
 require('Case contact uses backup3.0V and PC13',same(('SW12',1),('U4',1)) and same(('SW12',2),('U4',2),('U11',2)))
 require('LSE connected to PC14/15',same(('Y1',1),('U4',3)) and same(('Y1',2),('U4',4)))
 key_pins=[26,27,28,57,37,38,50,51,52,53]

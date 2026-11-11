@@ -24,6 +24,14 @@ for c in bom:
   if key in expected:observed[key]=name
 require('No schematic pin omitted from PCB',observed==expected)
 require('Four-layer1.0mm board',b.GetCopperLayerCount()==4 and b.GetDesignSettings().GetBoardThickness()==p.FromMM(1))
+def pad_position(ref,number):
+ return next(pad.GetPosition() for pad in fps[ref].Pads() if pad.GetNumber()==str(number))
+def pin_distance(first,second):
+ return p.ToMM((pad_position(*first)-pad_position(*second)).EuclideanNorm())
+require('Backup LDO input decoupling within 3mm of VI',pin_distance(('U13',3),('C40',1))<=3)
+require('Backup LDO output decoupling within 3mm of VO',pin_distance(('U13',2),('C41',1))<=3)
+require('MCU VBAT has separate decoupling within 3mm',pin_distance(('U4',1),('C56',1))<=3)
+require('Backup decouplers use the component copper side',all(fps[cap].GetLayer()==fps[owner].GetLayer() for cap,owner in [('C40','U13'),('C41','U13'),('C56','U4')]))
 zones=list(b.Zones())
 require('In1 and In2 contain only GND zones',len(zones)==2 and {z.GetLayer() for z in zones}=={p.In1_Cu,p.In2_Cu} and all(z.GetNetname()=='GND' and z.IsFilled() for z in zones))
 for z in zones:

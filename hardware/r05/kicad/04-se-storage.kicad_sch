@@ -11,7 +11,7 @@
     (comment 1 "ENGINEERING BOARD CANDIDATE - qualify before use")
   )
   (lib_symbols
-    (symbol "OpenKeys:SE050E"
+    (symbol "OpenKeys:SE051C2"
       (pin_names
         (offset 0.7)
       )
@@ -25,7 +25,7 @@
           )
         )
       )
-      (property "Value" "SE050E"
+      (property "Value" "SE051C2"
         (at 0 17.51 0)
         (effects
           (font
@@ -33,7 +33,7 @@
           )
         )
       )
-      (symbol "SE050E_0_1"
+      (symbol "SE051C2_0_1"
         (rectangle
           (start -10.16 16.51)
           (end 10.16 -16.51)
@@ -46,7 +46,7 @@
           )
         )
       )
-      (symbol "SE050E_1_1"
+      (symbol "SE051C2_1_1"
         (pin passive line
           (at -12.7 13.97 0)
           (length 2.54)
@@ -1310,7 +1310,7 @@
     )
   )
   (symbol
-    (lib_id "OpenKeys:SE050E")
+    (lib_id "OpenKeys:SE051C2")
     (at 78.74 83.82 0)
     (unit 1)
     (in_bom yes)
@@ -1325,7 +1325,7 @@
         )
       )
     )
-    (property "Value" "SE050E2HQ1/Z01Z3Z"
+    (property "Value" "SE051C2HQ1/Z01XDZ"
       (at 78.74 67.85 0)
       (effects
         (font
@@ -3198,13 +3198,13 @@
       (uuid "6e721f02-bc09-5aa4-9a2f-c40e1b8db17c")
     )
   )
-  (text "Each user security operation: fresh six-digit device PIN + confirmation.\nNo biometric path. PIN verification and persistent retries remain in protected root.\nPrecharge attempts durably; uncertain writes deny. AEAD does not alone prevent rollback.\nSE certification does not certify MCU, PCB, PIN execution path or complete product."
+  (text "Private operations: valid local six-digit PIN grant + per-request confirmation.\nNo biometric path. SE-native PIN ACLs and durable retries must be qualified; Root owns keypad.\nPrecharge attempts durably; uncertain writes deny. AEAD does not alone prevent rollback.\nSE certification does not certify MCU, PCB, PIN execution path or complete product."
     (at 184 264 0)
     (effects
       (font
         (size 1.3 1.3)
       )
     )
-    (uuid "f96947c4-2d9c-553b-a9e0-ee83d48fe222")
+    (uuid "b0206060-947c-568d-b1cd-188576bb8969")
   )
 )
