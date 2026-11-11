@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "edition": "classical",
+  "development_priority": "active_first",
+  "repository": "https://github.com/Jay-Void-BA/OpenKeys",
+  "branch": "main",
+  "sibling_branch": "pqc",
+  "pre_split_commit": "9761696170062bebd572bf0fe030c981228a1fb5",
+  "target_post_quantum_algorithms": [],
+  "excluded_algorithms": ["SM2", "ML-DSA-65", "ML-KEM-768"],
+  "component_preference": ["foreign_manufacturer", "chinese_manufacturer_fallback"],
+  "procurement_requirement": "Mainland China delivery and personal 3-unit order must be verified",
+  "saved_hardware": "R05 H573 / SE050E2 engineering baseline; RSA coverage unresolved",
+  "production_release": false,
+  "physical_qualification": "NOT_RUN",
+  "metadata_only": "This file describes edition scope; it does not enable or implement firmware algorithms"
+}

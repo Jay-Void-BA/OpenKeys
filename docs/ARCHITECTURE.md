@@ -4,9 +4,11 @@
 
 正式范围：六位设备 PIN、十个独立数字键、DFR0555 16×2 LCD；没有指纹。硬件与协议 PIN 分别缓存，规则见会话文档。当前缺少完整生产 Root，下面是实现约束与已有模块边界，不能视为整机已安全集成。
 
-新增目标包括 CanoKey 的算法 / 应用覆盖及芯片内 SM2、ML-DSA-65、ML-KEM-768。
-[双安全芯片评估](DUAL_SE_REVIEW_R05.md)列出选型与授权条件；当前 R05 PCB 尚无第二颗 SE。
-SE050E2 不支持 RSA，不能单独覆盖要求的 OpenPGP / PIV RSA；SM2 与后量子后端也尚未实现。
+本分支为[经典版](EDITIONS.md)，先推进 CanoKey 的传统协议 / 算法兼容；排除 SM2、
+ML-DSA-65 与 ML-KEM-768。后两项只留在 `pqc` 分支的后续目标中。尽量保留当前 H573
+与单 SE 分工；外国芯片优先，中国芯片备选，且须确认大陆交付与个人三件采购。
+SE050E2 不支持 RSA，不能单独覆盖要求的 OpenPGP / PIV RSA；移出 PQC 不解决这个缺口。
+[旧双 SE 评估](DUAL_SE_REVIEW_R05.md)作为历史研究，不是本版已采用的电路。
 
 ```mermaid
 flowchart LR

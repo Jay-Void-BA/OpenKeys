@@ -1,4 +1,4 @@
-# OpenKeys
+# OpenKeys — Classical edition
 
 开源 USB / NFC 认证器，面向个人制作的 **3 把密钥**。当前电路为 **R0.5：本地六位 PIN、十个数字实体键、DFR0555 双行 LCD**；自研运行代码采用 Rust。
 
@@ -6,7 +6,7 @@
 
 [当前进度](docs/DEVELOPMENT_STATUS.md) · [文档导航](docs/README.md) · [硬件与图纸](hardware/r05/README.md) · [从原材料开始制作](manufacturing/BUILD_R05_ZH.md) · [安全复查](docs/SECURITY_REVIEW_R05.md)
 
-最新要求增加 CanoKey 功能与硬件保护的 SM2、ML-DSA-65、ML-KEM-768，见[双安全芯片选型与授权评估](docs/DUAL_SE_REVIEW_R05.md)。现有 PCB 仍为单 SE，SE050E2 不支持 RSA；新算法、电源修正和第二颗芯片尚未落板，当前制造包不覆盖新增目标。
+**当前 `main` 为优先开发的经典版，不含 SM2 或后量子算法。** ML-DSA-65 / ML-KEM-768 留在独立的 [PQC 分支](https://github.com/Jay-Void-BA/OpenKeys/tree/pqc)，暂缓实现。两版都优先选择外国芯片，中国芯片作为备选，并核实大陆交付 / 个人三件采购；见[分版规则](docs/EDITIONS.md)。现有 SE050E2 不支持 RSA，这项传统算法覆盖缺口仍须解决。
 
 <img src="hardware/r05/exports/OpenKeys-dimensions.png" width="720" alt="R0.5 实际 PCB、十键、LCD 和外壳尺寸候选图">
 
