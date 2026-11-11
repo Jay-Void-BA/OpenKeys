@@ -1,18 +1,18 @@
-# OpenKeys — Classical edition
+# OpenKeys — PQC research edition
 
-开源 USB / NFC 认证器，面向个人制作的 **3 把密钥**。当前电路为 **R0.5：本地六位 PIN、十个数字实体键、DFR0555 双行 LCD**；自研运行代码采用 Rust。
+这是 OpenKeys 的后量子研究分支 `pqc`。目标是继承经典版并增加芯片内 **ML-DSA-65 与 ML-KEM-768**；不含 SM2。**按当前优先级，先完成[经典版 `main`](https://github.com/Jay-Void-BA/OpenKeys/tree/main)，本分支暂缓实现。** 自研运行代码使用 Rust / Zig，外国芯片优先，中国芯片备选。
 
-> **工程候选，生产放行 BLOCKED。** 已有已布线电路板、制造文件、板级诊断和经过测试的安全模块。完整生产 Root、认证协议与管理通道的实机集成尚未完成，不能将当前诊断固件用于真实账户。
+> **DEFERRED / 生产放行 BLOCKED。** 当前源码、R05 PCB、制造文件和诊断固件继承自经典版，没有后量子安全芯片驱动或可制造的 PQC PCB。基线 CI 通过不代表支持两个后量子算法，也不能用当前镜像保护真实账户。
 
 [当前进度](docs/DEVELOPMENT_STATUS.md) · [文档导航](docs/README.md) · [硬件与图纸](hardware/r05/README.md) · [从原材料开始制作](manufacturing/BUILD_R05_ZH.md) · [安全复查](docs/SECURITY_REVIEW_R05.md)
 
-**当前 `main` 为优先开发的经典版，不含 SM2 或后量子算法。** ML-DSA-65 / ML-KEM-768 留在独立的 [PQC 分支](https://github.com/Jay-Void-BA/OpenKeys/tree/pqc)，暂缓实现。两版都优先选择外国芯片，中国芯片作为备选，并核实大陆交付 / 个人三件采购；见[分版规则](docs/EDITIONS.md)。现有 SE050E2 不支持 RSA，这项传统算法覆盖缺口仍须解决。
+本分支与经典版保留完整共同历史和独立工作树，见[分版规则](docs/EDITIONS.md)与[后量子研究记录](docs/PQC_ROADMAP.md)。独立 GitHub 仓库的创建被当前集成权限拒绝，现以隔离分支交付。现有 SE050E2 不支持 RSA 或这两个后量子算法；后续安全芯片、原理图 / PCB、固件和供应资格均须另行冻结。
 
 <img src="hardware/r05/exports/OpenKeys-dimensions.png" width="720" alt="R0.5 实际 PCB、十键、LCD 和外壳尺寸候选图">
 
-*工程图，非实物照片。板体 96 × 112 mm；外壳候选 102 × 118 × 30 mm，待试装。*
+*继承的经典版工程图，不是后量子版 PCB，也不是实物照片。板体 96 × 112 mm；外壳候选 102 × 118 × 30 mm，待试装。*
 
-## 当前固定需求
+## 继承的经典版要求与后量子目标
 
 | 项目 | 设计目标与现状 |
 |---|---|
@@ -20,6 +20,7 @@
 | 会话授权 | 硬件 PIN 与各协议 PIN 分别缓存，同一已配对认证会话中 30 秒无有效操作锁定；连接 / 保活不续期，断连 / NFC 离场立即锁定，敏感操作仍需实体确认 |
 | 显示 | 英文 16 × 2 LCD，DFRobot DFR0555 蓝底白字；现货及版本说明见硬件页 |
 | 认证 | FIDO2 / WebAuthn / Passkey、U2F、hmac-secret、凭据管理；OpenPGP / PIV / SSH 为新增待集成目标 |
+| 后量子 | ML-DSA-65 / ML-KEM-768 必须在合格安全芯片内运行，私钥 / 种子不返回主控；当前未实现 |
 | OTP 与记录 | TOTP / HOTP 种子不可导出，六位码仅钥匙 LCD 显示；加密 notes / recovery codes；均受本地 PIN 约束 |
 | 接口 / 电源 | 唯一外部 USB-C 母口，USB 2.0 数据兼 5 V 充电，另有 NFC；保护型 500 mAh 电池与真实 NTC |
 | 管理器 | GPUI 英文桌面原型；macOS / Windows / Linux USB，iOS NFC / USB-C、iPadOS USB-C、Android NFC / USB-C 为交付目标，真实设备后端和移动安装包尚未完成 |

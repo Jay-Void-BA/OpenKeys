@@ -8,6 +8,7 @@
 |---|---|
 | 第一次阅读 | [状态](DEVELOPMENT_STATUS.md)、[架构](ARCHITECTURE.md)、[术语](GLOSSARY.md) |
 | 经典版优先 / 后量子版隔离 | [分版、功能范围与同步规则](EDITIONS.md)、[版本元数据](../edition.json)；[双 SE 评估](DUAL_SE_REVIEW_R05.md)仅属历史研究 |
+| 后量子器件与恢复开发条件 | [暂缓实施的研究记录](PQC_ROADMAP.md)；外国芯片优先，中国芯片备选，尚无 PQC PCB / 固件 |
 | 审核安全 / PIN 缓存 | [R05 安全复查](SECURITY_REVIEW_R05.md)、[会话规则与测试映射](PIN_SESSIONS_R05.md)、[SE 原生 PIN 候选](SE_NATIVE_PIN_FEASIBILITY_R05.md)、[样板会话探针](NATIVE_UID_QUALIFICATION_R05.md) |
 | 电路、板子与固件 | [R05 硬件](../hardware/r05/README.md)、[固件导航](../firmware/README.md)、[R05 目标](../firmware/r05/README.md) |
 | 从原材料到打样、代焊和测试 | [R05 制作手册](../manufacturing/BUILD_R05_ZH.md)、[制造入口](../manufacturing/README.md) |

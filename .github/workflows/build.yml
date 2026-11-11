@@ -1,4 +1,4 @@
-name: OpenKeys development checks
+name: PQC inherited classical baseline checks
 on:
   push:
     paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'manufacturing/se-native-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: runner.os == 'Linux'
         with:
-          name: r05-diagnostic-arm-elf
+          name: pqc-inherited-classical-r05-diagnostic-arm-elf
           path: target/r05-diagnostics/*.elf
           if-no-files-found: error
 
@@ -140,7 +140,7 @@ jobs:
         run: python3 scripts/check-future-compat.py
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: openkeys-gpui-development-${{ matrix.os }}
+          name: pqc-inherited-classical-gpui-development-${{ matrix.os }}
           path: |
             target/release/openkeys-manager
             target/release/openkeys-manager.exe
