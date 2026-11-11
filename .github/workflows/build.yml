@@ -133,6 +133,10 @@ jobs:
                   old = path.read_text()
                   new = old.replace('http://azure.archive.ubuntu.com/ubuntu', 'https://archive.ubuntu.com/ubuntu')
                   new = new.replace('https://azure.archive.ubuntu.com/ubuntu', 'https://archive.ubuntu.com/ubuntu')
+                  # New runner images resolve these indirections through a
+                  # separate file, so replacing only literal hostnames misses it.
+                  new = new.replace('mirror+file:/etc/apt/apt-mirrors.txt', 'https://archive.ubuntu.com/ubuntu')
+                  new = new.replace('mirror+file:/etc/apt/apt-mirrors-security.txt', 'https://security.ubuntu.com/ubuntu')
                   if new != old:
                       path.write_text(new)
           PY
