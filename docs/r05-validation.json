@@ -4,15 +4,15 @@
   "stage": "ENGINEERING_CANDIDATE",
   "production_release": false,
   "physical_test_result": "NOT_RUN",
-  "workspace_tests_passed": 240,
+  "workspace_tests_passed": 276,
   "dbus_wire_fixture_tests_passed": 2,
   "strict_clippy": "PASSED (workspace and both R05 ARM LCD profiles)",
   "dependency_audit": {
     "cargo_audit": "0.22.2",
     "deny_warnings": true,
     "result": "PASSED",
-    "packages": 840,
-    "rustsec_commit": "58a64e69d7a08a2b83a80efa6e4b018a9acb51fc"
+    "packages": 852,
+    "rustsec_commit": "901cf64f2d04dc7f9f26bbbd50a3010378de034d"
   },
   "r05_cad": {
     "board_sha256": "ea044bf4997073a4f13ba3af3ebe06452fceee466e52a8a6e2bc61bb07f890d3",
@@ -23,17 +23,19 @@
   },
   "r05_diagnostics": "firmware/dist/r05/diagnostic-manifest.json",
   "gui_forks_reconstructed_from_original_archives": 12,
-  "ci_result": "PASSED: source c2b89add698a20636775f89cfc827d439bd58474; complete logs/annotations checked, zero warning lines/annotations",
+  "ci_result": "PASSED: source 9f697f84873ab653803c9e2a3e97aec8c3a9ac58; complete logs/annotations checked, zero warning lines/annotations",
   "critical_open_items": [
     "Production secure Root / boot / isolation / debug lifecycle",
-    "SE native enforcement of local PIN for private-key operations",
+    "SE native PIN backend: real profile / ACL qualification, commissioning and Root integration",
     "Complete all-user-data erasure and first-boot commissioning services",
-    "Authenticated encrypted manager transport and actual device integrations",
-    "OpenPGP/PIV production applications and mobile app bundles",
-    "Physical LCD/NTC/charging/RF/EMC/tamper/FI/SCA qualification"
+    "Noise management core: actual OS / Root / pairing-store / device integrations",
+    "OTP catalog transactions / RTC; OpenPGP / PIV / FIDO production integration; mobile bundles",
+    "CanoKey full algorithm coverage: E2 has no RSA; SM2 / ML-DSA-65 / ML-KEM-768 hardware and dual-SE authorization not selected or implemented",
+    "Batteryless USB power: auxiliary tamper / RTC LDO still sourced from BAT; correction and worst-case load budget pending",
+    "Physical LCD / NTC / charging / RF / EMC / tamper / FI / SCA qualification"
   ],
   "ci_evidence": "docs/ci-evidence-r05.json",
-  "native_tests_per_platform": 246,
+  "native_tests_per_platform": 282,
   "additional_linux_wire_tests": 2,
   "additional_macos_abi_tests": 2,
   "native_uid_probe": {
@@ -45,6 +47,7 @@
     "strict_clippy": "PASSED",
     "profile_or_acl_qualification": "NOT_RUN",
     "physical_tests": "NOT_RUN",
-    "ci_for_new_probe": "PASSED: 6 new tests on macOS, Windows and Linux; source c2b89add698a20636775f89cfc827d439bd58474"
-  }
+    "ci_for_new_probe": "PASSED: 6 feature-gated tests on macOS, Windows and Linux; source 9f697f84873ab653803c9e2a3e97aec8c3a9ac58"
+  },
+  "source_commit": "9f697f84873ab653803c9e2a3e97aec8c3a9ac58"
 }

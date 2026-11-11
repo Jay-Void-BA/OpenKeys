@@ -6,6 +6,8 @@
 
 [当前进度](docs/DEVELOPMENT_STATUS.md) · [文档导航](docs/README.md) · [硬件与图纸](hardware/r05/README.md) · [从原材料开始制作](manufacturing/BUILD_R05_ZH.md) · [安全复查](docs/SECURITY_REVIEW_R05.md)
 
+最新要求增加 CanoKey 功能与硬件保护的 SM2、ML-DSA-65、ML-KEM-768，见[双安全芯片选型与授权评估](docs/DUAL_SE_REVIEW_R05.md)。现有 PCB 仍为单 SE，SE050E2 不支持 RSA；新算法、电源修正和第二颗芯片尚未落板，当前制造包不覆盖新增目标。
+
 <img src="hardware/r05/exports/OpenKeys-dimensions.png" width="720" alt="R0.5 实际 PCB、十键、LCD 和外壳尺寸候选图">
 
 *工程图，非实物照片。板体 96 × 112 mm；外壳候选 102 × 118 × 30 mm，待试装。*

@@ -4,6 +4,11 @@
 
 **工程候选；生产放行 BLOCKED。** 当前不是可用于三个真实账户密钥的生产认证器。下表区分候选源码、软件检查和未实现的实机功能。
 
+最新目标还包括 CanoKey 功能 / 算法覆盖，以及硬件保护的 SM2、ML-DSA-65、ML-KEM-768。
+[双 SE 评估](DUAL_SE_REVIEW_R05.md)已记录：现有 SE050E2 不支持 RSA，第二颗 SE 尚未选定；
+当前 PCB 不覆盖该目标。防拆 / RTC 辅助 LDO 只从 BAT 取电的缺口也尚未修正，不能宣称电池
+耗尽或缺失时全部 USB 认证路径已可用。
+
 | 部分 | 已有 | 未完成 |
 |---|---|---|
 | 电路 / PCB / 结构 | R05 十键、H573、SE050、DFR0555、NFC、供电 / LCD 故障互锁；10 页 / 151 BOM / 四层，ERC / DRC 零问题，705 项核对，制造导出 | 首板 DFM、LCD 电压下限 / 电容 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
@@ -11,6 +16,7 @@
 | PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试；[Noise XX 与 AEAD 通道内核](../crates/secure-channel/README.md)及 CCID / NFC 共用分片编码 | 可信时间、射频离场 IRQ、USB reset / suspend、原生 PIN 会话撤权及各协议实际验证状态的 Root 接线；真实 OS 连接 / 配对存储与通道集成 |
 | LCD / 十键 / 诊断 | 独立 Rust 驱动、版本明确、断电故障锁存、按键去抖 / 组合键拒绝；真实 R05 引脚构建约束 | 生产 Secure 归属、板上时序与故障响应；ARM 诊断没有认证功能 |
 | SE / MCU 密码 | T=1、SCP03、HKDF / 签名 / 持久计数、OTP MACOneShot 候选；H573 SAES / RNG 与受限 MMIO | 实片身份、唯一配对、profile / ACL、容量与耗尽、掉电原子性、KAT 和时钟 / DMA / GTZC / 调试配置 |
+| CanoKey 全功能 / SM2 / 后量子 | 固定上游参考；已核对 E2 的 RSA 限制及 SLC27 / ST33K1M5 的 PQC 候选证据 | 可采购的确切 A / B 与逐算法矩阵、芯片内授权 / 全局限次 / 跨芯片销毁、B 的 PCB / Rust 驱动 / 协议集成；无合格的软件运算替代硬件保护 |
 | FIDO | 已固定并修改的 OpenSK 子集与注册 / 登录 / U2F / hmac-secret 网关 | 真实 H573 Env / 硬件密钥、CTAPHID / NFC 和完整 Root dispatcher |
 | TOTP / HOTP | 6 位设备显示、RFC 测试、SE MAC 不读种子、HOTP 持久预增；新增严格 URI / 设备解析与[SE 导入 / 删除](OTP_PROVISIONING_R05.md)，精确账户 / 种子 / 槽位 / 代际绑定 | 密封账户目录、pending / tombstone 跨介质事务与恢复、受保护 RTC / 时间管理、Root / 管理器适配和真机互通 |
 | OpenPGP / PIV / SSH | 已拉取上游研究；协议角色与会话权限边界；管理器入口 | 真正的 OpenPGP / PIV 应用、导入 / 生成 / 证书管理与 CCID；SSH FIDO / PIV / OpenPGP 分别验证，不能视为已有可用实现 |
