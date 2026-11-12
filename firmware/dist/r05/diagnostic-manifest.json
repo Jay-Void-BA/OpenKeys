@@ -18,7 +18,7 @@
   "fingerprint_hardware": false,
   "physical_test_result": "NOT_RUN",
   "hardware_sha256": {
-    "hardware/r05/kicad/OpenKeys.kicad_pcb": "d6278f2e471fbc458ca9c3e9df6af21929153fb99c5f37df0c1bd28e5340a3ff",
+    "hardware/r05/kicad/OpenKeys.kicad_pcb": "8e9d3e61d21afd76e613611d21ebfb939d797c794edf4927300f5d9421142efd",
     "hardware/r05/pinout.csv": "193e41123500e1d14e853004f86404a986fca6b5f81c620643de85144c7c1599"
   },
   "source_sha256": {
@@ -50,7 +50,7 @@
     "firmware/board/README.md": "bafacb3bc760ccabf8ad6f165669692ca56c492681e62edfe1ffd22ff362a10d",
     "firmware/board/build.rs": "95399bb479e4148638bdc57b3931577e8a68512bbd19a7cad0f1dc2f420f1e67",
     "firmware/board/src/buttons.rs": "32c7262433769a3c5afe8e17d30e510da57c83a8eb371b7b2131aa78c7dafb1c",
-    "firmware/board/src/dfr0555.rs": "03ecadd5f8b7a7267eb4d132a8bbe560d73107fe44746ef9542918e0b1ed794a",
+    "firmware/board/src/dfr0555.rs": "2385cb69c7dc72b737502889c071d0143d7bac4d853efff4b25bc7b6442cb579",
     "firmware/board/src/fingerprint.rs": "b5d91a6b066480141b58ea1b3ff5caaa54724b4490fe3b95a86a1acb22a102d4",
     "firmware/board/src/flash.rs": "177e359a97e55d4690fac0cb3faeec642b943190be435145ce0860a18668349f",
     "firmware/board/src/lcd.rs": "811ddf1fb7e581563d44644cf9a90270180b2301d2f0da2fe19a9f2484e6e919",
@@ -65,13 +65,13 @@
     "firmware/board/tests/critical_sections.rs": "510f388e2b1010bdbde7181153e9d9c65dd0c048bc1689d695e2d0d21fdf9a80",
     "firmware/board/tests/drivers.rs": "abc2b02e9308b51caff735bd4339c92387afd1fcd2a6584e39a156e8009941a5",
     "firmware/board/tests/fingerprint.rs": "9ff9c54ed4cf297cb8a2b50f1b20317e688ac831243c873ea9317df38ca678a3",
-    "firmware/board/tests/r05_display_keys.rs": "70066b9c8b1f456e5d72d8c504b53bacacbbe3746082006808a947a727cc9e22",
+    "firmware/board/tests/r05_display_keys.rs": "e09957a89cb4f664974a3df7a79f786d008f3e97d0cc4939aa12c0d61590376d",
     "firmware/board/tests/r05_otp.rs": "737708af8b20a3942563d04894329929dab9de197975e64cb0c2ce46ee045c6f",
     "firmware/board/tests/r05_pin_ui.rs": "331e4b24568b8a97c32392c5a8f90d1820d9c0c7858dceef002682fc61b57c13",
     "firmware/board/tests/se_i2c.rs": "5ec0d55595f367de48cf39da0aa8afc70178995175c68881f8fb7ada74d87227",
     "firmware/r05/Cargo.toml": "7e3c52010717adaaf0d4b83f31aa29242058bba883f37a680ae0a558d016de5c",
-    "firmware/r05/README.md": "90737b43612ffb8301f53b1c58c3ea9a9a51bccc8f16b0275d1bdc0ceebc0002",
-    "firmware/r05/board-contract.sha256": "49cc3ff5e993d9562eda34e5f4dcb466f828c2eaa690c6d93d5da9f37e26a36c",
+    "firmware/r05/README.md": "33046209b6533e3d96bbcbf259f2203663a3f87a8b641e2ab3aaf81eeee61b77",
+    "firmware/r05/board-contract.sha256": "2966744c4d0bd3d783b5eb7e16f808d89d603b45f8f61714c30a28f18dcf19cf",
     "firmware/r05/build.rs": "546cf2e4a53f5205b32d2a141265d0c7dee20d6587e0b089b83b3eb38ec9dd7e",
     "firmware/r05/src/lib.rs": "b6ce7e55b55e3a48cc261adedf44e732feea0e81c5ba7d9df7589c6bde1b22e3",
     "firmware/r05/src/main.rs": "23b60cd699ea4e939c8f5b3a38af1578900595be7741d67d0cd1419715193161",
@@ -134,24 +134,24 @@
       "lcd_revision": "v1-1",
       "backlight_address": 107,
       "features": "r05-diagnostics",
-      "binary_bytes": 26840,
+      "binary_bytes": 26880,
       "initial_stack": "0x20040000",
       "reset_vector": "0x8000251",
       "artifacts": {
-        "openkeys-r05-diagnostics-v1-1.elf": "29a2bea17fc59f82e9d12b2f1ceb38161be5acee4f7b1a4ece64fd941f44aace",
-        "openkeys-r05-diagnostics-v1-1.bin": "7500bd47a88af16d4fe0420c2c3ab37cce7b2da22e3ec5bab55a7e02c0e6bae8"
+        "openkeys-r05-diagnostics-v1-1.elf": "039ed0927124c1dc3a36bc819b0d3ce0fee243e064e188df387e83c29c9e01f4",
+        "openkeys-r05-diagnostics-v1-1.bin": "f22bd27387d86d5901e27c34be1eea153d8babaf5f0349657a5f6107bb2191d1"
       }
     },
     {
       "lcd_revision": "v1-0",
       "backlight_address": 96,
       "features": "r05-diagnostics,lcd-v1-0",
-      "binary_bytes": 26832,
+      "binary_bytes": 26880,
       "initial_stack": "0x20040000",
       "reset_vector": "0x8000251",
       "artifacts": {
-        "openkeys-r05-diagnostics-v1-0.elf": "d25aa4983d6483c0ccbe5173075ca9409300e6ac65c38e39c17c6ab2d41caced",
-        "openkeys-r05-diagnostics-v1-0.bin": "a42ec7f81a20295ccb581e5b97a2c3c7c939e0e11419825d17c3476901a4ad42"
+        "openkeys-r05-diagnostics-v1-0.elf": "47a766194f186e3abeab59dd5ba59942f9eda76372e7565f4cc8bfd167ebdc63",
+        "openkeys-r05-diagnostics-v1-0.bin": "6ae8079f62e6b3c6fec6f2bb8064e59553da5f8a649022c64055f35d3a7da928"
       }
     }
   ]

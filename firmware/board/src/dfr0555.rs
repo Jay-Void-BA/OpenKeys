@@ -8,6 +8,10 @@ use zeroize::Zeroizing;
 
 pub const LCD_ADDRESS: u8 = 0x3e;
 pub const OFF_HOLD_MS: u32 = 500;
+/// TPS3808 fixed300ms mode can hold clear for420ms after MR release.
+/// Keep CLK low for500ms, then create a NEW edge; an earlier held-high
+/// level would never clock the asynchronously cleared latch.
+pub const RESET_RELEASE_MS: u32 = 500;
 pub const POWER_UP_MS: u32 = 200;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -100,7 +104,7 @@ impl<I: I2c, R: OutputPin, A: OutputPin, D: DelayNs> Lcd<I, R, A, D> {
         }
         self.lock()?;
         self.release.set_high().map_err(|_| self.fault())?;
-        self.delay.delay_ms(1); // meet asynchronous-clear recovery before CLK
+        self.delay.delay_ms(RESET_RELEASE_MS);
         self.arm.set_high().map_err(|_| self.fault())?;
         self.delay.delay_ms(POWER_UP_MS); // load rise, RC bus isolation and LCD POR
         for _ in 0..3 {

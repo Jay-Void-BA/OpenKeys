@@ -28,6 +28,9 @@ LIB['SWITCH'] = custom('SN74LVC2G66_DCU', [
     (4, 'GND', 'power_in'), (5, '2A', 'bidirectional'), (6, '2B', 'bidirectional'),
     (7, '1C', 'input'), (8, 'VCC', 'power_in')])
 LIB['SCHMITT']=library('74xGxx','74LVC1G17')
+LIB['LEVEL']=custom('TCA9517A_DGK',[(1,'VCCA','power_in'),(2,'SCLA','bidirectional'),(3,'SDAA','bidirectional'),(4,'GND','power_in'),(5,'EN','input'),(6,'SDAB','bidirectional'),(7,'SCLB','bidirectional'),(8,'VCCB','power_in')])
+LIB['WINDOW']=custom('TPS3700_DDC',[(1,'OUTA','open_collector'),(2,'GND','power_in'),(3,'INA+','input'),(4,'INB-','input'),(5,'VDD','power_in'),(6,'OUTB','open_collector')])
+LIB['RESETDELAY']=custom('TPS3808G33_DBV',[(1,'RESET_N','open_collector'),(2,'GND','power_in'),(3,'MR_N','input'),(4,'CT','input'),(5,'SENSE','input'),(6,'VDD','power_in')])
 
 def named(k,d):return {num:d.get(name) for num,name in pmap(k).items()}
 def usb():
@@ -55,7 +58,7 @@ def power():
  caps(s,[('1uF 10V','USB_5V','GND'),('10uF 6.3V','BAT','GND'),('10uF 10V','SYS','GND')],33.02,187.96)
  s.comp('PWR','#FLG3','PWR_FLAG',73.66,35.56,{'1':'VBUS_FUSED'})
  s.comp('SPDT','SW1','OFF / ON',190.5,220.98,{'1':'SYS','2':'REG_EN','3':'GND'},'Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN')
- s.comp('REG','U3','TPS63031DSK (3.3 V)',289.56,223.52,named('REG',{'VIN':'SYS','VINA':'REG_VINA','VOUT':'+3V3','FB':'+3V3','EN':'REG_EN','PS/SYNC':'GND','L1':'SW_L1','L2':'SW_L2','GND':'GND','PGND':'GND','EP':'GND'}))
+ s.comp('REG','U3','TPS63031DSK (3.3 V)',289.56,223.52,named('REG',{'VIN':'SYS','VINA':'REG_VINA','VOUT':'+3V3','FB':'+3V3','EN':'REG_EN','PS/SYNC':'SYS','L1':'SW_L1','L2':'SW_L2','GND':'GND','PGND':'GND','EP':'GND'}),note='PS/SYNC tied to VIN: forced PWM, guaranteed DC output3.267..3.333V before load/transient effects. GND power-save mode has wider -3/+6percent range and is not approved here.')
  passive(s,'R','0R',210.82,177.8,'SYS','REG_VINA');passive(s,'L','1.5uH Isat>=1.5A',353.06,152.4,'SW_L1','SW_L2')
  caps(s,[('10uF 10V','SYS','GND'),('100nF','REG_VINA','GND'),('10uF 6.3V','+3V3','GND'),('10uF 6.3V','+3V3','GND')],35.56,241.3)
  s.comp('PWR','#FLG4','PWR_FLAG',391.16,198.12,{'1':'REG_VINA'})
@@ -136,24 +139,36 @@ def lcd_guard():
  passive(s,'R','100k',35.56,185.42,'LCD_ARM_CLK','GND')
  passive(s,'C','100nF',35.56,215.9,'+3V3','GND')
  # TI pin tables are literal and independently checked by check_netlist.py.
- items=[('SCHMITT', 'U3', 'SN74LVC1G17DCKR', 106.68, 63.5, {'1': None, '2': 'LCD_RELEASE', '3': 'GND', '4': 'CLEAR_N', '5': '+3V3'}, 'Package_TO_SOT_SMD:SOT-353_SC-70-5'), ('LATCH', 'U2', 'SN74LVC1G74DCUR', 185.42, 66.04, {'1': 'LCD_ARM_CLK', '2': '+3V3', '3': None, '4': 'GND', '5': 'POWER_LATCH', '6': 'CLEAR_N', '7': '+3V3', '8': '+3V3'}, 'Package_SO:VSSOP-8_2.3x2mm_P0.5mm'), ('LOAD', 'U1', 'TPS22919DCKR', 266.7, 66.04, {'1': '+3V3', '2': 'GND', '3': 'POWER_LATCH', '4': None, '5': 'LCD_VCC_SW', '6': 'LCD_VCC_SW'}, 'Package_TO_SOT_SMD:SOT-363_SC-70-6'), ('SCHMITT', 'U4', 'SN74LVC1G17DCKR', 106.68, 129.54, {'1': None, '2': 'CONNECT_DELAY', '3': 'GND', '4': 'DELAY_READY', '5': '+3V3'}, 'Package_TO_SOT_SMD:SOT-353_SC-70-5'), ('AND', 'U5', 'SN74LVC1G08DCKR', 185.42, 129.54, {'1': 'POWER_LATCH', '2': 'DELAY_READY', '3': 'GND', '4': 'BUS_ENABLE', '5': '+3V3'}, 'Package_TO_SOT_SMD:SOT-353_SC-70-5'), ('SWITCH', 'U6', 'SN74LVC2G66DCUR', 274.32, 129.54, {'1': 'HOST_SCL', '2': 'LCD_SCL', '3': 'BUS_ENABLE', '4': 'GND', '5': 'HOST_SDA', '6': 'LCD_SDA', '7': 'BUS_ENABLE', '8': '+3V3'}, 'Package_SO:VSSOP-8_2.3x2mm_P0.5mm')]
+ items=[('RESETDELAY', 'U3', 'TPS3808G33DBVR', 106.68, 63.5, {'1': 'CLEAR_N', '2': 'GND', '3': 'LCD_RELEASE', '4': 'LCD_RESET_CT', '5': '+3V3', '6': '+3V3'}, 'Package_TO_SOT_SMD:SOT-23-6'), ('LATCH', 'U2', 'SN74LVC1G74DCUR', 185.42, 66.04, {'1': 'LCD_ARM_CLK', '2': '+3V3', '3': None, '4': 'GND', '5': 'POWER_LATCH', '6': 'CLEAR_N', '7': '+3V3', '8': '+3V3'}, 'Package_SO:VSSOP-8_2.3x2mm_P0.5mm'), ('LOAD', 'U1', 'TPS22919DCKR', 266.7, 66.04, {'1': 'SYS', '2': 'GND', '3': 'POWER_LATCH', '4': None, '5': 'LCD_VCC_SW', '6': 'LCD_VCC_SW'}, 'Package_TO_SOT_SMD:SOT-363_SC-70-6'), ('SCHMITT', 'U4', 'SN74LVC1G17DCKR', 106.68, 129.54, {'1': None, '2': 'CONNECT_DELAY', '3': 'GND', '4': 'DELAY_READY', '5': '+3V3'}, 'Package_TO_SOT_SMD:SOT-353_SC-70-5'), ('AND', 'U5', 'SN74LVC1G08DCKR', 185.42, 129.54, {'1': 'POWER_LATCH', '2': 'DELAY_READY', '3': 'GND', '4': 'BUS_ENABLE', '5': '+3V3'}, 'Package_TO_SOT_SMD:SOT-353_SC-70-5'), ('LEVEL', 'U6', 'TCA9517ADGKR', 274.32, 129.54, {'1': '+3V3', '2': 'HOST_SCL', '3': 'HOST_SDA', '4': 'GND', '5': 'LCD_BUFFER_EN', '6': 'LCD_SDA', '7': 'LCD_SCL', '8': 'LCD_VCC_SW'}, 'Package_SO:VSSOP-8_3x3mm_P0.65mm')]
  names={'U1':'U18','U2':'U16','U3':'U17','U4':'U19','U5':'U20','U6':'U21'}
  for kind,ref,value,x,y,nets,footprint in items:
   if ref not in names:continue
   nets={k:({'HOST_SCL':'LCD_HOST_SCL','HOST_SDA':'LCD_HOST_SDA'}.get(v,v)) for k,v in nets.items()}
-  s.comp(kind,names[ref],value,x+15.24,y,nets,footprint)
+  s.comp(kind,names[ref],value,x+15.24,y,nets,footprint,note='Independent reset hold: CT through100k to VDD gives180..420ms; MR=NRST/PC3 sum. Early PC4 pulses cannot rearm Q while RESET_N low.' if names[ref]=='U17' else '')
  passive(s,'R','220k 1%',104.14,185.42,'POWER_LATCH','CONNECT_DELAY')
- passive(s,'R','1k 1% 0.1W',160.02,185.42,'LCD_VCC_SW','GND',note='Bleeder required even without input power. Total module+board capacitance <=100uF is a qualification condition, not a module datasheet claim.')
+ passive(s,'R','330R 1% 0.25W',160.02,185.42,'LCD_VCC_SW','GND',note='330ohm bleeder remains effective without input power. Specify rated0.25W1206; qualify total module+board C<=100uF and off injection<=20uA. Extra display-on dissipation up to about73mW must fit input budget.')
  passive(s,'R','100k',215.9,185.42,'BUS_ENABLE','GND')
- caps(s,[('100nF 10% X7R 16V','CONNECT_DELAY','GND'),('1uF 10V','+3V3','GND'),('1uF 10V','LCD_VCC_SW','GND')]+[('100nF','+3V3','GND')]*5,50.8,241.3)
- s.text('U16 D=1, PRE_N=1. NRST/PC3 low asynchronously clears Q.\nReleasing reset alone does NOT restore power; a new PC4 rising edge is required.\nQ controls TPS22919 ON; Q AND delayed-Q controls both analog switches.\nLock: PC4 low then PC3 low. Wait500ms before a new start; then PC3 high,\nPC4 high, wait200ms before I2C. Wrong version/NAK/fault -> power OFF, latch.\n3.3V nominal module supply needs load/temperature/vendor tolerance qualification.\nNo physical clearing, injection or production security qualification claimed.',240,283,1.1)
+ caps(s,[('100nF 10% X7R 16V','CONNECT_DELAY','GND'),('1uF 10V','SYS','GND'),('1uF 10V','LCD_VCC_SW','GND')]+[('100nF','+3V3','GND')]*5,50.8,241.3)
+ s.text('U16 D=1, PRE_N=1. NRST/PC3 low clears Q through U17.\nCT through100k to VDD: RESET_N stays low180..420ms after MR release.\nReset release alone does not restore LCD power; a NEW PC4 edge is required.\nQ controls TPS22919; Q AND delayed-Q drives U21 EN through U23 on sheet10.\nLock: PC4 low, PC3 low, wait500ms. Restart: PC3 high, wait500ms,\nPC4 high, wait200ms, then full LCD initialization. Any I/O fault -> OFF.\nLCD rail is switched SYS; A/B level buffering isolates the3.3V MCU bus.\nPhysical clearing, injection, timing and power qualification NOT_RUN.',210,97,1.3)
+def supply_window():
+ s=sheet('10-sys-window','SYS voltage window and LCD level-buffer fail-closed enable')
+ s.comp('WINDOW','U22','TPS3700DDCR',73.66,76.2,{'1':'NRST','2':'GND','3':'SYS_UV_SENSE','4':'SYS_OV_SENSE','5':'+3V3','6':'NRST'},'Package_TO_SOT_SMD:TSOT-23-6',note='Cross-powered by main3.3V; senses SYS independently of software. OUTA/OUTB open drain join NRST. U10 is powered from SYS and watches main3.3V. Typical propagation is not nanosecond FI protection.')
+ for value,x,y,a,b in [('78.7k 0.1%',25.4,154.94,'SYS','SYS_UV_SENSE'),('10k 0.1%',81.28,154.94,'SYS_UV_SENSE','GND'),('110k 0.1%',137.16,154.94,'SYS','SYS_OV_SENSE'),('10k 0.1%',193.04,154.94,'SYS_OV_SENSE','GND')]:passive(s,'R',value,x,y,a,b)
+ s.comp('BUF','U23','SN74LVC1G07DCKR',299.72,76.2,{'1':None,'2':'BUS_ENABLE','3':'GND','4':'LCD_BUFFER_EN','5':'+3V3'},'Package_TO_SOT_SMD:SOT-353_SC-70-5',note='Non-inverting open-drain level conversion; TCA9517A EN high threshold tracks VCCB and cannot be driven directly by3.3V at highest SYS. Output5.5V tolerant with Ioff. Low BUS_ENABLE forces buffer off.')
+ for value,x,y,a,b in [('10k 1%',248.92,154.94,'LCD_VCC_SW','LCD_BUFFER_EN'),('100k 1%',304.8,154.94,'LCD_BUFFER_EN','GND'),('4.7k',248.92,205.74,'LCD_VCC_SW','LCD_SCL'),('4.7k',304.8,205.74,'LCD_VCC_SW','LCD_SDA')]:passive(s,'R',value,x,y,a,b)
+ caps(s,[('100nF','LCD_VCC_SW','GND'),('100nF','+3V3','GND'),('100nF','+3V3','GND')],43.18,236.22)
+ passive(s,'R','10k 1%',27.94,198.12,'+3V3','CLEAR_N',note='TPS3808 open-drain reset pullup; not connected to NRST, avoids feedback')
+ passive(s,'R','100k 1%',83.82,198.12,'+3V3','LCD_RESET_CT',note='CT requires40k..200k to VDD for fixed300ms mode. Do not short CT directly to VDD or fit a timing capacitor.')
+ passive(s,'R','10k 1%',139.7,198.12,'POWER_LATCH','GND',note='Forces TPS22919 ON low when latch/main supply is unpowered; defeats back-charge from CONNECT_DELAY through220k')
+ caps(s,[('100nF X7R 16V 10%','+3V3','GND')],182.88,236.22)
+ s.text('TPS3700 reference: positive396..404mV; negative387..400mV.\nInclude0.1percent divider errors and +/-25nA input bias.\nStatic SYS UV fall min3.4246V; OV rise max4.8596V.\nWith ASSUMED switch+harness drop<=50mV: LCD>=3.3746V.\nMain3.3V fixed PWM:3.267..3.333V; no ripple/transient guarantee.\nTCA sideA=main3.3V; sideB=switched SYS. Off I2C must stay high-Z.\nEN high follows switched VCCB through U23, R53/R54.\nLCD total C<=100uF and aggregate off injection<=20uA MUST be measured.\nHardware hold180ms minus ASSUMED turn-off<=5ms permits discharge.\nServices stay locked during startup, undervoltage and all faults.\nFast pulses, backfeed, input budget, temperature and RF remain unqualified.',195,112,1.3)
 def save():
  for ss in S:ss.save()
- root=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(nuid('OpenKeys'))],['paper',q('A3')],['title_block',['title',q('OpenKeys R0.5 - Engineering review')],['date',q('2026-11-10')],['rev',q('0.5')],['company',q('Jay-Void-BA')]],['lib_symbols']]
+ root=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(nuid('OpenKeys'))],['paper',q('A3')],['title_block',['title',q('OpenKeys R0.5 - Engineering review')],['date',q('2026-11-13')],['rev',q('0.5')],['company',q('Jay-Void-BA')]],['lib_symbols']]
  root.append(['text',q('OPENKEYS R0.5 - ONE USB-C + NFC / BLUE 16x2 LCD\nDevice PIN mandatory / TEN DECIMAL KEYS / NO FINGERPRINT\nPCB candidate; qualification required before secret provisioning'),['at',190,28,0],effects(2),['uuid',q(nuid('root/title'))]])
  for i,ss in enumerate(S):
-  x=20+(i%3)*128;y=65+(i//3)*67
-  root.append(['sheet',['at',x,y],['size',115,42],['stroke',['width',0.1524],['type','default']],['fill',['color',0,0,0,0]],['uuid',q(ss.uid)],['property',q('Sheetname'),q(ss.name),['at',x,y-1,0],effects(1.5)],['property',q('Sheetfile'),q(ss.name+'.kicad_sch'),['at',x,y+44,0],effects()],['instances',['project',q('OpenKeys'),['path',q('/'+nuid('OpenKeys')),['page',q(str(i+2))]]]]])
+  x=20+(i%3)*128;y=65+(i//3)*51
+  root.append(['sheet',['at',x,y],['size',115,31],['stroke',['width',0.1524],['type','default']],['fill',['color',0,0,0,0]],['uuid',q(ss.uid)],['property',q('Sheetname'),q(ss.name),['at',x,y-1,0],effects(1.5)],['property',q('Sheetfile'),q(ss.name+'.kicad_sch'),['at',x,y+33,0],effects()],['instances',['project',q('OpenKeys'),['path',q('/'+nuid('OpenKeys')),['page',q(str(i+2))]]]]])
  root.append(['sheet_instances',['path',q('/'),['page',q('1')]]])
  (CAD/'OpenKeys.kicad_sch').write_text(pretty(root)+'\n')
  used={key:lib for ss in S for key,lib in ss.used.items()}
@@ -164,9 +179,10 @@ def save():
  project.setdefault('text_variables',{})['DESIGN_STATUS']='BOARD_CANDIDATE_NOT_QUALIFIED'
  project_path.write_text(json.dumps(project,indent=2)+'\n')
  comps=[c for ss in S for c in ss.components]
+ assert len({c['ref'] for c in comps})==len(comps),'Duplicate component reference'
  with (ROOT/'BOM.csv').open('w') as f:
   w=csv.DictWriter(f,fieldnames=['ref','value','footprint','sheet','dnp','note'],lineterminator='\n');w.writeheader();w.writerows({k:c[k] for k in w.fieldnames} for c in comps)
  (ROOT/'review/connections.json').write_text(json.dumps(comps,indent=2)+'\n')
  print(f'R0.5: {len(S)+1} sheets, {len(comps)} BOM positions')
 if __name__=='__main__':
- usb();power();mcu();storage();nfc();trusted_ui();fault_tamper();input_guard();lcd_guard();save()
+ usb();power();mcu();storage();nfc();trusted_ui();fault_tamper();input_guard();lcd_guard();supply_window();save()

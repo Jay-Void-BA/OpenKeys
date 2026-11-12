@@ -24,7 +24,7 @@ C2,1uF 10V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
 C3,10uF 6.3V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
 C4,10uF 10V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
 SW1,OFF / ON,Button_Switch_SMD:SW_SPDT_CK_JS102011SAQN,02-power,False,
-U3,TPS63031DSK (3.3 V),Package_SON:WSON-10-1EP_2.5x2.5mm_P0.5mm_EP1.2x2mm,02-power,False,
+U3,TPS63031DSK (3.3 V),Package_SON:WSON-10-1EP_2.5x2.5mm_P0.5mm_EP1.2x2mm,02-power,False,"PS/SYNC tied to VIN: forced PWM, guaranteed DC output3.267..3.333V before load/transient effects. GND power-save mode has wider -3/+6percent range and is not approved here."
 R10,0R,Resistor_SMD:R_0603_1608Metric,02-power,False,
 L1,1.5uH Isat>=1.5A,Inductor_SMD:L_Sunlord_SWPA3015S,02-power,False,
 C5,10uF 10V,Capacitor_SMD:C_0805_2012Metric,02-power,False,
@@ -134,14 +134,14 @@ R43,10k,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
 R44,100k,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
 R45,100k,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
 C47,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
-U17,SN74LVC1G17DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,09-display-power,False,
+U17,TPS3808G33DBVR,Package_TO_SOT_SMD:SOT-23-6,09-display-power,False,Independent reset hold: CT through100k to VDD gives180..420ms; MR=NRST/PC3 sum. Early PC4 pulses cannot rearm Q while RESET_N low.
 U16,SN74LVC1G74DCUR,Package_SO:VSSOP-8_2.3x2mm_P0.5mm,09-display-power,False,
 U18,TPS22919DCKR,Package_TO_SOT_SMD:SOT-363_SC-70-6,09-display-power,False,
 U19,SN74LVC1G17DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,09-display-power,False,
 U20,SN74LVC1G08DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,09-display-power,False,
-U21,SN74LVC2G66DCUR,Package_SO:VSSOP-8_2.3x2mm_P0.5mm,09-display-power,False,
+U21,TCA9517ADGKR,Package_SO:VSSOP-8_3x3mm_P0.65mm,09-display-power,False,
 R46,220k 1%,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
-R47,1k 1% 0.1W,Resistor_SMD:R_0603_1608Metric,09-display-power,False,"Bleeder required even without input power. Total module+board capacitance <=100uF is a qualification condition, not a module datasheet claim."
+R47,330R 1% 0.25W,Resistor_SMD:R_1206_3216Metric,09-display-power,False,330ohm bleeder remains effective without input power. Specify rated0.25W1206; qualify total module+board C<=100uF and off injection<=20uA. Extra display-on dissipation up to about73mW must fit input budget.
 R48,100k,Resistor_SMD:R_0603_1608Metric,09-display-power,False,
 C48,100nF 10% X7R 16V,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
 C49,1uF 10V,Capacitor_SMD:C_0805_2012Metric,09-display-power,False,
@@ -151,3 +151,20 @@ C52,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
 C53,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
 C54,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
 C55,100nF,Capacitor_SMD:C_0603_1608Metric,09-display-power,False,
+U22,TPS3700DDCR,Package_TO_SOT_SMD:TSOT-23-6,10-sys-window,False,Cross-powered by main3.3V; senses SYS independently of software. OUTA/OUTB open drain join NRST. U10 is powered from SYS and watches main3.3V. Typical propagation is not nanosecond FI protection.
+R49,78.7k 0.1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,
+R50,10k 0.1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,
+R51,110k 0.1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,
+R52,10k 0.1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,
+U23,SN74LVC1G07DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,10-sys-window,False,Non-inverting open-drain level conversion; TCA9517A EN high threshold tracks VCCB and cannot be driven directly by3.3V at highest SYS. Output5.5V tolerant with Ioff. Low BUS_ENABLE forces buffer off.
+R53,10k 1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,
+R54,100k 1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,
+R55,4.7k,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,
+R56,4.7k,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,
+C57,100nF,Capacitor_SMD:C_0603_1608Metric,10-sys-window,False,
+C58,100nF,Capacitor_SMD:C_0603_1608Metric,10-sys-window,False,
+C59,100nF,Capacitor_SMD:C_0603_1608Metric,10-sys-window,False,
+R57,10k 1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,"TPS3808 open-drain reset pullup; not connected to NRST, avoids feedback"
+R58,100k 1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,CT requires40k..200k to VDD for fixed300ms mode. Do not short CT directly to VDD or fit a timing capacitor.
+R59,10k 1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,Forces TPS22919 ON low when latch/main supply is unpowered; defeats back-charge from CONNECT_DELAY through220k
+C60,100nF X7R 16V 10%,Capacitor_SMD:C_0603_1608Metric,10-sys-window,False,

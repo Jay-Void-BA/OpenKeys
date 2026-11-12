@@ -339,7 +339,7 @@
       "5": "SYS",
       "8": "REG_VINA",
       "6": "REG_EN",
-      "7": "GND",
+      "7": "SYS",
       "4": "SW_L1",
       "2": "SW_L2",
       "9": "GND",
@@ -348,7 +348,7 @@
       "1": "+3V3",
       "10": "+3V3"
     },
-    "note": "",
+    "note": "PS/SYNC tied to VIN: forced PWM, guaranteed DC output3.267..3.333V before load/transient effects. GND power-save mode has wider -3/+6percent range and is not approved here.",
     "dnp": false
   },
   {
@@ -1770,17 +1770,18 @@
   },
   {
     "ref": "U17",
-    "value": "SN74LVC1G17DCKR",
-    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "value": "TPS3808G33DBVR",
+    "footprint": "Package_TO_SOT_SMD:SOT-23-6",
     "sheet": "09-display-power",
     "nets": {
-      "1": null,
-      "2": "LCD_RELEASE",
-      "3": "GND",
-      "4": "CLEAR_N",
-      "5": "+3V3"
+      "1": "CLEAR_N",
+      "2": "GND",
+      "3": "LCD_RELEASE",
+      "4": "LCD_RESET_CT",
+      "5": "+3V3",
+      "6": "+3V3"
     },
-    "note": "",
+    "note": "Independent reset hold: CT through100k to VDD gives180..420ms; MR=NRST/PC3 sum. Early PC4 pulses cannot rearm Q while RESET_N low.",
     "dnp": false
   },
   {
@@ -1807,7 +1808,7 @@
     "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
     "sheet": "09-display-power",
     "nets": {
-      "1": "+3V3",
+      "1": "SYS",
       "2": "GND",
       "3": "POWER_LATCH",
       "4": null,
@@ -1849,18 +1850,18 @@
   },
   {
     "ref": "U21",
-    "value": "SN74LVC2G66DCUR",
-    "footprint": "Package_SO:VSSOP-8_2.3x2mm_P0.5mm",
+    "value": "TCA9517ADGKR",
+    "footprint": "Package_SO:VSSOP-8_3x3mm_P0.65mm",
     "sheet": "09-display-power",
     "nets": {
-      "1": "LCD_HOST_SCL",
-      "2": "LCD_SCL",
-      "3": "BUS_ENABLE",
+      "1": "+3V3",
+      "2": "LCD_HOST_SCL",
+      "3": "LCD_HOST_SDA",
       "4": "GND",
-      "5": "LCD_HOST_SDA",
+      "5": "LCD_BUFFER_EN",
       "6": "LCD_SDA",
-      "7": "BUS_ENABLE",
-      "8": "+3V3"
+      "7": "LCD_SCL",
+      "8": "LCD_VCC_SW"
     },
     "note": "",
     "dnp": false
@@ -1879,14 +1880,14 @@
   },
   {
     "ref": "R47",
-    "value": "1k 1% 0.1W",
-    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "value": "330R 1% 0.25W",
+    "footprint": "Resistor_SMD:R_1206_3216Metric",
     "sheet": "09-display-power",
     "nets": {
       "1": "LCD_VCC_SW",
       "2": "GND"
     },
-    "note": "Bleeder required even without input power. Total module+board capacitance <=100uF is a qualification condition, not a module datasheet claim.",
+    "note": "330ohm bleeder remains effective without input power. Specify rated0.25W1206; qualify total module+board C<=100uF and off injection<=20uA. Extra display-on dissipation up to about73mW must fit input budget.",
     "dnp": false
   },
   {
@@ -1919,7 +1920,7 @@
     "footprint": "Capacitor_SMD:C_0805_2012Metric",
     "sheet": "09-display-power",
     "nets": {
-      "1": "+3V3",
+      "1": "SYS",
       "2": "GND"
     },
     "note": "",
@@ -1990,6 +1991,217 @@
     "value": "100nF",
     "footprint": "Capacitor_SMD:C_0603_1608Metric",
     "sheet": "09-display-power",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U22",
+    "value": "TPS3700DDCR",
+    "footprint": "Package_TO_SOT_SMD:TSOT-23-6",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "NRST",
+      "2": "GND",
+      "3": "SYS_UV_SENSE",
+      "4": "SYS_OV_SENSE",
+      "5": "+3V3",
+      "6": "NRST"
+    },
+    "note": "Cross-powered by main3.3V; senses SYS independently of software. OUTA/OUTB open drain join NRST. U10 is powered from SYS and watches main3.3V. Typical propagation is not nanosecond FI protection.",
+    "dnp": false
+  },
+  {
+    "ref": "R49",
+    "value": "78.7k 0.1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "SYS",
+      "2": "SYS_UV_SENSE"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R50",
+    "value": "10k 0.1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "SYS_UV_SENSE",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R51",
+    "value": "110k 0.1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "SYS",
+      "2": "SYS_OV_SENSE"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R52",
+    "value": "10k 0.1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "SYS_OV_SENSE",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U23",
+    "value": "SN74LVC1G07DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": null,
+      "2": "BUS_ENABLE",
+      "3": "GND",
+      "4": "LCD_BUFFER_EN",
+      "5": "+3V3"
+    },
+    "note": "Non-inverting open-drain level conversion; TCA9517A EN high threshold tracks VCCB and cannot be driven directly by3.3V at highest SYS. Output5.5V tolerant with Ioff. Low BUS_ENABLE forces buffer off.",
+    "dnp": false
+  },
+  {
+    "ref": "R53",
+    "value": "10k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "LCD_VCC_SW",
+      "2": "LCD_BUFFER_EN"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R54",
+    "value": "100k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "LCD_BUFFER_EN",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R55",
+    "value": "4.7k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "LCD_VCC_SW",
+      "2": "LCD_SCL"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R56",
+    "value": "4.7k",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "LCD_VCC_SW",
+      "2": "LCD_SDA"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C57",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "LCD_VCC_SW",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C58",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C59",
+    "value": "100nF",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R57",
+    "value": "10k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "+3V3",
+      "2": "CLEAR_N"
+    },
+    "note": "TPS3808 open-drain reset pullup; not connected to NRST, avoids feedback",
+    "dnp": false
+  },
+  {
+    "ref": "R58",
+    "value": "100k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "+3V3",
+      "2": "LCD_RESET_CT"
+    },
+    "note": "CT requires40k..200k to VDD for fixed300ms mode. Do not short CT directly to VDD or fit a timing capacitor.",
+    "dnp": false
+  },
+  {
+    "ref": "R59",
+    "value": "10k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "10-sys-window",
+    "nets": {
+      "1": "POWER_LATCH",
+      "2": "GND"
+    },
+    "note": "Forces TPS22919 ON low when latch/main supply is unpowered; defeats back-charge from CONNECT_DELAY through220k",
+    "dnp": false
+  },
+  {
+    "ref": "C60",
+    "value": "100nF X7R 16V 10%",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "10-sys-window",
     "nets": {
       "1": "+3V3",
       "2": "GND"

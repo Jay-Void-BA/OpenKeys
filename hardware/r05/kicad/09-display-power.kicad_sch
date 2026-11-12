@@ -5,7 +5,7 @@
   (paper "A3")
   (title_block
     (title "OpenKeys R0.5 - 09-display-power")
-    (date "2026-11-10")
+    (date "2026-11-13")
     (rev "0.5-board-review")
     (company "Jay-Void-BA")
     (comment 1 "ENGINEERING BOARD CANDIDATE - qualify before use")
@@ -481,112 +481,32 @@
       )
       (embedded_fonts no)
     )
-    (symbol "OpenKeys:74LVC1G17"
-      (exclude_from_sim no)
+    (symbol "OpenKeys:TPS3808G33_DBV"
+      (pin_names
+        (offset 0.7)
+      )
       (in_bom yes)
       (on_board yes)
       (property "Reference" "U"
-        (at 0 3.81 0)
+        (at 0 9.35 0)
         (effects
           (font
-            (size 1.27 1.27)
+            (size 1.0 1.0)
           )
-          (justify left)
         )
       )
-      (property "Value" "74LVC1G17"
-        (at 0 -3.81 0)
+      (property "Value" "TPS3808G33_DBV"
+        (at 0 7.35 0)
         (effects
           (font
-            (size 1.27 1.27)
+            (size 1.0 1.0)
           )
-          (justify left)
         )
       )
-      (property "Footprint" ""
-        (at -2.54 0 0)
-        (effects
-          (font
-            (size 1.27 1.27)
-          )
-          (hide yes)
-        )
-      )
-      (property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g17.pdf"
-        (at 0 -6.35 0)
-        (effects
-          (font
-            (size 1.27 1.27)
-          )
-          (justify left)
-          (hide yes)
-        )
-      )
-      (property "Description" "Single Schmitt Buffer Gate, Low-Voltage CMOS"
-        (at 0 0 0)
-        (effects
-          (font
-            (size 1.27 1.27)
-          )
-          (hide yes)
-        )
-      )
-      (property "ki_keywords" "Single Gate Buff Schmitt LVC CMOS"
-        (at 0 0 0)
-        (effects
-          (font
-            (size 1.27 1.27)
-          )
-          (hide yes)
-        )
-      )
-      (property "ki_fp_filters" "SOT?23* SOT?553* Texas?R-PDSO-G5?DCK* Texas?R-PDSO-N5?DRL* Texas?X2SON*0.8x0.8mm*P0.48mm*"
-        (at 0 0 0)
-        (effects
-          (font
-            (size 1.27 1.27)
-          )
-          (hide yes)
-        )
-      )
-      (symbol "74LVC1G17_0_1"
-        (polyline
-          (pts
-            (xy -7.62 6.35)
-            (xy -7.62 -6.35)
-            (xy 5.08 0)
-            (xy -7.62 6.35)
-          )
-          (stroke
-            (width 0.254)
-            (type default)
-          )
-          (fill
-            (type background)
-          )
-        )
-        (polyline
-          (pts
-            (xy -3.81 -1.27)
-            (xy -2.54 -1.27)
-            (xy -2.54 1.27)
-            (xy -1.27 1.27)
-          )
-          (stroke
-            (width 0.254)
-            (type default)
-          )
-          (fill
-            (type background)
-          )
-        )
-        (polyline
-          (pts
-            (xy -2.54 -1.27)
-            (xy -1.27 -1.27)
-            (xy -1.27 1.27)
-            (xy 0 1.27)
-          )
+      (symbol "TPS3808G33_DBV_0_1"
+        (rectangle
+          (start -10.16 6.35)
+          (end 10.16 -6.35)
           (stroke
             (width 0.254)
             (type default)
@@ -596,100 +516,116 @@
           )
         )
       )
-      (symbol "74LVC1G17_1_1"
-        (pin input line
-          (at -12.7 0 0)
-          (length 5.08)
-          (name "~"
+      (symbol "TPS3808G33_DBV_1_1"
+        (pin open_collector line
+          (at -12.7 3.81 0)
+          (length 2.54)
+          (name "RESET_N"
             (effects
               (font
-                (size 1.27 1.27)
-              )
-            )
-          )
-          (number "2"
-            (effects
-              (font
-                (size 1.27 1.27)
-              )
-            )
-          )
-        )
-        (pin no_connect line
-          (at -7.62 5.08 180)
-          (length 5.08)
-          (hide yes)
-          (name "NC"
-            (effects
-              (font
-                (size 1.27 1.27)
+                (size 1.0 1.0)
               )
             )
           )
           (number "1"
             (effects
               (font
-                (size 1.27 1.27)
+                (size 1.0 1.0)
               )
             )
           )
         )
         (pin power_in line
-          (at -5.08 10.16 270)
-          (length 5.08)
-          (name "VCC"
-            (effects
-              (font
-                (size 1.27 1.27)
-              )
-            )
-          )
-          (number "5"
-            (effects
-              (font
-                (size 1.27 1.27)
-              )
-            )
-          )
-        )
-        (pin power_in line
-          (at -5.08 -10.16 90)
-          (length 5.08)
+          (at -12.7 1.27 0)
+          (length 2.54)
           (name "GND"
             (effects
               (font
-                (size 1.27 1.27)
+                (size 1.0 1.0)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.0 1.0)
+              )
+            )
+          )
+        )
+        (pin input line
+          (at -12.7 -1.27 0)
+          (length 2.54)
+          (name "MR_N"
+            (effects
+              (font
+                (size 1.0 1.0)
               )
             )
           )
           (number "3"
             (effects
               (font
-                (size 1.27 1.27)
+                (size 1.0 1.0)
               )
             )
           )
         )
-        (pin output line
-          (at 10.16 0 180)
-          (length 5.08)
-          (name "~"
+        (pin input line
+          (at 12.7 3.81 180)
+          (length 2.54)
+          (name "CT"
             (effects
               (font
-                (size 1.27 1.27)
+                (size 1.0 1.0)
               )
             )
           )
           (number "4"
             (effects
               (font
-                (size 1.27 1.27)
+                (size 1.0 1.0)
+              )
+            )
+          )
+        )
+        (pin input line
+          (at 12.7 1.27 180)
+          (length 2.54)
+          (name "SENSE"
+            (effects
+              (font
+                (size 1.0 1.0)
+              )
+            )
+          )
+          (number "5"
+            (effects
+              (font
+                (size 1.0 1.0)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at 12.7 -1.27 180)
+          (length 2.54)
+          (name "VDD"
+            (effects
+              (font
+                (size 1.0 1.0)
+              )
+            )
+          )
+          (number "6"
+            (effects
+              (font
+                (size 1.0 1.0)
               )
             )
           )
         )
       )
-      (embedded_fonts no)
     )
     (symbol "OpenKeys:SN74LVC1G74_DCU"
       (pin_names
@@ -1019,6 +955,216 @@
         )
       )
     )
+    (symbol "OpenKeys:74LVC1G17"
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "U"
+        (at 0 3.81 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Value" "74LVC1G17"
+        (at 0 -3.81 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Footprint" ""
+        (at -2.54 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g17.pdf"
+        (at 0 -6.35 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+          (hide yes)
+        )
+      )
+      (property "Description" "Single Schmitt Buffer Gate, Low-Voltage CMOS"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_keywords" "Single Gate Buff Schmitt LVC CMOS"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_fp_filters" "SOT?23* SOT?553* Texas?R-PDSO-G5?DCK* Texas?R-PDSO-N5?DRL* Texas?X2SON*0.8x0.8mm*P0.48mm*"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "74LVC1G17_0_1"
+        (polyline
+          (pts
+            (xy -7.62 6.35)
+            (xy -7.62 -6.35)
+            (xy 5.08 0)
+            (xy -7.62 6.35)
+          )
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+        (polyline
+          (pts
+            (xy -3.81 -1.27)
+            (xy -2.54 -1.27)
+            (xy -2.54 1.27)
+            (xy -1.27 1.27)
+          )
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+        (polyline
+          (pts
+            (xy -2.54 -1.27)
+            (xy -1.27 -1.27)
+            (xy -1.27 1.27)
+            (xy 0 1.27)
+          )
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+      )
+      (symbol "74LVC1G17_1_1"
+        (pin input line
+          (at -12.7 0 0)
+          (length 5.08)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin no_connect line
+          (at -7.62 5.08 180)
+          (length 5.08)
+          (hide yes)
+          (name "NC"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -5.08 10.16 270)
+          (length 5.08)
+          (name "VCC"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -5.08 -10.16 90)
+          (length 5.08)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin output line
+          (at 10.16 0 180)
+          (length 5.08)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+      (embedded_fonts no)
+    )
     (symbol "OpenKeys:74LVC1G08"
       (exclude_from_sim no)
       (in_bom yes)
@@ -1207,7 +1353,7 @@
       )
       (embedded_fonts no)
     )
-    (symbol "OpenKeys:SN74LVC2G66_DCU"
+    (symbol "OpenKeys:TCA9517A_DGK"
       (pin_names
         (offset 0.7)
       )
@@ -1221,7 +1367,7 @@
           )
         )
       )
-      (property "Value" "SN74LVC2G66_DCU"
+      (property "Value" "TCA9517A_DGK"
         (at 0 8.620000000000001 0)
         (effects
           (font
@@ -1229,7 +1375,7 @@
           )
         )
       )
-      (symbol "SN74LVC2G66_DCU_0_1"
+      (symbol "TCA9517A_DGK_0_1"
         (rectangle
           (start -10.16 7.62)
           (end 10.16 -7.62)
@@ -1242,11 +1388,11 @@
           )
         )
       )
-      (symbol "SN74LVC2G66_DCU_1_1"
-        (pin bidirectional line
+      (symbol "TCA9517A_DGK_1_1"
+        (pin power_in line
           (at -12.7 5.08 0)
           (length 2.54)
-          (name "1A"
+          (name "VCCA"
             (effects
               (font
                 (size 1.0 1.0)
@@ -1264,7 +1410,7 @@
         (pin bidirectional line
           (at -12.7 2.54 0)
           (length 2.54)
-          (name "1B"
+          (name "SCLA"
             (effects
               (font
                 (size 1.0 1.0)
@@ -1279,10 +1425,10 @@
             )
           )
         )
-        (pin input line
+        (pin bidirectional line
           (at -12.7 0.0 0)
           (length 2.54)
-          (name "2C"
+          (name "SDAA"
             (effects
               (font
                 (size 1.0 1.0)
@@ -1315,10 +1461,10 @@
             )
           )
         )
-        (pin bidirectional line
+        (pin input line
           (at 12.7 5.08 180)
           (length 2.54)
-          (name "2A"
+          (name "EN"
             (effects
               (font
                 (size 1.0 1.0)
@@ -1336,7 +1482,7 @@
         (pin bidirectional line
           (at 12.7 2.54 180)
           (length 2.54)
-          (name "2B"
+          (name "SDAB"
             (effects
               (font
                 (size 1.0 1.0)
@@ -1351,10 +1497,10 @@
             )
           )
         )
-        (pin input line
+        (pin bidirectional line
           (at 12.7 0.0 180)
           (length 2.54)
-          (name "1C"
+          (name "SCLB"
             (effects
               (font
                 (size 1.0 1.0)
@@ -1372,7 +1518,7 @@
         (pin power_in line
           (at 12.7 -2.54 180)
           (length 2.54)
-          (name "VCC"
+          (name "VCCB"
             (effects
               (font
                 (size 1.0 1.0)
@@ -2079,27 +2225,27 @@
   )
   (wire
     (pts
-      (xy 109.22 63.5)
-      (xy 104.14 63.5)
+      (xy 109.22 59.69)
+      (xy 104.14 59.69)
     )
     (stroke
       (width 0)
       (type default)
     )
-    (uuid "e4cf9608-da2b-5339-ab03-4b93f6bbbd7b")
+    (uuid "db678d4a-d68f-5374-8aee-829d42f3b334")
   )
-  (global_label "LCD_RELEASE"
+  (global_label "CLEAR_N"
     (shape input)
-    (at 104.14 63.5 180)
+    (at 104.14 59.69 180)
     (effects
       (font
         (size 0.9 0.9)
       )
       (justify right)
     )
-    (uuid "12283061-c9d7-58b4-b652-40fe2430d556")
+    (uuid "14dbb787-4f72-5ba1-b77f-ff77f720cce0")
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 104.14 63.5 180)
+      (at 104.14 59.69 180)
       (effects
         (font
           (size 0.8 0.8)
@@ -2108,14 +2254,103 @@
       )
     )
   )
-  (no_connect
-    (at 114.3 58.42)
-    (uuid "a4a51933-b31d-58e2-9f52-f2040bcfd7df")
+  (wire
+    (pts
+      (xy 109.22 62.23)
+      (xy 104.14 62.23)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "e4cf9608-da2b-5339-ab03-4b93f6bbbd7b")
+  )
+  (global_label "GND"
+    (shape input)
+    (at 104.14 62.23 180)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify right)
+    )
+    (uuid "12283061-c9d7-58b4-b652-40fe2430d556")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 104.14 62.23 180)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
   )
   (wire
     (pts
-      (xy 116.84 53.34)
-      (xy 116.84 48.26)
+      (xy 109.22 64.77)
+      (xy 104.14 64.77)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "ddc4312b-fd23-59f7-abb4-93956f7fd27c")
+  )
+  (global_label "LCD_RELEASE"
+    (shape input)
+    (at 104.14 64.77 180)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify right)
+    )
+    (uuid "c4f4f16f-9927-5b82-aa5b-da6d5ef4f345")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 104.14 64.77 180)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (wire
+    (pts
+      (xy 134.62 59.69)
+      (xy 139.7 59.69)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "ea9eed01-af4f-5061-ad59-ad9fbe27cb70")
+  )
+  (global_label "LCD_RESET_CT"
+    (shape input)
+    (at 139.7 59.69 0)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify left)
+    )
+    (uuid "0d9a9df8-bcef-54ff-a618-2a4a9d30ae25")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 139.7 59.69 0)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (wire
+    (pts
+      (xy 134.62 62.23)
+      (xy 139.7 62.23)
     )
     (stroke
       (width 0)
@@ -2125,7 +2360,7 @@
   )
   (global_label "+3V3"
     (shape input)
-    (at 116.84 48.26 90)
+    (at 139.7 62.23 0)
     (effects
       (font
         (size 0.9 0.9)
@@ -2134,7 +2369,7 @@
     )
     (uuid "3c994a63-bc89-55aa-932d-3a63e1d3b277")
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 116.84 48.26 90)
+      (at 139.7 62.23 0)
       (effects
         (font
           (size 0.8 0.8)
@@ -2145,58 +2380,27 @@
   )
   (wire
     (pts
-      (xy 116.84 73.66)
-      (xy 116.84 78.74)
+      (xy 134.62 64.77)
+      (xy 139.7 64.77)
     )
     (stroke
       (width 0)
       (type default)
     )
-    (uuid "ddc4312b-fd23-59f7-abb4-93956f7fd27c")
+    (uuid "f65f22bc-e027-5371-bd13-0e020ceeecd8")
   )
-  (global_label "GND"
+  (global_label "+3V3"
     (shape input)
-    (at 116.84 78.74 270)
-    (effects
-      (font
-        (size 0.9 0.9)
-      )
-      (justify right)
-    )
-    (uuid "c4f4f16f-9927-5b82-aa5b-da6d5ef4f345")
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 116.84 78.74 270)
-      (effects
-        (font
-          (size 0.8 0.8)
-        )
-        (hide yes)
-      )
-    )
-  )
-  (wire
-    (pts
-      (xy 132.08 63.5)
-      (xy 137.16 63.5)
-    )
-    (stroke
-      (width 0)
-      (type default)
-    )
-    (uuid "ea9eed01-af4f-5061-ad59-ad9fbe27cb70")
-  )
-  (global_label "CLEAR_N"
-    (shape input)
-    (at 137.16 63.5 0)
+    (at 139.7 64.77 0)
     (effects
       (font
         (size 0.9 0.9)
       )
       (justify left)
     )
-    (uuid "0d9a9df8-bcef-54ff-a618-2a4a9d30ae25")
+    (uuid "3eae45b0-213d-51d1-b103-f9f861b2a6b2")
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 137.16 63.5 0)
+      (at 139.7 64.77 0)
       (effects
         (font
           (size 0.8 0.8)
@@ -2206,7 +2410,7 @@
     )
   )
   (symbol
-    (lib_id "OpenKeys:74LVC1G17")
+    (lib_id "OpenKeys:TPS3808G33_DBV")
     (at 121.92 63.5 0)
     (unit 1)
     (in_bom yes)
@@ -2214,22 +2418,22 @@
     (dnp no)
     (uuid "8b31a4f3-414e-5595-8166-4c3aeeacd3a6")
     (property "Reference" "U17"
-      (at 121.92 49.34 0)
+      (at 121.92 55.69 0)
       (effects
         (font
           (size 1 1)
         )
       )
     )
-    (property "Value" "SN74LVC1G17DCKR"
-      (at 121.92 51.34 0)
+    (property "Value" "TPS3808G33DBVR"
+      (at 121.92 57.69 0)
       (effects
         (font
           (size 1 1)
         )
       )
     )
-    (property "Footprint" "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
       (at 121.92 63.5 0)
       (effects
         (font
@@ -2238,7 +2442,7 @@
         (hide yes)
       )
     )
-    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g17.pdf"
+    (property "Datasheet" ""
       (at 121.92 63.5 0)
       (effects
         (font
@@ -2255,20 +2459,23 @@
         )
       )
     )
-    (pin "2"
-      (uuid "67ad81fe-dc21-52d5-b963-42a9dd52cb94")
-    )
     (pin "1"
       (uuid "a3b4d44b-713c-5fe5-a6b0-3a33828cf3b4")
     )
-    (pin "5"
-      (uuid "40810b84-af0a-55e9-b05e-ee5c2f74a4e1")
+    (pin "2"
+      (uuid "67ad81fe-dc21-52d5-b963-42a9dd52cb94")
     )
     (pin "3"
       (uuid "fcac9e56-dd59-53ec-a6ca-b308aaa4ac5d")
     )
     (pin "4"
       (uuid "1e7bbdb5-1f7d-59ef-ab18-2f8a1cd71a75")
+    )
+    (pin "5"
+      (uuid "40810b84-af0a-55e9-b05e-ee5c2f74a4e1")
+    )
+    (pin "6"
+      (uuid "5292ae12-c74e-5524-a3d6-de4b570a3ae8")
     )
   )
   (wire
@@ -2578,7 +2785,7 @@
     )
     (uuid "24af9efb-4017-55fc-aafa-28534839d880")
   )
-  (global_label "+3V3"
+  (global_label "SYS"
     (shape input)
     (at 264.16 62.23 180)
     (effects
@@ -3221,7 +3428,7 @@
     )
     (uuid "d91a48b4-e709-584b-a953-798efaf00ca9")
   )
-  (global_label "LCD_HOST_SCL"
+  (global_label "+3V3"
     (shape input)
     (at 271.78 124.46 180)
     (effects
@@ -3252,7 +3459,7 @@
     )
     (uuid "afc9ee78-b65d-5cdd-9e7b-57d385db4b12")
   )
-  (global_label "LCD_SCL"
+  (global_label "LCD_HOST_SCL"
     (shape input)
     (at 271.78 127.0 180)
     (effects
@@ -3283,7 +3490,7 @@
     )
     (uuid "3e85fbcb-516a-5a8e-a522-1551af49a485")
   )
-  (global_label "BUS_ENABLE"
+  (global_label "LCD_HOST_SDA"
     (shape input)
     (at 271.78 129.54 180)
     (effects
@@ -3345,7 +3552,7 @@
     )
     (uuid "6a566f10-324e-558a-8a82-21a98953660c")
   )
-  (global_label "LCD_HOST_SDA"
+  (global_label "LCD_BUFFER_EN"
     (shape input)
     (at 307.34 124.46 0)
     (effects
@@ -3407,7 +3614,7 @@
     )
     (uuid "0eb12590-bb78-56c7-8758-23d60fc9352b")
   )
-  (global_label "BUS_ENABLE"
+  (global_label "LCD_SCL"
     (shape input)
     (at 307.34 129.54 0)
     (effects
@@ -3438,7 +3645,7 @@
     )
     (uuid "777ad992-1c37-5152-a92c-04e77a263a11")
   )
-  (global_label "+3V3"
+  (global_label "LCD_VCC_SW"
     (shape input)
     (at 307.34 132.08 0)
     (effects
@@ -3459,7 +3666,7 @@
     )
   )
   (symbol
-    (lib_id "OpenKeys:SN74LVC2G66_DCU")
+    (lib_id "OpenKeys:TCA9517A_DGK")
     (at 289.56 129.54 0)
     (unit 1)
     (in_bom yes)
@@ -3474,7 +3681,7 @@
         )
       )
     )
-    (property "Value" "SN74LVC2G66DCUR"
+    (property "Value" "TCA9517ADGKR"
       (at 289.56 122.46 0)
       (effects
         (font
@@ -3482,7 +3689,7 @@
         )
       )
     )
-    (property "Footprint" "Package_SO:VSSOP-8_2.3x2mm_P0.5mm"
+    (property "Footprint" "Package_SO:VSSOP-8_3x3mm_P0.65mm"
       (at 289.56 129.54 0)
       (effects
         (font
@@ -3733,7 +3940,7 @@
         (justify left)
       )
     )
-    (property "Value" "1k 1% 0.1W"
+    (property "Value" "330R 1% 0.25W"
       (at 164.02 186.92 0)
       (effects
         (font
@@ -3742,7 +3949,7 @@
         (justify left)
       )
     )
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+    (property "Footprint" "Resistor_SMD:R_1206_3216Metric"
       (at 164.02 185.42 0)
       (effects
         (font
@@ -4028,7 +4235,7 @@
     )
     (uuid "7e9118c0-7da8-5d4e-b6cf-c193f1c4684b")
   )
-  (global_label "+3V3"
+  (global_label "SYS"
     (shape input)
     (at 83.82 232.41 90)
     (effects
@@ -4864,13 +5071,13 @@
       (uuid "c543cadc-0f14-5829-88d9-cfcd2d096552")
     )
   )
-  (text "U16 D=1, PRE_N=1. NRST/PC3 low asynchronously clears Q.\nReleasing reset alone does NOT restore power; a new PC4 rising edge is required.\nQ controls TPS22919 ON; Q AND delayed-Q controls both analog switches.\nLock: PC4 low then PC3 low. Wait500ms before a new start; then PC3 high,\nPC4 high, wait200ms before I2C. Wrong version/NAK/fault -> power OFF, latch.\n3.3V nominal module supply needs load/temperature/vendor tolerance qualification.\nNo physical clearing, injection or production security qualification claimed."
-    (at 240 283 0)
+  (text "U16 D=1, PRE_N=1. NRST/PC3 low clears Q through U17.\nCT through100k to VDD: RESET_N stays low180..420ms after MR release.\nReset release alone does not restore LCD power; a NEW PC4 edge is required.\nQ controls TPS22919; Q AND delayed-Q drives U21 EN through U23 on sheet10.\nLock: PC4 low, PC3 low, wait500ms. Restart: PC3 high, wait500ms,\nPC4 high, wait200ms, then full LCD initialization. Any I/O fault -> OFF.\nLCD rail is switched SYS; A/B level buffering isolates the3.3V MCU bus.\nPhysical clearing, injection, timing and power qualification NOT_RUN."
+    (at 210 97 0)
     (effects
       (font
-        (size 1.1 1.1)
+        (size 1.3 1.3)
       )
     )
-    (uuid "a84cfb25-6570-5f4e-beb7-177b45359312")
+    (uuid "cfddf269-2d7a-5068-94f7-2ed77ef05b64")
   )
 )

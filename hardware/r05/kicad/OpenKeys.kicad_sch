@@ -5,7 +5,7 @@
   (paper "A3")
   (title_block
     (title "OpenKeys R0.5 - Engineering review")
-    (date "2026-11-10")
+    (date "2026-11-13")
     (rev "0.5")
     (company "Jay-Void-BA")
   )
@@ -21,7 +21,7 @@
   )
   (sheet
     (at 20 65)
-    (size 115 42)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -39,7 +39,7 @@
       )
     )
     (property "Sheetfile" "01-usb.kicad_sch"
-      (at 20 109 0)
+      (at 20 98 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -56,7 +56,7 @@
   )
   (sheet
     (at 148 65)
-    (size 115 42)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -74,7 +74,7 @@
       )
     )
     (property "Sheetfile" "02-power.kicad_sch"
-      (at 148 109 0)
+      (at 148 98 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -91,7 +91,7 @@
   )
   (sheet
     (at 276 65)
-    (size 115 42)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -109,7 +109,7 @@
       )
     )
     (property "Sheetfile" "03-mcu.kicad_sch"
-      (at 276 109 0)
+      (at 276 98 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -125,8 +125,8 @@
     )
   )
   (sheet
-    (at 20 132)
-    (size 115 42)
+    (at 20 116)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -136,7 +136,7 @@
     )
     (uuid "ef8228e0-5867-5d4e-8a75-2a1d56b1c944")
     (property "Sheetname" "04-se-storage"
-      (at 20 131 0)
+      (at 20 115 0)
       (effects
         (font
           (size 1.5 1.5)
@@ -144,7 +144,7 @@
       )
     )
     (property "Sheetfile" "04-se-storage.kicad_sch"
-      (at 20 176 0)
+      (at 20 149 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -160,8 +160,8 @@
     )
   )
   (sheet
-    (at 148 132)
-    (size 115 42)
+    (at 148 116)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -171,7 +171,7 @@
     )
     (uuid "fbc66e46-48c3-5f7f-8f0d-b09daacaad90")
     (property "Sheetname" "05-nfc"
-      (at 148 131 0)
+      (at 148 115 0)
       (effects
         (font
           (size 1.5 1.5)
@@ -179,7 +179,7 @@
       )
     )
     (property "Sheetfile" "05-nfc.kicad_sch"
-      (at 148 176 0)
+      (at 148 149 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -195,8 +195,8 @@
     )
   )
   (sheet
-    (at 276 132)
-    (size 115 42)
+    (at 276 116)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -206,7 +206,7 @@
     )
     (uuid "14ac5f31-5761-56e0-8855-9943e79a0b58")
     (property "Sheetname" "06-trusted-ui"
-      (at 276 131 0)
+      (at 276 115 0)
       (effects
         (font
           (size 1.5 1.5)
@@ -214,7 +214,7 @@
       )
     )
     (property "Sheetfile" "06-trusted-ui.kicad_sch"
-      (at 276 176 0)
+      (at 276 149 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -230,8 +230,8 @@
     )
   )
   (sheet
-    (at 20 199)
-    (size 115 42)
+    (at 20 167)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -241,7 +241,7 @@
     )
     (uuid "28731aa8-5e70-5192-825d-f85b9d235c73")
     (property "Sheetname" "07-fault-tamper"
-      (at 20 198 0)
+      (at 20 166 0)
       (effects
         (font
           (size 1.5 1.5)
@@ -249,7 +249,7 @@
       )
     )
     (property "Sheetfile" "07-fault-tamper.kicad_sch"
-      (at 20 243 0)
+      (at 20 200 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -265,8 +265,8 @@
     )
   )
   (sheet
-    (at 148 199)
-    (size 115 42)
+    (at 148 167)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -276,7 +276,7 @@
     )
     (uuid "a9c42f17-6e17-5777-a1d4-7012843fcddd")
     (property "Sheetname" "08-input-guard"
-      (at 148 198 0)
+      (at 148 166 0)
       (effects
         (font
           (size 1.5 1.5)
@@ -284,7 +284,7 @@
       )
     )
     (property "Sheetfile" "08-input-guard.kicad_sch"
-      (at 148 243 0)
+      (at 148 200 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -300,8 +300,8 @@
     )
   )
   (sheet
-    (at 276 199)
-    (size 115 42)
+    (at 276 167)
+    (size 115 31)
     (stroke
       (width 0.1524)
       (type default)
@@ -311,7 +311,7 @@
     )
     (uuid "b3a6b726-81dc-5436-af9b-ba12a73701f6")
     (property "Sheetname" "09-display-power"
-      (at 276 198 0)
+      (at 276 166 0)
       (effects
         (font
           (size 1.5 1.5)
@@ -319,7 +319,7 @@
       )
     )
     (property "Sheetfile" "09-display-power.kicad_sch"
-      (at 276 243 0)
+      (at 276 200 0)
       (effects
         (font
           (size 1.0 1.0)
@@ -330,6 +330,41 @@
       (project "OpenKeys"
         (path "/d0923185-2fdb-574b-930d-f52d526642e2"
           (page "10")
+        )
+      )
+    )
+  )
+  (sheet
+    (at 20 218)
+    (size 115 31)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "25fb0ce5-1078-51d2-b21a-f9e95a272b8f")
+    (property "Sheetname" "10-sys-window"
+      (at 20 217 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "10-sys-window.kicad_sch"
+      (at 20 251 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "11")
         )
       )
     )

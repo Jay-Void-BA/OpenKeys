@@ -5,7 +5,7 @@
   (paper "A3")
   (title_block
     (title "OpenKeys R0.5 - 02-power")
-    (date "2026-11-10")
+    (date "2026-11-13")
     (rev "0.5-board-review")
     (company "Jay-Void-BA")
     (comment 1 "ENGINEERING BOARD CANDIDATE - qualify before use")
@@ -3992,7 +3992,7 @@
     )
     (uuid "374cfd53-058c-5983-8a0d-fbb1504ee353")
   )
-  (global_label "GND"
+  (global_label "SYS"
     (shape input)
     (at 274.32 220.98 180)
     (effects

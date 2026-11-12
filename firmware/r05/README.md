@@ -34,6 +34,9 @@ disabled, and has no USB/NFC protocol, private records or PIN verification.
 Key display is a public wiring test: never enter a real PIN into diagnostics.
 Case/guard faults cut the display and latch the diagnostic; watchdog/panic reset
 does not intentionally restore a prior frame. Actual fault timing remains untested.
+The frozen PCB now includes a TPS3808 hardware reset hold. LCD initialization
+waits500ms after releasing MR before a new arm edge, then200ms before I2C;
+see the [power/reset bounds and bench requirements](../../docs/CLASSICAL_LCD_POWER_R05.md).
 
 ## PIN candidate modules
 
@@ -45,8 +48,10 @@ does not intentionally restore a prior frame. Actual fault timing remains untest
   exact review, timeout and one-use grant; the paired-session cache is in
   [session](../../crates/device-policy/src/session.rs), with independent hardware
   and protocol leases and the [30-second rules](../../docs/PIN_SESSIONS_R05.md).
-- [SE PIN backend](../../crates/se-state/src/pin_only.rs): persistent precharge,
-  SE-internal pepper/HKDF, fail-closed uncertain writes and no runtime defaults.
+- [Native SE PIN backend](../../crates/se-state/src/native_pin.rs): UserID
+  verification, persistent precharge, PIN-owner-only credit and sealed private
+  I/O. Exact C2 commissioning/ACLs, full wipe and Root wiring remain required.
+  The historical HKDF backend cannot authorize this private interface.
 - [DFR0555](../board/src/dfr0555.rs): explicit module revision, cold init,
   exact ASCII rows, fault-latched power removal and isolated bus.
 

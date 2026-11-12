@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/erc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-11T15:44:07+0000",
+    "date": "2026-11-12T23:26:18+0000",
     "kicad_version": "9.0.2",
     "sheets": [
         {
@@ -52,6 +52,11 @@
         {
             "path": "/09-display-power/",
             "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/b3a6b726-81dc-5436-af9b-ba12a73701f6",
+            "violations": []
+        },
+        {
+            "path": "/10-sys-window/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/25fb0ce5-1078-51d2-b21a-f9e95a272b8f",
             "violations": []
         }
     ],

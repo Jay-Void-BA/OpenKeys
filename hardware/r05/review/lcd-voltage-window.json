@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "revision": "0.5",
+  "status": "STATIC_DC_CORNERS_ONLY",
+  "source": "TI TPS3700 SBVS187G electrical characteristics, TPS63031 fixed PWM bounds",
+  "resistor_tolerance_fraction": 0.001,
+  "input_bias_bound_a": 2.5e-08,
+  "positive_reference_v": [
+    0.396,
+    0.404
+  ],
+  "negative_reference_v": [
+    0.387,
+    0.4
+  ],
+  "sys_uv_v": {
+    "rising": {
+      "min": 3.504327654313188,
+      "max": 3.5918147928253257
+    },
+    "falling": {
+      "min": 3.4246391727947065,
+      "max": 3.5562717698023025
+    }
+  },
+  "sys_ov_v": {
+    "rising": {
+      "min": 4.740549453296705,
+      "max": 4.859649646896897
+    },
+    "falling": {
+      "min": 4.632747255494507,
+      "max": 4.811561558808809
+    }
+  },
+  "main_rail_fixed_pwm_v": [
+    3.267,
+    3.333
+  ],
+  "assumed_total_switch_and_harness_drop_max_v": 0.05,
+  "static_lcd_supply_v": [
+    3.3746391727947067,
+    4.859649646896897
+  ],
+  "conditions": [
+    "Actual switched-rail/harness drop <=50mV across load, temperature and units",
+    "Main regulator forced PWM; DC bounds do not include ripple or transients",
+    "TPS3700 powered and settled; startup services held off for at least500ms",
+    "Comparator, reset, buffer and load-switch propagation are finite and must be measured",
+    "Fault pulses, active injection, input-current and thermal margins are not modeled",
+    "LCD capacitance, powered-off leakage, bus pullups and visible clearing must be measured"
+  ],
+  "physical_qualification": false,
+  "production_release": false
+}

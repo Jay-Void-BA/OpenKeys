@@ -5,7 +5,7 @@
   (paper "A3")
   (title_block
     (title "OpenKeys R0.5 - 04-se-storage")
-    (date "2026-11-10")
+    (date "2026-11-13")
     (rev "0.5-board-review")
     (company "Jay-Void-BA")
     (comment 1 "ENGINEERING BOARD CANDIDATE - qualify before use")

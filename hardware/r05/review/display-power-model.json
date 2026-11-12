@@ -2,13 +2,25 @@
   "revision": "0.5",
   "status": "ASSUMPTION_BOUNDED_MODEL_ONLY",
   "assumed_total_lcd_capacitance_max_f": 0.0001,
-  "bleeder_max_ohm": 1010.0,
+  "bleeder_max_ohm": 333.3,
   "off_hold_s": 0.5,
-  "assumed_initial_max_v": 3.465,
-  "ideal_no_injection_residual_v": 0.02453186444525912,
+  "assumed_initial_max_v": 5.5,
+  "ideal_no_injection_residual_v": 1.6799407084241558e-06,
+  "assumed_injection_max_a": 2e-05,
+  "residual_with_bounded_injection_v": 0.006667677904620286,
+  "hardware_reset_delay_s": [
+    0.18,
+    0.42
+  ],
+  "assumed_aggregate_turn_off_max_s": 0.005,
+  "hardware_effective_off_min_s": 0.175,
+  "hardware_residual_with_bounded_injection_v": 0.03547723985214659,
+  "bleeder_stable_power_max_w": 0.07228709730818836,
+  "bleeder_assumed_initial_power_max_w": 0.0925925925925926,
   "truth_table": [
     {
       "clear_asserted": false,
+      "reset_hold_active": false,
       "previous_q": false,
       "new_clock_edge": false,
       "delay_ready": false,
@@ -17,6 +29,7 @@
     },
     {
       "clear_asserted": false,
+      "reset_hold_active": false,
       "previous_q": false,
       "new_clock_edge": false,
       "delay_ready": true,
@@ -25,6 +38,25 @@
     },
     {
       "clear_asserted": false,
+      "reset_hold_active": true,
+      "previous_q": false,
+      "new_clock_edge": false,
+      "delay_ready": false,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": true,
+      "previous_q": false,
+      "new_clock_edge": false,
+      "delay_ready": true,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": false,
       "previous_q": false,
       "new_clock_edge": true,
       "delay_ready": false,
@@ -33,7 +65,80 @@
     },
     {
       "clear_asserted": false,
+      "reset_hold_active": false,
       "previous_q": false,
+      "new_clock_edge": true,
+      "delay_ready": true,
+      "power_on": true,
+      "bus_connected": true
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": true,
+      "previous_q": false,
+      "new_clock_edge": true,
+      "delay_ready": false,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": true,
+      "previous_q": false,
+      "new_clock_edge": true,
+      "delay_ready": true,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": false,
+      "previous_q": true,
+      "new_clock_edge": false,
+      "delay_ready": false,
+      "power_on": true,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": false,
+      "previous_q": true,
+      "new_clock_edge": false,
+      "delay_ready": true,
+      "power_on": true,
+      "bus_connected": true
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": true,
+      "previous_q": true,
+      "new_clock_edge": false,
+      "delay_ready": false,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": true,
+      "previous_q": true,
+      "new_clock_edge": false,
+      "delay_ready": true,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": false,
+      "previous_q": true,
+      "new_clock_edge": true,
+      "delay_ready": false,
+      "power_on": true,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": false,
+      "reset_hold_active": false,
+      "previous_q": true,
       "new_clock_edge": true,
       "delay_ready": true,
       "power_on": true,
@@ -41,38 +146,25 @@
     },
     {
       "clear_asserted": false,
+      "reset_hold_active": true,
       "previous_q": true,
-      "new_clock_edge": false,
+      "new_clock_edge": true,
       "delay_ready": false,
-      "power_on": true,
+      "power_on": false,
       "bus_connected": false
     },
     {
       "clear_asserted": false,
-      "previous_q": true,
-      "new_clock_edge": false,
-      "delay_ready": true,
-      "power_on": true,
-      "bus_connected": true
-    },
-    {
-      "clear_asserted": false,
+      "reset_hold_active": true,
       "previous_q": true,
       "new_clock_edge": true,
-      "delay_ready": false,
-      "power_on": true,
+      "delay_ready": true,
+      "power_on": false,
       "bus_connected": false
     },
     {
-      "clear_asserted": false,
-      "previous_q": true,
-      "new_clock_edge": true,
-      "delay_ready": true,
-      "power_on": true,
-      "bus_connected": true
-    },
-    {
       "clear_asserted": true,
+      "reset_hold_active": false,
       "previous_q": false,
       "new_clock_edge": false,
       "delay_ready": false,
@@ -81,6 +173,7 @@
     },
     {
       "clear_asserted": true,
+      "reset_hold_active": false,
       "previous_q": false,
       "new_clock_edge": false,
       "delay_ready": true,
@@ -89,6 +182,25 @@
     },
     {
       "clear_asserted": true,
+      "reset_hold_active": true,
+      "previous_q": false,
+      "new_clock_edge": false,
+      "delay_ready": false,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": true,
+      "reset_hold_active": true,
+      "previous_q": false,
+      "new_clock_edge": false,
+      "delay_ready": true,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": true,
+      "reset_hold_active": false,
       "previous_q": false,
       "new_clock_edge": true,
       "delay_ready": false,
@@ -97,6 +209,7 @@
     },
     {
       "clear_asserted": true,
+      "reset_hold_active": false,
       "previous_q": false,
       "new_clock_edge": true,
       "delay_ready": true,
@@ -105,6 +218,25 @@
     },
     {
       "clear_asserted": true,
+      "reset_hold_active": true,
+      "previous_q": false,
+      "new_clock_edge": true,
+      "delay_ready": false,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": true,
+      "reset_hold_active": true,
+      "previous_q": false,
+      "new_clock_edge": true,
+      "delay_ready": true,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": true,
+      "reset_hold_active": false,
       "previous_q": true,
       "new_clock_edge": false,
       "delay_ready": false,
@@ -113,6 +245,7 @@
     },
     {
       "clear_asserted": true,
+      "reset_hold_active": false,
       "previous_q": true,
       "new_clock_edge": false,
       "delay_ready": true,
@@ -121,6 +254,25 @@
     },
     {
       "clear_asserted": true,
+      "reset_hold_active": true,
+      "previous_q": true,
+      "new_clock_edge": false,
+      "delay_ready": false,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": true,
+      "reset_hold_active": true,
+      "previous_q": true,
+      "new_clock_edge": false,
+      "delay_ready": true,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": true,
+      "reset_hold_active": false,
       "previous_q": true,
       "new_clock_edge": true,
       "delay_ready": false,
@@ -129,6 +281,25 @@
     },
     {
       "clear_asserted": true,
+      "reset_hold_active": false,
+      "previous_q": true,
+      "new_clock_edge": true,
+      "delay_ready": true,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": true,
+      "reset_hold_active": true,
+      "previous_q": true,
+      "new_clock_edge": true,
+      "delay_ready": false,
+      "power_on": false,
+      "bus_connected": false
+    },
+    {
+      "clear_asserted": true,
+      "reset_hold_active": true,
       "previous_q": true,
       "new_clock_edge": true,
       "delay_ready": true,
@@ -138,11 +309,13 @@
   ],
   "qualification_conditions": [
     "Actual module plus PCB capacitance <=100uF over bias/temperature/units",
-    "No SCL/SDA/ESD/harness injection maintains the switched rail",
-    "Reset/PC3 clears latch at power ramps and brownouts; no unwanted CLK edge",
-    "Both bus switches disconnect promptly before rail decay",
+    "All SCL/SDA/EN/ESD/harness injection combined <=20uA while off",
+    "TPS3808 CT connected to VDD through100k; fixed reset hold180..420ms verified on actual units",
+    "Aggregate reset/switch turn-off <=5ms; no CLK edge after hold without trusted Root authorization",
+    "Reset/PC3 clears latch at power ramps and brownouts; unpowered ON held low by10k",
+    "TCA9517A both bus wires disable promptly before rail decay, including partial power",
     "Measured visible text disappears after faults without automatic repower",
-    "3.3V nominal supply and cable meet real LCD operating limits at corners",
+    "SYS voltage monitor, switched LCD rail and cable meet the separate DC window assumptions",
     "Actual latch, switch, threshold and propagation timings validated"
   ],
   "physical_qualification": false,

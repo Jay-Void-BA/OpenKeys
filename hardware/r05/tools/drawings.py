@@ -27,7 +27,7 @@ data = {
            'module_envelope':[87,32,13], 'window':[8,11.5,86,31],
            'cover':[6.5,10,89,34,.8], 'connector':case('J7'),
            'hole_pattern':'Not assumed; inspect sample before retaining/printing final lid',
-           'supply':'3.3V nominal switched; corner compatibility NOT qualified'},
+           'supply':'Switched SYS; static window3.3746..4.8596V under explicit assumptions; physical NOT qualified'},
     'cell':{'part':'Protected 1S 500mAh, pack + 10k NTC',
             'body':[29,36,4.75],'origin':[39,53,1.8],
             'pcb_back_keepout':[33,47,35,43]},
@@ -86,7 +86,7 @@ for z in fps['J4'].GraphicalItems():
     if z.GetLayer()==p.F_Cu:
         a,c=loc(z.GetStart()),loc(z.GetEnd())
         line((xx+a[0],yy+a[1]),(xx+c[0],yy+c[1]),'#b78325',.5)
-for ref in ['U4','U5','U6','U7','U16','U18','U21','J7']:
+for ref in ['U4','U5','U6','U7','U16','U17','U18','U21','U22','J7']:
     px,py=loc(fps[ref].GetPosition());text(xx+px,yy+py,ref,1.9,'middle')
 rect(xx+4.5,yy+8,87,32,'none','#677e8d')
 text(xx+48,yy+24,'LCD ABOVE',2.7,'middle')

@@ -115,19 +115,25 @@ class Sheet:
     def save(self):
         libs=[]
         for id,lib in self.used.items():l=copy.deepcopy(lib);l[1]=q(id);libs.append(l)
-        doc=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(self.uid)],['paper',q('A3')],['title_block',['title',q('OpenKeys R0.5 - '+self.name)],['date',q('2026-11-10')],['rev',q('0.5-board-review')],['company',q('Jay-Void-BA')],['comment',1,q('ENGINEERING BOARD CANDIDATE - qualify before use')]],['lib_symbols',*libs],*self.items]
+        doc=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(self.uid)],['paper',q('A3')],['title_block',['title',q('OpenKeys R0.5 - '+self.name)],['date',q('2026-11-13')],['rev',q('0.5-board-review')],['company',q('Jay-Void-BA')],['comment',1,q('ENGINEERING BOARD CANDIDATE - qualify before use')]],['lib_symbols',*libs],*self.items]
         (CAD/(self.name+'.kicad_sch')).write_text(pretty(doc)+'\n')
 
 S=[]
 def sheet(name,title):
     s=Sheet(name,title,len(S)+2);S.append(s);return s
 refcounts={'R':0,'C':0,'L':0,'FB':0,'F':0,'Q':0,'SW':0,'J':0,'U':0}
-def ref(t):refcounts[t]+=1;return t+str(refcounts[t])
+def ref(t):
+    existing={c['ref'] for ss in S for c in ss.components}
+    while True:
+        refcounts[t]+=1;candidate=t+str(refcounts[t])
+        if candidate not in existing:return candidate
 def passive(s,k,val,x,y,a,b,note='',dnp=False):
     prefix={'R':'R','C':'C','L':'L','FB':'FB','FUSE':'F'}[k]
     fp={'R':'Resistor_SMD:R_0603_1608Metric','C':'Capacitor_SMD:C_0603_1608Metric','L':'Inductor_SMD:L_Taiyo-Yuden_MD-3030','FB':'Inductor_SMD:L_0603_1608Metric','FUSE':'Fuse:Fuse_1206_3216Metric'}[k]
     if k=='C' and ('uF' in val or '1kV' in val):
         fp='Capacitor_SMD:C_0805_2012Metric'
+    if k=='R' and '0.25W' in val:
+        fp='Resistor_SMD:R_1206_3216Metric'
     if k=='C' and '2kV' in val:
         fp='Capacitor_SMD:C_1206_3216Metric'
     if k=='L':

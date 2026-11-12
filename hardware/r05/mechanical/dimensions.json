@@ -136,7 +136,7 @@
       46.0
     ],
     "hole_pattern": "Not assumed; inspect sample before retaining/printing final lid",
-    "supply": "3.3V nominal switched; corner compatibility NOT qualified"
+    "supply": "Switched SYS; static window3.3746..4.8596V under explicit assumptions; physical NOT qualified"
   },
   "cell": {
     "part": "Protected 1S 500mAh, pack + 10k NTC",

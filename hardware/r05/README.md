@@ -11,18 +11,18 @@
 | 内容 | 入口 |
 |---|---|
 | 整机尺寸与真实 PCB 线条 | [装配图 PDF](exports/OpenKeys-dimensions.pdf)、[PNG](exports/OpenKeys-dimensions.png)、[坐标 JSON](mechanical/dimensions.json) |
-| 电路 | [10 页原理图 PDF](exports/OpenKeys-schematic.pdf)、[KiCad 源](kicad/OpenKeys.kicad_sch)、[网表](exports/OpenKeys-netlist.xml) |
+| 电路 | [11 页原理图 PDF](exports/OpenKeys-schematic.pdf)、[KiCad 源](kicad/OpenKeys.kicad_sch)、[网表](exports/OpenKeys-netlist.xml) |
 | PCB | [四层板源](kicad/OpenKeys.kicad_pcb)、[正面](exports/OpenKeys-PCB-front.svg)、[背面](exports/OpenKeys-PCB-back.svg) |
 | 工程打样资料 | [Gerber / 钻孔](exports/OpenKeys-fabrication.zip)、[BOM](BOM.csv)、[贴片坐标](exports/OpenKeys-SMD-position.csv)、[引脚表](pinout.csv) |
 | 结构 | [OpenSCAD](mechanical/enclosure.scad)、[板体 STEP](exports/OpenKeys-PCB.step)、[结构导出](exports) |
 | 检查 | [ERC](review/erc.json)、[DRC](review/routed-drc.json)、[独立网表核对](review/netlist-check.json)、[板网核对](review/board-check.json)、[摘要](review/cad-manifest.json) |
-| 模拟范围 | [天线 / 复位 RC](review/simulation.json)、[输入保护直流角落](review/protection-calculations.json)、[LCD 断电假设模型](review/display-power-model.json) |
+| 模拟范围 | [天线 / 复位 RC](review/simulation.json)、[输入保护直流角落](review/protection-calculations.json)、[LCD 电压静态角落](review/lcd-voltage-window.json)、[LCD 断电假设模型](review/display-power-model.json) |
 
 硬件 PIN 与协议 PIN 分别按[同一认证会话的 30 秒规则](../../docs/PIN_SESSIONS_R05.md)缓存；断连 / NFC 离场立即锁定。改硬件 PIN 或第 11 次完整错误须清空全部数据；当前仅擦除锁存，完整销毁服务待集成。
 
 ## 经典版 SE 与辅助电源
 
-U5 为 SE051C2HQ1/Z01XDZ / OEF A8FA / Applet 7.2 候选，保留 H573 单 SE 架构，纠正原 E2 不支持 RSA 的限制。U13 / C40 改接 SYS，C41 与 C56 分别为 LDO 输出和 MCU VBAT 就近去耦；[完整依据、采购与测试](../../docs/CLASSICAL_SE_POWER_R05.md)。这些修改不代表原生 PIN / RSA 已在实片集成，也不关闭下述 LCD 供电裕量问题。
+U5 为 SE051C2HQ1/Z01XDZ / OEF A8FA / Applet 7.2 候选，保留 H573 单 SE 架构，纠正原 E2 不支持 RSA 的限制。U13 / C40 改接 SYS，C41 与 C56 分别为 LDO 输出和 MCU VBAT 就近去耦；[完整依据、采购与测试](../../docs/CLASSICAL_SE_POWER_R05.md)。原生 PIN / RSA 仍需实际集成。LCD 供电与复位的本轮修订见[电路依据与实测条件](../../docs/CLASSICAL_LCD_POWER_R05.md)。
 
 ## LCD 采购与兼容性
 
@@ -30,9 +30,9 @@ U5 为 SE051C2HQ1/Z01XDZ / OEF A8FA / Applet 7.2 候选，保留 H573 单 SE 架
 
 [官方文档](https://wiki.dfrobot.com/dfr0555/docs/24390)区分 V1.0 与 V1.1：字符地址均为七位 `0x3E`，背光分别为 `0x60`、`0x6B`。BOM 固定 V1.1；若收到 V1.0，必须改用明确标注的 V1.0 诊断镜像并重新冻结配置，禁止自动探测降级。Rust 驱动见 [dfr0555.rs](../../firmware/board/src/dfr0555.rs)，参考寄存器来源见[来源记录](../../docs/DFR0555_SOURCE.md)。
 
-模块无外部复位脚，因此增加 U15–U21：复位 / PC3 异步清除电源锁存、TPS22919 切断 VCC，双模拟开关同时隔离 SCL/SDA。复位释放后不会自行恢复 LCD 供电，必须有新的 PC4 上升沿。1k 泄放电阻与 500ms 关断保持用于清除残留电荷；模型依赖“模块＋板上总电容≤100µF、无注入”等**待测条件**。背光熄灭本身不等于文字消失。
+模块无外部复位脚，因此使用锁存切电和 TCA9517A 双线隔离。U17 TPS3808 的 CT 通过 100k 接 VDD，复位释放后保持清除 180–420ms；必须在其后有新的 PC4 上升沿才能恢复供电。330Ω / 0.25W / 1206 泄放、未上电 ON 下拉和 500ms 软件关断保持用于限制残留。模型依赖“总电容≤100µF、关断注入≤20µA、关断延迟≤5ms”等**待测条件**。背光熄灭本身不等于文字消失。
 
-供电取自 **3.3V 标称**主电源。厂家网页写“3.3–5V”不能证明本板在稳压误差、线损、温度、背光负载下始终满足工作条件。必须取得厂商保证或实测后调整电源；这是未关闭的电气交付条件。不能接 5V 到 MCU / SE 总线。
+LCD 改从 **SYS 经负载开关**供电，主电源强制 PWM；独立 U22 监测 SYS 窗口。计入参考 / 电阻 / 输入偏置误差，且假设开关加线束压降≤50mV，静态 LCD 范围为约 **3.3746–4.8596V**。U21 两侧分别为主 3.3V 和 LCD 电源，U23 将 EN 转为对应电平。实测纹波、背供电、功耗、低电量和故障瞬态仍是交付条件；不能把 LCD 高侧接到 MCU / SE 总线。
 
 ## 布局与按键
 

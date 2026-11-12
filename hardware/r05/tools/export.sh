@@ -19,6 +19,8 @@ kicad-cli pcb drc --format json --severity-all --output "$openkeys_r05/review/ro
 /usr/bin/python3 "$openkeys_r05/tools/check_board.py"
 /usr/bin/python3 "$openkeys_r05/tools/ground_report.py"
 python3 "$openkeys_r05/tools/calculate_protection.py"
+python3 "$openkeys_r05/tools/calculate_lcd_window.py"
+python3 "$openkeys_r05/tools/display_model.py"
 kicad-cli sch export pdf --output "$openkeys_r05/exports/OpenKeys-schematic.pdf" "$openkeys_schematic"
 kicad-cli sch export svg --output "$openkeys_r05/exports/schematic/" "$openkeys_schematic"
 python3 - <<'PY'

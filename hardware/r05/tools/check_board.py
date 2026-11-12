@@ -18,6 +18,7 @@ observed={}
 for c in bom:
  f=fps[c['ref']]
  require('Package '+c['ref'],f.GetFPID().GetLibItemName()==c['footprint'].split(':',1)[1])
+ require('Saved value '+c['ref'],f.GetValue()==c['value'])
  for pad in f.Pads():
   key=(c['ref'],pad.GetNumber());name=pad.GetNetname()
   require('Pad/net '+c['ref']+'.'+pad.GetNumber(),name==expected.get(key,''))
@@ -32,6 +33,8 @@ require('Backup LDO input decoupling within 3mm of VI',pin_distance(('U13',3),('
 require('Backup LDO output decoupling within 3mm of VO',pin_distance(('U13',2),('C41',1))<=3)
 require('MCU VBAT has separate decoupling within 3mm',pin_distance(('U4',1),('C56',1))<=3)
 require('Backup decouplers use the component copper side',all(fps[cap].GetLayer()==fps[owner].GetLayer() for cap,owner in [('C40','U13'),('C41','U13'),('C56','U4')]))
+for cap,owner,pin in [('C49','U18',1),('C55','U21',1),('C57','U21',8),('C58','U23',5),('C59','U22',5),('C60','U17',6)]:
+ require('Local display/window decoupling '+cap,pin_distance((cap,1),(owner,pin))<=3 and fps[cap].GetLayer()==fps[owner].GetLayer())
 zones=list(b.Zones())
 require('In1 and In2 contain only GND zones',len(zones)==2 and {z.GetLayer() for z in zones}=={p.In1_Cu,p.In2_Cu} and all(z.GetNetname()=='GND' and z.IsFilled() for z in zones))
 for z in zones:
@@ -49,6 +52,9 @@ def outside_rf(t):
 require('Digital routes exclude the RF region',all(t.GetNetname() in ('ANT1','ANT2') or outside_rf(t) for t in segments))
 require('No sub150um track necks',all(t.GetWidth()>=p.FromMM(.15) for t in segments))
 require('Only through vias with300um drills',all(t.GetViaType()==p.VIATYPE_THROUGH and t.GetDrillValue()==p.FromMM(.3) for t in vias))
+for net in ['SYS_UV_SENSE','SYS_OV_SENSE']:
+ items=[t for t in segments if t.GetNetname()==net]
+ require('Short same-side comparator ladder '+net,bool(items) and sum(p.ToMM(t.GetLength()) for t in items)<10 and all(t.GetLayer()==p.B_Cu for t in items) and not any(t.GetNetname()==net for t in vias))
 switch_lengths={name:sum(math.dist(p.ToMM(t.GetStart()),p.ToMM(t.GetEnd())) for t in segments if t.GetNetname()==name) for name in ('SW_L1','SW_L2','VCAP1','VCAP2')}
 require('Short converter switch loops and VCAP tracks',all(0<value<6 for value in switch_lengths.values()))
 require('Switch nodes remain on B.Cu with no vias',all(t.GetLayer()==p.B_Cu for t in segments if t.GetNetname() in ('SW_L1','SW_L2')) and not any(t.GetNetname() in ('SW_L1','SW_L2','VCAP1','VCAP2') for t in vias))

@@ -41,8 +41,10 @@ as their consumers and within 3 mm, independently checked from the saved PCB.
 
 This closes the previous schematic-only BAT dependency of the tamper/RTC rail.
 It does not prove startup, input-current margin or correct authentication with
-an empty/missing cell. The LCD supply margin is still a separate electrical
-blocker. The diagnostic continues to disable charging and all private services.
+an empty/missing cell. The separate [LCD correction](CLASSICAL_LCD_POWER_R05.md)
+now adds switched SYS, level buffering, a voltage window and hardware reset hold;
+its DC and discharge bounds still require bench qualification. The diagnostic
+continues to disable charging and all private services.
 
 ## Mainland three-unit procurement
 

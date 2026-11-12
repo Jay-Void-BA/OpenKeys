@@ -8,11 +8,12 @@
 SM2 在两版均排除，ML-DSA-65 / ML-KEM-768 不属于本版交付。两版均外国芯片优先、
 中国芯片备选，三颗与大陆交付须确认。已将 U5 候选换为 SE051C2 / OEF A8FA / Applet 7.2，并将防拆 / RTC 辅助 LDO
 从 BAT 改接 SYS、补齐局部去耦；见[电路修订](CLASSICAL_SE_POWER_R05.md)。实际原生 PIN、
-RSA 与 USB 认证仍待集成，LCD 电源下限和整机负载也尚未验证。
+RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD_POWER_R05.md)已补静态角落计算，
+实际电压、关断、整机负载和抗故障仍未验证。
 
 | 部分 | 已有 | 未完成 |
 |---|---|---|
-| 电路 / PCB / 结构 | R05 十键、H573、SE051C2、DFR0555、NFC、供电 / LCD 故障互锁；10 页 / 152 BOM / 四层，ERC / DRC 零问题，712 项核对，制造导出 | 首板 DFM、LCD 电压下限 / 电容 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
+| 电路 / PCB / 结构 | R05 十键、H573、SE051C2、DFR0555、NFC、供电 / LCD 故障互锁；11 页 / 169 BOM / 四层，ERC / DRC 零问题，948 项核对，制造导出 | 首板 DFM、LCD 静态角落假设 / 电容 / 关断时序 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
 | 本地六位 PIN | 6+6 首次设置策略、独立十键、持久预扣 / 擦除锁存；新增[原生 PIN v3 后端](NATIVE_PIN_RUNTIME_R05.md)、原生会话内 credit、密封私钥接口；新签名对象 ACL 限定 PIN AuthID | 真实首次初始化器、完整 ALL-DATA 擦除事务、生产 Root 接线、SE profile / 真实 ACL / 原生限次资格验证；标记摘要不证明 ACL，锁存不等于全部删除 |
 | PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试；[Noise XX 与 AEAD 通道内核](../crates/secure-channel/README.md)及 CCID / NFC 共用分片编码 | 可信时间、射频离场 IRQ、USB reset / suspend、原生 PIN 会话撤权及各协议实际验证状态的 Root 接线；真实 OS 连接 / 配对存储与通道集成 |
 | LCD / 十键 / 诊断 | 独立 Rust 驱动、版本明确、断电故障锁存、按键去抖 / 组合键拒绝；真实 R05 引脚构建约束 | 生产 Secure 归属、板上时序与故障响应；ARM 诊断没有认证功能 |

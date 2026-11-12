@@ -25,6 +25,9 @@ struct State {
     gpio_failure: bool,
     release: bool,
     arm: bool,
+    now_ns: u64,
+    released_at: Option<u64>,
+    armed_at: Option<u64>,
 }
 type Shared = Rc<RefCell<State>>;
 struct Bus(Shared);
@@ -43,6 +46,10 @@ impl I2c for Bus {
         assert!(
             s.release && s.arm,
             "no bus traffic while display power is held off"
+        );
+        assert!(
+            s.now_ns - s.armed_at.unwrap() >= 200_000_000,
+            "LCD POR and bus isolation must settle before I2C"
         );
         if s.fail_at == Some(call) {
             return Err(embedded_hal::i2c::ErrorKind::Other);
@@ -77,7 +84,18 @@ impl Pin {
         }
         if self.1 {
             s.release = value;
+            s.released_at = value.then_some(s.now_ns);
         } else {
+            if value && !s.arm {
+                assert!(s.release);
+                assert!(
+                    s.now_ns - s.released_at.unwrap() >= 420_000_000,
+                    "a CLK edge before worst-case supervisor release cannot rearm"
+                );
+                s.armed_at = Some(s.now_ns);
+            } else if !value {
+                s.armed_at = None;
+            }
             s.arm = value;
         }
         Ok(())
@@ -86,7 +104,9 @@ impl Pin {
 struct Delay(Shared);
 impl DelayNs for Delay {
     fn delay_ns(&mut self, ns: u32) {
-        self.0.borrow_mut().events.push(Event::Delay(ns));
+        let mut s = self.0.borrow_mut();
+        s.now_ns = s.now_ns.checked_add(u64::from(ns)).unwrap();
+        s.events.push(Event::Delay(ns));
     }
 }
 type Display = Lcd<Bus, Pin, Pin, Delay>;
@@ -117,8 +137,12 @@ fn both_revisions_have_explicit_addresses_cold_start_and_exact_full_rows() {
             .iter()
             .position(|e| matches!(e, Event::Pin(false, true)))
             .unwrap();
+        let release = s.borrow().events[..first_arm]
+            .iter()
+            .rposition(|e| matches!(e, Event::Pin(true, true)))
+            .unwrap();
         assert!(
-            s.borrow().events[..first_arm]
+            s.borrow().events[release + 1..first_arm]
                 .iter()
                 .any(|e| matches!(e,Event::Delay(n) if *n>=500_000_000))
         );
@@ -168,6 +192,42 @@ fn both_revisions_have_explicit_addresses_cold_start_and_exact_full_rows() {
                 .count()
                 == 32
         );
+    }
+}
+#[test]
+fn every_reinitialization_performs_a_new_cold_start_after_release() {
+    let s = Shared::default();
+    let mut lcd = display(&s, Revision::V1_1);
+    for _ in 0..3 {
+        let at = s.borrow().events.len();
+        lcd.initialize().unwrap();
+        lcd.show(&frame()).unwrap();
+        lcd.lock().unwrap();
+        let state = s.borrow();
+        let events = &state.events[at..];
+        let release = events
+            .iter()
+            .position(|e| matches!(e, Event::Pin(true, true)))
+            .unwrap();
+        let arm = events
+            .iter()
+            .position(|e| matches!(e, Event::Pin(false, true)))
+            .unwrap();
+        assert!(release < arm);
+        assert!(
+            events[release + 1..arm]
+                .iter()
+                .all(|e| matches!(e, Event::Delay(_)))
+        );
+        let wait: u64 = events[release + 1..arm]
+            .iter()
+            .map(|e| match e {
+                Event::Delay(ns) => u64::from(*ns),
+                _ => 0,
+            })
+            .sum();
+        assert!(wait >= 500_000_000);
+        assert!(!state.release && !state.arm);
     }
 }
 #[test]

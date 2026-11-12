@@ -27,7 +27,7 @@ PLACEMENT={
  'U4':(50,24,0,'B'),'U5':(84,55,0,'F'),'U6':(84,81,0,'F'),
  'U7':(25,51,-90,'F'),'U10':(65,16,0,'B'),'U11':(72,18,0,'B'),
  'U12':(71,26,0,'B'),'U13':(8,31,0,'B'),'U14':(21,8,0,'B'),
- 'U15':(76,31,0,'B'),'U16':(83,20,0,'B'),'U17':(76,23,0,'B'),
+ 'U15':(76,31,0,'B'),'U16':(83,20,0,'B'),'U17':(76.25,23,0,'B'),
  'U18':(83,28,0,'B'),'U19':(82,35,0,'B'),'U20':(90,28,0,'B'),'U21':(91,20,0,'B'),
  'Q1':(59,9,0,'B'),'Q2':(8,24,0,'B'),
  'D1':(36,10,90,'B'),'D2':(44,8,90,'B'),'D3':(52,8,90,'B'),
@@ -38,7 +38,19 @@ PLACEMENT={
  'R37':(25,10,0,'B'),'R1':(43,12,0,'B'),'R2':(46,12.5,0,'B'),
  # Backup LDO needs local input/output capacitance; MCU VBAT has its own cap.
  'C40':(12,31,0,'B'),'C41':(4,30,180,'B'),'C56':(41.5,28,180,'B'),
+ 'R43':(86.5,28,0,'B'),
+ 'C49':(79.5,28.5,180,'B'),
  'R12':(38.75,30,0,'B'),
+ 'U22':(25,38,0,'B'),'U23':(91,36,0,'B'),
+ 'R49':(23,34.5,90,'B'),'R50':(21,37,180,'B'),
+ 'R51':(27,34.5,90,'B'),'R52':(29,37,0,'B'),
+ 'R53':(91,39,0,'B'),'R54':(93.5,41,0,'B'),
+ 'R55':(88,16,0,'B'),'R56':(92,16,0,'B'),
+ 'C55':(89.0,23.5,270,'B'),'C57':(93.25,23.5,270,'B'),
+ 'C58':(93.5,36.0,90,'B'),'C59':(28.75,38.75,0,'B'),
+ 'R47':(88,41,0,'B'),'R48':(87.5,35.75,180,'B'),
+ 'R57':(77.75,25,0,'F'),'R58':(75.25,20.25,0,'B'),
+ 'R59':(86,17.75,0,'B'),'C60':(79.25,23,90,'B'),
 }
 PLACEMENT.update({'SW'+ref:(x,y,0,'F') for ref,(x,y) in KEYS.items()})
 def courtyard(f):
@@ -60,7 +72,7 @@ def pack_passives(b,fps):
  Courts remain real library courtyards. This is placement assistance, not a
  DRC waiver: the final KiCad DRC is run independently after routing.
  """
- fixed=[f for f in b.GetFootprints() if f.GetReference().startswith(('U','J','SW','H','L','Y','Q','D','F')) or f.GetReference() in ('C29','R21','R37','R1','R2','R12','C40','C41','C56')]
+ fixed=[f for f in b.GetFootprints() if f.GetReference().startswith(('U','J','SW','H','L','Y','Q','D','F')) or f.GetReference() in ('C29','R21','R37','R1','R2','R12','C40','C41','C49','C55','C56','C57','C58','C59','C60','R43','R47','R48','R49','R50','R51','R52','R53','R54','R55','R56','R57','R58','R59')]
  fixed=[f for f in fixed if f.GetReference() not in ('J4',) and not f.GetReference().startswith('FB')]
  movable=[f for f in fps.values() if f not in fixed and f.GetReference()!='J4']
  priority=['C15','C16','C9','C10','C11','C12','C13','C17','C18','C20','C21','C2','C3','C4','C5','C6','C7','C8','C45','C46']
@@ -106,7 +118,7 @@ def build():
   z=p.NETINFO_ITEM(b,name);b.Add(z);nets[name]=z
   for node in n.findall('node'):pin_net[(node.attrib['ref'],node.attrib['pin'])]=name
  comps=list(csv.DictReader((R/'BOM.csv').open()));fps={}
- groups={'01-usb':(49,8,'B'),'02-power':(13,20,'B'),'03-mcu':(50,24,'B'),'04-se-storage':(84,58,'F'),'05-nfc':(27,51,'F'),'06-trusted-ui':(60,18,'B'),'07-fault-tamper':(69,24,'B'),'08-input-guard':(21,8,'B'),'09-display-power':(82,28,'B')}
+ groups={'01-usb':(49,8,'B'),'02-power':(13,20,'B'),'03-mcu':(50,24,'B'),'04-se-storage':(84,58,'F'),'05-nfc':(27,51,'F'),'06-trusted-ui':(60,18,'B'),'07-fault-tamper':(69,24,'B'),'08-input-guard':(21,8,'B'),'09-display-power':(82,28,'B'),'10-sys-window':(25,38,'B')}
  def place(f,x,y,angle,side):
   if side=='B' and f.GetLayer()==p.F_Cu:f.Flip(f.GetPosition(),p.FLIP_DIRECTION_LEFT_RIGHT)
   f.SetOrientationDegrees(angle);f.SetPosition(v(x,y))
@@ -186,6 +198,14 @@ def build():
   ('BTN4_N','U4',57,(49.75,30.75),p.B_Cu),
  ]:
   a=pin(ref,n);trace(net,[a,end],.15,layer);via(net,end)
+ # The host-side escapes preserve the reviewed inner-layer bus topology.
+ # Staggered straight escapes cross that bus on this dense layout.
+ buffer_escapes={1:[(86.416,20.975),(86.416,20.5)],
+  2:[(87.558,20.325),(87.558,19.7752)],
+  3:[(91.186,19.675),(91.186,18.6088)],4:[(87.05,19.025)],
+  5:[(94.6,19.025)],6:[(95.1,19.675)],7:[(94.6,20.325)],8:[(95.1,20.975)]}
+ for n,points in buffer_escapes.items():
+  net=pin_net[('U21',str(n))];trace(net,[pin('U21',n),*points],.15);via(net,points[-1])
  for net,n,path in [
   ('ANT1',3,[(25,49.6),(25,47.5)]),
   ('NFC_VOUT',2,[(25.5,49.6),(25.5,48.8),(26.2,48.1)]),
