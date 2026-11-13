@@ -40,6 +40,11 @@ DC bias, tolerance and temperature. All three capacitors are on the same side
 as their consumers and within 3 mm, independently checked from the saved PCB.
 
 This closes the previous schematic-only BAT dependency of the tamper/RTC rail.
+It does not retain tamper monitoring when **both USB and the main cell have
+no energy**: this revision has no independent backup source for that case.
+Power-loss continuity/recovery and the requirement for powered-off physical
+tamper detection remain a design/integration blocker, not a proven property;
+see the [security review](SECURITY_REVIEW_R05.md).
 It does not prove startup, input-current margin or correct authentication with
 an empty/missing cell. The separate [LCD correction](CLASSICAL_LCD_POWER_R05.md)
 now adds switched SYS, level buffering, a voltage window and hardware reset hold;

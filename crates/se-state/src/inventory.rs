@@ -27,6 +27,9 @@ pub struct Baseline<'a> {
     profile_digest: [u8; 32],
 }
 impl<'a> Baseline<'a> {
+    pub const fn profile_digest(&self) -> &[u8; 32] {
+        &self.profile_digest
+    }
     /// IDs must be sorted, unique, nonempty and inside the applet reserved range.
     /// Never whitelist an old OpenKeys private object just to make reset pass.
     pub fn from_qualified_profile(

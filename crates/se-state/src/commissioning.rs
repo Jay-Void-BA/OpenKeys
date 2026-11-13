@@ -2,7 +2,9 @@
 //! This performs real fixed APDUs, not factory-key selection or a whole-device
 //! commissioner. Root must supply qualified closed boot, exact C2 profile,
 //! an independently trusted blank lifecycle and a durable installation journal.
-//! There is NO Root/journal adapter or default production credential here.
+//! The separate root-journal PIN bridge supplies lifecycle stages; complete
+//! protected boot/commissioning and full-wipe integration remain required.
+//! No default production credential is supplied here.
 use crate::{
     Error, Exchange,
     inventory::{self, Baseline},

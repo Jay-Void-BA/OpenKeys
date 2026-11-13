@@ -20,6 +20,7 @@ mod objects;
 pub mod otp;
 pub mod pin_only;
 mod record;
+pub mod reset;
 mod state;
 pub use objects::{Exchange, PinBoundExchange, ScpSession};
 pub use state::{BIO_MAX_FAILURES, Service, State, StateRef};

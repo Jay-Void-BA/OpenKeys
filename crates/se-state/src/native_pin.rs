@@ -542,7 +542,7 @@ impl<X: Exchange, P: PowerCut, S: PrivateState, C: FnMut() -> u64> Exchange
 /// The embedded APDU has Lc but no Le; an extended response hint selects the
 /// SDK's extended-Lc form. Canonical BER 0x81/0x82 lengths include the complete
 /// inner header. No arbitrary host APDU entry point is exposed.
-fn process_envelope(
+pub(crate) fn process_envelope(
     sid: &[u8; 8],
     command: &Command<'_>,
     wire: &mut [u8; MAX_DATA],

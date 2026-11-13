@@ -64,6 +64,27 @@ Root 检查失败都不给 ErasedFlash；成功凭据独占同一 Flash 所有�
 ErasedFlash 只覆盖该 NOR 的命令 / 读回路径，不证明 SE 对象、MCU 根密钥、备份域、
 协议 PIN、配对或持久 journal 已销毁。外部探针、Flash 替换和总线欺骗属于实物评估。
 
+## SE DeleteAll 请求与重新观察
+
+[`reset::Attempt`](../crates/se-state/src/reset.rs)只能在 Root 已持久提交 ErasePending、
+撤销所有私钥入口后工作。固定使用 `0x7FFF0205` 的独立16字节随机 UserID 凭据；
+不是本地六位 PIN、协议 PIN 或默认密钥。核对持久 UserID 类型、建立原生会话、通过
+认证交换验证凭据后，恰好发送一条固定 DeleteAll。缺失对象、错类型、认证失败、
+检查失败都不尝试另一个凭据 / 私钥路径。普通 SCP03 的应答认证从未放宽。
+
+原厂说明该命令可能关闭会话并返回无 R-MAC / 加密的应答，因此裸 `9000`、认证失败、
+丢应答或甚至认证空应答，都只产生 **Pending，不能证明删除**。所有路径关闭会话、
+请求真实 SE 断电；无法确认断电不给 Pending 回执。重启恢复只从独立认证的同一
+ErasePending 代际开始，不自动重发命令，也不因缺少 PIN marker 认定空白。
+
+`Pending::observe`要求同一芯片 / profile、真实冷断电后新建的认证通道，并使用此前
+独立资格验证的基线，逐次复查 Root。发现旧用户对象、旧会话、错代际 / profile、
+应答 / 读回 / 电源不确定都会拒绝。Observation 仍只是对象观察，不证明 Origin / ACL、
+NOR、Root 密钥 / 胶囊、协议 PIN、配对或暂存区已清空，没有到 Blank / Ready 的转换。
+
+确切 C2 的 reset-only UserID 配置 / 凭据注入、生产凭据存储 / Root、基线身份、
+完整跨介质 ALL-DATA 协调器及掉电恢复仍未完成。合成测试中的凭据 / Root 不进入生产。
+
 ## 每次私钥命令的执行约束
 
 `NativePin` 本身不实现 `PinBoundExchange`；编译失败用例防止重新把它直接传给 Keys。

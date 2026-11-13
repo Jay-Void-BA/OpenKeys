@@ -6,6 +6,16 @@ execution ports](../../docs/CLASSICAL_LIFECYCLE_R05.md). `NativePin` alone is no
 The older R04 state/biometric layout below is retained for shared-code history,
 not an R05 fingerprint fallback or a completed production commissioner.
 
+The fixed [`reset`](src/reset.rs) component additionally authenticates a
+separate random16-byte reset-only UserID at `0x7FFF0205`, issues DeleteAll
+once and always closes/cuts the SE. Bare/uncertain replies produce Pending,
+never wipe completion; ordinary SCP03 verification is unchanged. Observation
+requires cold power-cut and a new authenticated same-chip channel, then the
+qualified baseline. Neither Pending nor Observation can initialize a PIN or
+assert whole-device Blank/Ready. Production reset credential provisioning,
+protected Root/capsules, NOR/protocol/pairing destruction and full crash
+recovery remain incomplete. Synthetic credentials/guards are test-only.
+
 Own `no_std`, allocation-free Rust. Implements actual SE050 object APDUs,
 `device_vault::Ledger` and biometric `ProtectedAttempts`. Production exchange
 is sealed to `ScpSession`, which uses the strict authenticated SCP03 client.
