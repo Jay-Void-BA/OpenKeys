@@ -1,10 +1,12 @@
 # H573 secure MMIO boundary
 
 This is an explicit exception to `forbid(unsafe_code)` in the other own-code
-crates. Its one `aliases()` function contains six fixed-address PAC handle
+crates. Its one `aliases()` function contains nine fixed-address PAC handle
 constructors, with no caller-selected pointer, memory slice, allocator, data
 conversion or foreign code. No C/C++ is compiled. The constructors map the
-documented Secure aliases of RNG, SAES, RCC, GTZC, RNG_NSCR and I2C1. The selected
+documented Secure aliases of RNG, SAES, RCC, GTZC, RNG_NSCR, I2C1, FLASH,
+SBS and TAMP. The last three handles are used only for readbacks here; this
+port never writes option bytes, HDPL/epoch selection or tamper flags. The selected
 metapac21.0.0 has Non-secure constants and omits RNG_NSCR and SAES GTZC fields.
 Moving a `Peri<RNG>` / `Peri<SAES>` into the ports preserves single-owner
 runtime use; the whole privileged Secure program remains the trusted caller.
@@ -28,5 +30,16 @@ ARM compilation is checked. Register-model tests run in `openkeys-h573-crypto`;
 real Secure-alias access, startup, clock/health-error injection, KAT, clear
 timing and physical leakage are **NOT_RUN** and block production use. This
 boundary needs independent review before the3keys hold any real secrets.
+
+DHUK CMAC additionally performs two fresh snapshots before/after each block
+and after erasure, requiring CLOSED/LOCKED, locked STiRoT selection, TZEN plus
+effective Secure SBS access, privileged runtime HDPL3/SEC_EPOCH, completed
+memory erasure, SRAM reset erasure/ECC, Secure+privileged crypto/TAMP and the
+R05 external/internal tamper enables with immediate erasure. Debug attachment,
+any pending tamper flag, potential/no-erase mode, forced-zero epoch, missing
+RNG profile/clock or changing context rejects the result. This code never
+clears a flag to regain a key. These readbacks cannot prove the running image
+was authenticated, a sensor is functional or SAU/MPU/DMA attribution is correct;
+the protected Root and real STiRoT/provisioning integration remain mandatory.
 
 I2C1 uses the fixed Secure alias0x50005400, consumes the unique initialized HAL/pin owner, and performs transactions through the bounded board state machine. Every register operation checks current GTZC Secure+privileged attribution, RCC enable and the captured kernel-clock selector. No HAL ambiguous-NACK transfer method is used. PB6/PB7 SAU/GPIO attribution, verified boot and a live clock remain root obligations; this port never enables SE_EN or authorizes private operations. See [SE I2C review](../../docs/SE_I2C_REVIEW.md).

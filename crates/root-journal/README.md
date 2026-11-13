@@ -53,8 +53,12 @@ Sequence numbers and MACs are not a substitute for that independent binding.
   code, DMA, debug and unsigned/rolled-back firmware may not modify the store.
 - Real device MAC with healthy hardware key loading and stable qualified
   security/HDPL/epoch/key-mode context. Pending TAMP/dummy DHUK, debug, untrusted
-  lifecycle and hardware faults must fail closed. No production adapter is
-  currently supplied.
+  lifecycle and hardware faults must fail closed. The
+  [H573 target adapter](../../firmware/target/src/root_mac.rs) now supplies
+  domain-separated non-exportable DHUK CMAC through the bounded masked SAES
+  service. Hardware readback gating and independent register-model tests are
+  present; its required closed boot/profile and on-chip KDF/clear behavior
+  are not yet integrated/qualified. It is not a deployed production Root.
 - A Root guard tied to verified boot, exact device/SE identity, exclusively
   owned maintenance state, real power/time/fault facts and local authorization.
   HUK MAC generation and `state()` metadata do not authorize private operations.

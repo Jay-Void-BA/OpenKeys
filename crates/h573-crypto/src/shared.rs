@@ -109,6 +109,14 @@ impl<P: Registers, S: Source> Service<P, S> {
         }
         result
     }
+    pub fn dhuk_cmac(&self, message: &[u8], out: &mut [u8; 16]) -> Result<(), Error> {
+        out.fill(0);
+        let result = self.with_aes(|aes| aes.dhuk_cmac(message, out));
+        if result.is_err() {
+            out.fill(0);
+        }
+        result
+    }
     pub fn cbc<const N: usize>(
         &self,
         key: &[u8; N],
@@ -203,6 +211,22 @@ mod tests {
             Err(Error::Faulted)
         );
         assert_eq!(out, [0; 16]);
+    }
+    #[test]
+    fn missing_hardware_key_context_revokes_every_purpose_without_software_fallback() {
+        let service = service(false);
+        let mut tag = [0x55; 16];
+        assert!(service.dhuk_cmac(b"journal", &mut tag).is_err());
+        assert_eq!(tag, [0; 16]);
+        assert!(service.faulted());
+        assert_eq!(
+            service.cmac(&[0; 16], b"SCP", &mut tag),
+            Err(Error::Faulted)
+        );
+        assert_eq!(tag, [0; 16]);
+        let mut random = [0x55; 8];
+        assert_eq!(service.random(&mut random), Err(Error::Faulted));
+        assert_eq!(random, [0; 8]);
     }
     #[test]
     fn reentry_poison_cannot_release_the_outer_success_or_be_reset_by_a_new_adapter() {

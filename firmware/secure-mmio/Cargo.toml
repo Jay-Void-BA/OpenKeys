@@ -11,7 +11,7 @@ openkeys-h573-crypto = { path = "../../crates/h573-crypto" }
 openkeys-board = { path = "../board" }
 openkeys-se-transport = { path = "../../crates/se-transport" }
 
-# This is the sole own-code exception: six fixed MMIO handle constructors,
+# This is the sole own-code exception: nine fixed MMIO handle constructors,
 # explained in README. It never accepts an arbitrary address or host buffer.
 [lints.rust]
 unsafe_code = "deny"

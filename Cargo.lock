@@ -5048,6 +5048,7 @@ dependencies = [
  "embedded-hal-bus",
  "openkeys-board",
  "openkeys-h573-crypto",
+ "openkeys-root-journal",
  "openkeys-scp03",
  "openkeys-se-state",
  "openkeys-se-transport",

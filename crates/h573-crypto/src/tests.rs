@@ -28,12 +28,22 @@ struct Model {
     inject_key: bool,
     inject_clear: bool,
     fail_key_ready: bool,
+    device_context: Option<device_key::Snapshot>,
+    context_checks: usize,
+    context_fault_at: Option<usize>,
+    context_change_at: Option<usize>,
+    dhuk_controls: Vec<u32>,
 }
 #[derive(Clone, Default)]
 pub(crate) struct Port(Rc<RefCell<Model>>);
 
 impl Model {
     fn keys(&self) -> Vec<u8> {
+        if self.cr & KEYSEL == 1 << 28 {
+            // Independent synthetic test key, NOT the H573 hardware KDF.
+            assert_eq!(self.cr & !EN, DHUK_CONTROL);
+            return std::vec![0x57; 32];
+        }
         let count = if self.cr & (1 << 18) != 0 { 8 } else { 4 };
         (0..count)
             .rev()
@@ -179,7 +189,22 @@ impl Registers for Port {
                 assert_eq!(m.sr & BUSY, 0, "control write while busy");
                 let previous = m.cr;
                 m.cr = value;
+                if value & KEYSEL != previous & KEYSEL {
+                    assert_eq!(previous & EN, 0, "KEYSEL change while enabled");
+                    m.sr &= !KEYVALID;
+                    m.key.fill(0);
+                    if value & KEYSEL == 1 << 28 {
+                        m.dhuk_controls.push(value);
+                        if !m.fail_key_ready {
+                            m.sr |= KEYVALID;
+                        }
+                        if m.inject_key {
+                            m.flags |= 4;
+                        }
+                    }
+                }
                 if value & IPRST != 0 {
+                    assert_eq!(value & KEYSEL, 0, "hardware key reload during cleanup");
                     m.sr = 0;
                     m.flags = 0;
                     m.key.fill(0);
@@ -241,6 +266,19 @@ impl Registers for Port {
             _ => panic!("invalid register write"),
         }
     }
+    fn device_key_context(&mut self) -> Result<DeviceKeyContext, Error> {
+        let mut m = self.0.borrow_mut();
+        m.context_checks += 1;
+        if m.context_fault_at == Some(m.context_checks) {
+            return Err(Error::Hardware);
+        }
+        if m.context_change_at == Some(m.context_checks)
+            && let Some(context) = m.device_context.as_mut()
+        {
+            context.flash_secure_epoch += 1;
+        }
+        m.device_context.ok_or(Error::Hardware)?.qualify()
+    }
     fn emergency_reset(&mut self) -> ! {
         panic!("emergency whole-device reset required")
     }
@@ -255,8 +293,121 @@ fn assert_erased(port: &Port) {
     let m = port.0.borrow();
     assert_eq!(m.sr & KEYVALID, 0);
     assert_eq!(m.cr & EN, 0);
+    assert_eq!(m.cr & KEYSEL, 0);
     assert!(m.key.iter().all(|v| *v == 0));
     assert!(m.clear_values.iter().all(|v| *v == CCF));
+}
+
+fn dhuk_engine() -> (MaskedAes<Port>, Port) {
+    let (aes, port) = engine();
+    port.0.borrow_mut().device_context = Some(device_key::fixture());
+    (aes, port)
+}
+
+#[test]
+fn dhuk_cmac_matches_independent_oracle_without_key_register_io_or_mode_switch() {
+    let (mut aes, port) = dhuk_engine();
+    for length in [0, 1, 15, 16, 17, 31, 32, 33, 224, 256, 4080, 4096] {
+        let message: Vec<_> = (0..length).map(|i| (i * 37) as u8).collect();
+        let mut oracle = <Cmac<aes::Aes256> as Mac>::new_from_slice(&[0x57; 32]).unwrap();
+        oracle.update(&message);
+        let expected = oracle.finalize().into_bytes();
+        let mut out = [0x55; 16];
+        aes.dhuk_cmac(&message, &mut out).unwrap();
+        assert_eq!(out.as_slice(), expected.as_slice());
+        assert_erased(&port);
+        let m = port.0.borrow();
+        assert!(m.key_writes.is_empty());
+        assert!(m.dhuk_controls.iter().all(|&c| c == DHUK_CONTROL));
+    }
+    assert_eq!(port.0.borrow().dhuk_controls.len(), 24);
+}
+
+#[test]
+fn every_dhuk_context_fault_or_change_including_after_cleanup_rejects_output() {
+    let (mut baseline, port) = dhuk_engine();
+    baseline.dhuk_cmac(&[0x39; 33], &mut [0; 16]).unwrap();
+    let checks = port.0.borrow().context_checks;
+    assert!(checks > 10);
+    for change in [false, true] {
+        for at in 1..=checks {
+            let (mut aes, port) = dhuk_engine();
+            if change {
+                port.0.borrow_mut().context_change_at = Some(at);
+            } else {
+                port.0.borrow_mut().context_fault_at = Some(at);
+            }
+            let mut out = [0x55; 16];
+            let result = aes.dhuk_cmac(&[0x39; 33], &mut out);
+            // The very first valid context establishes the lifetime identity;
+            // there is no earlier epoch for this component to compare with.
+            // Root's journal/SE owner binding must reject stale persistent data.
+            if change && at == 1 {
+                assert!(result.is_ok());
+            } else {
+                assert!(result.is_err(), "context change={change}, checkpoint={at}");
+                assert_eq!(out, [0; 16]);
+                assert_eq!(
+                    aes.ecb(&[0; 16], Direction::Encrypt, &[0; 16], &mut out),
+                    Err(Error::Faulted)
+                );
+                assert_eq!(out, [0; 16]);
+            }
+            assert_erased(&port);
+        }
+    }
+}
+
+#[test]
+fn dhuk_absent_unqualified_and_changed_valid_lifecycle_never_falls_back() {
+    let (mut absent, port) = engine();
+    let mut out = [0x55; 16];
+    assert_eq!(absent.dhuk_cmac(b"journal", &mut out), Err(Error::Hardware));
+    assert_eq!(out, [0; 16]);
+    assert!(port.0.borrow().key_writes.is_empty());
+    assert!(port.0.borrow().dhuk_controls.is_empty());
+    assert_erased(&port);
+    for mutation in [0, 1, 2] {
+        let (mut aes, port) = dhuk_engine();
+        aes.dhuk_cmac(b"journal", &mut out).unwrap();
+        let mut m = port.0.borrow_mut();
+        let context = m.device_context.as_mut().unwrap();
+        match mutation {
+            0 => context.flash_secure_epoch += 1,
+            1 => context.flash_options ^= (0x72 ^ 0x5c) << 8,
+            _ => context.tamper_status = 1,
+        }
+        drop(m);
+        assert_eq!(aes.dhuk_cmac(b"journal", &mut out), Err(Error::Hardware));
+        assert_eq!(out, [0; 16]);
+        assert_erased(&port);
+    }
+}
+
+#[test]
+fn dhuk_load_output_clear_faults_and_key_timeout_poison_and_erase() {
+    for fault in 0..4 {
+        let (mut aes, port) = dhuk_engine();
+        let mut m = port.0.borrow_mut();
+        match fault {
+            0 => m.inject_key = true,
+            1 => m.inject_read = true,
+            2 => m.inject_clear = true,
+            _ => m.fail_key_ready = true,
+        }
+        drop(m);
+        let mut out = [0x55; 16];
+        assert!(aes.dhuk_cmac(b"journal", &mut out).is_err());
+        assert_eq!(out, [0; 16]);
+        assert_eq!(aes.dhuk_cmac(b"journal", &mut out), Err(Error::Faulted));
+        assert_erased(&port);
+    }
+    let (mut aes, port) = dhuk_engine();
+    let mut out = [0x55; 16];
+    assert_eq!(aes.dhuk_cmac(&[0; 4097], &mut out), Err(Error::Input));
+    assert_eq!(out, [0; 16]);
+    assert!(port.0.borrow().dhuk_controls.is_empty());
+    assert_erased(&port);
 }
 
 #[test]

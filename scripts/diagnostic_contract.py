@@ -12,7 +12,7 @@ SOURCE_FOLDERS = (
     'firmware/board', 'firmware/target', 'firmware/secure-mmio',
     'firmware/vendor/cortex-m', 'crates/device-policy', 'crates/device-vault',
     'crates/se-transport', 'crates/scp03', 'crates/h573-crypto', 'crates/se-state',
-    'crates/otp-format',
+    'crates/otp-format', 'crates/root-journal',
 )
 
 

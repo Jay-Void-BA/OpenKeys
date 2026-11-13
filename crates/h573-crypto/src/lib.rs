@@ -7,8 +7,10 @@
 //! Register-model tests are not on-chip KAT or physical side-channel evidence.
 use zeroize::Zeroizing;
 
+pub mod device_key;
 pub mod entropy;
 mod shared;
+use device_key::DeviceKeyContext;
 pub use shared::Service;
 
 const EN: u32 = 1;
@@ -16,6 +18,10 @@ const KEYPROT: u32 = 1 << 19;
 const IPRST: u32 = 1 << 31;
 const BUSY: u32 = 1 << 3;
 const KEYVALID: u32 = 1 << 7;
+const KEYSEL: u32 = 7 << 28;
+// The DHUK KDF includes CHMOD/KMOD/KEYSIZE. Both L and the CMAC body use
+// exactly this CBC/normal-key/256-bit context; no ECB derivation step.
+const DHUK_CONTROL: u32 = KEYPROT | (1 << 18) | (1 << 5) | (1 << 28);
 const CCF: u32 = 1;
 const ERRORS: u32 = 0b1110;
 const STATUS_ERRORS: u32 = (1 << 1) | (1 << 2);
@@ -48,6 +54,8 @@ pub enum Register {
 pub trait Registers {
     fn read(&mut self, register: Register) -> u32;
     fn write(&mut self, register: Register, value: u32);
+    /// Fresh qualified hardware readbacks, never a cached/host supplied flag.
+    fn device_key_context(&mut self) -> Result<DeviceKeyContext, Error>;
     fn emergency_reset(&mut self) -> !;
 }
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -59,12 +67,14 @@ pub enum Direction {
 pub struct MaskedAes<P: Registers> {
     port: P,
     faulted: bool,
+    device_key: Option<DeviceKeyContext>,
 }
 impl<P: Registers> MaskedAes<P> {
     pub fn new(port: P) -> Result<Self, Error> {
         let mut this = Self {
             port,
             faulted: false,
+            device_key: None,
         };
         let result = this.status();
         let erase_fault = this.erase();
@@ -112,6 +122,12 @@ impl<P: Registers> MaskedAes<P> {
                 self.port.write(Register::Cr, cr);
                 // Preserve faults arriving after the last output check. The
                 // IPRST below must not erase them into an apparent success.
+                fault |= self.status().is_err();
+                // Do not let IPRST re-select/reload a hardware key. KEYSEL
+                // changes only with EN=0; key/context validity must be gone
+                // when returning to the caller or entering low power.
+                let cr = cr & !KEYSEL;
+                self.port.write(Register::Cr, cr);
                 fault |= self.status().is_err();
                 self.port.write(Register::Cr, cr | IPRST);
                 self.port.write(Register::Cr, 0);
@@ -317,6 +333,106 @@ impl<P: Registers> MaskedAes<P> {
         let result = self.finish(result);
         if result.is_err() {
             out.fill(0)
+        }
+        result
+    }
+    fn check_device_context(&mut self) -> Result<(), Error> {
+        let current = self.port.device_key_context()?;
+        match self.device_key {
+            Some(previous) if previous != current => Err(Error::Hardware),
+            Some(_) => Ok(()),
+            None => {
+                self.device_key = Some(current);
+                Ok(())
+            }
+        }
+    }
+    fn start_dhuk(&mut self) -> Result<(), Error> {
+        self.check_device_context()?;
+        self.status()?;
+        if self.erase() {
+            return Err(Error::Hardware);
+        }
+        self.check_device_context()?;
+        self.cr(DHUK_CONTROL & !KEYSEL)?;
+        for i in 0..4 {
+            self.port.write(Register::Iv(i), 0);
+        }
+        // No KEYRx read/write, public UID key or software fallback.
+        self.cr(DHUK_CONTROL)?;
+        self.wait(Register::Sr, KEYVALID, true)?;
+        if self.port.read(Register::Cr) != DHUK_CONTROL {
+            return Err(Error::Hardware);
+        }
+        self.cr(DHUK_CONTROL | EN)?;
+        self.idle()?;
+        self.check_dhuk_active()
+    }
+    fn check_dhuk_active(&mut self) -> Result<(), Error> {
+        self.check_device_context()?;
+        self.status()?;
+        if self.port.read(Register::Cr) != (DHUK_CONTROL | EN)
+            || self.port.read(Register::Sr) & KEYVALID == 0
+        {
+            return Err(Error::Hardware);
+        }
+        Ok(())
+    }
+    fn dhuk_block(&mut self, input: &[u8; 16], out: &mut [u8; 16]) -> Result<(), Error> {
+        self.check_dhuk_active()?;
+        self.block(input, out)?;
+        self.check_dhuk_active()
+    }
+    /// SP800-38B CMAC using the non-exportable H573 DHUK, for protected Root
+    /// services only. Never expose a MAC/encryption oracle to USB/NFC/UI.
+    /// Before/after every block and after cleanup, recheck the hardware
+    /// context captured on the first call. Any fault permanently poisons this
+    /// peripheral owner and erases tentative output. Subkey CPU/RAM leakage
+    /// still requires physical evaluation; hardware masking is not a proof.
+    pub fn dhuk_cmac(&mut self, message: &[u8], out: &mut [u8; 16]) -> Result<(), Error> {
+        out.fill(0);
+        if self.faulted {
+            return Err(Error::Faulted);
+        }
+        let result = (|| {
+            if message.len() > MAX_MESSAGE {
+                return Err(Error::Input);
+            }
+            self.start_dhuk()?;
+            let mut l = Zeroizing::new([0; 16]);
+            // CBC with zero IV over a single zero block equals AES_K(0).
+            // Reinitializing CBC below reloads the SAME derived key; using
+            // the ordinary ECB->CBC CMAC path here would use DIFFERENT keys.
+            self.dhuk_block(&[0; 16], &mut l)?;
+            let k1 = double(&l);
+            let k2 = double(&k1);
+            self.start_dhuk()?;
+            let complete = !message.is_empty() && message.len().is_multiple_of(16);
+            let blocks = message.len().div_ceil(16).max(1);
+            for index in 0..blocks {
+                let start = index * 16;
+                let length = (message.len() - start.min(message.len())).min(16);
+                let mut input = Zeroizing::new([0; 16]);
+                input[..length].copy_from_slice(&message[start..start + length]);
+                if index == blocks - 1 {
+                    if !complete {
+                        input[length] = 0x80;
+                    }
+                    let subkey = if complete { &k1 } else { &k2 };
+                    for i in 0..16 {
+                        input[i] ^= subkey[i];
+                    }
+                }
+                self.dhuk_block(&input, out)?;
+            }
+            Ok(())
+        })();
+        let result = self
+            .finish(result)
+            .and_then(|()| self.check_device_context());
+        if result.is_err() {
+            self.faulted = true;
+            out.fill(0);
         }
         result
     }

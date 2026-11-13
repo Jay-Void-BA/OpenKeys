@@ -1,6 +1,7 @@
 use embassy_stm32::{Peri, pac, peripherals};
 use openkeys_h573_crypto::{
     Error, MaskedAes, Register, Registers,
+    device_key::{DeviceKeyContext, Snapshot},
     entropy::{CheckedRng, Source},
 };
 
@@ -20,6 +21,9 @@ struct Aliases {
     gtzc: pac::gtzc::Gtzc1Tzsc,
     nscr: pac::common::Reg<u32, pac::common::RW>,
     i2c1: pac::i2c::I2c,
+    flash: pac::flash::Flash,
+    sbs: pac::syscfg::Syscfg,
+    tamp: pac::tamp::Tamp,
 }
 #[allow(unsafe_code)]
 fn aliases() -> Aliases {
@@ -37,6 +41,11 @@ fn aliases() -> Aliases {
             gtzc: pac::gtzc::Gtzc1Tzsc::from_ptr(0x5003_2400 as *mut ()),
             nscr: pac::common::Reg::from_ptr(0x520c_080c as *mut u32),
             i2c1: pac::i2c::I2c::from_ptr(0x5000_5400 as *mut ()),
+            // Only readbacks through these three handles. Option bytes,
+            // HDPL/epoch selection and tamper flags are NEVER written here.
+            flash: pac::flash::Flash::from_ptr(0x5002_2000 as *mut ()),
+            sbs: pac::syscfg::Syscfg::from_ptr(0x5400_0400 as *mut ()),
+            tamp: pac::tamp::Tamp::from_ptr(0x5400_7c00 as *mut ()),
         }
     }
 }
@@ -139,6 +148,7 @@ impl openkeys_board::se_i2c::Registers for I2c1Registers<'_> {
 pub struct SaesPort<'d> {
     _owned: Peri<'d, peripherals::SAES>,
     registers: pac::saes::Saes,
+    readbacks: Aliases,
 }
 pub struct RngPort<'d> {
     _owned: Peri<'d, peripherals::RNG>,
@@ -225,6 +235,7 @@ pub fn initialize<'d>(
     let aes = MaskedAes::new(SaesPort {
         _owned: saes,
         registers: a.saes,
+        readbacks: a,
     })?;
     Ok((aes, rng))
 }
@@ -278,7 +289,61 @@ impl Registers for SaesPort<'_> {
             _ => self.emergency_reset(),
         }
     }
+    fn device_key_context(&mut self) -> Result<DeviceKeyContext, Error> {
+        // Two fresh reads catch transitions while assembling the snapshot;
+        // the crypto core also compares before/after every block and cleanup.
+        let before = self.device_snapshot()?.qualify()?;
+        let after = self.device_snapshot()?.qualify()?;
+        if before != after {
+            return Err(Error::Hardware);
+        }
+        Ok(after)
+    }
     fn emergency_reset(&mut self) -> ! {
         cortex_m::peripheral::SCB::sys_reset()
+    }
+}
+
+impl SaesPort<'_> {
+    fn device_snapshot(&self) -> Result<Snapshot, Error> {
+        let a = &self.readbacks;
+        if !a.rcc.ahb2enr().read().rngen()
+            || !a.rcc.ahb2enr().read().saesen()
+            || !a.rcc.cr().read().hsi48rdy()
+            || a.rcc.ccipr5().read().rngsel() != pac::rcc::vals::Rngsel::HSI48
+            || a.rng.cr().read().0 != (RNG_CONFIG | AUTO_RESET_DISABLE | ENABLE | CONFIG_LOCK)
+            || a.rng.htcr().read().0 != RNG_HTCR
+            || a.nscr.read() != RNG_NSCR
+            || a.rng.sr().read().0 & ERROR_BITS != 0
+        {
+            return Err(Error::Hardware);
+        }
+        Ok(Snapshot {
+            flash_options: a.flash.optsr_cur().read().0,
+            flash_options2: a.flash.optsr2_cur().read().0,
+            flash_secure_boot: a.flash.secbootr_cur().read().0,
+            flash_secure_epoch: a.flash.secepochr_cur().read().0,
+            flash_privilege: a.flash.privcfgr().read().0,
+            hdpl: a.sbs.hdplsr().read().0,
+            next_hdpl: a.sbs.nexthdplcr().read().0,
+            epoch_select: a.sbs.epochselcr().read().0,
+            sbs_security: a.sbs.seccfgr().read().0,
+            memory_erase_status: a.sbs.mesr().read().0,
+            tamper_control: [
+                a.tamp.cr1().read().0,
+                a.tamp.cr2().read().0,
+                a.tamp.cr3().read().0,
+            ],
+            tamper_security: a.tamp.seccfgr().read().0,
+            tamper_privilege: a.tamp.privcfgr().read().0,
+            tamper_filter: a.tamp.fltcr().read().0,
+            tamper_active: a.tamp.atcr1().read().0,
+            tamper_status: a.tamp.sr().read().0,
+            crypto_security: a.gtzc.seccfgr3().read().0,
+            crypto_privilege: a.gtzc.privcfgr3().read().0,
+            unprivileged: cortex_m::register::control::read().npriv()
+                == cortex_m::register::control::Npriv::Unprivileged,
+            debugger_attached: cortex_m::peripheral::DCB::is_debugger_attached(),
+        })
     }
 }

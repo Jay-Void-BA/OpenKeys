@@ -21,6 +21,25 @@ API. Vault/FP callers need a fresh live authorization checkpoint as applicable.
 All production keys are supplied through protected provisioning; none are
 generated from public UID/default/test constants.
 
+`dhuk_cmac` uses the non-exportable per-device256-bit H573 key. It generates
+CMAC L with one CBC/zero-IV block and reinitializes the **same CBC context**
+for the body; the usual ECB->CBC path is invalid here because CHMOD is an
+input to the DHUK KDF (RM0481 §38.4.17). No KEYRx read/write or software
+fallback occurs. Every block and final cleanup require fresh qualified
+hardware context, pinned across the peripheral lifetime. Missing/tampered
+context, debug, pending TAMP/dummy DHUK, mode/key-valid changes and failed
+loads erase output and poison the service. Cleanup clears KEYSEL before
+IPRST so no hardware key is reloaded. The Root journal's target adapter adds
+a fixed domain and accepts only its fixed-size internal record body; no
+manager, APDU or host MAC endpoint is provided.
+
+The snapshot gate requires a very specific closed STiRoT/TZ/HDPL/epoch/tamper
+profile. It neither installs that profile nor proves signed-image execution,
+sensor operation, private-memory layout or every fault condition. The test
+model substitutes a synthetic AES key only under `cfg(test)` and checks
+CMAC with an independent RustCrypto oracle. It does **not** emulate or qualify
+the silicon KDF. On-chip qualification is still required.
+
 Checked entropy discards a baseline, checks consecutive32-bit repetitions,
 retains the comparison across requests and erases partial output on failure.
 Its source checks silicon current/latched clock/seed errors before/after DR;

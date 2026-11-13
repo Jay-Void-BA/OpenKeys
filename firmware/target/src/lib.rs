@@ -12,6 +12,9 @@ pub mod se_link;
 #[cfg(target_arch = "arm")]
 pub mod scp_crypto;
 
+#[cfg(target_arch = "arm")]
+pub mod root_mac;
+
 // Shared ledger/attempt adapters for the protected runtime; this re-export
 // does not commission/enable the SE or turn diagnostics into an authenticator.
 #[cfg(target_arch = "arm")]
