@@ -27,12 +27,12 @@
     "crates/device-policy/src/execution.rs": "f42578d28ca30ebce141f89d1cdfd95d153ff31deba829743df32b141a00eae0",
     "crates/device-policy/src/lcd.rs": "099b849586b15cc77edd11298d26524f5175e782240631c43cf4b3bb3ec9519b",
     "crates/device-policy/src/lib.rs": "67d969adc9f9d0ba15cba48023e4445aa81dbcd34da9118064e14254e19d9560",
-    "crates/device-policy/src/pin.rs": "771d9465fa5c8544d053fbf21bf044b9da8429b8e15d4afe0aea86dd53fe8249",
+    "crates/device-policy/src/pin.rs": "e1028ca51d6022032a79f5eba2f4ec5d05efe5aa950ca7a55e081278daebb9ed",
     "crates/device-policy/src/pin_only.rs": "3c4a21a27d6819633ea125604ff4519c2e570a22ea5455f86dfdc6be4cc249d3",
     "crates/device-policy/src/pin_only_tests.rs": "d6c8eab4f81b2118f3eb7cc5813a53a4169afb82cdda33342dc4b0765a7e4a6e",
     "crates/device-policy/src/pin_setup.rs": "5c0d7e3ea99d7684f9e1cd09942e862305158debd40f3311b05e85215da008cf",
-    "crates/device-policy/src/session.rs": "410e0eed4707812efacd377a1521320826db4f83b5abc914b4c004f879de5e2f",
-    "crates/device-policy/src/session_tests.rs": "c30ec7451eea4254ac5bca0c279c4ecdf870fa614e3f6407253ab5f9192b39ea",
+    "crates/device-policy/src/session.rs": "b3683458570ea7a08c698b9c7fd67643d390c6c12dc5909502d0e842dca770ca",
+    "crates/device-policy/src/session_tests.rs": "3171040c1085e96e453762d2437949c0091965d06965f80febfcfa405cfc3773",
     "crates/device-policy/tests/generate-fpc-fixtures.py": "061575df612efbfcbe08fdca4f6c76a254155076c7db8117eafc70e39aee8939",
     "crates/device-vault/Cargo.toml": "6411c314429924110c38397291751e222628a52bab70f95a270f74ced14e760d",
     "crates/device-vault/README.md": "4785655baf8ab23f5decf75640aaadde45a4f2eb1cf2be13eb218a72e6de5494",
@@ -57,8 +57,8 @@
     "crates/se-state/README.md": "2e7ecaa6e81895d9be5dcc70bf85b0786432532e26d1b7dcb0677e32c71331c2",
     "crates/se-state/src/keys/tests.rs": "c0d847ce51d0a5cff0ed4be6f6e9b77a2c4d7544765ac58c58eb168286d512ee",
     "crates/se-state/src/keys.rs": "bfa01198e027a712f0bc7c8ffdc0717464082ae87ef57d8444e87e521cdd0189",
-    "crates/se-state/src/lib.rs": "2804e9843bdb533722f57102725b3ebf1203d98628c2f27e91238aa2178d26cd",
-    "crates/se-state/src/native_pin.rs": "ca0d0f2238dd84c49ab2162a559f63790ba133ad92fc089aba58be6d4bf4644f",
+    "crates/se-state/src/lib.rs": "3d46374acd523c584a014ac58c6bb1edcaa3de02974eb99afe3d91dbab3f64a6",
+    "crates/se-state/src/native_pin.rs": "35ffcdce5b2c40ec92c3803c8cbfd834afa6a1f3b1a6db4c4560709bdd6ccafc",
     "crates/se-state/src/native_pin_tests.rs": "b6fd5124cb7380dcd4a8821f30029531c9ea96de046bf4a9128cb65525ecc7c5",
     "crates/se-state/src/native_uid.rs": "1a2ff191dd169df45e89cb725fa0f247b5cff66357ae02e195dcfff737694bc5",
     "crates/se-state/src/native_uid_tests.rs": "9875b9c0f39e8e7b12c0b9cdefc6c4ae637340018ecc6dc47c9d9698fca30b0e",
@@ -170,7 +170,7 @@
     "scripts/export-se-state-layout.py": "0fdcc09b56c31c6d5b1e627679fb87da184c40c2258369fbdf0bd5bc55c2a7ef"
   },
   "artifacts": {
-    "openkeys-r04-diagnostics.elf": "98b03a7ef89d077a3e679b1c5cfb65bbc5adb5843dfc43078858bdd1c35244bb",
+    "openkeys-r04-diagnostics.elf": "916ea700df62de708b60070d682d7017d9cb0a5d745d66276646a5f78b9bd03e",
     "openkeys-r04-diagnostics.bin": "41015865321164b5d972bbb370d473749ca2d79b0671bb194ff794dd367e52fb"
   }
 }

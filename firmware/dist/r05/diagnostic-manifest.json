@@ -29,12 +29,12 @@
     "crates/device-policy/src/execution.rs": "f42578d28ca30ebce141f89d1cdfd95d153ff31deba829743df32b141a00eae0",
     "crates/device-policy/src/lcd.rs": "099b849586b15cc77edd11298d26524f5175e782240631c43cf4b3bb3ec9519b",
     "crates/device-policy/src/lib.rs": "67d969adc9f9d0ba15cba48023e4445aa81dbcd34da9118064e14254e19d9560",
-    "crates/device-policy/src/pin.rs": "771d9465fa5c8544d053fbf21bf044b9da8429b8e15d4afe0aea86dd53fe8249",
+    "crates/device-policy/src/pin.rs": "e1028ca51d6022032a79f5eba2f4ec5d05efe5aa950ca7a55e081278daebb9ed",
     "crates/device-policy/src/pin_only.rs": "3c4a21a27d6819633ea125604ff4519c2e570a22ea5455f86dfdc6be4cc249d3",
     "crates/device-policy/src/pin_only_tests.rs": "d6c8eab4f81b2118f3eb7cc5813a53a4169afb82cdda33342dc4b0765a7e4a6e",
     "crates/device-policy/src/pin_setup.rs": "5c0d7e3ea99d7684f9e1cd09942e862305158debd40f3311b05e85215da008cf",
-    "crates/device-policy/src/session.rs": "410e0eed4707812efacd377a1521320826db4f83b5abc914b4c004f879de5e2f",
-    "crates/device-policy/src/session_tests.rs": "c30ec7451eea4254ac5bca0c279c4ecdf870fa614e3f6407253ab5f9192b39ea",
+    "crates/device-policy/src/session.rs": "b3683458570ea7a08c698b9c7fd67643d390c6c12dc5909502d0e842dca770ca",
+    "crates/device-policy/src/session_tests.rs": "3171040c1085e96e453762d2437949c0091965d06965f80febfcfa405cfc3773",
     "crates/device-policy/tests/generate-fpc-fixtures.py": "061575df612efbfcbe08fdca4f6c76a254155076c7db8117eafc70e39aee8939",
     "crates/device-vault/Cargo.toml": "6411c314429924110c38397291751e222628a52bab70f95a270f74ced14e760d",
     "crates/device-vault/README.md": "4785655baf8ab23f5decf75640aaadde45a4f2eb1cf2be13eb218a72e6de5494",
@@ -138,7 +138,7 @@
       "initial_stack": "0x20040000",
       "reset_vector": "0x8000251",
       "artifacts": {
-        "openkeys-r05-diagnostics-v1-1.elf": "039ed0927124c1dc3a36bc819b0d3ce0fee243e064e188df387e83c29c9e01f4",
+        "openkeys-r05-diagnostics-v1-1.elf": "4f9b993a5c2b44f3144befaaa366b36384798eb56a032ce103bc43a7a7b18506",
         "openkeys-r05-diagnostics-v1-1.bin": "f22bd27387d86d5901e27c34be1eea153d8babaf5f0349657a5f6107bb2191d1"
       }
     },
@@ -150,7 +150,7 @@
       "initial_stack": "0x20040000",
       "reset_vector": "0x8000251",
       "artifacts": {
-        "openkeys-r05-diagnostics-v1-0.elf": "47a766194f186e3abeab59dd5ba59942f9eda76372e7565f4cc8bfd167ebdc63",
+        "openkeys-r05-diagnostics-v1-0.elf": "e253f9573d9e70d695255dab9f2ecc2591b49c0d434aae731cc3847300729e7f",
         "openkeys-r05-diagnostics-v1-0.bin": "6ae8079f62e6b3c6fec6f2bb8064e59553da5f8a649022c64055f35d3a7da928"
       }
     }

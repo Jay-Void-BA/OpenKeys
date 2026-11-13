@@ -1,3 +1,4 @@
+# OpenKeys modifications: separate local hardware-PIN UV from biometric enrollment.
 [package]
 name = "opensk"
 version = "0.1.0"
@@ -47,6 +48,7 @@ software_crypto = ["rand", "sha2", "hmac", "hkdf", "aes", "cbc", "p256"]
 ed25519 = []
 software_crypto_ed25519 = ["software_crypto", "ed25519", "ed25519-compact"]
 fingerprint = []
+openkeys-local-pin = []
 
 [dev-dependencies]
 enum-iterator = "2.3.0"

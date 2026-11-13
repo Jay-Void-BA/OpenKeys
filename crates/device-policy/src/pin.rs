@@ -29,7 +29,7 @@ pub enum Error {
 
 pub trait ProtectedPin<const N: usize = PIN_SYMBOLS> {
     /// Persistently debit BEFORE verifying a completed guess. R04 calls this
-    /// at input start; R05 calls after twelve digits, immediately before verify.
+    /// at input start; R05 calls after six digits, immediately before verify.
     /// An uncertain write denies access. Reset/power loss cannot restore credit.
     fn reserve_attempt(&mut self, request: &Request) -> Result<(), Error>;
     /// R04 uses twelve symbols 1..4; R05 uses six decimal digits 0..9.

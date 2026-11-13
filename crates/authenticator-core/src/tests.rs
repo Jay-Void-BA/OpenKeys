@@ -1,21 +1,18 @@
 extern crate std;
 use super::*;
-use aes_gcm::{Aes256Gcm, KeyInit, Nonce, Tag, aead::AeadInPlace};
 use alloc::{vec, vec::Vec};
 use device_policy::{
-    Authorization, Gate, Request, SecureVerifier,
-    biometric::{self, ProtectedAttempts, ProtectedGcm, Session},
+    Authorization, Request,
+    pin::{Error as PinError, Press, ProtectedPin},
+    pin_only::{Digit, Gate, PinEntry, SecurePinVerifier, VerifiedPinRequest},
 };
 use opensk::{
-    api::{fingerprint::Fingerprint, persist::Persist},
+    api::persist::Persist,
     ctap::Channel,
     env::{Env, test::TestEnv},
 };
 use sk_cbor::{Value, cbor_array, cbor_map};
-use std::{
-    cell::{Cell, RefCell},
-    rc::Rc,
-};
+use std::{cell::RefCell, rc::Rc};
 const BINDING: [u8; 32] = [0xa5; 32];
 const CHANNEL: Channel = Channel::MainHid([0, 0, 0, 7]);
 #[derive(Default)]
@@ -25,6 +22,8 @@ struct Stats {
     checks: u32,
     fail_check: Option<u32>,
     active: bool,
+    deny_local_pin: bool,
+    persist_calls: usize,
     generation: u64,
     revoke_check: Option<u32>,
 }
@@ -34,15 +33,7 @@ struct Model {
 }
 impl Model {
     fn new() -> (Self, Rc<RefCell<Stats>>) {
-        let mut inner = TestEnv::default();
-        inner.fingerprint().prepare_enrollment().unwrap();
-        let _ = inner.fingerprint().capture_sample(None).unwrap();
-        let (_, remaining, template) = inner.fingerprint().capture_sample(None).unwrap();
-        assert_eq!(remaining, 0);
-        inner
-            .persist()
-            .store_template_id(template.unwrap())
-            .unwrap();
+        let inner = TestEnv::default();
         let stats = Rc::new(RefCell::new(Stats::default()));
         (
             Self {
@@ -65,7 +56,7 @@ impl Env for Model {
     type HidConnection = <TestEnv as Env>::HidConnection;
     type Clock = <TestEnv as Env>::Clock;
     type Crypto = <TestEnv as Env>::Crypto;
-    type Fingerprint = <TestEnv as Env>::Fingerprint;
+    type LocalPin = Self;
     fn rng(&mut self) -> &mut Self::Rng {
         self.inner.rng()
     }
@@ -73,6 +64,7 @@ impl Env for Model {
         self.inner.user_presence()
     }
     fn persist(&mut self) -> &mut Self::Persist {
+        self.stats.borrow_mut().persist_calls += 1;
         self.inner.persist()
     }
     fn key_store(&mut self) -> &mut Self::KeyStore {
@@ -81,8 +73,8 @@ impl Env for Model {
     fn clock(&mut self) -> &mut Self::Clock {
         self.inner.clock()
     }
-    fn fingerprint(&mut self) -> &mut Self::Fingerprint {
-        self.inner.fingerprint()
+    fn local_pin(&mut self) -> &mut Self::LocalPin {
+        self
     }
     fn write(&mut self) -> Self::Write {
         self.inner.write()
@@ -125,90 +117,89 @@ impl Platform for Model {
         stats.ends += 1;
         stats.active = false;
     }
+    fn revoke_session(&mut self) {
+        let mut stats = self.stats.borrow_mut();
+        stats.active = false;
+        stats.generation += 1;
+    }
     fn reset_fido_authorized(&mut self) -> Result<Vec<u8>, Error> {
         Err(Error::Unsupported)
     }
 }
-struct Counter;
-impl ProtectedAttempts for Counter {
-    fn reserve_identify_attempt(&mut self, _: &Request) -> Result<u32, biometric::Error> {
-        Ok(1)
-    }
-    fn record_match(&mut self, _: &biometric::AuthenticatedMatch) -> Result<(), biometric::Error> {
+// PIN fixtures exist only under cfg(test), never as an H573 backend.
+struct PinBackend;
+impl ProtectedPin<6> for PinBackend {
+    fn reserve_attempt(&mut self, _: &Request) -> Result<(), PinError> {
         Ok(())
     }
-}
-struct Gcm;
-impl ProtectedGcm for Gcm {
-    fn decrypt_identify_payload(
-        &mut self,
-        h: &[u8; 8],
-        iv: &[u8; 12],
-        tag: &[u8; 16],
-        body: &mut [u8; 12],
-    ) -> Result<(), biometric::Error> {
-        Aes256Gcm::new_from_slice(&[0x72; 32])
-            .unwrap()
-            .decrypt_in_place_detached(Nonce::from_slice(iv), h, body, Tag::from_slice(tag))
-            .map_err(|_| biometric::Error::Unauthenticated)
+    fn verify(&mut self, _: &Request, digits: &[u8; 6]) -> Result<(), PinError> {
+        if *digits == [0; 6] {
+            Ok(())
+        } else {
+            Err(PinError::Incorrect)
+        }
     }
 }
-struct Verifier {
-    pin_calls: Rc<Cell<usize>>,
-}
-impl SecureVerifier for Verifier {
+struct Verifier;
+impl SecurePinVerifier for Verifier {
     fn check_security_state(&mut self) -> Result<(), device_policy::Error> {
         Ok(())
     }
-    fn verify_fingerprint(
+    fn verify_device_pin(
         &mut self,
         r: &Request,
-    ) -> Result<biometric::VerifiedRequest, device_policy::Error> {
-        let mut session = Session::new(Counter, Gcm);
-        let tag = session.begin(*r, 7, 10).unwrap();
-        let header = [4, 0, 0x13, 0, 0x41, 0, 40, 0];
-        let iv = [0x39; 12];
-        let mut body = [0u8; 12];
-        for (i, word) in [0x55u16, 0x13, 0x61ec, 0x3034, 7, tag]
-            .into_iter()
-            .enumerate()
-        {
-            body[2 * i..2 * i + 2].copy_from_slice(&word.to_le_bytes());
+    ) -> Result<VerifiedPinRequest, device_policy::Error> {
+        let mut entry = PinEntry::begin(*r, || 10).unwrap();
+        for _ in 0..6 {
+            entry.press(Digit::Zero, Press::Short, 10).unwrap();
         }
-        let mac = Aes256Gcm::new_from_slice(&[0x72; 32])
-            .unwrap()
-            .encrypt_in_place_detached(Nonce::from_slice(&iv), &header, &mut body)
-            .unwrap();
-        let mut wire = header.to_vec();
-        wire.extend(iv);
-        wire.extend(mac);
-        wire.extend(body);
-        session
-            .receive(&wire, r, || 10)
-            .unwrap()
-            .ok_or(device_policy::Error::Rejected)
+        entry
+            .submit(&mut PinBackend, || 10)
+            .map_err(|_| device_policy::Error::Rejected)
     }
-    fn verify_additional_pin(
-        &mut self,
-        _: &biometric::VerifiedRequest,
-    ) -> Result<(), device_policy::Error> {
-        self.pin_calls.set(self.pin_calls.get() + 1);
+    fn confirm_on_device(&mut self, _: &VerifiedPinRequest) -> Result<(), device_policy::Error> {
         Ok(())
     }
-    fn confirm_on_device(
+}
+impl opensk::env::LocalPin for Model {
+    fn configured(&mut self) -> opensk::ctap::status_code::CtapResult<bool> {
+        Ok(true)
+    }
+    fn protocol_pin_info(
         &mut self,
-        _: &biometric::VerifiedRequest,
-    ) -> Result<(), device_policy::Error> {
-        Ok(())
+    ) -> opensk::ctap::status_code::CtapResult<opensk::env::ProtocolPinInfo> {
+        let persist = self.inner.persist();
+        Ok(opensk::env::ProtocolPinInfo {
+            configured: persist.pin_hash()?.is_some(),
+            minimum_length: persist.min_pin_length()?.unwrap_or(4),
+            force_change: persist.has_force_pin_change()?,
+        })
+    }
+    fn verify_active_request(
+        &mut self,
+        channel: Channel,
+    ) -> opensk::ctap::status_code::CtapResult<()> {
+        if channel == CHANNEL && self.stats.borrow().active && !self.stats.borrow().deny_local_pin {
+            Ok(())
+        } else {
+            Err(opensk::ctap::status_code::Ctap2StatusCode::CTAP2_ERR_OPERATION_DENIED)
+        }
     }
 }
 fn authority(r: &Request) -> Authorization {
-    let mut gate = Gate::new(Verifier {
-        pin_calls: Rc::new(Cell::new(0)),
-    });
+    authority_at(r, 0)
+}
+fn authority_at(r: &Request, generation: u64) -> Authorization {
+    let mut gate = Gate::new(Verifier);
+    for _ in 0..generation {
+        gate.lock();
+    }
     gate.approve(*r, || 10).unwrap();
     gate.consume_authorized(r, || 10).unwrap()
 }
+
+#[path = "protocol_pin_tests.rs"]
+mod protocol_pin_tests;
 fn encode(cmd: u8, value: Value) -> Vec<u8> {
     let mut bytes = vec![cmd];
     opensk::ctap::cbor_write(value, &mut bytes).unwrap();
@@ -288,7 +279,7 @@ fn next_assertions_need_fresh_bound_authority_and_cannot_replay_a_consumed_curso
 }
 
 #[test]
-fn u2f_authentication_is_fingerprint_gated_and_signature_verifies() {
+fn u2f_authentication_is_local_pin_gated_and_signature_verifies() {
     use p256::ecdsa::{Signature, VerifyingKey, signature::Verifier as _};
     use sha2::{Digest, Sha256};
     let (env, _) = Model::new();
@@ -420,7 +411,7 @@ fn real_make_credential_and_assertion_have_forced_uv_and_a_verifiable_signature(
 }
 
 #[test]
-fn reset_dispatch_cannot_partially_delete_shared_fingerprints_via_upstream_fallback() {
+fn reset_dispatch_cannot_partially_reset_shared_persistence_via_upstream_fallback() {
     let (env, stats) = Model::new();
     let mut core = Processor::new(env);
     assert_eq!(run(&mut core, &make_credential())[0], 0);
@@ -460,7 +451,7 @@ fn multi_account_limit_uses_the_trusted_platform_capacity_instead_of_a_smaller_m
 }
 
 #[test]
-fn hmac_secret_v1_and_v2_round_trip_and_authenticate_salts_after_fingerprint() {
+fn hmac_secret_v1_and_v2_round_trip_and_authenticate_salts_after_local_pin() {
     use opensk::{
         api::crypto::{
             aes256::Aes256,
@@ -581,7 +572,7 @@ fn hmac_secret_v1_and_v2_round_trip_and_authenticate_salts_after_fingerprint() {
     }
 }
 #[test]
-fn public_info_hides_private_capacity_and_does_not_advertise_host_pin() {
+fn public_info_hides_private_capacity_and_advertises_separate_protocol_pin() {
     let (env, stats) = Model::new();
     let mut core = Processor::new(env);
     let info = core
@@ -590,11 +581,9 @@ fn public_info_hides_private_capacity_and_does_not_advertise_host_pin() {
     let map = response_map(&info);
     assert!(!map.iter().any(|(k, _)| *k == Value::unsigned(20)));
     let options = get(&map, 4).extract_map().unwrap();
-    assert!(
-        !options
-            .iter()
-            .any(|(k, _)| *k == Value::text_string("clientPin".into()))
-    );
+    assert!(options.iter().any(
+        |(k, v)| *k == Value::text_string("clientPin".into()) && *v == Value::bool_value(false)
+    ));
     assert!(
         options
             .iter()
@@ -627,7 +616,7 @@ fn changed_payload_channel_or_expired_authority_never_enters_crypto_scope() {
     let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
     let auth = authority(prepared.request().unwrap());
     assert!(matches!(
-        core.authorized(prepared, auth, || 15_010),
+        core.authorized(prepared, auth, || 60_010),
         Err(Error::Time)
     ));
     assert_eq!(stats.borrow().begins, 0);
@@ -696,8 +685,8 @@ fn rollback_after_the_last_activation_check_prevents_the_first_private_operation
     assert_eq!(run(&mut core, &get_assertion(0x51))[0], 0x2e);
 }
 #[test]
-fn forbidden_host_pin_mutations_bad_rp_ids_and_noncanonical_requests_are_rejected() {
-    for subcmd in [1, 3, 4, 5, 7, 8, 9] {
+fn forbidden_uv_tokens_bad_rp_ids_and_noncanonical_requests_are_rejected() {
+    for subcmd in [7, 8] {
         assert!(matches!(
             prepare_ctap2(&encode(6, cbor_map! {1=>1,2=>subcmd}), BINDING, CHANNEL),
             Err(Error::Unsupported)

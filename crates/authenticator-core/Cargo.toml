@@ -9,13 +9,13 @@ device-policy = { path = "../device-policy" }
 device-records = { path = "../device-records" }
 device-vault = { path = "../device-vault" }
 openkeys-se-state = { path = "../se-state" }
-opensk = { path = "../../vendor/opensk/libraries/opensk", default-features = false, features = ["ctap1", "fingerprint"] }
+opensk = { path = "../../vendor/opensk/libraries/opensk", default-features = false, features = ["ctap1", "openkeys-local-pin"] }
 sk-cbor = { path = "../../vendor/opensk/libraries/cbor" }
 sha2 = { version = "=0.10.9", default-features = false }
 zeroize = { version = "1.9", default-features = false, features = ["alloc"] }
 
 [dev-dependencies]
-opensk = { path = "../../vendor/opensk/libraries/opensk", default-features = false, features = ["ctap1", "fingerprint", "std"] }
+opensk = { path = "../../vendor/opensk/libraries/opensk", default-features = false, features = ["ctap1", "openkeys-local-pin", "std"] }
 aes-gcm = { version = "=0.10.3", default-features = false, features = ["aes"] }
 p256 = { version = "=0.14.0", default-features = false, features = ["ecdsa", "ecdh"] }
 

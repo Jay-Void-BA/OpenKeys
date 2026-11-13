@@ -1,9 +1,15 @@
 {
   "upstream_commit": "2382394d4d61e170ef9ed1a2f7d39bf62e94b7d5",
   "modified_source_sha256": {
+    "libraries/opensk/Cargo.toml": "e5287fa3962f90a9f00b4c71f7e78409871758fbe59896ccea67c8bb31af1000",
     "libraries/opensk/src/api/key_store.rs": "6ab2b2a7875044d53f04d838ff27e4f26c036c5609f18b71720248a66f1684c3",
     "libraries/opensk/src/api/persist.rs": "fcf3d280202f44ea9b0961df6bca439f68a7e60124a206d10554799f5d363314",
-    "libraries/opensk/src/ctap/mod.rs": "ea7412ac14dc1341d5d8f649f9b9b8bdd037fabdcf930d9429d74b96c0110427"
+    "libraries/opensk/src/ctap/client_pin.rs": "3fdf6c8b8523668a54e25f434ea1a112836b370276b6348e8ef74f6c4455c06f",
+    "libraries/opensk/src/ctap/mod.rs": "352ec00420892e2e8357849e6c895f4b8c6eee189376e5c630c83a0b0b3859b1",
+    "libraries/opensk/src/ctap/pin_protocol.rs": "e1d90e3f1bee76cdd9c5b06b5ecf2a6d4cc3edff7d9cec9155c2f04cd8f7b72d",
+    "libraries/opensk/src/ctap/storage.rs": "d1868b9f3e685b408b18dda394efc8d0d92290053fe96975486326292a24d66e",
+    "libraries/opensk/src/env/mod.rs": "6d1e30fc3d074dfc8355b63a476fe9dedde3532931f737801862b695e0261d5e",
+    "libraries/opensk/src/env/test/mod.rs": "58a65697e1848cc26d4805549d9ba77f456b75acd8b86fe51b8e8293d509bef7"
   },
-  "patch_sha256": "c118b98d2e15d4ac57a50fc1e169764e28dd4b6979b98ee69192af9cd8b58930"
+  "patch_sha256": "82e35204fc71fe702d3b56b0f73d48f6fbc5ca9bab866a82b901745cb422f508"
 }

@@ -6,7 +6,7 @@
 //! Chip ACLs must make PIN_ID immutable (including deletion), bind all private
 //! objects and CREDIT writes to PIN_ID, and mandate full platform SCP03. Marker
 //! installation must be last and read-only. These are commissioning facts,
-//! not conclusions drawn from ReadType. Physical E2 qualification is required.
+//! not conclusions drawn from ReadType. Exact C2/Applet7.2 qualification is required.
 use crate::{Error, Exchange, PinBoundExchange, private};
 use device_policy::{
     Request,

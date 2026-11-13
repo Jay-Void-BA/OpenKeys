@@ -62,7 +62,7 @@
   "migration": "No automatic migration from legacy HKDF v2; full verified destruction first",
   "physical_results": "NOT_RUN",
   "source_sha256": {
-    "crates/se-state/src/native_pin.rs": "ca0d0f2238dd84c49ab2162a559f63790ba133ad92fc089aba58be6d4bf4644f",
+    "crates/se-state/src/native_pin.rs": "35ffcdce5b2c40ec92c3803c8cbfd834afa6a1f3b1a6db4c4560709bdd6ccafc",
     "crates/se-state/src/pin_only.rs": "6b7497a8436d74c270b27c1daedc98121b8054f8369bbf5dd81a39858c2cb205"
   }
 }

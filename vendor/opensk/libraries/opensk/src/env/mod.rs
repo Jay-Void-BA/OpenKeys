@@ -1,3 +1,4 @@
+// OpenKeys modifications (2026): explicit Root-owned local-PIN user verification.
 // Copyright 2022-2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +29,37 @@ use crate::api::rng::Rng;
 use crate::api::user_presence::UserPresence;
 use crate::ctap::Channel;
 use alloc::vec::Vec;
+
+#[cfg(all(feature = "openkeys-local-pin", feature = "fingerprint"))]
+compile_error!("OpenKeys local-PIN and biometric profiles must not be combined");
+#[cfg(all(feature = "openkeys-local-pin", feature = "debug_ctap"))]
+compile_error!("OpenKeys local-PIN profile forbids raw CTAP debug logging");
+
+/// Public protocol capability metadata, never a PIN hash or retry count.
+/// Root must bind this to the same committed profile used by private PIN I/O.
+#[cfg(feature = "openkeys-local-pin")]
+pub struct ProtocolPinInfo {
+    pub configured: bool,
+    pub minimum_length: u8,
+    pub force_change: bool,
+}
+
+/// Implement ONLY in the isolated Root. A configured device is not unlocked.
+/// Verification must check the SAME live exact-request execution, native PIN
+/// session, channel, clock, generation and hardware state before returning.
+/// Do not accept a host Boolean, enter PIN digits here, spend a second retry,
+/// or turn this hook into a cached all-channel unlock. No default succeeds.
+#[cfg(feature = "openkeys-local-pin")]
+pub trait LocalPin {
+    fn configured(&mut self) -> crate::ctap::status_code::CtapResult<bool>;
+    /// Public capability flag only; never read out a PIN hash outside its
+    /// private scope. Must agree with the atomically committed FIDO PIN state.
+    fn protocol_pin_info(&mut self) -> crate::ctap::status_code::CtapResult<ProtocolPinInfo>;
+    fn verify_active_request(
+        &mut self,
+        channel: Channel,
+    ) -> crate::ctap::status_code::CtapResult<()>;
+}
 
 #[cfg(feature = "std")]
 pub mod test;
@@ -61,6 +93,8 @@ pub trait Env {
     type Crypto: Crypto;
     #[cfg(feature = "fingerprint")]
     type Fingerprint: Fingerprint;
+    #[cfg(feature = "openkeys-local-pin")]
+    type LocalPin: LocalPin;
 
     fn rng(&mut self) -> &mut Self::Rng;
     fn user_presence(&mut self) -> &mut Self::UserPresence;
@@ -69,6 +103,8 @@ pub trait Env {
     fn clock(&mut self) -> &mut Self::Clock;
     #[cfg(feature = "fingerprint")]
     fn fingerprint(&mut self) -> &mut Self::Fingerprint;
+    #[cfg(feature = "openkeys-local-pin")]
+    fn local_pin(&mut self) -> &mut Self::LocalPin;
 
     /// Creates a write instance for debugging.
     ///

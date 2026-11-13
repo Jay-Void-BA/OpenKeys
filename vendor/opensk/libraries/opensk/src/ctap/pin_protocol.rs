@@ -1,3 +1,4 @@
+// OpenKeys modifications (2026): clear transport authorization without new entropy.
 // Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +29,7 @@ use crate::env::{AesKey, EcdhSk, Env, Hkdf, Hmac, Sha};
 use alloc::vec::Vec;
 use core::ops::DerefMut;
 use rand_core::Rng as _;
+use zeroize::Zeroize;
 
 /// Implements common functions between existing PIN protocols for handshakes.
 pub struct PinProtocol<E: Env> {
@@ -57,6 +59,10 @@ impl<E: Env> PinProtocol<E> {
     /// Generates a fresh pinUvAuthToken.
     pub fn reset_pin_uv_auth_token(&mut self, env: &mut E) {
         env.rng().fill_bytes(self.pin_uv_auth_token.deref_mut());
+    }
+
+    pub fn erase_pin_uv_auth_token(&mut self) {
+        self.pin_uv_auth_token.deref_mut().zeroize();
     }
 
     /// Returns the authenticator’s public key as a CoseKey structure.

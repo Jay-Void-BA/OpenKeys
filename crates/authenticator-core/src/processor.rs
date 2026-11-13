@@ -6,20 +6,28 @@ use device_policy::{
     Authorization,
     execution::{Execution, State as ExecutionState},
 };
-use opensk::{api::customization::Customization, ctap::CtapState, env::Env};
+use opensk::{
+    api::{customization::Customization, persist::Persist},
+    ctap::CtapState,
+    env::{Env, LocalPin},
+};
 use zeroize::{Zeroize, Zeroizing};
 
 /// Implement only inside the verified root. Counter, key, persistence and
-/// fingerprint providers must be real hardware adapters. No permissive default
+/// local-PIN providers must be real hardware adapters. No permissive default
 /// or public simulation backend is supplied. End must revoke ALL scope state.
 pub trait Platform: Env {
     fn check_boot_and_channel(&mut self, binding: &[u8; 32]) -> Result<(), Error>;
     fn authorization_generation(&self) -> u64;
     fn begin_authorized(&mut self, execution: Execution) -> Result<(), Error>;
     fn end_authorized(&mut self);
+    /// Full synchronous local revocation: native SE PIN, both lease kinds,
+    /// active execution, display/input and pending requests. Bump the Root
+    /// generation before returning; never wait for a USB/NFC host ACK.
+    fn revoke_session(&mut self);
     /// Root-owned crash-safe FIDO reset. Do not invoke OpenSK's generic reset:
-    /// it can delete shared sensor templates before the vault/SE transaction.
-    /// Device-level notes/fingerprint lifecycle is separate from CTAP reset.
+    /// it can mutate shared persistence before the vault/SE transaction.
+    /// Device-level notes/hardware-PIN lifecycle is separate from CTAP reset.
     fn reset_fido_authorized(&mut self) -> Result<Vec<u8>, Error>;
 }
 struct Activation<'a, E> {
@@ -40,6 +48,7 @@ pub struct Processor<E: Platform> {
     env: E,
     state: CtapState<E>,
     continuation: Option<Continuation>,
+    binding: Option<([u8; 32], opensk::ctap::Channel)>,
 }
 struct Continuation {
     binding: [u8; 32],
@@ -61,7 +70,24 @@ impl<E: Platform> Processor<E> {
             env,
             state,
             continuation: None,
+            binding: None,
         }
+    }
+    pub fn lock(&mut self) {
+        self.env.revoke_session();
+        self.continuation = None;
+        self.binding = None;
+        self.state.revoke_authorizations(&mut self.env);
+    }
+    fn bind(&mut self, request: &Prepared) -> Result<(), Error> {
+        let binding = (request.binding, request.channel);
+        if self.binding.is_some_and(|old| old != binding) {
+            self.lock();
+            self.binding = Some(binding);
+            return Err(Error::Authorization);
+        }
+        self.binding = Some(binding);
+        Ok(())
     }
     /// Continuations retain their original RP/channel/transaction digest and
     /// deadline, then require a NEW device authorization for each next result.
@@ -92,6 +118,7 @@ impl<E: Platform> Processor<E> {
         if request.request.is_some() {
             return Err(Error::Authorization);
         }
+        self.bind(&request)?;
         // Public shape is narrowed by prepare_ctap2; callers cannot construct
         // Prepared or mutate its byte buffer outside this crate.
         self.env.end_authorized();
@@ -148,6 +175,7 @@ impl<E: Platform> Processor<E> {
             return Err(Error::Time);
         }
         self.env.check_boot_and_channel(&expected.channel)?;
+        self.bind(&request)?;
         let execution = authorization.activate(
             expected,
             &mut Activation {
@@ -190,6 +218,16 @@ impl<E: Platform> Processor<E> {
             self.env.end_authorized();
             return Err(error);
         }
+        if self
+            .env
+            .local_pin()
+            .verify_active_request(request.channel)
+            .is_err()
+        {
+            self.env.end_authorized();
+            self.continuation = None;
+            return Err(Error::Authorization);
+        }
         let before = clock();
         let same_generation = self.env.authorization_generation() == generation;
         if !same_generation
@@ -207,7 +245,15 @@ impl<E: Platform> Processor<E> {
         }
         let previous = self.continuation.take();
         let mut dispatched = self.dispatch(&request);
-        let checked = self.env.check_boot_and_channel(&expected.channel);
+        let checked = self
+            .env
+            .check_boot_and_channel(&expected.channel)
+            .and_then(|_| {
+                self.env
+                    .local_pin()
+                    .verify_active_request(request.channel)
+                    .map_err(|_| Error::Authorization)
+            });
         let same_generation = self.env.authorization_generation() == generation;
         let after = clock();
         self.env.end_authorized();
@@ -277,6 +323,29 @@ impl<E: Platform> Processor<E> {
         Ok(response)
     }
     fn dispatch(&mut self, request: &Prepared) -> Result<Vec<u8>, Error> {
+        // Built-in device PIN never substitutes for an independently set
+        // FIDO protocol PIN. Upstream validates the supplied token/MAC/RP.
+        // This read occurs only inside the exact private execution scope.
+        let host_pin_needed = if request.dialect == Dialect::Ctap2
+            && matches!(request.bytes[0], 1 | 2)
+        {
+            let stored = Zeroizing::new(self.env.persist().pin_hash().map_err(|_| Error::State)?);
+            stored.is_some()
+        } else {
+            false
+        };
+        if host_pin_needed {
+            let map = opensk::ctap::cbor_read(&request.bytes[1..])
+                .map_err(|_| Error::State)?
+                .extract_map()
+                .ok_or(Error::State)?;
+            let key = if request.bytes[0] == 1 { 8 } else { 6 };
+            if !map.iter().any(|(k, _)| *k == sk_cbor::Value::unsigned(key)) {
+                return Ok(alloc::vec![
+                    opensk::ctap::status_code::Ctap2StatusCode::CTAP2_ERR_PUAT_REQUIRED as u8
+                ]);
+            }
+        }
         if request.dialect == Dialect::Ctap2 && request.bytes[0] == 7 {
             return self.env.reset_fido_authorized();
         }
@@ -298,11 +367,11 @@ fn sanitize_info(response: &[u8]) -> Result<Zeroizing<Vec<u8>>, Error> {
         .map_err(|_| Error::State)?
         .extract_map()
         .ok_or(Error::State)?;
-    // Remaining credential capacity reveals usage metadata before fingerprint.
+    // Remaining credential capacity reveals usage metadata before local PIN.
     map.retain(|(k, _)| *k != Value::unsigned(20));
     // Do not advertise optional large-blob/PIN configuration APIs that the
     // root gateway intentionally does not expose.
-    map.retain(|(k, _)| *k != Value::unsigned(11) && *k != Value::unsigned(13));
+    map.retain(|(k, _)| *k != Value::unsigned(11) && *k != Value::unsigned(16));
     if let Some((_, extensions)) = map.iter_mut().find(|(k, _)| *k == Value::unsigned(2)) {
         let mut list = extensions.clone().extract_array().ok_or(Error::State)?;
         list.retain(|v| {
@@ -313,13 +382,32 @@ fn sanitize_info(response: &[u8]) -> Result<Zeroizing<Vec<u8>>, Error> {
     }
     if let Some((_, options)) = map.iter_mut().find(|(k, _)| *k == Value::unsigned(4)) {
         let mut pairs = options.clone().extract_map().ok_or(Error::State)?;
+        let host_pin_set = pairs.iter().any(|(k, v)| {
+            *k == Value::text_string("clientPin".into()) && *v == Value::bool_value(true)
+        });
         pairs.retain(|(k, _)| {
-            *k != Value::text_string("clientPin".into())
-                && *k != Value::text_string("alwaysUv".into())
+            *k != Value::text_string("alwaysUv".into())
                 && *k != Value::text_string("largeBlobs".into())
                 && *k != Value::text_string("authnrCfg".into())
                 && *k != Value::text_string("setMinPINLength".into())
+                && *k != Value::text_string("bioEnroll".into())
+                && *k != Value::text_string("userVerificationMgmtPreview".into())
+                && *k != Value::text_string("uvAcfg".into())
+                && *k != Value::text_string("makeCredUvNotRqd".into())
         });
+        if host_pin_set {
+            // Make hosts use the separate protocol PIN/token path; Root
+            // still requires its own local six-digit hardware PIN first.
+            for (key, value) in &mut pairs {
+                if *key == Value::text_string("uv".into()) {
+                    *value = Value::bool_value(false);
+                }
+            }
+        }
+        pairs.push((
+            Value::text_string("makeCredUvNotRqd".into()),
+            Value::bool_value(false),
+        ));
         pairs.push((
             Value::text_string("alwaysUv".into()),
             Value::bool_value(true),

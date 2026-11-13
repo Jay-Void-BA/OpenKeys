@@ -1,3 +1,4 @@
+// OpenKeys modifications (2026): unconfigured, refusing local-PIN test default.
 // Copyright 2022-2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -301,6 +302,27 @@ impl Fingerprint for TestFingerprint {
 
 impl key_store::Helper for TestEnv {}
 
+#[cfg(feature = "openkeys-local-pin")]
+impl crate::env::LocalPin for TestEnv {
+    fn configured(&mut self) -> CtapResult<bool> {
+        Ok(false)
+    }
+    fn protocol_pin_info(&mut self) -> CtapResult<crate::env::ProtocolPinInfo> {
+        Ok(crate::env::ProtocolPinInfo {
+            configured: self.pin_hash()?.is_some(),
+            minimum_length: self.min_pin_length()?.unwrap_or(
+                crate::api::customization::Customization::default_min_pin_length(
+                    self.customization(),
+                ),
+            ),
+            force_change: self.has_force_pin_change()?,
+        })
+    }
+    fn verify_active_request(&mut self, _channel: crate::ctap::Channel) -> CtapResult<()> {
+        Err(crate::ctap::status_code::Ctap2StatusCode::CTAP2_ERR_OPERATION_DENIED)
+    }
+}
+
 impl Env for TestEnv {
     type Rng = TestRng;
     type UserPresence = TestUserPresence;
@@ -313,6 +335,8 @@ impl Env for TestEnv {
     type Crypto = SoftwareCrypto;
     #[cfg(feature = "fingerprint")]
     type Fingerprint = TestFingerprint;
+    #[cfg(feature = "openkeys-local-pin")]
+    type LocalPin = Self;
 
     fn rng(&mut self) -> &mut Self::Rng {
         &mut self.rng
@@ -320,6 +344,11 @@ impl Env for TestEnv {
 
     fn user_presence(&mut self) -> &mut Self::UserPresence {
         &mut self.user_presence
+    }
+
+    #[cfg(feature = "openkeys-local-pin")]
+    fn local_pin(&mut self) -> &mut Self::LocalPin {
+        self
     }
 
     #[cfg(feature = "fingerprint")]

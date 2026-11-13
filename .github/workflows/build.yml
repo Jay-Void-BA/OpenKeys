@@ -1,9 +1,9 @@
 name: OpenKeys development checks
 on:
   push:
-    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'manufacturing/se-native-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'manufacturing/se-native-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/check-classical-features.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
   pull_request:
-    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'manufacturing/se-native-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
+    paths: ['.gitattributes', 'Cargo.toml', 'Cargo.lock', 'crates/**', 'apps/**', 'firmware/**', 'vendor/**', 'hardware/r04/**', 'hardware/r05/**', 'manufacturing/se-pin-layout-r05.json', 'manufacturing/se-native-pin-layout-r05.json', 'scripts/*r05*', 'scripts/check-gpui-vendor.py', 'scripts/check-future-compat.py', 'manufacturing/se-state-layout.json', 'scripts/export-se-state-layout.py', 'scripts/check-opensk-vendor.py', 'scripts/check-classical-features.py', 'scripts/export-diagnostic.py', 'scripts/check-diagnostic-manifest.py', 'scripts/diagnostic_contract.py', '.github/workflows/build.yml']
   workflow_dispatch:
     inputs:
       target:
@@ -63,6 +63,9 @@ jobs:
           cargo build -p openkeys-h573-r05 --release --target thumbv8m.main-none-eabihf --features r05-diagnostics,lcd-v1-0 --locked
           cp target/thumbv8m.main-none-eabihf/release/openkeys-r05-diagnostics target/r05-diagnostics/openkeys-r05-diagnostics-v1-0.elf
           cargo clippy -p openkeys-h573-r05 --target thumbv8m.main-none-eabihf --features r05-diagnostics,lcd-v1-0 --locked -- -D warnings
+      - name: Check classical ARM feature boundary
+        if: runner.os == 'Linux'
+        run: python3 scripts/check-classical-features.py
       - name: Default-off native UserID probe ARM check
         if: runner.os == 'Linux'
         run: cargo check -p openkeys-se-state --features native-uid-qualification --target thumbv8m.main-none-eabihf --locked

@@ -34,6 +34,12 @@
 “全部软件漏洞已经排除”的结论。UserID 通用 counter 不报告失败次数、ReadSize 不支持
 UserID，也已作为原厂接口限制写入资格验证材料。
 
+本轮经典 FIDO 复查又关闭了：[旧指纹入口、设备 PIN 与主机 PIN 混用、设置主机 PIN
+之前取得的本地 UV token、锁定后的 token / 加密 PIN 重放、撤权返还连续错误预算、
+公开 GetInfo 先读取私密目录、确认后未执行即延长租约](CLASSICAL_FIDO_PIN_R05.md)。
+相应独立客户端 v1 / v2 和负向测试已补；真实 H573 Root、SE ACL、IRQ / 时钟与
+端到端管理仍未接通，因此不能将这些修复表述为整机理论安全或全部漏洞排除。
+
 ## 放行前必须关闭
 
 - 可信启动、签名升级、防回滚、生产调试配置、Root / SAU / GTZC / DMA / watchdog、可信时钟与 RTC。

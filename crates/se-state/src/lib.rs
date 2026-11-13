@@ -7,7 +7,8 @@
 //! keys or RAM/NOR counter fallback. Typed key/OTP provisioning is separate
 //! from persistent-state open, which never creates or repairs missing objects.
 //! The chip's atomic/monotonic/persistent behavior and commissioning ACLs must
-//! still be qualified on the exact E2 personality; model tests do not do so.
+//! still be qualified on the selected personality (R05 C2/Applet7.2); model
+//! tests do not qualify a real device.
 
 pub mod keys;
 pub mod native_pin;

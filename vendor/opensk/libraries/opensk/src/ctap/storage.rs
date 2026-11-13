@@ -1,3 +1,4 @@
+// OpenKeys modifications (2026): local-PIN UV capability without biometric objects.
 // Copyright 2019-2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +21,8 @@ use crate::ctap::data_formats::{
 };
 use crate::ctap::status_code::{Ctap2StatusCode, CtapResult};
 use crate::env::Env;
+#[cfg(feature = "openkeys-local-pin")]
+use crate::env::LocalPin;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::convert::TryFrom;
@@ -297,6 +300,10 @@ pub fn enable_enterprise_attestation(env: &mut impl Env) -> CtapResult<()> {
 /// That is the case if a PIN is set, or a built-in user verification method is enrolled. Both
 /// can provide a pinUvAuthToken, which OpenSK always supports.
 pub fn has_user_verification(env: &mut impl Env) -> CtapResult<bool> {
+    #[cfg(feature = "openkeys-local-pin")]
+    if env.local_pin().configured()? {
+        return Ok(true);
+    }
     #[cfg(feature = "fingerprint")]
     if !env.persist().template_infos()?.is_empty() {
         return Ok(true);

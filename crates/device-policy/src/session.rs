@@ -342,9 +342,9 @@ impl<V: Verifier> Gate<V> {
             self.lock();
             return Err(Error::CounterExhausted);
         }
-        // A completed exact local confirmation is real user activity. A
-        // keepalive, failed PIN, silent poll or rejected request is not.
-        self.hardware_until = Self::deadline(self.last)?;
+        // Confirmation authorizes this exact request but does not renew an
+        // idle lease. Only completed successful output/commit may renew it.
+        // Otherwise confirmed-but-never-executed requests could keep it alive.
         self.pending = Some(Grant {
             request,
             protocol,

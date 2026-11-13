@@ -133,6 +133,18 @@ fn physical_connection_and_keepalive_polling_cannot_renew_thirty_seconds() {
     );
 }
 #[test]
+fn confirmation_without_successful_execution_never_renews_idle() {
+    let (mut g, _, b) = model();
+    let r = request(&b, Operation::RevealNote);
+    g.approve(r, None, &b, || 20_000).unwrap();
+    g.tick(&b, || 30_000).unwrap();
+    assert_eq!(
+        g.consume_authorized(&r, &b, || 30_001).err(),
+        Some(Error::Expired)
+    );
+    assert!(g.tick(&b, || 30_002).is_err());
+}
+#[test]
 fn hardware_and_protocol_pin_flags_are_independent_and_scoped_to_role() {
     let (mut g, db, b) = model();
     assert_eq!(

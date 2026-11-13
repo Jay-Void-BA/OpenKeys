@@ -91,12 +91,13 @@ fn operation_code(op: Operation) -> u8 {
         Operation::EnrollFingerprint => 7,
         Operation::DeleteFingerprint => 8,
         Operation::DeriveHmacSecret => 9,
+        Operation::ProtocolPin => 10,
         _ => 255,
     }
 }
 /// Called only with the root's current device-session binding and transport
-/// channel, not values deserialized from the host. Unknown/config/host-PIN
-/// mutation commands are rejected. The effective command always requires UV.
+/// channel, not values deserialized from the host. Biometric/config commands
+/// are rejected. Host protocol-PIN commands remain distinct from local PIN.
 pub fn prepare_ctap2(raw: &[u8], binding: [u8; 32], channel: Channel) -> Result<Prepared, Error> {
     if raw.is_empty() || raw.len() > limits::MAX_BYTES {
         return Err(Error::Limit);
@@ -116,7 +117,7 @@ pub fn prepare_ctap2(raw: &[u8], binding: [u8; 32], channel: Channel) -> Result<
             review: Review::Action("Device information"),
         });
     }
-    if !matches!(cmd, 1 | 2 | 6 | 7 | 8 | 9 | 10 | 11 | 0x40 | 0x41) {
+    if !matches!(cmd, 1 | 2 | 6 | 7 | 8 | 10 | 11 | 0x41) {
         return Err(Error::Unsupported);
     }
     let mut map = if matches!(cmd, 7 | 8 | 11) {
@@ -168,12 +169,29 @@ pub fn prepare_ctap2(raw: &[u8], binding: [u8; 32], channel: Channel) -> Result<
         6 => {
             match subcommand(&map, 2)? {
                 2 => (None, Review::Action("Key agreement")),
-                // UV token requests use the built-in fingerprint. Host PIN
-                // setup/change/token paths cannot replace the device buttons.
-                6 => (
-                    Some(Operation::FidoSign),
+                1 => (
+                    Some(Operation::ProtocolPin),
+                    Review::Action("FIDO PIN retries"),
+                ),
+                3 => (Some(Operation::ProtocolPin), Review::Action("Set FIDO PIN")),
+                4 => (
+                    Some(Operation::ProtocolPin),
+                    Review::Action("Change FIDO PIN"),
+                ),
+                5 => (
+                    Some(Operation::ProtocolPin),
+                    Review::Action("Verify FIDO PIN"),
+                ),
+                6 if matches!(subcommand(&map, 9)?, 1..=7) => (
+                    Some(Operation::ProtocolPin),
                     Review::Action("Verify device user"),
                 ),
+                9 if matches!(subcommand(&map, 9)?, 1..=7) => (
+                    Some(Operation::ProtocolPin),
+                    Review::Action("Verify FIDO PIN"),
+                ),
+                // Local UV tokens are rejected by the PIN provider whenever
+                // an independent host PIN is set. No unsupported permissions.
                 _ => return Err(Error::Unsupported),
             }
         }
@@ -182,14 +200,6 @@ pub fn prepare_ctap2(raw: &[u8], binding: [u8; 32], channel: Channel) -> Result<
             Review::Action("Erase FIDO data"),
         ),
         8 => return Err(Error::Unsupported), // Explicit bound continuation added by runtime.
-        9 | 0x40 => {
-            let op = if subcommand(&map, 2)? == 6 {
-                Operation::DeleteFingerprint
-            } else {
-                Operation::EnrollFingerprint
-            };
-            (Some(op), Review::Action("Manage fingerprints"))
-        }
         10 | 0x41 => {
             let op = match subcommand(&map, 1)? {
                 1..=5 => Operation::ListPrivateMetadata,

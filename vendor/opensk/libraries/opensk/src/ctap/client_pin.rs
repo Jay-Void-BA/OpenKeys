@@ -1,3 +1,4 @@
+// OpenKeys modifications (2026): revoke tokens and ECDH without refunding PIN retries.
 // Copyright 2020-2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +19,8 @@ use super::data_formats::{
 };
 #[cfg(feature = "fingerprint")]
 use super::fingerprint::perform_built_in_uv;
+#[cfg(feature = "openkeys-local-pin")]
+use super::perform_built_in_uv;
 use super::pin_protocol::{PinProtocol, SharedSecret, verify_pin_uv_auth_token};
 use super::response::{AuthenticatorClientPinResponse, ResponseData};
 use super::secret::Secret;
@@ -291,6 +294,8 @@ impl<E: Env> ClientPin<E> {
 
         check_and_store_new_pin(env, &shared_secret, new_pin_enc)?;
         storage::reset_pin_retries(env)?;
+        #[cfg(feature = "openkeys-local-pin")]
+        self.reset_pin_uv_auth_token(env); // invalidate earlier local-only UV tokens
         Ok(())
     }
 
@@ -374,7 +379,7 @@ impl<E: Env> ClientPin<E> {
         })
     }
 
-    #[cfg(feature = "fingerprint")]
+    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
     fn process_get_pin_uv_auth_token_using_uv_with_permissions(
         &mut self,
         env: &mut E,
@@ -390,6 +395,18 @@ impl<E: Env> ClientPin<E> {
         } = client_pin_params;
         let key_agreement = ok_or_missing(key_agreement)?;
         let permissions = permissions.ok_or(Ctap2StatusCode::CTAP2_ERR_MISSING_PARAMETER)?;
+
+        #[cfg(feature = "openkeys-local-pin")]
+        {
+            // An independent configured host PIN is mandatory, even after
+            // local hardware PIN success. Never mint a local-only bypass.
+            if env.persist().pin_hash()?.is_some() {
+                return Err(Ctap2StatusCode::CTAP2_ERR_PUAT_REQUIRED);
+            }
+            if permissions & !0x07 != 0 {
+                return Err(Ctap2StatusCode::CTAP2_ERR_UNAUTHORIZED_PERMISSION);
+            }
+        }
 
         if permissions == 0 {
             return Err(Ctap2StatusCode::CTAP1_ERR_INVALID_PARAMETER);
@@ -409,7 +426,10 @@ impl<E: Env> ClientPin<E> {
             return Err(Ctap2StatusCode::CTAP1_ERR_INVALID_PARAMETER);
         }
 
+        #[cfg(feature = "fingerprint")]
         let internal_retry = env.customization().preferred_platform_uv_attempts() == 1;
+        #[cfg(feature = "openkeys-local-pin")]
+        let internal_retry = false; // Root proof already exists; never retry the device PIN here
         perform_built_in_uv(env, channel, internal_retry)?;
 
         let shared_secret = self.get_shared_secret(pin_uv_auth_protocol, key_agreement)?;
@@ -440,7 +460,7 @@ impl<E: Env> ClientPin<E> {
         })
     }
 
-    #[cfg(not(feature = "fingerprint"))]
+    #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
     fn process_get_pin_uv_auth_token_using_uv_with_permissions(
         &mut self,
         _env: &mut E,
@@ -511,39 +531,51 @@ impl<E: Env> ClientPin<E> {
         client_pin_params: AuthenticatorClientPinParameters,
         channel: Channel,
     ) -> CtapResult<ResponseData> {
-        check_pin_uv_auth_protocol(env, client_pin_params.pin_uv_auth_protocol)?;
-        let response = match client_pin_params.sub_command {
-            ClientPinSubCommand::GetPinRetries => Some(self.process_get_pin_retries(env)?),
-            ClientPinSubCommand::GetKeyAgreement => {
-                Some(self.process_get_key_agreement(client_pin_params)?)
-            }
-            ClientPinSubCommand::SetPin => {
-                self.process_set_pin(env, client_pin_params)?;
-                None
-            }
-            ClientPinSubCommand::ChangePin => {
-                self.process_change_pin(env, client_pin_params)?;
-                None
-            }
-            ClientPinSubCommand::GetPinToken => {
-                Some(self.process_get_pin_token(env, client_pin_params)?)
-            }
-            ClientPinSubCommand::GetPinUvAuthTokenUsingUvWithPermissions => Some(
-                self.process_get_pin_uv_auth_token_using_uv_with_permissions(
-                    env,
-                    client_pin_params,
-                    channel,
-                )?,
-            ),
-            ClientPinSubCommand::GetUvRetries => Some(self.process_get_uv_retries(env)?),
-            ClientPinSubCommand::GetPinUvAuthTokenUsingPinWithPermissions => Some(
-                self.process_get_pin_uv_auth_token_using_pin_with_permissions(
-                    env,
-                    client_pin_params,
-                )?,
-            ),
-        };
-        Ok(ResponseData::AuthenticatorClientPin(response))
+        #[cfg(feature = "openkeys-local-pin")]
+        let sensitive = !matches!(
+            &client_pin_params.sub_command,
+            ClientPinSubCommand::GetPinRetries | ClientPinSubCommand::GetKeyAgreement
+        );
+        let result = (|| {
+            check_pin_uv_auth_protocol(env, client_pin_params.pin_uv_auth_protocol)?;
+            let response = match client_pin_params.sub_command {
+                ClientPinSubCommand::GetPinRetries => Some(self.process_get_pin_retries(env)?),
+                ClientPinSubCommand::GetKeyAgreement => {
+                    Some(self.process_get_key_agreement(client_pin_params)?)
+                }
+                ClientPinSubCommand::SetPin => {
+                    self.process_set_pin(env, client_pin_params)?;
+                    None
+                }
+                ClientPinSubCommand::ChangePin => {
+                    self.process_change_pin(env, client_pin_params)?;
+                    None
+                }
+                ClientPinSubCommand::GetPinToken => {
+                    Some(self.process_get_pin_token(env, client_pin_params)?)
+                }
+                ClientPinSubCommand::GetPinUvAuthTokenUsingUvWithPermissions => Some(
+                    self.process_get_pin_uv_auth_token_using_uv_with_permissions(
+                        env,
+                        client_pin_params,
+                        channel,
+                    )?,
+                ),
+                ClientPinSubCommand::GetUvRetries => Some(self.process_get_uv_retries(env)?),
+                ClientPinSubCommand::GetPinUvAuthTokenUsingPinWithPermissions => Some(
+                    self.process_get_pin_uv_auth_token_using_pin_with_permissions(
+                        env,
+                        client_pin_params,
+                    )?,
+                ),
+            };
+            Ok(ResponseData::AuthenticatorClientPin(response))
+        })();
+        #[cfg(feature = "openkeys-local-pin")]
+        if sensitive && result.is_err() {
+            self.revoke(env);
+        }
+        result
     }
 
     /// Verifies the HMAC for the pinUvAuthToken of the given version.
@@ -572,6 +604,18 @@ impl<E: Env> ClientPin<E> {
         self.pin_protocol_v1.reset_pin_uv_auth_token(env);
         self.pin_protocol_v2.reset_pin_uv_auth_token(env);
         self.pin_uv_auth_token_state.stop_using_pin_uv_auth_token();
+    }
+
+    /// Root has already cut private services. Invalidate permissions and zero
+    /// both tokens BEFORE potentially blocking key regeneration. A replayed
+    /// encrypted host PIN must not verify against an old ECDH key after lock.
+    /// Preserve consecutive_pin_mismatches and all persistent retry state.
+    pub fn revoke(&mut self, env: &mut E) {
+        self.pin_uv_auth_token_state.stop_using_pin_uv_auth_token();
+        self.pin_protocol_v1.erase_pin_uv_auth_token();
+        self.pin_protocol_v2.erase_pin_uv_auth_token();
+        self.pin_protocol_v1.regenerate(env);
+        self.pin_protocol_v2.regenerate(env);
     }
 
     /// Resets all held state.

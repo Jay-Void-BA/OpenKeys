@@ -1,3 +1,9 @@
+--- a/libraries/opensk/Cargo.toml
++++ b/libraries/opensk/Cargo.toml
+@@ -0,0 +1 @@
++# OpenKeys modifications: separate local hardware-PIN UV from biometric enrollment.
+@@ -49,0 +51 @@
++openkeys-local-pin = []
 --- a/libraries/opensk/src/api/key_store.rs
 +++ b/libraries/opensk/src/api/key_store.rs
 @@ -0,0 +1 @@
@@ -39,18 +45,168 @@
 +        let new_value = old_value
 +            .checked_add(increment)
 +            .ok_or(Ctap2StatusCode::CTAP2_ERR_VENDOR_INTERNAL_ERROR)?;
+--- a/libraries/opensk/src/ctap/client_pin.rs
++++ b/libraries/opensk/src/ctap/client_pin.rs
+@@ -0,0 +1 @@
++// OpenKeys modifications (2026): revoke tokens and ECDH without refunding PIN retries.
+@@ -20,0 +22,2 @@
++#[cfg(feature = "openkeys-local-pin")]
++use super::perform_built_in_uv;
+@@ -293,0 +297,2 @@
++        #[cfg(feature = "openkeys-local-pin")]
++        self.reset_pin_uv_auth_token(env); // invalidate earlier local-only UV tokens
+@@ -377 +382 @@
+-    #[cfg(feature = "fingerprint")]
++    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
+@@ -393,0 +399,12 @@
++        #[cfg(feature = "openkeys-local-pin")]
++        {
++            // An independent configured host PIN is mandatory, even after
++            // local hardware PIN success. Never mint a local-only bypass.
++            if env.persist().pin_hash()?.is_some() {
++                return Err(Ctap2StatusCode::CTAP2_ERR_PUAT_REQUIRED);
++            }
++            if permissions & !0x07 != 0 {
++                return Err(Ctap2StatusCode::CTAP2_ERR_UNAUTHORIZED_PERMISSION);
++            }
++        }
++
+@@ -411,0 +429 @@
++        #[cfg(feature = "fingerprint")]
+@@ -412,0 +431,2 @@
++        #[cfg(feature = "openkeys-local-pin")]
++        let internal_retry = false; // Root proof already exists; never retry the device PIN here
+@@ -443 +463 @@
+-    #[cfg(not(feature = "fingerprint"))]
++    #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
+@@ -514,33 +534,45 @@
+-        check_pin_uv_auth_protocol(env, client_pin_params.pin_uv_auth_protocol)?;
+-        let response = match client_pin_params.sub_command {
+-            ClientPinSubCommand::GetPinRetries => Some(self.process_get_pin_retries(env)?),
+-            ClientPinSubCommand::GetKeyAgreement => {
+-                Some(self.process_get_key_agreement(client_pin_params)?)
+-            }
+-            ClientPinSubCommand::SetPin => {
+-                self.process_set_pin(env, client_pin_params)?;
+-                None
+-            }
+-            ClientPinSubCommand::ChangePin => {
+-                self.process_change_pin(env, client_pin_params)?;
+-                None
+-            }
+-            ClientPinSubCommand::GetPinToken => {
+-                Some(self.process_get_pin_token(env, client_pin_params)?)
+-            }
+-            ClientPinSubCommand::GetPinUvAuthTokenUsingUvWithPermissions => Some(
+-                self.process_get_pin_uv_auth_token_using_uv_with_permissions(
+-                    env,
+-                    client_pin_params,
+-                    channel,
+-                )?,
+-            ),
+-            ClientPinSubCommand::GetUvRetries => Some(self.process_get_uv_retries(env)?),
+-            ClientPinSubCommand::GetPinUvAuthTokenUsingPinWithPermissions => Some(
+-                self.process_get_pin_uv_auth_token_using_pin_with_permissions(
+-                    env,
+-                    client_pin_params,
+-                )?,
+-            ),
+-        };
+-        Ok(ResponseData::AuthenticatorClientPin(response))
++        #[cfg(feature = "openkeys-local-pin")]
++        let sensitive = !matches!(
++            &client_pin_params.sub_command,
++            ClientPinSubCommand::GetPinRetries | ClientPinSubCommand::GetKeyAgreement
++        );
++        let result = (|| {
++            check_pin_uv_auth_protocol(env, client_pin_params.pin_uv_auth_protocol)?;
++            let response = match client_pin_params.sub_command {
++                ClientPinSubCommand::GetPinRetries => Some(self.process_get_pin_retries(env)?),
++                ClientPinSubCommand::GetKeyAgreement => {
++                    Some(self.process_get_key_agreement(client_pin_params)?)
++                }
++                ClientPinSubCommand::SetPin => {
++                    self.process_set_pin(env, client_pin_params)?;
++                    None
++                }
++                ClientPinSubCommand::ChangePin => {
++                    self.process_change_pin(env, client_pin_params)?;
++                    None
++                }
++                ClientPinSubCommand::GetPinToken => {
++                    Some(self.process_get_pin_token(env, client_pin_params)?)
++                }
++                ClientPinSubCommand::GetPinUvAuthTokenUsingUvWithPermissions => Some(
++                    self.process_get_pin_uv_auth_token_using_uv_with_permissions(
++                        env,
++                        client_pin_params,
++                        channel,
++                    )?,
++                ),
++                ClientPinSubCommand::GetUvRetries => Some(self.process_get_uv_retries(env)?),
++                ClientPinSubCommand::GetPinUvAuthTokenUsingPinWithPermissions => Some(
++                    self.process_get_pin_uv_auth_token_using_pin_with_permissions(
++                        env,
++                        client_pin_params,
++                    )?,
++                ),
++            };
++            Ok(ResponseData::AuthenticatorClientPin(response))
++        })();
++        #[cfg(feature = "openkeys-local-pin")]
++        if sensitive && result.is_err() {
++            self.revoke(env);
++        }
++        result
+@@ -574,0 +607,12 @@
++    }
++
++    /// Root has already cut private services. Invalidate permissions and zero
++    /// both tokens BEFORE potentially blocking key regeneration. A replayed
++    /// encrypted host PIN must not verify against an old ECDH key after lock.
++    /// Preserve consecutive_pin_mismatches and all persistent retry state.
++    pub fn revoke(&mut self, env: &mut E) {
++        self.pin_uv_auth_token_state.stop_using_pin_uv_auth_token();
++        self.pin_protocol_v1.erase_pin_uv_auth_token();
++        self.pin_protocol_v2.erase_pin_uv_auth_token();
++        self.pin_protocol_v1.regenerate(env);
++        self.pin_protocol_v2.regenerate(env);
 --- a/libraries/opensk/src/ctap/mod.rs
 +++ b/libraries/opensk/src/ctap/mod.rs
 @@ -0,0 +1 @@
-+// OpenKeys modifications (2026): hardware secret derivation and one-call gated U2F bridge.
++// OpenKeys modifications (2026): hardware derivation, local-PIN UV, revocation and gated U2F.
 @@ -73 +73,0 @@
 -use crate::api::crypto::hkdf256::Hkdf256;
-@@ -83 +83 @@
+@@ -83 +83,3 @@
 -use crate::env::{EcdsaSk, Env, Hkdf, Sha};
++#[cfg(feature = "openkeys-local-pin")]
++use crate::env::LocalPin;
 +use crate::env::{EcdsaSk, Env, Sha};
-@@ -584,0 +585,18 @@
+@@ -275,0 +278,7 @@
++// Root already consumed a request-bound hardware-PIN and confirmation proof.
++// The adapter still checks its live execution at this exact call boundary.
++#[cfg(feature = "openkeys-local-pin")]
++fn perform_built_in_uv(env: &mut impl Env, channel: Channel, _retry: bool) -> CtapResult<()> {
++    env.local_pin().verify_active_request(channel)
++}
++
+@@ -279 +288 @@
+-#[cfg(feature = "fingerprint")]
++#[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
+@@ -584,0 +594,29 @@
++    /// Root calls on lock, idle expiry, reset/suspend, RF loss/reselect and
++    /// native epoch/channel changes. Do not recreate ClientPin: doing that
++    /// would refund its consecutive mismatch budget without a power cycle.
++    pub fn revoke_authorizations(&mut self, env: &mut E) {
++        self.stateful_command_permission.clear();
++        #[cfg(feature = "ctap1")]
++        {
++            self.u2f_up_state = U2fUserPresenceState::new();
++        }
++        self.client_pin.revoke(env);
++    }
 +    /// Root adapter: caller has already consumed an exact-request device
-+    /// fingerprint/PIN/confirmation capability. Never caches UP across calls.
++    /// local-PIN/confirmation capability. Never caches UP across calls.
 +    #[cfg(feature = "ctap1")]
 +    pub fn process_legacy_protected(&mut self, env: &mut E, bytes: &[u8]) -> Vec<u8> {
 +        self.stateful_command_permission.clear();
@@ -67,7 +223,16 @@
 +            Err(status) => (u16::from(status)).to_be_bytes().to_vec(),
 +        }
 +    }
-@@ -1095,4 +1113,3 @@
+@@ -873 +911 @@
+-                    #[cfg(not(feature = "fingerprint"))]
++                    #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
+@@ -875 +913 @@
+-                    #[cfg(feature = "fingerprint")]
++                    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
+@@ -877 +915 @@
+-                    #[cfg(feature = "fingerprint")]
++                    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
+@@ -1095,4 +1133,3 @@
 -        let key = env.key_store().cred_random(has_uv)?;
 -        let mut output = Secret::default();
 -        Hkdf::<E>::hkdf_256(&*key, &salt, b"credRandom", &mut output);
@@ -75,3 +240,165 @@
 +        env.key_store()
 +            .derive_cred_random(has_uv, &salt)
 +            .map_err(Into::into)
+@@ -1268 +1305 @@
+-                    #[cfg(not(feature = "fingerprint"))]
++                    #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
+@@ -1270 +1307 @@
+-                    #[cfg(feature = "fingerprint")]
++                    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
+@@ -1272 +1309 @@
+-                    #[cfg(feature = "fingerprint")]
++                    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
+@@ -1375,0 +1413,3 @@
++        #[cfg(feature = "openkeys-local-pin")]
++        let has_always_uv = true; // enforced by the protected OpenKeys gateway
++        #[cfg(not(feature = "openkeys-local-pin"))]
+@@ -1376,0 +1417,12 @@
++        #[cfg(feature = "openkeys-local-pin")]
++        let protocol_pin_info = env.local_pin().protocol_pin_info()?;
++        #[cfg(feature = "openkeys-local-pin")]
++        if !(4..=63).contains(&protocol_pin_info.minimum_length)
++            || (!protocol_pin_info.configured && protocol_pin_info.force_change)
++        {
++            return Err(Ctap2StatusCode::CTAP2_ERR_VENDOR_INTERNAL_ERROR);
++        }
++        #[cfg(feature = "openkeys-local-pin")]
++        let protocol_pin_set = protocol_pin_info.configured;
++        #[cfg(not(feature = "openkeys-local-pin"))]
++        let protocol_pin_set = env.persist().pin_hash()?.is_some();
+@@ -1383 +1435 @@
+-        if !has_always_uv {
++        if !has_always_uv || cfg!(feature = "openkeys-local-pin") {
+@@ -1388,4 +1440 @@
+-            (
+-                String::from("clientPin"),
+-                env.persist().pin_hash()?.is_some(),
+-            ),
++            (String::from("clientPin"), protocol_pin_set),
+@@ -1410,0 +1460,2 @@
++        #[cfg(feature = "openkeys-local-pin")]
++        options.push((String::from("uv"), env.local_pin().configured()?));
+@@ -1441,0 +1493,3 @@
++                #[cfg(feature = "openkeys-local-pin")]
++                force_pin_change: Some(protocol_pin_info.force_change),
++                #[cfg(not(feature = "openkeys-local-pin"))]
+@@ -1442,0 +1497,3 @@
++                #[cfg(feature = "openkeys-local-pin")]
++                min_pin_length: protocol_pin_info.minimum_length,
++                #[cfg(not(feature = "openkeys-local-pin"))]
+@@ -1453 +1510,3 @@
+-                #[cfg(not(feature = "fingerprint"))]
++                #[cfg(feature = "openkeys-local-pin")]
++                preferred_platform_uv_attempts: Some(1),
++                #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
+@@ -1458 +1517,3 @@
+-                #[cfg(not(feature = "fingerprint"))]
++                #[cfg(feature = "openkeys-local-pin")]
++                uv_modality: Some(0x04), // USER_VERIFY_PASSCODE_INTERNAL
++                #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
+@@ -1460,0 +1522,5 @@
++                // Public GetInfo must not query the encrypted private catalog
++                // merely to redact it later at the gateway.
++                #[cfg(feature = "openkeys-local-pin")]
++                remaining_discoverable_credentials: None,
++                #[cfg(not(feature = "openkeys-local-pin"))]
+--- a/libraries/opensk/src/ctap/pin_protocol.rs
++++ b/libraries/opensk/src/ctap/pin_protocol.rs
+@@ -0,0 +1 @@
++// OpenKeys modifications (2026): clear transport authorization without new entropy.
+@@ -30,0 +32 @@
++use zeroize::Zeroize;
+@@ -59,0 +62,4 @@
++    }
++
++    pub fn erase_pin_uv_auth_token(&mut self) {
++        self.pin_uv_auth_token.deref_mut().zeroize();
+--- a/libraries/opensk/src/ctap/storage.rs
++++ b/libraries/opensk/src/ctap/storage.rs
+@@ -0,0 +1 @@
++// OpenKeys modifications (2026): local-PIN UV capability without biometric objects.
+@@ -22,0 +24,2 @@
++#[cfg(feature = "openkeys-local-pin")]
++use crate::env::LocalPin;
+@@ -299,0 +303,4 @@
++    #[cfg(feature = "openkeys-local-pin")]
++    if env.local_pin().configured()? {
++        return Ok(true);
++    }
+--- a/libraries/opensk/src/env/mod.rs
++++ b/libraries/opensk/src/env/mod.rs
+@@ -0,0 +1 @@
++// OpenKeys modifications (2026): explicit Root-owned local-PIN user verification.
+@@ -30,0 +32,31 @@
++
++#[cfg(all(feature = "openkeys-local-pin", feature = "fingerprint"))]
++compile_error!("OpenKeys local-PIN and biometric profiles must not be combined");
++#[cfg(all(feature = "openkeys-local-pin", feature = "debug_ctap"))]
++compile_error!("OpenKeys local-PIN profile forbids raw CTAP debug logging");
++
++/// Public protocol capability metadata, never a PIN hash or retry count.
++/// Root must bind this to the same committed profile used by private PIN I/O.
++#[cfg(feature = "openkeys-local-pin")]
++pub struct ProtocolPinInfo {
++    pub configured: bool,
++    pub minimum_length: u8,
++    pub force_change: bool,
++}
++
++/// Implement ONLY in the isolated Root. A configured device is not unlocked.
++/// Verification must check the SAME live exact-request execution, native PIN
++/// session, channel, clock, generation and hardware state before returning.
++/// Do not accept a host Boolean, enter PIN digits here, spend a second retry,
++/// or turn this hook into a cached all-channel unlock. No default succeeds.
++#[cfg(feature = "openkeys-local-pin")]
++pub trait LocalPin {
++    fn configured(&mut self) -> crate::ctap::status_code::CtapResult<bool>;
++    /// Public capability flag only; never read out a PIN hash outside its
++    /// private scope. Must agree with the atomically committed FIDO PIN state.
++    fn protocol_pin_info(&mut self) -> crate::ctap::status_code::CtapResult<ProtocolPinInfo>;
++    fn verify_active_request(
++        &mut self,
++        channel: Channel,
++    ) -> crate::ctap::status_code::CtapResult<()>;
++}
+@@ -63,0 +96,2 @@
++    #[cfg(feature = "openkeys-local-pin")]
++    type LocalPin: LocalPin;
+@@ -71,0 +106,2 @@
++    #[cfg(feature = "openkeys-local-pin")]
++    fn local_pin(&mut self) -> &mut Self::LocalPin;
+--- a/libraries/opensk/src/env/test/mod.rs
++++ b/libraries/opensk/src/env/test/mod.rs
+@@ -0,0 +1 @@
++// OpenKeys modifications (2026): unconfigured, refusing local-PIN test default.
+@@ -303,0 +305,21 @@
++#[cfg(feature = "openkeys-local-pin")]
++impl crate::env::LocalPin for TestEnv {
++    fn configured(&mut self) -> CtapResult<bool> {
++        Ok(false)
++    }
++    fn protocol_pin_info(&mut self) -> CtapResult<crate::env::ProtocolPinInfo> {
++        Ok(crate::env::ProtocolPinInfo {
++            configured: self.pin_hash()?.is_some(),
++            minimum_length: self.min_pin_length()?.unwrap_or(
++                crate::api::customization::Customization::default_min_pin_length(
++                    self.customization(),
++                ),
++            ),
++            force_change: self.has_force_pin_change()?,
++        })
++    }
++    fn verify_active_request(&mut self, _channel: crate::ctap::Channel) -> CtapResult<()> {
++        Err(crate::ctap::status_code::Ctap2StatusCode::CTAP2_ERR_OPERATION_DENIED)
++    }
++}
++
+@@ -315,0 +338,2 @@
++    #[cfg(feature = "openkeys-local-pin")]
++    type LocalPin = Self;
+@@ -322,0 +347,5 @@
++    }
++
++    #[cfg(feature = "openkeys-local-pin")]
++    fn local_pin(&mut self) -> &mut Self::LocalPin {
++        self

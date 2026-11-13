@@ -1,4 +1,4 @@
-// OpenKeys modifications (2026): hardware secret derivation and one-call gated U2F bridge.
+// OpenKeys modifications (2026): hardware derivation, local-PIN UV, revocation and gated U2F.
 // Copyright 2019-2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,6 +80,8 @@ use crate::api::persist::{Attestation, AttestationId, MAX_LARGE_BLOB_ARRAY_SIZE,
 use crate::api::private_key::PrivateKey;
 use crate::api::rng::Rng;
 use crate::api::user_presence::{UserPresence, UserPresenceError};
+#[cfg(feature = "openkeys-local-pin")]
+use crate::env::LocalPin;
 use crate::env::{EcdsaSk, Env, Sha};
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
@@ -273,10 +275,17 @@ fn truncate_to_char_boundary(s: &str, mut max: usize) -> &str {
     }
 }
 
+// Root already consumed a request-bound hardware-PIN and confirmation proof.
+// The adapter still checks its live execution at this exact call boundary.
+#[cfg(feature = "openkeys-local-pin")]
+fn perform_built_in_uv(env: &mut impl Env, channel: Channel, _retry: bool) -> CtapResult<()> {
+    env.local_pin().verify_active_request(channel)
+}
+
 // For MakeCredential and GetAssertion, the specification says:
 // If the uvRetries counter is 0, return CTAP2_ERR_PIN_BLOCKED. See:
 // https://github.com/fido-alliance/fido-2-specs/issues/1672 (private)
-#[cfg(feature = "fingerprint")]
+#[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
 fn map_uv_block_error(result: CtapResult<()>) -> CtapResult<()> {
     result.map_err(|e| match e {
         Ctap2StatusCode::CTAP2_ERR_UV_BLOCKED => Ctap2StatusCode::CTAP2_ERR_PIN_BLOCKED,
@@ -582,8 +591,19 @@ pub struct CtapState<E: Env> {
 }
 
 impl<E: Env> CtapState<E> {
+    /// Root calls on lock, idle expiry, reset/suspend, RF loss/reselect and
+    /// native epoch/channel changes. Do not recreate ClientPin: doing that
+    /// would refund its consecutive mismatch budget without a power cycle.
+    pub fn revoke_authorizations(&mut self, env: &mut E) {
+        self.stateful_command_permission.clear();
+        #[cfg(feature = "ctap1")]
+        {
+            self.u2f_up_state = U2fUserPresenceState::new();
+        }
+        self.client_pin.revoke(env);
+    }
     /// Root adapter: caller has already consumed an exact-request device
-    /// fingerprint/PIN/confirmation capability. Never caches UP across calls.
+    /// local-PIN/confirmation capability. Never caches UP across calls.
     #[cfg(feature = "ctap1")]
     pub fn process_legacy_protected(&mut self, env: &mut E, bytes: &[u8]) -> Vec<u8> {
         self.stateful_command_permission.clear();
@@ -888,11 +908,11 @@ impl<E: Env> CtapState<E> {
             }
             None => {
                 if options.uv {
-                    #[cfg(not(feature = "fingerprint"))]
+                    #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
                     return Err(Ctap2StatusCode::CTAP2_ERR_INVALID_OPTION);
-                    #[cfg(feature = "fingerprint")]
+                    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
                     map_uv_block_error(perform_built_in_uv(env, channel, true))?;
-                    #[cfg(feature = "fingerprint")]
+                    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
                     UV_FLAG
                 } else {
                     if storage::has_always_uv(env)? {
@@ -1282,11 +1302,11 @@ impl<E: Env> CtapState<E> {
             }
             None => {
                 if options.uv {
-                    #[cfg(not(feature = "fingerprint"))]
+                    #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
                     return Err(Ctap2StatusCode::CTAP2_ERR_INVALID_OPTION);
-                    #[cfg(feature = "fingerprint")]
+                    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
                     map_uv_block_error(perform_built_in_uv(env, channel, true))?;
-                    #[cfg(feature = "fingerprint")]
+                    #[cfg(any(feature = "fingerprint", feature = "openkeys-local-pin"))]
                     UV_FLAG
                 } else {
                     if options.up && storage::has_always_uv(env)? {
@@ -1390,22 +1410,34 @@ impl<E: Env> CtapState<E> {
     }
 
     fn process_get_info(&self, env: &mut E) -> CtapResult<ResponseData> {
+        #[cfg(feature = "openkeys-local-pin")]
+        let has_always_uv = true; // enforced by the protected OpenKeys gateway
+        #[cfg(not(feature = "openkeys-local-pin"))]
         let has_always_uv = storage::has_always_uv(env)?;
+        #[cfg(feature = "openkeys-local-pin")]
+        let protocol_pin_info = env.local_pin().protocol_pin_info()?;
+        #[cfg(feature = "openkeys-local-pin")]
+        if !(4..=63).contains(&protocol_pin_info.minimum_length)
+            || (!protocol_pin_info.configured && protocol_pin_info.force_change)
+        {
+            return Err(Ctap2StatusCode::CTAP2_ERR_VENDOR_INTERNAL_ERROR);
+        }
+        #[cfg(feature = "openkeys-local-pin")]
+        let protocol_pin_set = protocol_pin_info.configured;
+        #[cfg(not(feature = "openkeys-local-pin"))]
+        let protocol_pin_set = env.persist().pin_hash()?.is_some();
         #[cfg_attr(not(feature = "ctap1"), allow(unused_mut))]
         let mut versions = vec![
             String::from(FIDO2_VERSION_STRING),
             String::from(FIDO2_1_VERSION_STRING),
         ];
         #[cfg(feature = "ctap1")]
-        if !has_always_uv {
+        if !has_always_uv || cfg!(feature = "openkeys-local-pin") {
             versions.insert(0, String::from(U2F_VERSION_STRING))
         }
         let mut options = vec![
             (String::from("rk"), true),
-            (
-                String::from("clientPin"),
-                env.persist().pin_hash()?.is_some(),
-            ),
+            (String::from("clientPin"), protocol_pin_set),
             (String::from("up"), true),
             (String::from("pinUvAuthToken"), true),
             (String::from("largeBlobs"), true),
@@ -1425,6 +1457,8 @@ impl<E: Env> CtapState<E> {
             options.push((String::from("uv"), has_fingerprint));
             options.push((String::from("bioEnroll"), has_fingerprint));
         }
+        #[cfg(feature = "openkeys-local-pin")]
+        options.push((String::from("uv"), env.local_pin().configured()?));
         if env.customization().enterprise_attestation_mode().is_some() {
             options.push((String::from("ep"), storage::enterprise_attestation(env)?));
         }
@@ -1456,7 +1490,13 @@ impl<E: Env> CtapState<E> {
                 transports: Some(vec![AuthenticatorTransport::Usb]),
                 algorithms: Some(SUPPORTED_CRED_PARAMS.to_vec()),
                 max_serialized_large_blob_array: Some(MAX_LARGE_BLOB_ARRAY_SIZE as u64),
+                #[cfg(feature = "openkeys-local-pin")]
+                force_pin_change: Some(protocol_pin_info.force_change),
+                #[cfg(not(feature = "openkeys-local-pin"))]
                 force_pin_change: Some(env.persist().has_force_pin_change()?),
+                #[cfg(feature = "openkeys-local-pin")]
+                min_pin_length: protocol_pin_info.minimum_length,
+                #[cfg(not(feature = "openkeys-local-pin"))]
                 min_pin_length: storage::min_pin_length(env)?,
                 firmware_version: env.firmware_version(),
                 max_cred_blob_length: Some(env.customization().max_cred_blob_length() as u64),
@@ -1467,14 +1507,23 @@ impl<E: Env> CtapState<E> {
                 preferred_platform_uv_attempts: Some(
                     env.customization().preferred_platform_uv_attempts() as u64,
                 ),
-                #[cfg(not(feature = "fingerprint"))]
+                #[cfg(feature = "openkeys-local-pin")]
+                preferred_platform_uv_attempts: Some(1),
+                #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
                 preferred_platform_uv_attempts: None,
                 // https://fidoalliance.org/specs/common-specs/fido-registry-v2.2-ps-20220523.html#user-verification-methods
                 #[cfg(feature = "fingerprint")]
                 uv_modality: Some(0x02),
-                #[cfg(not(feature = "fingerprint"))]
+                #[cfg(feature = "openkeys-local-pin")]
+                uv_modality: Some(0x04), // USER_VERIFY_PASSCODE_INTERNAL
+                #[cfg(not(any(feature = "fingerprint", feature = "openkeys-local-pin")))]
                 uv_modality: None,
                 certifications: None,
+                // Public GetInfo must not query the encrypted private catalog
+                // merely to redact it later at the gateway.
+                #[cfg(feature = "openkeys-local-pin")]
+                remaining_discoverable_credentials: None,
+                #[cfg(not(feature = "openkeys-local-pin"))]
                 remaining_discoverable_credentials: Some(
                     storage::remaining_credentials(env)? as u64
                 ),
