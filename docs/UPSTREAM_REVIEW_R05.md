@@ -32,7 +32,7 @@ SSH 不需要另造密码协议：优先分别验证 OpenSSH FIDO `*-sk`、PIV /
 SE 内 MACOneShot 编码另与 [NXP plug-and-trust](https://github.com/NXP/plug-and-trust/tree/7102413e0457d3dfa4fc4be686ca8ec50bd9f5e2)
 提交 `7102413e0457d3dfa4fc4be686ca8ec50bd9f5e2` 的 APDU / enum 定义核对：
 P1 MAC `0x0D`、P2 generate-one-shot `0x45`，密钥 ID / 算法 / 八字节计数 TLV。
-自研 Rust 只编码有界命令、核对精确响应长度，不读取 OTP 种子；实际 SE050E2 profile / ACL
+自研 Rust 只编码有界命令、核对精确响应长度，不读取 OTP 种子；实际 SE051C2 profile / ACL
 和此指令是否满足安全策略，仍需实片资格验证。
 
 ## 许可和安全取舍

@@ -43,7 +43,7 @@ cargo check -p openkeys-authenticator-core -p openkeys-h573-r05 --target thumbv8
 cargo run -p openkeys-manager --features gui --locked
 ```
 
-界面为英文。真实设备后端尚未完成，保持锁定，不能通过主机按钮或主机 PIN 解锁。历史 R04 界面已构建的三个平台包见[开发包下载及限制](NATIVE_BUILDS.md)；导入样例只使用[合成测试数据](IMPORT_FORMAT.md)。
+界面为英文。真实设备后端尚未完成，保持锁定，不能通过主机按钮或主机 PIN 解锁。三个平台的候选开发包与构建限制见[R05 开发构建](NATIVE_BUILDS_R05.md)；导入样例只使用[合成测试数据](IMPORT_FORMAT.md)。
 
 ## 4. 查看硬件与来源检查
 

@@ -40,7 +40,7 @@ Apple 20 W 充电器使用 **5 V**，不申请 9 V PD。设计输入预算 **0.5
 
 ## 检查的含义
 
-R05 当前有 10 页原理图、152 个 BOM 位置、四层已布线 PCB；ERC / DRC 零错误、零警告、零未连接，712 项独立板网核对通过。[CAD 清单](hardware/r05/review/cad-manifest.json)绑定导出文件。它们验证设计文件的规则和连通性，不能证明实物抗侧信道、故障注入、EMC、RF、充电或抗拆安全。
+R05 当前有 11 页原理图、169 个 BOM 位置、四层已布线 PCB；ERC / DRC 零错误、零警告、零未连接，948 项独立板网核对通过。[CAD 清单](hardware/r05/review/cad-manifest.json)绑定导出文件。它们验证设计文件的规则和连通性，不能证明实物抗侧信道、故障注入、EMC、RF、充电或抗拆安全。
 
 新代码的[本地检查记录](docs/r05-validation.json)与 CI 以对应提交为准；[R04 的历史 CI](docs/ci-evidence-r04.json)不能作为 R05 的通过证明。[生产缺口](docs/DEVELOPMENT_STATUS.md)逐项列出，完整 Root 和硬件 PIN 的 SE 原生强制仍是关键未关闭项。
 

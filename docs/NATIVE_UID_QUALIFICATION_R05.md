@@ -50,7 +50,7 @@ cargo +1.99.1 check -p openkeys-se-state --features native-uid-qualification --t
 
 ## 交给工程师 / 实验室的样板任务
 
-1. 使用独立工程样板和合成秘密，记录 SE050E2 完整料号、批次、Applet / profile、
+1. 使用独立工程样板和合成秘密，记录 SE051C2HQ1/Z01XDZ 完整料号、批次、OEF A8FA / Applet 7.2、
    板 / 固件摘要和 SCP03 配置。禁止导入真实账户、恢复码或生产私钥。
 2. 在受控初始化过程中创建合成 UserID 对象：ID `0x4F4B0800`，六字节 ASCII PIN，
    显式认证对象标记、最大尝试数 **11**、明确审查过的对象策略。

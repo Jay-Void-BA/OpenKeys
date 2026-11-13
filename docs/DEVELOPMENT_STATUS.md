@@ -33,7 +33,8 @@ RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD
 
 - 当前 CAD：[板网报告](../hardware/r05/review/board-check.json)、[CAD 摘要](../hardware/r05/review/cad-manifest.json)。
 - 已发布的软件证据：[R05 本地验证记录](r05-validation.json)、[GitHub CI 记录](ci-evidence-r05.json)均注明对应提交；后续修改不得借用旧提交的通过结果。新内核须重新完成全仓库 / ARM / 三平台 CI 和日志核对。
-- 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[公开 SE 布局](../manufacturing/se-pin-layout-r05.json)。
+- 当前软件提交 `665c0a3`：299 项 workspace 测试（含 30 项 FIDO 内核测试）及 6 项默认关闭的原生 UserID 探针测试，在 Linux / macOS / Windows 各通过 305 项；不是 915 个不同测试。完整 CI 日志与注释已核对，零 warning。CAD 对应 `0beebf7`，`hardware/r05/` 与当前软件提交逐字节相同；这只复用相同文件的检查结果，不复用实物资格。
+- 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[原生 PIN v3 SE 布局](../manufacturing/se-native-pin-layout-r05.json)。旧 HKDF v2 布局仅供历史回归，不用于生产授权。
 - 诊断用途：[R05 目标说明](../firmware/r05/README.md)；公开 LCD / 键 / Flash ID，不验证真实 PIN，不启用充电或 USB/NFC 协议。
 - 旧 R04 的 [CI](ci-evidence-r04.json)、[手册](../manufacturing/BUILD_MANUAL_ZH.md)及 [预检](../manufacturing/readiness-report.json)仅供历史追溯，不能充当 R05 放行证据。
 

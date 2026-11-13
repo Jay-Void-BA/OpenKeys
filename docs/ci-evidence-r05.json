@@ -2,10 +2,10 @@
   "schema": 1,
   "runs": [
     {
-      "run_id": 43007113067,
-      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43007113067",
+      "run_id": 43336263376,
+      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43336263376",
       "workflow": "Documentation links",
-      "head_sha": "9f697f84873ab653803c9e2a3e97aec8c3a9ac58",
+      "head_sha": "665c0a3d807ad49942cd228ba99b3c77d773179c",
       "conclusion": "success",
       "job_results": {
         "links": "success"
@@ -18,10 +18,10 @@
       }
     },
     {
-      "run_id": 42814760229,
-      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/42814760229",
+      "run_id": 43329520530,
+      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43329520530",
       "workflow": "Saved electrical CAD checks",
-      "head_sha": "f8abace997807ad4149ff76bf25d07c30a4bcf77",
+      "head_sha": "0beebf7684b7e49b997605302cbd3c6142d11db8",
       "conclusion": "success",
       "job_results": {
         "cad": "success"
@@ -34,36 +34,40 @@
       }
     },
     {
-      "run_id": 43007113141,
-      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43007113141",
+      "run_id": 43336263695,
+      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43336263695",
       "workflow": "OpenKeys development checks",
-      "head_sha": "9f697f84873ab653803c9e2a3e97aec8c3a9ac58",
+      "head_sha": "665c0a3d807ad49942cd228ba99b3c77d773179c",
       "conclusion": "success",
       "job_results": {
-        "gpui (macos-15)": "success",
-        "native (windows-2022)": "success",
+        "dependency-audit": "success",
+        "gpui (ubuntu-24.04)": "success",
         "gpui (windows-2022)": "success",
         "native (ubuntu-24.04)": "success",
-        "gpui (ubuntu-24.04)": "success",
+        "gpui (macos-15)": "success",
         "native (macos-15)": "success",
-        "dependency-audit": "success"
+        "native (windows-2022)": "success"
       },
       "log_warning_lines": 0,
       "warning_annotations": 0,
       "notice_annotations": 2,
       "test_results_by_log": {
-        "0_dependency-audit.txt": 0,
-        "1_native (macos-15).txt": 282,
-        "2_native (ubuntu-24.04).txt": 282,
-        "3_native (windows-2022).txt": 282,
-        "4_gpui (ubuntu-24.04).txt": 2,
-        "5_gpui (windows-2022).txt": 0,
-        "6_gpui (macos-15).txt": 2
+        "0_native (windows-2022).txt": 305,
+        "1_native (ubuntu-24.04).txt": 305,
+        "2_native (macos-15).txt": 305,
+        "3_gpui (ubuntu-24.04).txt": 2,
+        "4_gpui (windows-2022).txt": 0,
+        "5_gpui (macos-15).txt": 2,
+        "6_dependency-audit.txt": 0
       }
     }
   ],
-  "source_commit": "9f697f84873ab653803c9e2a3e97aec8c3a9ac58",
+  "source_commit": "665c0a3d807ad49942cd228ba99b3c77d773179c",
+  "checked_date_utc": "2026-11-13",
   "production_release": false,
   "physical_qualification": false,
-  "cad_reuse": "CAD checked at f8abace997807ad4149ff76bf25d07c30a4bcf77; saved PCB/CAD hashes unchanged in the source commit. This does not cover the unimplemented dual-SE or batteryless-power corrections."
+  "cad_source_commit": "0beebf7684b7e49b997605302cbd3c6142d11db8",
+  "cad_reuse": "The complete hardware/r05 tree is byte-identical between the CAD-tested commit and the software source commit. This covers file checks only, not physical qualification.",
+  "log_review": "Complete downloadable job logs and all check-run annotation pages reviewed. Zero warning lines and zero warning annotations; the development run has two notice annotations.",
+  "limits": "Native test counts include six default-off synthetic native-UID probe tests. Linux GPUI wire fixtures and macOS Blocks ABI tests are additional. These jobs do not implement or qualify the missing production runtime."
 }

@@ -1,53 +1,73 @@
 {
   "schema": 1,
   "revision": "0.5",
+  "edition": "classical",
   "stage": "ENGINEERING_CANDIDATE",
   "production_release": false,
+  "production_authenticator_image": false,
   "physical_test_result": "NOT_RUN",
-  "workspace_tests_passed": 276,
-  "dbus_wire_fixture_tests_passed": 2,
-  "strict_clippy": "PASSED (workspace and both R05 ARM LCD profiles)",
+  "source_commit": "665c0a3d807ad49942cd228ba99b3c77d773179c",
+  "checked_date_utc": "2026-11-13",
+  "workspace_tests_passed": 299,
+  "authenticator_core_tests_passed": 30,
+  "authenticator_core_tests_included_in_workspace_count": true,
+  "native_tests_per_platform": 305,
+  "native_test_count_explanation": "299 workspace tests plus six feature-gated synthetic native-UID probe tests; repeated on Linux, macOS and Windows, not 915 distinct test cases.",
+  "additional_linux_wire_tests": 2,
+  "additional_macos_abi_tests": 2,
+  "strict_clippy": "PASSED: workspace/all-targets, default-off native-UID probe, R04 diagnostics and both R05 ARM LCD profiles",
+  "arm_library_checks": "PASSED: thumbv8m.main-none-eabihf; not a production Root or private-key firmware image",
+  "classical_opensk_features": [
+    "ctap1",
+    "openkeys-local-pin"
+  ],
   "dependency_audit": {
     "cargo_audit": "0.22.2",
     "deny_warnings": true,
     "result": "PASSED",
-    "packages": 852,
-    "rustsec_commit": "901cf64f2d04dc7f9f26bbbd50a3010378de034d"
+    "ci_run": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43336263695",
+    "scope": "Known advisory and maintenance checks at this CI execution; not an exhaustive vulnerability assessment"
   },
   "r05_cad": {
-    "board_sha256": "ea044bf4997073a4f13ba3af3ebe06452fceee466e52a8a6e2bc61bb07f890d3",
-    "independent_checks": 705,
+    "source_commit": "0beebf7684b7e49b997605302cbd3c6142d11db8",
+    "board_sha256": "8e9d3e61d21afd76e613611d21ebfb939d797c794edf4927300f5d9421142efd",
+    "schematic_pages": 11,
+    "bom_positions": 169,
+    "netlist_checks": 52,
+    "independent_checks": 948,
+    "erc_errors": 0,
+    "erc_warnings": 0,
     "drc_violations": 0,
     "unconnected": 0,
-    "cad_manifest": "hardware/r05/review/cad-manifest.json"
+    "verified_manifest_artifacts": 94,
+    "cad_manifest": "hardware/r05/review/cad-manifest.json",
+    "physical_qualification": "NOT_RUN"
   },
   "r05_diagnostics": "firmware/dist/r05/diagnostic-manifest.json",
   "gui_forks_reconstructed_from_original_archives": 12,
-  "ci_result": "PASSED: source 9f697f84873ab653803c9e2a3e97aec8c3a9ac58; complete logs/annotations checked, zero warning lines/annotations",
+  "ci_result": "PASSED: seven development jobs, documentation links, and separately bound CAD job; complete logs/annotations reviewed with zero warning lines/annotations",
   "critical_open_items": [
-    "Production secure Root / boot / isolation / debug lifecycle",
-    "SE native PIN backend: real profile / ACL qualification, commissioning and Root integration",
-    "Complete all-user-data erasure and first-boot commissioning services",
-    "Noise management core: actual OS / Root / pairing-store / device integrations",
-    "OTP catalog transactions / RTC; OpenPGP / PIV / FIDO production integration; mobile bundles",
-    "CanoKey full algorithm coverage: E2 has no RSA; SM2 / ML-DSA-65 / ML-KEM-768 hardware and dual-SE authorization not selected or implemented",
-    "Batteryless USB power: auxiliary tamper / RTC LDO still sourced from BAT; correction and worst-case load budget pending",
-    "Physical LCD / NTC / charging / RF / EMC / tamper / FI / SCA qualification"
+    "Production H573 secure Root/STiRoT/boot, signed update, antirollback, SAU/GTZC/DMA/debug lifecycle and trusted time/RTC",
+    "Received SE051C2HQ1/Z01XDZ/OEF A8FA/Applet7.2 identity, native PIN/ACL/attempt semantics, unique SCP commissioning, algorithm KAT and usable capacity",
+    "Real first-boot installer and recoverable ALL-DATA destruction of SE user objects, vault/wrapping roots, protocol PINs, pairing state, catalogs and staging; an erase latch is not completed erasure",
+    "H573 OpenSK Env/SE key bridge, USB CTAPHID/CCID, NFC lifecycle and production dispatcher; current FIDO core tests are synthetic",
+    "Classical RSA/Ed25519/X25519 SE operations and OpenPGP/PIV applications; separate SSH interoperability",
+    "OTP sealed catalog and cross-media pending/tombstone transactions, trusted RTC/time management and Root adapters",
+    "Real desktop OS USB/keystore/Noise pairing adapters and installers; iOS/iPadOS/Android management applications and device compatibility",
+    "Actual battery measurement/calibration/UI, production charging policy and worst-case USB power/startup with an empty or absent battery",
+    "Exact MPN selection for generic BOM entries, current R05 personal/small-order DFM acceptance, physical LCD/NTC/RF/thermal/EMC/ESD/tamper/FI/SCA qualification"
   ],
-  "ci_evidence": "docs/ci-evidence-r05.json",
-  "native_tests_per_platform": 282,
-  "additional_linux_wire_tests": 2,
-  "additional_macos_abi_tests": 2,
   "native_uid_probe": {
     "feature": "native-uid-qualification",
     "production_enabled": false,
     "private_authorization_issuer": false,
-    "new_local_tests_passed": 6,
+    "local_tests_passed": 6,
     "cortex_m33_compile": "PASSED",
     "strict_clippy": "PASSED",
     "profile_or_acl_qualification": "NOT_RUN",
     "physical_tests": "NOT_RUN",
-    "ci_for_new_probe": "PASSED: 6 feature-gated tests on macOS, Windows and Linux; source 9f697f84873ab653803c9e2a3e97aec8c3a9ac58"
+    "ci_source_commit": "665c0a3d807ad49942cd228ba99b3c77d773179c"
   },
-  "source_commit": "9f697f84873ab653803c9e2a3e97aec8c3a9ac58"
+  "ci_evidence": "docs/ci-evidence-r05.json",
+  "limits": "Source, file hashes, synthetic models and compiler/CI results only. Not a claim of complete firmware, theoretical security, certification or resistance to every software/hardware attack."
 }
