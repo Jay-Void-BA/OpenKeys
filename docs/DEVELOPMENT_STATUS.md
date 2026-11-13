@@ -13,7 +13,7 @@ RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD
 
 | 部分 | 已有 | 未完成 |
 |---|---|---|
-| 电路 / PCB / 结构 | R05 十键、H573、SE051C2、DFR0555、NFC、供电 / LCD 故障互锁；11 页 / 169 BOM / 四层，ERC / DRC 零问题，948 项核对，制造导出 | 首板 DFM、LCD 静态角落假设 / 电容 / 关断时序 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
+| 电路 / PCB / 结构 | R05 十键、H573、SE051C2、DFR0555、NFC、供电 / LCD 故障互锁；11 页 / 169 BOM / 四层，ERC / DRC 零问题，948 项核对，制造导出 | 完全断能后的防拆保持与备份域失效处理仍有设计 / 集成缺口；首板 DFM、LCD 静态角落假设 / 电容 / 关断时序 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
 | 本地六位 PIN | 6+6 首次设置策略、独立十键、持久预扣 / 擦除锁存；[原生 PIN v4 后端](NATIVE_PIN_RUNTIME_R05.md)、原生会话内 credit；[PIN 安装 / SE 清点 / 全 NOR 擦除组件](CLASSICAL_LIFECYCLE_R05.md)；[生命周期 journal 与 PIN 适配](../crates/root-journal/README.md)、[H573 固定两扇区安全 Flash](../crates/root-flash/README.md)、硬件 DHUK MAC、不可改写的 SE 用户代际匹配；私钥端口逐 APDU 检查同一 Execution | 整机首次初始化、生产启动 / 链接 / OTA 预留、完整 ALL-DATA 协调与恢复、Root 接线、SE profile / 真实 ACL / 原生限次资格验证；组件和模型通过不等于整机 Ready / 全部删除 |
 | PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试；[Noise XX 与 AEAD 通道内核](../crates/secure-channel/README.md)及 CCID / NFC 共用分片编码 | 可信时间、射频离场 IRQ、USB reset / suspend、原生 PIN 会话撤权及各协议实际验证状态的 Root 接线；真实 OS 连接 / 配对存储与通道集成 |
 | LCD / 十键 / 诊断 | 独立 Rust 驱动、版本明确、断电故障锁存、按键去抖 / 组合键拒绝；真实 R05 引脚构建约束 | 生产 Secure 归属、板上时序与故障响应；ARM 诊断没有认证功能 |
@@ -33,7 +33,7 @@ RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD
 
 - 当前 CAD：[板网报告](../hardware/r05/review/board-check.json)、[CAD 摘要](../hardware/r05/review/cad-manifest.json)。
 - 已发布的软件证据：[R05 本地验证记录](r05-validation.json)、[GitHub CI 记录](ci-evidence-r05.json)均注明对应提交；后续修改不得借用旧提交的通过结果。新内核须重新完成全仓库 / ARM / 三平台 CI 和日志核对。
-- 上一次归档 CI 的软件提交 `665c0a3`：299 项 workspace 测试（含 30 项 FIDO 内核测试）及 6 项默认关闭的原生 UserID 探针测试，在 Linux / macOS / Windows 各通过 305 项；不是 915 个不同测试。完整 CI 日志与注释已核对，零 warning。新增生命周期组件以其后续提交的 CI 为准；旧结果不覆盖新增代码。CAD 对应 `0beebf7`，之后未改硬件文件时才可复用同文件检查，不能复用实物资格。
+- 当前归档的软件提交 `60f0e60`：[三平台 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43414654181)中，356 项 workspace / 文档测试（包含一个编译失败用例和 30 项 FIDO 内核测试）及 6 项默认关闭的原生 UserID 探针测试，在 Linux / macOS / Windows 各通过 362 项；不是 1086 个不同测试。完整日志和所有注释页已核对，零 warning；另有两个 notice。新增 HUK / 内部 Flash / 清空观察组件包含在该提交中。CAD 对应 `0beebf7`，整个硬件目录与 `60f0e60` 相同才可复用文件检查，不能复用实物资格或覆盖此后的改板。
 - 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[原生 PIN v4 SE 布局](../manufacturing/se-native-pin-layout-r05.json)。旧 HKDF v2 布局仅供历史回归，不用于生产授权。
 - 诊断用途：[R05 目标说明](../firmware/r05/README.md)；公开 LCD / 键 / Flash ID，不验证真实 PIN，不启用充电或 USB/NFC 协议。
 - 旧 R04 的 [CI](ci-evidence-r04.json)、[手册](../manufacturing/BUILD_MANUAL_ZH.md)及 [预检](../manufacturing/readiness-report.json)仅供历史追溯，不能充当 R05 放行证据。

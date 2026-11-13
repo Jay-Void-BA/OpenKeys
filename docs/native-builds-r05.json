@@ -1,46 +1,79 @@
 {
   "schema": 1,
-  "source_commit": "665c0a3d807ad49942cd228ba99b3c77d773179c",
-  "run_id": 43336263695,
+  "source_commit": "60f0e601fb41986e18a2ee1d4d2207f63d1c26df",
+  "run_id": 43414654181,
   "production_release": false,
   "artifacts_downloaded_and_executed": false,
-  "artifact_download_result": "HTTP 403 in this environment; archive contents and binary execution NOT_VERIFIED",
-  "note": "GitHub metadata only; previous local Linux source build was rendered separately. Device backend and mobile apps are not integrated.",
+  "artifact_download_checks": [
+    {
+      "id": 14032350866,
+      "name": "openkeys-gpui-development-windows-2022",
+      "downloaded": false,
+      "archive_digest_verified": false,
+      "executed": false,
+      "result": "Download failed; archive contents and execution NOT_VERIFIED; temporary URLs suppressed"
+    },
+    {
+      "id": 14032295330,
+      "name": "openkeys-gpui-development-ubuntu-24.04",
+      "downloaded": false,
+      "archive_digest_verified": false,
+      "executed": false,
+      "result": "Download failed; archive contents and execution NOT_VERIFIED; temporary URLs suppressed"
+    },
+    {
+      "id": 14031587707,
+      "name": "openkeys-gpui-development-macos-15",
+      "downloaded": false,
+      "archive_digest_verified": false,
+      "executed": false,
+      "result": "Download failed; archive contents and execution NOT_VERIFIED; temporary URLs suppressed"
+    },
+    {
+      "id": 14030843069,
+      "name": "r05-diagnostic-arm-elf",
+      "downloaded": false,
+      "archive_digest_verified": false,
+      "executed": false,
+      "result": "Download failed; archive contents and execution NOT_VERIFIED; temporary URLs suppressed"
+    }
+  ],
+  "note": "GitHub build/artifact metadata and explicit download results. No device backend/mobile integration; build success is not end-to-end device verification.",
   "artifacts": [
     {
-      "id": 13998640820,
-      "name": "openkeys-gpui-development-ubuntu-24.04",
-      "size_in_bytes": 10908279,
-      "digest": "sha256:f3661fe63b4d11478e00f16b7452d2de0d3d0e7ef98ef1489900cf4d1ad22205",
-      "created_at": "2026-11-13T00:31:22Z",
-      "expires_at": "2027-02-11T00:20:22Z",
-      "expired": false
-    },
-    {
-      "id": 13997802104,
-      "name": "openkeys-gpui-development-macos-15",
-      "size_in_bytes": 6643243,
-      "digest": "sha256:f27ffe1996df900c3366ca283ddd63da7ac1a32dbd0b3ee95f871a55ecd91bc2",
-      "created_at": "2026-11-13T00:28:49Z",
-      "expires_at": "2027-02-11T00:20:22Z",
-      "expired": false
-    },
-    {
-      "id": 13997643213,
+      "id": 14032350866,
       "name": "openkeys-gpui-development-windows-2022",
       "size_in_bytes": 6778053,
-      "digest": "sha256:e2e998c0ae271b702b407f8f5352408ddbcafdbea318bc3ef8651a447fe879b1",
-      "created_at": "2026-11-13T00:32:36Z",
-      "expires_at": "2027-02-11T00:20:22Z",
+      "digest": "sha256:65580c063981b55bbb6b624d25965eec894508ef8b7ce237a595345f656851b7",
+      "created_at": "2026-11-13T11:22:01Z",
+      "expires_at": "2027-02-11T11:08:36Z",
       "expired": false
     },
     {
-      "id": 13997148211,
+      "id": 14032295330,
+      "name": "openkeys-gpui-development-ubuntu-24.04",
+      "size_in_bytes": 10908286,
+      "digest": "sha256:14763988f3647365ec53e95612be8fe32be6d27170c1eb5be4e0190ee331dfc0",
+      "created_at": "2026-11-13T11:18:43Z",
+      "expires_at": "2027-02-11T11:08:36Z",
+      "expired": false
+    },
+    {
+      "id": 14031587707,
+      "name": "openkeys-gpui-development-macos-15",
+      "size_in_bytes": 6643243,
+      "digest": "sha256:86be22cc59eb7663b149c8676322b49a7d87dcbb1c917f1861a64ece51677172",
+      "created_at": "2026-11-13T11:17:25Z",
+      "expires_at": "2027-02-11T11:08:36Z",
+      "expired": false
+    },
+    {
+      "id": 14030843069,
       "name": "r05-diagnostic-arm-elf",
-      "size_in_bytes": 43993,
-      "digest": "sha256:52d4e85a3cab0c737b3923cdc6b1e290398ff65809921f0bc91964df7cdf1aed",
-      "created_at": "2026-11-13T00:23:37Z",
-      "expires_at": "2027-02-11T00:20:22Z",
+      "size_in_bytes": 43999,
+      "digest": "sha256:f2a3e5e2e953d88a7988f5637d2cc736b949754db0895503f418dc437ef5d58f",
+      "created_at": "2026-11-13T11:12:08Z",
+      "expires_at": "2027-02-11T11:08:36Z",
       "expired": false
     }
   ]

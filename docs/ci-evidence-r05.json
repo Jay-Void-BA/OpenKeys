@@ -1,11 +1,16 @@
 {
   "schema": 1,
+  "source_commit": "60f0e601fb41986e18a2ee1d4d2207f63d1c26df",
+  "checked_date_utc": "2026-11-13",
+  "production_release": false,
+  "physical_qualification": false,
+  "cad_source_commit": "0beebf7684b7e49b997605302cbd3c6142d11db8",
   "runs": [
     {
-      "run_id": 43336263376,
-      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43336263376",
+      "run_id": 43415269535,
+      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43415269535",
       "workflow": "Documentation links",
-      "head_sha": "665c0a3d807ad49942cd228ba99b3c77d773179c",
+      "head_sha": "60f0e601fb41986e18a2ee1d4d2207f63d1c26df",
       "conclusion": "success",
       "job_results": {
         "links": "success"
@@ -34,40 +39,35 @@
       }
     },
     {
-      "run_id": 43336263695,
-      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43336263695",
+      "run_id": 43414654181,
+      "url": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43414654181",
       "workflow": "OpenKeys development checks",
-      "head_sha": "665c0a3d807ad49942cd228ba99b3c77d773179c",
+      "head_sha": "60f0e601fb41986e18a2ee1d4d2207f63d1c26df",
       "conclusion": "success",
       "job_results": {
         "dependency-audit": "success",
-        "gpui (ubuntu-24.04)": "success",
-        "gpui (windows-2022)": "success",
         "native (ubuntu-24.04)": "success",
-        "gpui (macos-15)": "success",
+        "gpui (ubuntu-24.04)": "success",
         "native (macos-15)": "success",
-        "native (windows-2022)": "success"
+        "native (windows-2022)": "success",
+        "gpui (macos-15)": "success",
+        "gpui (windows-2022)": "success"
       },
       "log_warning_lines": 0,
       "warning_annotations": 0,
       "notice_annotations": 2,
       "test_results_by_log": {
-        "0_native (windows-2022).txt": 305,
-        "1_native (ubuntu-24.04).txt": 305,
-        "2_native (macos-15).txt": 305,
-        "3_gpui (ubuntu-24.04).txt": 2,
-        "4_gpui (windows-2022).txt": 0,
-        "5_gpui (macos-15).txt": 2,
+        "0_native (ubuntu-24.04).txt": 362,
+        "1_gpui (windows-2022).txt": 0,
+        "2_gpui (ubuntu-24.04).txt": 2,
+        "3_gpui (macos-15).txt": 2,
+        "4_native (windows-2022).txt": 362,
+        "5_native (macos-15).txt": 362,
         "6_dependency-audit.txt": 0
       }
     }
   ],
-  "source_commit": "665c0a3d807ad49942cd228ba99b3c77d773179c",
-  "checked_date_utc": "2026-11-13",
-  "production_release": false,
-  "physical_qualification": false,
-  "cad_source_commit": "0beebf7684b7e49b997605302cbd3c6142d11db8",
-  "cad_reuse": "The complete hardware/r05 tree is byte-identical between the CAD-tested commit and the software source commit. This covers file checks only, not physical qualification.",
-  "log_review": "Complete downloadable job logs and all check-run annotation pages reviewed. Zero warning lines and zero warning annotations; the development run has two notice annotations.",
-  "limits": "Native test counts include six default-off synthetic native-UID probe tests. Linux GPUI wire fixtures and macOS Blocks ABI tests are additional. These jobs do not implement or qualify the missing production runtime."
+  "cad_reuse": "The complete hardware/r05 tree is byte-identical between the separately CAD-tested commit and this software source commit. File checks only; physical qualification remains NOT_RUN.",
+  "log_review": "Complete downloadable run logs and all annotation pages reviewed: zero warning lines/annotations. Two development notice annotations are not warnings.",
+  "limits": "356 workspace/doc tests include one compile-fail check and synthetic hardware models; six default-off native-UID probe tests bring each OS total to362. The three OS repetitions are not1086 different cases. GPUI wire/ABI tests are additional. These checks do not implement or qualify the missing production runtime."
 }
