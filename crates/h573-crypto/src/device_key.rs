@@ -53,7 +53,9 @@ impl Snapshot {
             || self.flash_secure_boot & 0xff != 0xb4 // SECBOOT_LOCK.
             || self.flash_secure_epoch & !0x00ff_ffff != 0
             || self.flash_privilege & 1 == 0
-            || self.hdpl != 0x6f // runtime HDPL3, not a provisioning level.
+            // UM3125 Rev2 pp19/23: authenticated secure-image jump at HDPL2.
+            // This Root stays there; a HDPL3/NS handoff is not this profile.
+            || self.hdpl != 0x8a
             || self.next_hdpl != 0
             || self.epoch_select != 1 // SEC_EPOCH; never forced-zero/NS.
             || self.sbs_security & 0xb != 0xb
@@ -89,7 +91,7 @@ pub(crate) fn fixture() -> Snapshot {
         flash_secure_boot: 0xb4,
         flash_secure_epoch: 0,
         flash_privilege: 1,
-        hdpl: 0x6f,
+        hdpl: 0x8a,
         next_hdpl: 0,
         epoch_select: 1,
         sbs_security: 0xb,
@@ -125,7 +127,7 @@ mod tests {
             |s| s.flash_secure_boot = 0xc3,
             |s| s.flash_secure_epoch = 1 << 24,
             |s| s.flash_privilege = 0,
-            |s| s.hdpl = 0x8a,
+            |s| s.hdpl = 0x6f,
             |s| s.next_hdpl = 1,
             |s| s.epoch_select = 0,
             |s| s.epoch_select = 2,

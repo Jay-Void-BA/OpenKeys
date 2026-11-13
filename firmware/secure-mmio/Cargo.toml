@@ -10,8 +10,11 @@ cortex-m = { version = "=0.7.10", features = ["critical-section-single-core"] }
 openkeys-h573-crypto = { path = "../../crates/h573-crypto" }
 openkeys-board = { path = "../board" }
 openkeys-se-transport = { path = "../../crates/se-transport" }
+openkeys-root-flash = { path = "../../crates/root-flash" }
+openkeys-root-journal = { path = "../../crates/root-journal" }
 
-# This is the sole own-code exception: nine fixed MMIO handle constructors,
-# explained in README. It never accepts an arbitrary address or host buffer.
+# This is the sole own-code exception: eleven fixed MMIO handle constructors
+# and aligned words within two fixed secure-flash sectors, explained in README.
+# It never accepts a caller pointer/arbitrary address or host programmer request.
 [lints.rust]
 unsafe_code = "deny"

@@ -5100,6 +5100,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "openkeys-root-flash"
+version = "0.1.0"
+dependencies = [
+ "hmac 0.12.1",
+ "openkeys-h573-crypto",
+ "openkeys-root-journal",
+ "sha2 0.10.9",
+ "zeroize",
+]
+
+[[package]]
 name = "openkeys-root-journal"
 version = "0.1.0"
 dependencies = [
@@ -5163,6 +5174,8 @@ dependencies = [
  "embassy-stm32",
  "openkeys-board",
  "openkeys-h573-crypto",
+ "openkeys-root-flash",
+ "openkeys-root-journal",
  "openkeys-se-transport",
 ]
 

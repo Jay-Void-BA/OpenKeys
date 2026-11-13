@@ -8,7 +8,10 @@
 
 后续已加入[生命周期 journal 内核与 PIN 安装连接](../crates/root-journal/README.md)，
 提供写前计划、提交末写、损坏不回退 Ready、分阶段恢复及每次清空的新用户代际。
-真实内部安全 Flash / HUK / 启动适配仍未提供，所以上面的整机阻塞没有解除。
+后续又补了[硬件 DHUK MAC](../crates/h573-crypto/README.md)与
+[固定两个内部安全 Flash 扇区的控制器 / 实际 MMIO](../crates/root-flash/README.md)，
+并将日志内核与控制器组合测试。生产链接 / STiRoT / OTA 预留和 Root 接线仍未完成，
+所以上面的整机阻塞没有解除；不能只凭组件存在启用真实密钥。
 
 ## 本地 PIN 安装
 

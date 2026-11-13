@@ -2,6 +2,10 @@
 
 [当前硬件](../hardware/r05/README.md) · [安全复查](../docs/SECURITY_REVIEW_R05.md) · [境内渠道](MAINLAND_COMPONENT_CHANNELS.md) · [工厂 / 实验室筛选](MAINLAND_SUPPLIERS_AND_LABS.md)
 
+新增[Root 密钥 / 内部日志实测规程](ROOT_STORAGE_TESTS_R05_ZH.md)，覆盖句写入 / 掉电、
+完整日志回放、ECC / 卡住控制器、DHUK 状态、侧信道与故障注入；其启动 / 镜像先验条件
+尚未完成，不能将规程当作通过记录。
+
 **版本已正式变更：无指纹、6 位设备 PIN、0–9 十键、DFR0555 蓝底白字双行 LCD。** 此说明覆盖工程样板的准备和后续放行条件。当前完整认证器仍未完成，诊断固件不能作为三把成品密钥；不要把 R0.4 手册中的指纹、旧 LCD、四键或旧壳体加入新订单。
 
 ## 1. 冻结版本和委托范围

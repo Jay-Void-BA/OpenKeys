@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/device-policy", "crates/vault-import", "crates/device-vault", "crates/device-records", "crates/otp-format", "crates/se-transport", "crates/scp03", "crates/h573-crypto", "crates/se-state", "crates/authenticator-core", "crates/secure-channel", "crates/root-journal", "apps/manager", "firmware/board", "firmware/target", "firmware/secure-mmio", "firmware/r05", "apps/manager-gpui"]
+members = ["crates/device-policy", "crates/vault-import", "crates/device-vault", "crates/device-records", "crates/otp-format", "crates/se-transport", "crates/scp03", "crates/h573-crypto", "crates/se-state", "crates/authenticator-core", "crates/secure-channel", "crates/root-journal", "crates/root-flash", "apps/manager", "firmware/board", "firmware/target", "firmware/secure-mmio", "firmware/r05", "apps/manager-gpui"]
 default-members = ["crates/device-policy", "crates/vault-import"]
 exclude = ["firmware/vendor/cortex-m", "vendor/opensk/libraries/opensk", "vendor/opensk/libraries/cbor"]
 

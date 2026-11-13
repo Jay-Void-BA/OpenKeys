@@ -22,8 +22,8 @@
     "hardware/r05/pinout.csv": "193e41123500e1d14e853004f86404a986fca6b5f81c620643de85144c7c1599"
   },
   "source_sha256": {
-    "Cargo.lock": "9fd5bc3ce0652ce379c811fdd79108259ce8847e306757e17f2641b29a0e2ac5",
-    "Cargo.toml": "c07c4fc6dbddce41211dd6ce1fd7946c89290b3ff3cbeaa3705b9fd4634c8de1",
+    "Cargo.lock": "f273468a7aa9f71540b8023cd0b395394ad8291b3a074b2db576164bfbefe43f",
+    "Cargo.toml": "f6647646503a308bc1ba45a5850e66f6d58dfb89fbec4e59603fc184ee3a6399",
     "crates/device-policy/Cargo.toml": "3543984e4fb9c36d6cb9e47396c18726998f11cbba4958ade3417d29c1de6d6f",
     "crates/device-policy/src/biometric.rs": "2b5200740724ef7b47516cfc5ff8aecfddcd29e721084234907ed77c70b6cd64",
     "crates/device-policy/src/execution.rs": "19db5a87d816147aff66d57b31d5f7199f69c91e243acc16d5c27abe2d136c15",

@@ -50,7 +50,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           rustup target add thumbv8m.main-none-eabihf --toolchain 1.99.1
-          cargo check -p device-policy -p device-vault -p device-records -p openkeys-board -p openkeys-se-transport -p openkeys-scp03 -p openkeys-h573-crypto -p openkeys-se-state -p openkeys-authenticator-core -p openkeys-secure-channel -p openkeys-root-journal --target thumbv8m.main-none-eabihf --locked
+          cargo check -p device-policy -p device-vault -p device-records -p openkeys-board -p openkeys-se-transport -p openkeys-scp03 -p openkeys-h573-crypto -p openkeys-se-state -p openkeys-authenticator-core -p openkeys-secure-channel -p openkeys-root-journal -p openkeys-root-flash --target thumbv8m.main-none-eabihf --locked
           cargo build -p openkeys-h573 --release --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked
           cargo clippy -p openkeys-h573 --target thumbv8m.main-none-eabihf --features r04-diagnostics --locked -- -D warnings
       - name: R05 Cortex-M33 diagnostics and LCD variants

@@ -14,24 +14,27 @@ const CONFIG_LOCK: u32 = 1 << 31;
 const ENABLE: u32 = 1 << 2;
 const ERROR_BITS: u32 = 0b110_0110; // CECS,SECS,CEIS,SEIS; never cleared as recovery.
 
-struct Aliases {
+pub(super) struct Aliases {
     rng: pac::rng::Rng,
     saes: pac::saes::Saes,
     rcc: pac::rcc::Rcc,
     gtzc: pac::gtzc::Gtzc1Tzsc,
     nscr: pac::common::Reg<u32, pac::common::RW>,
     i2c1: pac::i2c::I2c,
-    flash: pac::flash::Flash,
+    pub(super) flash: pac::flash::Flash,
     sbs: pac::syscfg::Syscfg,
     tamp: pac::tamp::Tamp,
+    pub(super) icache: pac::icache::Icache,
+    pub(super) dcache: pac::dcache::Dcache,
 }
 #[allow(unsafe_code)]
-fn aliases() -> Aliases {
+pub(super) fn aliases() -> Aliases {
     // SAFETY: RM0481 Rev5 section2.3 secure peripheral memory map. Each fixed
     // address is a documented,4-byte-aligned volatile peripheral register
     // region, not RAM or a Rust reference. RNG/SAES ownership is exclusively
-    // moved into their ports before use. RCC/GTZC are bootstrap-only and are
-    // not returned to clients. The boot caller must be privileged Secure and
+    // moved into their ports before use. RCC/GTZC writes are bootstrap-only;
+    // the private ports retain readback handles, never expose them to clients.
+    // The boot caller must be privileged Secure and
     // serialise clock/attribution configuration; NS code cannot call this.
     unsafe {
         Aliases {
@@ -46,6 +49,8 @@ fn aliases() -> Aliases {
             flash: pac::flash::Flash::from_ptr(0x5002_2000 as *mut ()),
             sbs: pac::syscfg::Syscfg::from_ptr(0x5400_0400 as *mut ()),
             tamp: pac::tamp::Tamp::from_ptr(0x5400_7c00 as *mut ()),
+            icache: pac::icache::Icache::from_ptr(0x5003_0400 as *mut ()),
+            dcache: pac::dcache::Dcache::from_ptr(0x5003_1400 as *mut ()),
         }
     }
 }
@@ -292,6 +297,15 @@ impl Registers for SaesPort<'_> {
     fn device_key_context(&mut self) -> Result<DeviceKeyContext, Error> {
         // Two fresh reads catch transitions while assembling the snapshot;
         // the crypto core also compares before/after every block and cleanup.
+        self.readbacks.device_context()
+    }
+    fn emergency_reset(&mut self) -> ! {
+        cortex_m::peripheral::SCB::sys_reset()
+    }
+}
+
+impl Aliases {
+    pub(super) fn device_context(&self) -> Result<DeviceKeyContext, Error> {
         let before = self.device_snapshot()?.qualify()?;
         let after = self.device_snapshot()?.qualify()?;
         if before != after {
@@ -299,14 +313,8 @@ impl Registers for SaesPort<'_> {
         }
         Ok(after)
     }
-    fn emergency_reset(&mut self) -> ! {
-        cortex_m::peripheral::SCB::sys_reset()
-    }
-}
-
-impl SaesPort<'_> {
     fn device_snapshot(&self) -> Result<Snapshot, Error> {
-        let a = &self.readbacks;
+        let a = self;
         if !a.rcc.ahb2enr().read().rngen()
             || !a.rcc.ahb2enr().read().saesen()
             || !a.rcc.cr().read().hsi48rdy()

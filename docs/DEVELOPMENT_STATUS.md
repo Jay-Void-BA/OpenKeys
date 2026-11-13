@@ -14,7 +14,7 @@ RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD
 | 部分 | 已有 | 未完成 |
 |---|---|---|
 | 电路 / PCB / 结构 | R05 十键、H573、SE051C2、DFR0555、NFC、供电 / LCD 故障互锁；11 页 / 169 BOM / 四层，ERC / DRC 零问题，948 项核对，制造导出 | 首板 DFM、LCD 静态角落假设 / 电容 / 关断时序 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
-| 本地六位 PIN | 6+6 首次设置策略、独立十键、持久预扣 / 擦除锁存；[原生 PIN v4 后端](NATIVE_PIN_RUNTIME_R05.md)、原生会话内 credit；[PIN 安装 / SE 清点 / 全 NOR 擦除组件](CLASSICAL_LIFECYCLE_R05.md)；[生命周期 journal 内核与 PIN 适配](../crates/root-journal/README.md)、不可改写的 SE 用户代际匹配；私钥端口逐 APDU 检查同一 Execution | 整机首次初始化、安全 Flash / HUK / 启动适配、完整 ALL-DATA 协调与恢复、生产 Root 接线、SE profile / 真实 ACL / 原生限次资格验证；安装阶段与日志内核不等于整机 Ready / 全部删除 |
+| 本地六位 PIN | 6+6 首次设置策略、独立十键、持久预扣 / 擦除锁存；[原生 PIN v4 后端](NATIVE_PIN_RUNTIME_R05.md)、原生会话内 credit；[PIN 安装 / SE 清点 / 全 NOR 擦除组件](CLASSICAL_LIFECYCLE_R05.md)；[生命周期 journal 与 PIN 适配](../crates/root-journal/README.md)、[H573 固定两扇区安全 Flash](../crates/root-flash/README.md)、硬件 DHUK MAC、不可改写的 SE 用户代际匹配；私钥端口逐 APDU 检查同一 Execution | 整机首次初始化、生产启动 / 链接 / OTA 预留、完整 ALL-DATA 协调与恢复、Root 接线、SE profile / 真实 ACL / 原生限次资格验证；组件和模型通过不等于整机 Ready / 全部删除 |
 | PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试；[Noise XX 与 AEAD 通道内核](../crates/secure-channel/README.md)及 CCID / NFC 共用分片编码 | 可信时间、射频离场 IRQ、USB reset / suspend、原生 PIN 会话撤权及各协议实际验证状态的 Root 接线；真实 OS 连接 / 配对存储与通道集成 |
 | LCD / 十键 / 诊断 | 独立 Rust 驱动、版本明确、断电故障锁存、按键去抖 / 组合键拒绝；真实 R05 引脚构建约束 | 生产 Secure 归属、板上时序与故障响应；ARM 诊断没有认证功能 |
 | 电量 / 电源 UI | USB / 电池供电候选电路、充电禁止的诊断边界 | 实际电量采集 / 校准 / UI、USB 无电池与低电量工作验证；不得用充电状态伪报电量百分比 |

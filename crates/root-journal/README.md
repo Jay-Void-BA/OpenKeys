@@ -51,6 +51,10 @@ Sequence numbers and MACs are not a substitute for that independent binding.
 - Internal secure MCU flash only; reserve both sectors in boot/OTA/linker
   configuration and qualify16-byte programming, erase, ECC and readback. Normal
   code, DMA, debug and unsigned/rolled-back firmware may not modify the store.
+  The [fixed two-sector controller](../root-flash/README.md) and real secure
+  MMIO port are now present, including strict readback and journal integration
+  tests. Production linker/STiRoT/OTA reservation and protected boot wiring
+  remain incomplete; the port is not called by public diagnostics.
 - Real device MAC with healthy hardware key loading and stable qualified
   security/HDPL/epoch/key-mode context. Pending TAMP/dummy DHUK, debug, untrusted
   lifecycle and hardware faults must fail closed. The
