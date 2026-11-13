@@ -1,41 +1,46 @@
 {
   "schema": 1,
-  "source_commit": "9f697f84873ab653803c9e2a3e97aec8c3a9ac58",
-  "run_id": 43007113141,
+  "source_commit": "665c0a3d807ad49942cd228ba99b3c77d773179c",
+  "run_id": 43336263695,
   "production_release": false,
   "artifacts_downloaded_and_executed": false,
-  "note": "GitHub metadata only; local Linux source build was rendered separately. Device backend and mobile apps are not integrated.",
+  "artifact_download_result": "HTTP 403 in this environment; archive contents and binary execution NOT_VERIFIED",
+  "note": "GitHub metadata only; previous local Linux source build was rendered separately. Device backend and mobile apps are not integrated.",
   "artifacts": [
     {
-      "id": 13849302204,
+      "id": 13998640820,
       "name": "openkeys-gpui-development-ubuntu-24.04",
-      "size_in_bytes": 10908251,
-      "digest": "sha256:95c5d4c5767c49b0797a2582a64312a32ae97585738730896b1e4a85e5dbdae9",
-      "expires_at": "2027-02-09T10:51:34Z",
+      "size_in_bytes": 10908279,
+      "digest": "sha256:f3661fe63b4d11478e00f16b7452d2de0d3d0e7ef98ef1489900cf4d1ad22205",
+      "created_at": "2026-11-13T00:31:22Z",
+      "expires_at": "2027-02-11T00:20:22Z",
       "expired": false
     },
     {
-      "id": 13848588154,
-      "name": "r05-diagnostic-arm-elf",
-      "size_in_bytes": 43999,
-      "digest": "sha256:8dea0ed753ef1a8f84abf5837eba8d32ec34b718c39c9349fce9df6036cbf4f3",
-      "expires_at": "2027-02-09T10:51:34Z",
-      "expired": false
-    },
-    {
-      "id": 13848264973,
+      "id": 13997802104,
       "name": "openkeys-gpui-development-macos-15",
       "size_in_bytes": 6643243,
-      "digest": "sha256:653e42923a794e69f8ab8b307750635ed256e50327ce011154a2f0fd86aa5e7d",
-      "expires_at": "2027-02-09T10:51:34Z",
+      "digest": "sha256:f27ffe1996df900c3366ca283ddd63da7ac1a32dbd0b3ee95f871a55ecd91bc2",
+      "created_at": "2026-11-13T00:28:49Z",
+      "expires_at": "2027-02-11T00:20:22Z",
       "expired": false
     },
     {
-      "id": 13848244773,
+      "id": 13997643213,
       "name": "openkeys-gpui-development-windows-2022",
-      "size_in_bytes": 6778055,
-      "digest": "sha256:618d4a7ec341eae9ef6314245bb994fbaab3c2b8902845afa7cb189ee7aebd8a",
-      "expires_at": "2027-02-09T10:51:34Z",
+      "size_in_bytes": 6778053,
+      "digest": "sha256:e2e998c0ae271b702b407f8f5352408ddbcafdbea318bc3ef8651a447fe879b1",
+      "created_at": "2026-11-13T00:32:36Z",
+      "expires_at": "2027-02-11T00:20:22Z",
+      "expired": false
+    },
+    {
+      "id": 13997148211,
+      "name": "r05-diagnostic-arm-elf",
+      "size_in_bytes": 43993,
+      "digest": "sha256:52d4e85a3cab0c737b3923cdc6b1e290398ff65809921f0bc91964df7cdf1aed",
+      "created_at": "2026-11-13T00:23:37Z",
+      "expires_at": "2027-02-11T00:20:22Z",
       "expired": false
     }
   ]
