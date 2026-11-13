@@ -1,5 +1,11 @@
 # SE050 persistent state
 
+R05 classical additions: [native PIN installation, inventory and private
+execution ports](../../docs/CLASSICAL_LIFECYCLE_R05.md). `NativePin` alone is not
+`PinBoundExchange`; only a live `PrivatePort` can be passed to key/OTP providers.
+The older R04 state/biometric layout below is retained for shared-code history,
+not an R05 fingerprint fallback or a completed production commissioner.
+
 Own `no_std`, allocation-free Rust. Implements actual SE050 object APDUs,
 `device_vault::Ledger` and biometric `ProtectedAttempts`. Production exchange
 is sealed to `ScpSession`, which uses the strict authenticated SCP03 client.

@@ -10,6 +10,7 @@
 use crate::{Error, Exchange, PinBoundExchange, private};
 use device_policy::{
     Request,
+    execution::{Execution, State},
     pin::{Error as PinError, ProtectedPin},
 };
 use openkeys_scp03::{Command, MAX_DATA};
@@ -50,11 +51,26 @@ pub trait PowerCut {
     /// Never an OS/host ACK; confirm actual VDD/EN decay on the board.
     fn disable_se(&mut self) -> Result<(), Error>;
 }
+/// Root-specific private dispatch check, in addition to global boot/fault state.
+/// Verify this request's real peer/link epoch, native hardware-PIN lease and
+/// independent protocol PIN/role/token/RP/slot permission. A boot-only guard or
+/// generic hardware State cannot satisfy this interface through a default impl.
+pub trait PrivateState: State {
+    fn check_private_request(&mut self, request: &Request) -> Result<(), device_policy::Error>;
+}
 struct Pending {
     request: Request,
     spent: u64,
     credit: u64,
 }
+/// A verified PIN alone is deliberately not a private-key exchange capability.
+///
+/// ```compile_fail
+/// use openkeys_se_state::{Exchange, keys::Keys, native_pin::{NativePin, PowerCut}};
+/// fn cannot_skip_execution<X: Exchange, P: PowerCut>(pin: NativePin<X, P>) {
+///     let _keys = Keys::new(pin);
+/// }
+/// ```
 pub struct NativePin<X: Exchange, P: PowerCut> {
     io: X,
     power: P,
@@ -129,6 +145,32 @@ impl<X: Exchange, P: PowerCut> NativePin<X, P> {
             Err(Error::Channel)
         }
     }
+
+    /// Only a live, already consumed exact-request execution may borrow a
+    /// native private port. No boot/commissioning SCP guard can substitute for
+    /// this per-APDU check. Root State must cover real link/lease/hardware facts.
+    pub fn private_port<'a, S: PrivateState, C: FnMut() -> u64>(
+        &'a mut self,
+        execution: &'a Execution,
+        state: &'a mut S,
+        clock: C,
+    ) -> Result<PrivatePort<'a, X, P, S, C>, Error> {
+        if !self.verified {
+            execution.cancel();
+            return Err(Error::Authorization);
+        }
+        let mut port = PrivatePort {
+            pin: self,
+            execution,
+            state,
+            clock,
+        };
+        if let Err(error) = port.check() {
+            port.close();
+            return Err(error);
+        }
+        Ok(port)
+    }
     /// Consume exact ChangePin authority and persist the irreversible erase
     /// intent BEFORE accepting a replacement PIN. This is not deletion or a
     /// factory-blank result. Root must lock every session and run/recover the
@@ -144,7 +186,7 @@ impl<X: Exchange, P: PowerCut> NativePin<X, P> {
             if !self.verified || request.operation != device_policy::Operation::ChangePin {
                 return Err(Error::Authorization);
             }
-            let mut scope = authorization
+            let scope = authorization
                 .activate(&request, state, &mut clock)
                 .map_err(|_| Error::Authorization)?;
             scope
@@ -359,6 +401,112 @@ impl<X: Exchange, P: PowerCut> NativePin<X, P> {
         }
         Ok(())
     }
+
+    fn private_exchange(&mut self, command: &Command<'_>, out: &mut [u8]) -> Result<usize, Error> {
+        out.fill(0);
+        if !self.verified {
+            return Err(Error::Authorization);
+        }
+        // Only typed protected providers use this port. Nested/maintenance
+        // sessions and reset commands cannot be smuggled through it.
+        if command.instruction == 5
+            || (command.instruction == 4 && (command.p1 != 0 || !matches!(command.p2, 0x27 | 0x28)))
+        {
+            self.close();
+            return Err(Error::Authorization);
+        }
+        self.process(command, out)
+    }
+}
+
+/// Exclusive borrowed operation port. Its scope is shared read-only with typed
+/// key/OTP providers, while every native APDU updates the SAME live execution
+/// checkpoint. No public constructor, Clone, host deserializer or raw SID.
+pub struct PrivatePort<'a, X: Exchange, P: PowerCut, S: PrivateState, C: FnMut() -> u64> {
+    pin: &'a mut NativePin<X, P>,
+    execution: &'a Execution,
+    state: &'a mut S,
+    clock: C,
+}
+impl<X: Exchange, P: PowerCut, S: PrivateState, C: FnMut() -> u64> PrivatePort<'_, X, P, S, C> {
+    fn check(&mut self) -> Result<(), Error> {
+        use device_policy::Operation as O;
+        if !self.pin.verified
+            || !matches!(
+                self.execution.request().operation,
+                O::FidoRegister
+                    | O::FidoSign
+                    | O::DeriveHmacSecret
+                    | O::ShowTotp
+                    | O::ShowHotp
+                    | O::ImportOtp
+                    | O::DeleteOtp
+                    | O::OpenPgp
+                    | O::Piv
+                    | O::ProtocolPin
+                    | O::GenerateKey
+                    | O::ImportKey
+                    | O::DeleteKey
+                    | O::ListPrivateMetadata
+                    | O::RevealNote
+                    | O::RevealRecoveryCode
+                    | O::Import
+                    | O::Delete
+                    | O::PairHost
+                    | O::SetTime
+            )
+        {
+            return Err(Error::Authorization);
+        }
+        self.execution
+            .check(self.execution.request(), self.state, &mut self.clock)
+            .map_err(|_| Error::Authorization)?;
+        self.state
+            .check_private_request(self.execution.request())
+            .map_err(|_| Error::Authorization)?;
+        // A role/link callback can block, cancel or change generation too.
+        self.execution
+            .check(self.execution.request(), self.state, &mut self.clock)
+            .map_err(|_| Error::Authorization)
+    }
+}
+impl<X: Exchange, P: PowerCut, S: PrivateState, C: FnMut() -> u64> private::Sealed
+    for PrivatePort<'_, X, P, S, C>
+{
+}
+impl<X: Exchange, P: PowerCut, S: PrivateState, C: FnMut() -> u64> private::PinBound
+    for PrivatePort<'_, X, P, S, C>
+{
+}
+impl<X: Exchange, P: PowerCut, S: PrivateState, C: FnMut() -> u64> PinBoundExchange
+    for PrivatePort<'_, X, P, S, C>
+{
+}
+impl<X: Exchange, P: PowerCut, S: PrivateState, C: FnMut() -> u64> Exchange
+    for PrivatePort<'_, X, P, S, C>
+{
+    fn exchange(&mut self, command: &Command<'_>, out: &mut [u8]) -> Result<usize, Error> {
+        out.fill(0);
+        let result = (|| {
+            self.check()?;
+            let length = self.pin.private_exchange(command, out)?;
+            self.check()?;
+            Ok(length)
+        })();
+        if result.is_err() {
+            out.fill(0);
+            self.close();
+        }
+        result
+    }
+    fn close(&mut self) {
+        self.execution.cancel();
+        self.pin.close();
+    }
+    fn release(&mut self) {
+        // Successful provider destruction does not extend or cancel a lease.
+        // Subsequent use still requires a checked port and Root's live state.
+    }
 }
 
 /// NXP se05x_Transform/ProcessSessionCmd encoding, inside authenticated SCP03.
@@ -434,28 +582,6 @@ impl<X: Exchange, P: PowerCut> ProtectedPin<6> for NativePin<X, P> {
             self.close();
             PinError::Storage
         })
-    }
-}
-impl<X: Exchange, P: PowerCut> private::Sealed for NativePin<X, P> {}
-impl<X: Exchange, P: PowerCut> private::PinBound for NativePin<X, P> {}
-impl<X: Exchange, P: PowerCut> PinBoundExchange for NativePin<X, P> {}
-impl<X: Exchange, P: PowerCut> Exchange for NativePin<X, P> {
-    fn exchange(&mut self, command: &Command<'_>, out: &mut [u8]) -> Result<usize, Error> {
-        out.fill(0);
-        if !self.verified {
-            return Err(Error::Authorization);
-        }
-        // No host forwarding; these inputs belong only to typed key backends.
-        if command.instruction == 5
-            || (command.instruction == 4 && (command.p1 != 0 || !matches!(command.p2, 0x27 | 0x28)))
-        {
-            self.close();
-            return Err(Error::Authorization);
-        }
-        self.process(command, out)
-    }
-    fn close(&mut self) {
-        NativePin::close(self);
     }
 }
 impl<X: Exchange, P: PowerCut> Drop for NativePin<X, P> {

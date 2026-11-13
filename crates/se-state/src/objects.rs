@@ -25,8 +25,9 @@ pub trait Exchange: private::Sealed {
         self.close();
     }
 }
-/// Only an authenticated native local-PIN session can supply private-key/OTP
-/// exchanges. Plain platform SCP03 proves MCU identity, never the owner's PIN.
+/// Only a live execution-bound native local-PIN port can supply private-key/OTP
+/// exchanges. A verified NativePin object alone no longer implements this.
+/// Plain platform SCP03 proves MCU identity, never the owner's PIN or request.
 pub trait PinBoundExchange: Exchange + private::PinBound {}
 pub struct ScpSession<'a, L, C, G, const N: usize> {
     client: &'a mut Client<L, N>,

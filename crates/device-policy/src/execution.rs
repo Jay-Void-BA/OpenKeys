@@ -1,6 +1,7 @@
 //! One-shot, request-bound execution after local authorization and confirmation.
 //! A use-by deadline authorizes only one exact operation, not blanket access.
 use crate::{Authorization, Error, Request};
+use core::cell::Cell;
 
 /// Trusted root state only: generation changes on cancel/disconnect/suspend/
 /// lock, and check covers latched hardware/boot faults. Never implement from a
@@ -16,8 +17,12 @@ pub struct Execution {
     authorization: Authorization,
     started: u64,
     deadline: u64,
-    last_time: u64,
-    closed: bool,
+    // A private SE port may borrow the immutable request/authorization while
+    // running live checks. Cell keeps one shared revocation/time state and
+    // makes Execution !Sync; it is still non-clonable and Root-owned.
+    last_time: Cell<u64>,
+    closed: Cell<bool>,
+    checking: Cell<bool>,
 }
 /// Successful end of one checked execution. Not cloneable, serializable or
 /// constructible by a host. Only a matching active session may consume it to
@@ -77,23 +82,24 @@ impl Authorization {
             authorization: self,
             started: start,
             deadline,
-            last_time: now,
-            closed: false,
+            last_time: Cell::new(now),
+            closed: Cell::new(false),
+            checking: Cell::new(false),
         })
     }
 }
 impl Execution {
     pub fn finish(
-        mut self,
+        self,
         expected: &Request,
         state: &mut impl State,
         clock: impl FnMut() -> u64,
     ) -> Result<Completed, Error> {
         self.check(expected, state, clock)?;
-        self.closed = true;
+        self.closed.set(true);
         Ok(Completed {
             authorization: self.authorization,
-            finished_ms: self.last_time,
+            finished_ms: self.last_time.get(),
         })
     }
     pub fn authorization(&self) -> &Authorization {
@@ -109,37 +115,38 @@ impl Execution {
         self.deadline
     }
     pub fn checked_at_ms(&self) -> u64 {
-        self.last_time
+        self.last_time.get()
     }
     /// Root continuation policy may only narrow the original deadline. A new
     /// local proof cannot extend a previous multi-response transaction.
     pub fn restrict_deadline(mut self, until: u64) -> Result<Self, Error> {
         self.deadline = self.deadline.min(until);
-        if self.deadline <= self.last_time {
+        if self.deadline <= self.last_time.get() {
             return Err(Error::Expired);
         }
         Ok(self)
     }
-    pub fn cancel(&mut self) {
-        self.closed = true;
+    pub fn cancel(&self) {
+        self.closed.set(true);
     }
-    fn time(&mut self, now: u64) -> Result<(), Error> {
-        if now < self.last_time {
+    fn time(&self, now: u64) -> Result<(), Error> {
+        if now < self.last_time.get() {
             return Err(Error::TimeWentBackwards);
         }
         if now >= self.deadline {
             return Err(Error::Expired);
         }
-        self.last_time = now;
+        self.last_time.set(now);
         Ok(())
     }
     pub fn check(
-        &mut self,
+        &self,
         expected: &Request,
         state: &mut impl State,
         mut clock: impl FnMut() -> u64,
     ) -> Result<(), Error> {
-        if self.closed {
+        if self.closed.get() || self.checking.replace(true) {
+            self.cancel();
             return Err(Error::Locked);
         }
         let result = (|| {
@@ -162,6 +169,16 @@ impl Execution {
             }
             Ok(())
         })();
+        self.checking.set(false);
+        // A nested callback may cancel/reenter through a shared Execution.
+        // Its failure must never be hidden by the outer callback returning Ok.
+        let result = result.and_then(|()| {
+            if self.closed.get() {
+                Err(Error::Locked)
+            } else {
+                Ok(())
+            }
+        });
         if result.is_err() {
             self.cancel();
         }
@@ -210,6 +227,66 @@ mod tests {
             execution_deadline: None,
         }
     }
+
+    #[test]
+    fn shared_provider_checks_cannot_hide_cancellation_or_reentry() {
+        struct Cancel<'a>(&'a Execution);
+        impl State for Cancel<'_> {
+            fn generation(&self) -> u64 {
+                3
+            }
+            fn check_security_state(&mut self) -> Result<(), Error> {
+                self.0.cancel();
+                Ok(())
+            }
+        }
+        struct Reenter<'a>(&'a Execution, &'a Cell<u64>);
+        impl State for Reenter<'_> {
+            fn generation(&self) -> u64 {
+                3
+            }
+            fn check_security_state(&mut self) -> Result<(), Error> {
+                let mut nested = Live {
+                    generation: Cell::new(3),
+                    clock: self.1,
+                    delay: 0,
+                    fault: false,
+                    revoke: false,
+                };
+                assert_eq!(
+                    self.0.check(self.0.request(), &mut nested, || self.1.get()),
+                    Err(Error::Locked)
+                );
+                Ok(())
+            }
+        }
+        for reenter in [false, true] {
+            let clock = Cell::new(10);
+            let auth = authorization(Operation::FidoSign);
+            let request = *auth.request();
+            let mut state = Live {
+                generation: Cell::new(3),
+                clock: &clock,
+                delay: 0,
+                fault: false,
+                revoke: false,
+            };
+            let scope = auth.activate(&request, &mut state, || clock.get()).unwrap();
+            let borrowed_auth = scope.authorization();
+            let result = if reenter {
+                scope.check(&request, &mut Reenter(&scope, &clock), || clock.get())
+            } else {
+                scope.check(&request, &mut Cancel(&scope), || clock.get())
+            };
+            assert_eq!(result, Err(Error::Locked));
+            assert_eq!(borrowed_auth.request(), &request);
+            assert_eq!(
+                scope.check(&request, &mut state, || clock.get()),
+                Err(Error::Locked)
+            );
+            assert!(scope.finish(&request, &mut state, || clock.get()).is_err());
+        }
+    }
     fn live(clock: &Cell<u64>) -> Live<'_> {
         Live {
             generation: Cell::new(3),
@@ -225,7 +302,7 @@ mod tests {
         let mut state = live(&clock);
         let a = authorization(Operation::Import);
         let request = *a.request();
-        let mut e = a.activate(&request, &mut state, || clock.get()).unwrap();
+        let e = a.activate(&request, &mut state, || clock.get()).unwrap();
         assert_eq!(e.expires_ms(), 300_011);
         for t in [21, 15_020, 100_000, 300_010] {
             clock.set(t);
@@ -268,7 +345,7 @@ mod tests {
             let mut state = live(&clock);
             let a = authorization(Operation::FidoSign);
             let request = *a.request();
-            let mut e = a.activate(&request, &mut state, || clock.get()).unwrap();
+            let e = a.activate(&request, &mut state, || clock.get()).unwrap();
             assert_eq!(e.expires_ms(), 15_011);
             match mode {
                 0 => state.generation.set(4),
@@ -296,7 +373,7 @@ mod tests {
         let mut state = live(&clock);
         let a = authorization(Operation::Import);
         let request = *a.request();
-        let mut e = a.activate(&request, &mut state, || clock.get()).unwrap();
+        let e = a.activate(&request, &mut state, || clock.get()).unwrap();
         let mut wrong = request;
         wrong.operation = Operation::RevealRecoveryCode;
         assert_eq!(
@@ -320,7 +397,7 @@ mod tests {
             .restrict_deadline(u64::MAX)
             .unwrap();
         assert_eq!(e.expires_ms(), 15_011);
-        let mut e = e.restrict_deadline(14).unwrap();
+        let e = e.restrict_deadline(14).unwrap();
         clock.set(14);
         assert_eq!(
             e.check(&request, &mut state, || clock.get()),

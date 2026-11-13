@@ -1,9 +1,17 @@
 //! Independent synthetic applet model. No device/owner secrets or factory keys.
 extern crate std;
 use super::*;
-use std::{cell::RefCell, rc::Rc, vec, vec::Vec};
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+    vec,
+    vec::Vec,
+};
 const PIN: [u8; 6] = [9, 2, 7, 0, 4, 6];
 const SID: [u8; 8] = [1, 2, 3, 4, 5, 6, 7, 8];
+
+#[path = "commissioning_tests.rs"]
+mod commissioning;
 
 #[test]
 fn process_envelope_uses_canonical_ber_and_inner_lc_at_independent_boundaries() {
@@ -94,11 +102,30 @@ struct Db {
     fail_power: bool,
     fail_at: Option<(usize, bool)>,
     packets: Vec<Vec<u8>>,
+    private_time: Option<Rc<Cell<u64>>>,
+    private_generation: Option<Rc<Cell<u64>>>,
+    private_fault: Option<Rc<Cell<bool>>>,
+    private_role: Option<Rc<Cell<bool>>>,
 }
 type Shared = Rc<RefCell<Db>>;
 struct Io {
     db: Shared,
     closed: bool,
+}
+fn private_done(db: &mut Db) {
+    db.private += 1;
+    if let Some(time) = &db.private_time {
+        time.set(20_000);
+    }
+    if let Some(generation) = &db.private_generation {
+        generation.set(1);
+    }
+    if let Some(fault) = &db.private_fault {
+        fault.set(true);
+    }
+    if let Some(role) = &db.private_role {
+        role.set(true);
+    }
 }
 impl private::Sealed for Io {}
 fn id(data: &[u8]) -> u32 {
@@ -170,12 +197,12 @@ impl Io {
                 }
                 (2, 0, 7) => {
                     assert!(db.native_verified);
-                    db.private += 1;
+                    private_done(db);
                     Ok(vec![0x41, 2, 0, 32])
                 }
                 (2, 0, 0) => {
                     assert!(db.native_verified);
-                    db.private += 1;
+                    private_done(db);
                     let mut reply = vec![0x41, 0x82, 2, 0];
                     reply.extend((0..512).map(|i| i as u8));
                     Ok(reply)
@@ -306,6 +333,101 @@ fn private_command() -> Command<'static> {
     }
 }
 
+#[derive(Default)]
+struct LiveRoot {
+    generation: Rc<Cell<u64>>,
+    fault: Rc<Cell<bool>>,
+    denied_role: Rc<Cell<bool>>,
+}
+impl PrivateState for LiveRoot {
+    fn check_private_request(&mut self, request: &Request) -> Result<(), device_policy::Error> {
+        if self.denied_role.get() || request.channel != [2; 32] || request.digest != [1; 32] {
+            Err(device_policy::Error::Rejected)
+        } else {
+            Ok(())
+        }
+    }
+}
+impl State for LiveRoot {
+    fn generation(&self) -> u64 {
+        self.generation.get()
+    }
+    fn check_security_state(&mut self) -> Result<(), device_policy::Error> {
+        if self.fault.get() {
+            Err(device_policy::Error::HardwareFault)
+        } else {
+            Ok(())
+        }
+    }
+}
+fn execution(operation: device_policy::Operation) -> Execution {
+    use device_policy::{
+        pin::Press,
+        pin_only::{Digit, Gate, PinEntry, SecurePinVerifier, VerifiedPinRequest},
+    };
+    struct Local;
+    impl ProtectedPin<6> for Local {
+        fn reserve_attempt(&mut self, _: &Request) -> Result<(), PinError> {
+            Ok(())
+        }
+        fn verify(&mut self, _: &Request, digits: &[u8; 6]) -> Result<(), PinError> {
+            if *digits == PIN {
+                Ok(())
+            } else {
+                Err(PinError::Incorrect)
+            }
+        }
+    }
+    struct Proof;
+    impl SecurePinVerifier for Proof {
+        fn check_security_state(&mut self) -> Result<(), device_policy::Error> {
+            Ok(())
+        }
+        fn verify_device_pin(
+            &mut self,
+            r: &Request,
+        ) -> Result<VerifiedPinRequest, device_policy::Error> {
+            let mut entry = PinEntry::begin(*r, || 1).unwrap();
+            for digit in PIN {
+                let key = Digit::from_gpio_index(if digit == 0 { 9 } else { u32::from(digit - 1) })
+                    .unwrap();
+                entry.press(key, Press::Short, 1).unwrap();
+            }
+            Ok(entry.submit(&mut Local, || 1).unwrap())
+        }
+        fn confirm_on_device(
+            &mut self,
+            _: &VerifiedPinRequest,
+        ) -> Result<(), device_policy::Error> {
+            Ok(())
+        }
+    }
+    let request = Request {
+        operation,
+        digest: [1; 32],
+        channel: [2; 32],
+    };
+    let mut gate = Gate::new(Proof);
+    gate.approve(request, || 1).unwrap();
+    let auth = gate.consume_authorized(&request, || 1).unwrap();
+    auth.activate(&request, &mut LiveRoot::default(), || 1)
+        .unwrap()
+}
+// Test-only shorthand: every legacy wire test now obtains a real opaque
+// execution from the policy gate and uses the production checked port. There
+// is deliberately no production Exchange implementation on NativePin itself.
+trait TestExchange {
+    fn exchange(&mut self, c: &Command<'_>, out: &mut [u8]) -> Result<usize, Error>;
+}
+impl TestExchange for NativePin<Io, Power> {
+    fn exchange(&mut self, c: &Command<'_>, out: &mut [u8]) -> Result<usize, Error> {
+        out.fill(0);
+        let scope = execution(device_policy::Operation::FidoSign);
+        self.private_port(&scope, &mut LiveRoot::default(), || 1)?
+            .exchange(c, out)
+    }
+}
+
 #[test]
 fn extended_private_read_still_requires_native_pin_and_caps_its_reply() {
     let db = Shared::default();
@@ -369,7 +491,12 @@ fn private_operations_require_both_native_comparison_and_durable_credit() {
     assert_eq!(db.borrow().private, 1);
     // A borrowed provider's normal release preserves the native session, but
     // an explicit fault/revocation cuts it. Root enforces the 30-second lease.
-    Exchange::release(&mut &mut pin);
+    let scope = execution(device_policy::Operation::FidoSign);
+    let mut root = LiveRoot::default();
+    {
+        let mut port = pin.private_port(&scope, &mut root, || 1).unwrap();
+        Exchange::release(&mut &mut port);
+    }
     assert!(db.borrow().native_verified);
     pin.revoke().unwrap();
     assert!(!db.borrow().native_verified);
@@ -548,5 +675,120 @@ fn changing_pin_latches_before_new_pin_and_revokes_even_on_lost_ack() {
         drop(pin);
         db.borrow_mut().fail_at = None;
         assert!(matches!(open(&db), Err(Error::EraseRequired)));
+    }
+}
+
+#[test]
+fn expired_generation_changed_or_faulted_scope_cannot_open_private_port() {
+    for mode in 0..4 {
+        let db = Shared::default();
+        let mut pin = open(&db).unwrap();
+        pin.reserve_attempt(&request()).unwrap();
+        pin.verify(&request(), &PIN).unwrap();
+        let scope = execution(device_policy::Operation::FidoSign);
+        let mut root = LiveRoot::default();
+        let now = Cell::new(1);
+        match mode {
+            0 => now.set(scope.expires_ms()),
+            1 => root.generation.set(1),
+            2 => root.fault.set(true),
+            _ => root.denied_role.set(true),
+        }
+        let calls = db.borrow().calls;
+        assert!(pin.private_port(&scope, &mut root, || now.get()).is_err());
+        assert_eq!(db.borrow().calls, calls);
+        assert!(!db.borrow().native_verified);
+        assert!(db.borrow().cuts > 0);
+        let expected = *scope.request();
+        assert!(scope.finish(&expected, &mut root, || now.get()).is_err());
+    }
+}
+
+#[test]
+fn a_fault_or_revocation_during_native_io_wipes_output_and_the_execution() {
+    for mode in 0..4 {
+        let db = Shared::default();
+        let mut pin = open(&db).unwrap();
+        pin.reserve_attempt(&request()).unwrap();
+        pin.verify(&request(), &PIN).unwrap();
+        let scope = execution(device_policy::Operation::FidoSign);
+        let mut root = LiveRoot::default();
+        let now = Rc::new(Cell::new(1));
+        match mode {
+            0 => db.borrow_mut().private_time = Some(now.clone()),
+            1 => db.borrow_mut().private_generation = Some(root.generation.clone()),
+            2 => db.borrow_mut().private_fault = Some(root.fault.clone()),
+            _ => db.borrow_mut().private_role = Some(root.denied_role.clone()),
+        }
+        let mut out = [0xa5; 16];
+        {
+            let mut port = pin.private_port(&scope, &mut root, || now.get()).unwrap();
+            assert_eq!(
+                port.exchange(&private_command(), &mut out),
+                Err(Error::Authorization)
+            );
+            let calls = db.borrow().calls;
+            assert!(port.exchange(&private_command(), &mut out).is_err());
+            assert_eq!(db.borrow().calls, calls);
+        }
+        assert_eq!(out, [0; 16]);
+        assert_eq!(db.borrow().private, 1);
+        assert!(!db.borrow().native_verified);
+        assert!(
+            scope
+                .check(scope.request(), &mut root, || now.get())
+                .is_err()
+        );
+    }
+}
+
+#[test]
+fn normal_release_preserves_pin_but_does_not_extend_execution_or_hide_cancellation() {
+    let db = Shared::default();
+    let mut pin = open(&db).unwrap();
+    pin.reserve_attempt(&request()).unwrap();
+    pin.verify(&request(), &PIN).unwrap();
+    let scope = execution(device_policy::Operation::FidoSign);
+    let borrowed_auth = scope.authorization();
+    let mut root = LiveRoot::default();
+    let now = Cell::new(10);
+    {
+        let mut port = pin.private_port(&scope, &mut root, || now.get()).unwrap();
+        assert_eq!(borrowed_auth.request(), scope.request());
+        assert_eq!(port.exchange(&private_command(), &mut [0; 16]), Ok(4));
+        now.set(100);
+        assert_eq!(port.exchange(&private_command(), &mut [0; 16]), Ok(4));
+        Exchange::release(&mut port);
+    }
+    assert!(db.borrow().native_verified);
+    assert_eq!(scope.checked_at_ms(), 100);
+    scope.cancel();
+    let calls = db.borrow().calls;
+    assert!(pin.private_port(&scope, &mut root, || 100).is_err());
+    assert_eq!(db.borrow().calls, calls);
+    assert!(!db.borrow().native_verified);
+}
+
+#[test]
+fn reset_update_and_unlock_grants_are_not_general_private_ports() {
+    use device_policy::Operation as O;
+    for operation in [
+        O::FactoryReset,
+        O::ChangePin,
+        O::UnlockSession,
+        O::FirmwareUpdate,
+    ] {
+        let db = Shared::default();
+        let mut pin = open(&db).unwrap();
+        pin.reserve_attempt(&request()).unwrap();
+        pin.verify(&request(), &PIN).unwrap();
+        let scope = execution(operation);
+        let calls = db.borrow().calls;
+        assert!(
+            pin.private_port(&scope, &mut LiveRoot::default(), || 1)
+                .is_err()
+        );
+        assert_eq!(db.borrow().calls, calls);
+        assert!(!db.borrow().native_verified);
     }
 }

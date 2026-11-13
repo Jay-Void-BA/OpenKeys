@@ -66,6 +66,10 @@ impl<S: SpiDevice> Flash<S> {
         Ok(())
     }
 
+    pub(crate) fn check_erase_owner(&self) -> Result<(), Error> {
+        self.check_range(0, SECTOR as usize)
+    }
+
     fn header(opcode: u8, address: u32) -> [u8; 4] {
         let bytes = address.to_be_bytes();
         [opcode, bytes[1], bytes[2], bytes[3]]

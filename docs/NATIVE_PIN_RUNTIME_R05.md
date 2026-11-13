@@ -15,8 +15,11 @@ credit、私钥 APDU 包装与故障撤权。**仍不是已接通 / 已验证的
    完整提交先持久增加 spent 并读回，再为同一请求创建 UserID 会话。
 3. 原生 `VerifySessionUserID` 成功后，才在该原生会话内写 credit 并读回。
    credit 的写权限必须只授予 PIN AuthID；普通 Platform SCP 只能读 credit。
-4. 签名密钥与 OTP 后端的泛型要求 `PinBoundExchange`。普通 `ScpSession` 和
-   旧 HKDF `PinState` 不满足该类型，不能直接传入私钥后端。
+4. 签名密钥与 OTP 后端的泛型要求 `PinBoundExchange`。仅有已验证的 `NativePin`
+   不再满足该类型：必须用已经消耗的 `Execution`、Root 状态与可信时钟借出
+   `private_port`，每个 APDU 前后重新检查同一个请求、期限、代际和硬件。
+   过期、撤权、重入或应答后故障会清输出、取消执行并关闭 / 断电原生会话。
+   普通 `ScpSession`、旧 HKDF `PinState` 和启动阶段的 SCP guard 不能代替此端口。
 5. 私钥命令包在原生 SID 内，再由完整 Platform SCP03 保护。新签名密钥策略
    只授权 `0x4F4B0801`，其他用户明确 `FORBID_ALL`；不再给 AuthID 0 签名权。
 6. 正常释放借用的操作后端允许保留原生会话。Root 必须继续按真实配对 / 请求 / 时间 /
@@ -39,7 +42,10 @@ credit、私钥 APDU 包装与故障撤权。**仍不是已接通 / 已验证的
 | 私钥、HMAC / vault 包装根 | 全部明确绑定正确 PIN 原生会话，不得保留其他用户可用的旧对象 |
 
 源码的 `marker()` 只是已审查配置的摘要，**不是 SE 真实 ACL / maxAttempts 的远程证明**。
-当前不提供安全的首次安装器，不允许通过手工写一段 marker 就宣称已合格。
+已增加[PIN 命名空间安装器](../crates/se-state/src/commissioning.rs)：实际写有限次、不可替换
+UserID，创建并核对计数器，最后写 marker，再做原生验证并请求断电。它依赖尚未接通的
+生产 Root / 受保护 journal / 明确空白生命周期，不是完整设备的首次初始化器。
+不能通过手工写一段 marker 就宣称 ACL 已合格。见[安装 / 销毁组件边界](CLASSICAL_LIFECYCLE_R05.md)。
 旧 v2 布局没有自动升级；未来转换必须先完成全部旧秘密销毁并验证，再初始化新代际。
 
 AN12413 Rev2.12 §3.2.4.4 明确：UserID 失败次数不通过通用对象 counter 属性报告，

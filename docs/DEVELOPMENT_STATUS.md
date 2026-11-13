@@ -14,7 +14,7 @@ RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD
 | 部分 | 已有 | 未完成 |
 |---|---|---|
 | 电路 / PCB / 结构 | R05 十键、H573、SE051C2、DFR0555、NFC、供电 / LCD 故障互锁；11 页 / 169 BOM / 四层，ERC / DRC 零问题，948 项核对，制造导出 | 首板 DFM、LCD 静态角落假设 / 电容 / 关断时序 / 线束、结构、公差、RF、电源、热和 EMC / ESD 实测 |
-| 本地六位 PIN | 6+6 首次设置策略、独立十键、持久预扣 / 擦除锁存；新增[原生 PIN v3 后端](NATIVE_PIN_RUNTIME_R05.md)、原生会话内 credit、密封私钥接口；新签名对象 ACL 限定 PIN AuthID | 真实首次初始化器、完整 ALL-DATA 擦除事务、生产 Root 接线、SE profile / 真实 ACL / 原生限次资格验证；标记摘要不证明 ACL，锁存不等于全部删除 |
+| 本地六位 PIN | 6+6 首次设置策略、独立十键、持久预扣 / 擦除锁存；[原生 PIN v3 后端](NATIVE_PIN_RUNTIME_R05.md)、原生会话内 credit；新增[实际 PIN 命名空间安装 / SE 清点 / 全 NOR 擦除组件](CLASSICAL_LIFECYCLE_R05.md)，私钥端口逐 APDU 强制检查同一 Execution | 整机首次初始化、受保护 journal / 完整 ALL-DATA 协调与恢复、生产 Root 接线、SE profile / 真实 ACL / 原生限次资格验证；PIN 安装阶段与擦除原语不等于整机 Ready / 全部删除 |
 | PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试；[Noise XX 与 AEAD 通道内核](../crates/secure-channel/README.md)及 CCID / NFC 共用分片编码 | 可信时间、射频离场 IRQ、USB reset / suspend、原生 PIN 会话撤权及各协议实际验证状态的 Root 接线；真实 OS 连接 / 配对存储与通道集成 |
 | LCD / 十键 / 诊断 | 独立 Rust 驱动、版本明确、断电故障锁存、按键去抖 / 组合键拒绝；真实 R05 引脚构建约束 | 生产 Secure 归属、板上时序与故障响应；ARM 诊断没有认证功能 |
 | 电量 / 电源 UI | USB / 电池供电候选电路、充电禁止的诊断边界 | 实际电量采集 / 校准 / UI、USB 无电池与低电量工作验证；不得用充电状态伪报电量百分比 |
@@ -33,7 +33,7 @@ RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD
 
 - 当前 CAD：[板网报告](../hardware/r05/review/board-check.json)、[CAD 摘要](../hardware/r05/review/cad-manifest.json)。
 - 已发布的软件证据：[R05 本地验证记录](r05-validation.json)、[GitHub CI 记录](ci-evidence-r05.json)均注明对应提交；后续修改不得借用旧提交的通过结果。新内核须重新完成全仓库 / ARM / 三平台 CI 和日志核对。
-- 当前软件提交 `665c0a3`：299 项 workspace 测试（含 30 项 FIDO 内核测试）及 6 项默认关闭的原生 UserID 探针测试，在 Linux / macOS / Windows 各通过 305 项；不是 915 个不同测试。完整 CI 日志与注释已核对，零 warning。CAD 对应 `0beebf7`，`hardware/r05/` 与当前软件提交逐字节相同；这只复用相同文件的检查结果，不复用实物资格。
+- 上一次归档 CI 的软件提交 `665c0a3`：299 项 workspace 测试（含 30 项 FIDO 内核测试）及 6 项默认关闭的原生 UserID 探针测试，在 Linux / macOS / Windows 各通过 305 项；不是 915 个不同测试。完整 CI 日志与注释已核对，零 warning。新增生命周期组件以其后续提交的 CI 为准；旧结果不覆盖新增代码。CAD 对应 `0beebf7`，之后未改硬件文件时才可复用同文件检查，不能复用实物资格。
 - 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[原生 PIN v3 SE 布局](../manufacturing/se-native-pin-layout-r05.json)。旧 HKDF v2 布局仅供历史回归，不用于生产授权。
 - 诊断用途：[R05 目标说明](../firmware/r05/README.md)；公开 LCD / 键 / Flash ID，不验证真实 PIN，不启用充电或 USB/NFC 协议。
 - 旧 R04 的 [CI](ci-evidence-r04.json)、[手册](../manufacturing/BUILD_MANUAL_ZH.md)及 [预检](../manufacturing/readiness-report.json)仅供历史追溯，不能充当 R05 放行证据。

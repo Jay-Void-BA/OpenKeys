@@ -8,6 +8,7 @@ pub mod buttons;
 pub mod dfr0555;
 pub mod fingerprint;
 pub mod flash;
+pub mod flash_erase;
 pub mod lcd;
 pub mod otp;
 pub mod pin_ui;

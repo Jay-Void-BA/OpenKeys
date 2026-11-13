@@ -278,7 +278,7 @@ impl PairingCandidate {
             return Err(Error::Pairing);
         }
         let request = self.pairing_request();
-        let mut execution = authorization
+        let execution = authorization
             .activate(&request, state, &mut clock)
             .map_err(|_| Error::Authorization)?;
         self.channel.check(link, clock())?;

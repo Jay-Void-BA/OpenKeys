@@ -256,7 +256,7 @@ fn manual_lock_revokes_both_caches_and_inflight_authority() {
     let r = request(&b, Operation::RevealNote);
     g.approve(r, None, &b, || 2).unwrap();
     let a = g.consume_authorized(&r, &b, || 2).unwrap();
-    let mut e = a.activate(&r, &mut g, || 2).unwrap();
+    let e = a.activate(&r, &mut g, || 2).unwrap();
     g.lock();
     assert!(e.check(&r, &mut g, || 3).is_err());
     assert!(!db.borrow().protocol.iter().any(|&x| x));
@@ -268,7 +268,7 @@ fn long_operation_has_fixed_deadline_and_old_completion_cannot_unlock_again() {
     let r = request(&b, Operation::Import);
     g.approve(r, None, &b, || 2).unwrap();
     let a = g.consume_authorized(&r, &b, || 2).unwrap();
-    let mut e = a.activate(&r, &mut g, || 2).unwrap();
+    let e = a.activate(&r, &mut g, || 2).unwrap();
     g.tick(&b, || 100_000).unwrap();
     e.check(&r, &mut g, || 100_000).unwrap();
     let done = e.finish(&r, &mut g, || 100_001).unwrap();
@@ -345,7 +345,7 @@ fn failed_protocol_verification_revokes_only_its_role_unless_in_use() {
     let r = request(&b, Operation::FidoSign);
     g.approve(r, Some(Protocol::FidoPin), &b, || 4).unwrap();
     let a = g.consume_authorized(&r, &b, || 4).unwrap();
-    let mut e = a.activate(&r, &mut g, || 4).unwrap();
+    let e = a.activate(&r, &mut g, || 4).unwrap();
     g.protocol_failed(Protocol::FidoPin);
     assert!(e.check(&r, &mut g, || 5).is_err());
     assert!(!db.borrow().protocol.iter().any(|&v| v));
@@ -359,7 +359,7 @@ fn in_flight_native_permission_loss_revokes_execution_without_a_host_event() {
     let r = request(&b, Operation::FidoSign);
     g.approve(r, Some(Protocol::FidoPin), &b, || 3).unwrap();
     let a = g.consume_authorized(&r, &b, || 3).unwrap();
-    let mut e = a.activate(&r, &mut g, || 3).unwrap();
+    let e = a.activate(&r, &mut g, || 3).unwrap();
     db.borrow_mut().denied_digest = Some(r.digest);
     assert!(e.check(&r, &mut g, || 4).is_err());
     assert!(!db.borrow().protocol.iter().any(|&flag| flag));
@@ -376,7 +376,7 @@ fn approved_long_operation_keeps_only_its_own_protocol_until_fixed_deadline() {
     g.approve(r, Some(Protocol::PivManagement), &b, || 3)
         .unwrap();
     let a = g.consume_authorized(&r, &b, || 3).unwrap();
-    let mut e = a.activate(&r, &mut g, || 3).unwrap();
+    let e = a.activate(&r, &mut g, || 3).unwrap();
     g.tick(&b, || 40_000).unwrap();
     assert!(!db.borrow().protocol[Protocol::FidoPin as usize]);
     assert!(db.borrow().protocol[Protocol::PivManagement as usize]);
@@ -391,7 +391,7 @@ fn delayed_activation_cannot_restart_a_fixed_execution_budget() {
     let r = request(&b, Operation::RevealNote);
     g.approve(r, None, &b, || 2).unwrap();
     let a = g.consume_authorized(&r, &b, || 3).unwrap();
-    let mut e = a.activate(&r, &mut g, || 10_000).unwrap();
+    let e = a.activate(&r, &mut g, || 10_000).unwrap();
     assert_eq!(e.expires_ms(), 15_003);
     assert_eq!(e.check(&r, &mut g, || 15_003), Err(Error::Expired));
     assert_eq!(g.tick(&b, || 15_003), Err(Error::Expired));

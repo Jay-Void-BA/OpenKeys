@@ -176,7 +176,7 @@ impl<B: ProtectedOtp, S: TrustedScreen> Display<B, S> {
         let result = (|| {
             self.time(clock())?;
             let expected = request(mode, slot, algorithm, channel);
-            let mut execution = auth
+            let execution = auth
                 .activate(&expected, &mut self.backend, &mut clock)
                 .map_err(|_| Error::Verify)?;
             let generation = execution.authorization().generation();

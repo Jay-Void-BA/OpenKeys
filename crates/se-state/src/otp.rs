@@ -1,7 +1,7 @@
 //! Non-exporting OTP-key HMAC and persistent HOTP precharge over full SCP03.
 //! APDU facts: NXP plug-and-trust 7102413e0457d3dfa4fc4be686ca8ec50bd9f5e2,
 //! MACOneShot_G / P1_MAC=0x0d / P2_GENERATE_ONESHOT=0x45.
-//! Actual E2 support, policies, provisioning and power-loss semantics require
+//! Actual C2/Applet7.2 support, policies, provisioning and power-loss semantics require
 //! silicon qualification. There is no runtime creation/default/seed export.
 use crate::{Error, PinBoundExchange};
 use device_policy::{Operation, Request, execution::Execution};

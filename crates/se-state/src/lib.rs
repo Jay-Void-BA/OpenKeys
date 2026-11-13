@@ -10,6 +10,8 @@
 //! still be qualified on the selected personality (R05 C2/Applet7.2); model
 //! tests do not qualify a real device.
 
+pub mod commissioning;
+pub mod inventory;
 pub mod keys;
 pub mod native_pin;
 #[cfg(feature = "native-uid-qualification")]

@@ -14,8 +14,9 @@ pub trait ProtectedCommissioning {
     /// Verify boot/debug/SE identity and deliberate factory-blank lifecycle.
     /// Missing/corrupt/partial owner state MUST fail; it is not a blank device.
     fn qualified_factory_blank(&mut self) -> Result<(), Error>;
-    /// Generate unique pepper/salt/keys, install the locally entered PIN and
-    /// read back commissioned policy. Write the validity marker LAST.
+    /// Install the locally entered native PIN and qualified namespace, verify
+    /// the exact written state and write the validity marker LAST. Legacy
+    /// HKDF pepper/salt verification is not the R05 native-PIN implementation.
     /// Any uncertain reply poisons setup; never blindly retry or set a default.
     fn install_owner_pin(&mut self, pin: &[u8; PIN_DIGITS]) -> Result<(), Error>;
 }
