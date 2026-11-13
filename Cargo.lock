@@ -5099,6 +5099,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "openkeys-root-journal"
+version = "0.1.0"
+dependencies = [
+ "hmac 0.12.1",
+ "openkeys-se-state",
+ "sha2 0.10.9",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
 name = "openkeys-scp03"
 version = "0.1.0"
 dependencies = [

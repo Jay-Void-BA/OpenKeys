@@ -9,6 +9,7 @@ use std::{
 };
 const PIN: [u8; 6] = [9, 2, 7, 0, 4, 6];
 const SID: [u8; 8] = [1, 2, 3, 4, 5, 6, 7, 8];
+const OWNER: [u8; 32] = [0x93; 32];
 
 #[path = "commissioning_tests.rs"]
 mod commissioning;
@@ -98,6 +99,7 @@ struct Db {
     cuts: usize,
     closes: usize,
     wrong_marker: bool,
+    wrong_owner: bool,
     malformed_sid: bool,
     fail_power: bool,
     fail_at: Option<(usize, bool)>,
@@ -106,6 +108,7 @@ struct Db {
     private_generation: Option<Rc<Cell<u64>>>,
     private_fault: Option<Rc<Cell<bool>>>,
     private_role: Option<Rc<Cell<bool>>>,
+    private_owner: Option<Rc<Cell<[u8; 32]>>>,
 }
 type Shared = Rc<RefCell<Db>>;
 struct Io {
@@ -125,6 +128,9 @@ fn private_done(db: &mut Db) {
     }
     if let Some(role) = &db.private_role {
         role.set(true);
+    }
+    if let Some(owner) = &db.private_owner {
+        owner.set([0x74; 32]);
     }
 }
 impl private::Sealed for Io {}
@@ -217,7 +223,7 @@ impl Io {
                     1,
                     match object {
                         PIN_ID => 0x0c,
-                        MARKER_ID => 0x0b,
+                        MARKER_ID | OWNER_ID => 0x0b,
                         SPENT_ID | CREDIT_ID | ERASE_ID => 0x0d,
                         _ => panic!(),
                     },
@@ -227,14 +233,25 @@ impl Io {
                 ]),
                 (2, 0, 7) => {
                     assert_ne!(object, PIN_ID, "UserID has no readable size");
-                    Ok(vec![0x41, 2, 0, if object == MARKER_ID { 32 } else { 8 }])
+                    Ok(vec![
+                        0x41,
+                        2,
+                        0,
+                        if object == MARKER_ID || object == OWNER_ID {
+                            32
+                        } else {
+                            8
+                        },
+                    ])
                 }
                 (2, 0, 0) => {
-                    if object == MARKER_ID {
+                    if object == MARKER_ID || object == OWNER_ID {
                         assert_eq!(c.data[6..], [0x42, 2, 0, 0, 0x43, 2, 0, 32]);
                         let mut out = vec![0x41, 32];
-                        out.extend(marker());
-                        if db.wrong_marker {
+                        out.extend(if object == MARKER_ID { marker() } else { OWNER });
+                        if (object == MARKER_ID && db.wrong_marker)
+                            || (object == OWNER_ID && db.wrong_owner)
+                        {
                             out[2] ^= 1;
                         }
                         Ok(out)
@@ -313,6 +330,7 @@ fn open(db: &Shared) -> Result<NativePin<Io, Power>, Error> {
             closed: false,
         },
         Power(db.clone()),
+        &OWNER,
     )
 }
 fn request() -> Request {
@@ -338,10 +356,19 @@ struct LiveRoot {
     generation: Rc<Cell<u64>>,
     fault: Rc<Cell<bool>>,
     denied_role: Rc<Cell<bool>>,
+    expected_owner: Option<Rc<Cell<[u8; 32]>>>,
 }
 impl PrivateState for LiveRoot {
-    fn check_private_request(&mut self, request: &Request) -> Result<(), device_policy::Error> {
-        if self.denied_role.get() || request.channel != [2; 32] || request.digest != [1; 32] {
+    fn check_private_request(
+        &mut self,
+        request: &Request,
+        owner: &[u8; 32],
+    ) -> Result<(), device_policy::Error> {
+        if self.denied_role.get()
+            || request.channel != [2; 32]
+            || request.digest != [1; 32]
+            || *owner != self.expected_owner.as_ref().map_or(OWNER, |o| o.get())
+        {
             Err(device_policy::Error::Rejected)
         } else {
             Ok(())
@@ -619,13 +646,13 @@ fn wrong_request_marker_sid_and_nested_session_commands_fail_closed() {
 
 #[test]
 fn immutable_owner_policy_denies_platform_other_users_and_reports_power_failure() {
-    // Independent Python marker: ba65388a90faa904cd64b2c297ee2648947e281f5dd98f8c4bc6b8d11bc34583
+    // Independent Python marker: 9c864b82dd3331505fabdedefbb975d394109a3e19514259c167a4e30d165334
     assert_eq!(
         marker(),
         [
-            0xba, 0x65, 0x38, 0x8a, 0x90, 0xfa, 0xa9, 0x04, 0xcd, 0x64, 0xb2, 0xc2, 0x97, 0xee,
-            0x26, 0x48, 0x94, 0x7e, 0x28, 0x1f, 0x5d, 0xd9, 0x8f, 0x8c, 0x4b, 0xc6, 0xb8, 0xd1,
-            0x1b, 0xc3, 0x45, 0x83,
+            0x9c, 0x86, 0x4b, 0x82, 0xdd, 0x33, 0x31, 0x50, 0x5f, 0xab, 0xde, 0xde, 0xfb, 0xb9,
+            0x75, 0xd3, 0x94, 0x10, 0x9a, 0x3e, 0x19, 0x51, 0x42, 0x59, 0xc1, 0x67, 0xa4, 0xe3,
+            0x0d, 0x16, 0x53, 0x34,
         ]
     );
     assert_eq!(
@@ -643,6 +670,35 @@ fn immutable_owner_policy_denies_platform_other_users_and_reports_power_failure(
     db.borrow_mut().fail_power = false;
     pin.revoke().unwrap();
     assert!(db.borrow().cuts >= 2);
+}
+
+#[test]
+fn old_or_missing_root_owner_binding_is_rejected_before_any_pin_guess() {
+    for expected in [[0; 32], [0x74; 32]] {
+        let db = Shared::default();
+        let result = NativePin::open(
+            Io {
+                db: db.clone(),
+                closed: false,
+            },
+            Power(db.clone()),
+            &expected,
+        );
+        assert!(matches!(result, Err(Error::Authorization)));
+        assert_eq!(
+            (
+                db.borrow().spent,
+                db.borrow().credit,
+                db.borrow().native_verifies
+            ),
+            (0, 0, 0)
+        );
+        assert!(db.borrow().cuts > 0);
+    }
+    let db = Shared::default();
+    db.borrow_mut().wrong_owner = true;
+    assert!(matches!(open(&db), Err(Error::Authorization)));
+    assert_eq!(db.borrow().native_verifies, 0);
 }
 
 #[test]
@@ -680,7 +736,7 @@ fn changing_pin_latches_before_new_pin_and_revokes_even_on_lost_ack() {
 
 #[test]
 fn expired_generation_changed_or_faulted_scope_cannot_open_private_port() {
-    for mode in 0..4 {
+    for mode in 0..5 {
         let db = Shared::default();
         let mut pin = open(&db).unwrap();
         pin.reserve_attempt(&request()).unwrap();
@@ -692,7 +748,8 @@ fn expired_generation_changed_or_faulted_scope_cannot_open_private_port() {
             0 => now.set(scope.expires_ms()),
             1 => root.generation.set(1),
             2 => root.fault.set(true),
-            _ => root.denied_role.set(true),
+            3 => root.denied_role.set(true),
+            _ => root.expected_owner = Some(Rc::new(Cell::new([0x74; 32]))),
         }
         let calls = db.borrow().calls;
         assert!(pin.private_port(&scope, &mut root, || now.get()).is_err());
@@ -706,7 +763,7 @@ fn expired_generation_changed_or_faulted_scope_cannot_open_private_port() {
 
 #[test]
 fn a_fault_or_revocation_during_native_io_wipes_output_and_the_execution() {
-    for mode in 0..4 {
+    for mode in 0..5 {
         let db = Shared::default();
         let mut pin = open(&db).unwrap();
         pin.reserve_attempt(&request()).unwrap();
@@ -718,7 +775,12 @@ fn a_fault_or_revocation_during_native_io_wipes_output_and_the_execution() {
             0 => db.borrow_mut().private_time = Some(now.clone()),
             1 => db.borrow_mut().private_generation = Some(root.generation.clone()),
             2 => db.borrow_mut().private_fault = Some(root.fault.clone()),
-            _ => db.borrow_mut().private_role = Some(root.denied_role.clone()),
+            3 => db.borrow_mut().private_role = Some(root.denied_role.clone()),
+            _ => {
+                let owner = Rc::new(Cell::new(OWNER));
+                root.expected_owner = Some(owner.clone());
+                db.borrow_mut().private_owner = Some(owner);
+            }
         }
         let mut out = [0xa5; 16];
         {

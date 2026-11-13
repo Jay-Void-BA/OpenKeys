@@ -67,6 +67,10 @@ impl Root for ProtectedRoot {
             Ok(())
         }
     }
+    fn owner_nonce(&mut self) -> Result<[u8; 32], Error> {
+        assert_eq!(self.0.borrow().phase, 1);
+        Ok(OWNER)
+    }
 }
 struct Step {
     header: [u8; 3],
@@ -150,6 +154,14 @@ fn transcript() -> TraceDb {
     // finite maxAttempts and INS_AUTH_OBJECT are explicit. Marker is last.
     let mut steps = VecDeque::new();
     steps.push_back(Step {
+        header: [1, 6, 0],
+        data: hex(&std::format!(
+            "110908000000000022000041044f4b080242020000430200204420{}",
+            "93".repeat(32)
+        )),
+        response: vec![],
+    });
+    steps.push_back(Step {
         header: [0x41, 7, 0],
         data: hex("11090800000000200200001202000b41044f4b08014206393237303436"),
         response: vec![],
@@ -174,7 +186,7 @@ fn transcript() -> TraceDb {
         header: [1, 6, 0],
         data: hex(concat!(
             "110908000000000022000041044f4b050642020000430200204420",
-            "ba65388a90faa904cd64b2c297ee2648947e281f5dd98f8c4bc6b8d11bc34583"
+            "9c864b82dd3331505fabdedefbb975d394109a3e19514259c167a4e30d165334"
         )),
         response: vec![],
     });
@@ -220,7 +232,7 @@ fn first_boot_uses_two_local_entries_finite_immutable_pin_and_marker_last() {
     let journal = JournalDb::default();
     let native = Shared::default();
     setup(&trace, &journal, &native).unwrap();
-    assert_eq!(trace.borrow().mutations, 5);
+    assert_eq!(trace.borrow().mutations, 6);
     assert!(trace.borrow().steps.is_empty());
     assert_eq!(journal.borrow().phase, 2); // NOT global Ready.
     assert_eq!((native.borrow().spent, native.borrow().credit), (1, 1));

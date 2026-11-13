@@ -31,6 +31,9 @@ pub trait Root {
     /// Persist+readback Installing BEFORE the first SE mutation. Ambiguous ACK
     /// must return Err and remain nonblank; no reset or caller retry refunds it.
     fn begin_pin_install(&mut self, profile: &[u8; 32], inventory: &[u8; 32]) -> Result<(), Error>;
+    /// The healthy-RNG owner nonce in the authenticated Installing journal.
+    /// It must change for each full wipe; do not read it from an old SE object.
+    fn owner_nonce(&mut self) -> Result<[u8; 32], Error>;
     /// Commit only this verified PIN-namespace milestone, not whole-device
     /// Ready. Other roots/apps/pairing must finish before the global Ready seal.
     fn commit_pin_namespace(&mut self) -> Result<(), Error>;
@@ -131,6 +134,16 @@ impl<'a, X: Exchange, P: PowerCut, R: Root> Installer<'a, X, P, R> {
         }
         Ok(())
     }
+    fn immutable_file(&mut self, id: u32, value: &[u8; 32]) -> Result<(), Error> {
+        let mut data = Zeroizing::new([0; 59]);
+        data[..11].copy_from_slice(&default_policy(READ));
+        data[11..13].copy_from_slice(&[0x41, 4]);
+        data[13..17].copy_from_slice(&id.to_be_bytes());
+        data[17..25].copy_from_slice(&[0x42, 2, 0, 0, 0x43, 2, 0, 32]);
+        data[25..27].copy_from_slice(&[0x44, 32]);
+        data[27..59].copy_from_slice(value);
+        self.write(1, 6, &data[..])
+    }
     fn install(&mut self, digits: &[u8; 6]) -> Result<(), Error> {
         if digits.iter().any(|&d| d > 9) {
             return Err(Error::Schema);
@@ -139,6 +152,12 @@ impl<'a, X: Exchange, P: PowerCut, R: Root> Installer<'a, X, P, R> {
         self.root
             .begin_pin_install(inventory.profile_digest(), inventory.inventory_digest())?;
         self.root.check()?;
+
+        let owner = self.root.owner_nonce()?;
+        if owner == [0; 32] {
+            return Err(Error::Authorization);
+        }
+        self.immutable_file(native_pin::OWNER_ID, &owner)?;
 
         let mut data = Zeroizing::new([0; 96]);
         let policy = default_policy(native_pin::FORBID_ALL);
@@ -160,19 +179,13 @@ impl<'a, X: Exchange, P: PowerCut, R: Root> Installer<'a, X, P, R> {
         credit[16..20].copy_from_slice(&(READ | native_pin::REQUIRE_SM).to_be_bytes());
         self.counter(native_pin::CREDIT_ID, &credit)?;
         self.counter(native_pin::ERASE_ID, &default_policy(READ | WRITE))?;
-        let policy = default_policy(READ);
-        data[..11].copy_from_slice(&policy);
-        data[11..13].copy_from_slice(&[0x41, 4]);
-        data[13..17].copy_from_slice(&native_pin::MARKER_ID.to_be_bytes());
-        data[17..25].copy_from_slice(&[0x42, 2, 0, 0, 0x43, 2, 0, 32]);
-        data[25..27].copy_from_slice(&[0x44, 32]);
-        data[27..59].copy_from_slice(&native_pin::marker());
-        self.write(1, 6, &data[..59])?; // immutable marker LAST
+        self.immutable_file(native_pin::MARKER_ID, &native_pin::marker())?; // marker LAST
         data.fill(0);
 
         let mut pin = NativePin::open(
             self.io.take().ok_or(Error::Closed)?,
             self.power.take().ok_or(Error::Closed)?,
+            &owner,
         )?;
         let request = Request {
             operation: Operation::UnlockSession,

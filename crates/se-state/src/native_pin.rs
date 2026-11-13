@@ -1,6 +1,6 @@
 //! R05 native UserID PIN backend with durable precharge and SE-owned credit.
 //! Unlike the lab probe, implements ProtectedPin and the sealed private I/O
-//! boundary. It opens ONLY an explicitly commissioned v3 namespace; it cannot
+//! boundary. It opens ONLY an explicitly commissioned v4 namespace; it cannot
 //! create/reset a PIN, restore factory defaults or clear an erase request.
 //!
 //! Chip ACLs must make PIN_ID immutable (including deletion), bind all private
@@ -20,6 +20,7 @@ use zeroize::Zeroizing;
 
 pub use crate::pin_only::{CREDIT_ID, ERASE_ID, MARKER_ID, MAX_FAILURES, SPENT_ID};
 pub const PIN_ID: u32 = 0x4f4b_0801;
+pub const OWNER_ID: u32 = 0x4f4b_0802;
 pub const REQUIRE_SM: u32 = 0x0002_0000;
 pub const FORBID_ALL: u32 = 0x2000_0000;
 
@@ -36,14 +37,16 @@ pub fn owner_policy(rights: u32) -> [u8; 20] {
 }
 pub fn marker() -> [u8; 32] {
     let mut h = Sha256::new();
-    h.update(b"OpenKeys/R05/native-PIN-state/v3");
+    h.update(b"OpenKeys/R05/native-PIN-state/v4");
     h.update([6]);
     h.update(MAX_FAILURES.to_be_bytes());
-    for id in [PIN_ID, SPENT_ID, CREDIT_ID, ERASE_ID, MARKER_ID] {
+    for id in [PIN_ID, OWNER_ID, SPENT_ID, CREDIT_ID, ERASE_ID, MARKER_ID] {
         h.update(id.to_be_bytes());
     }
     h.update(owner_policy(0x1024_0000)); // signing + public read + delete
-    h.update(b"immutable-userid/credit-owner-only/platform-SCP03-33/marker-last");
+    h.update(
+        b"immutable-userid/immutable-owner-epoch/credit-owner-only/platform-SCP03-33/marker-last",
+    );
     h.finalize().into()
 }
 pub trait PowerCut {
@@ -56,7 +59,11 @@ pub trait PowerCut {
 /// independent protocol PIN/role/token/RP/slot permission. A boot-only guard or
 /// generic hardware State cannot satisfy this interface through a default impl.
 pub trait PrivateState: State {
-    fn check_private_request(&mut self, request: &Request) -> Result<(), device_policy::Error>;
+    fn check_private_request(
+        &mut self,
+        request: &Request,
+        owner: &[u8; 32],
+    ) -> Result<(), device_policy::Error>;
 }
 struct Pending {
     request: Request,
@@ -75,6 +82,7 @@ pub struct NativePin<X: Exchange, P: PowerCut> {
     io: X,
     power: P,
     sid: Zeroizing<[u8; 8]>,
+    owner: [u8; 32],
     verified: bool,
     pending: Option<Pending>,
     spent: u64,
@@ -83,11 +91,14 @@ pub struct NativePin<X: Exchange, P: PowerCut> {
     power_off: bool,
 }
 impl<X: Exchange, P: PowerCut> NativePin<X, P> {
-    pub fn open(io: X, power: P) -> Result<Self, Error> {
+    /// expected_owner comes from the authenticated protected Root journal,
+    /// never learned from the observed SE or supplied in a manager request.
+    pub fn open(io: X, power: P, expected_owner: &[u8; 32]) -> Result<Self, Error> {
         let mut this = Self {
             io,
             power,
             sid: Zeroizing::new([0; 8]),
+            owner: *expected_owner,
             verified: false,
             pending: None,
             spent: 0,
@@ -96,17 +107,21 @@ impl<X: Exchange, P: PowerCut> NativePin<X, P> {
             power_off: false,
         };
         let result = (|| {
+            if *expected_owner == [0; 32] {
+                return Err(Error::Authorization);
+            }
             this.schema(PIN_ID, 0x0c, None)?; // ReadSize is invalid for a UserID.
+            this.schema(OWNER_ID, 0x0b, Some(32))?;
+            let found_owner = this.file32(OWNER_ID)?;
+            if !bool::from(found_owner[..].ct_eq(expected_owner)) {
+                return Err(Error::Authorization);
+            }
             for id in [SPENT_ID, CREDIT_ID, ERASE_ID] {
                 this.schema(id, 0x0d, Some(8))?;
             }
             this.schema(MARKER_ID, 0x0b, Some(32))?;
-            let mut data = [0; 14];
-            data[..6].copy_from_slice(&id_tlv(MARKER_ID));
-            data[6..].copy_from_slice(&[0x42, 2, 0, 0, 0x43, 2, 0, 32]);
-            let mut out = Zeroizing::new([0; 40]);
-            let n = this.raw(2, 0, 0, &data, &mut out[..])?;
-            if n != 34 || out[..2] != [0x41, 32] || !bool::from(out[2..34].ct_eq(&marker())) {
+            let found = this.file32(MARKER_ID)?;
+            if !bool::from(found[..].ct_eq(&marker())) {
                 return Err(Error::Schema);
             }
             if this.counter(ERASE_ID)? != 0 {
@@ -130,6 +145,7 @@ impl<X: Exchange, P: PowerCut> NativePin<X, P> {
         self.verified = false;
         self.pending = None;
         self.sid.fill(0);
+        self.owner.fill(0);
         self.io.close();
         if !self.power_off && self.power.disable_se().is_ok() {
             self.power_off = true;
@@ -246,6 +262,19 @@ impl<X: Exchange, P: PowerCut> NativePin<X, P> {
             }
         }
         Ok(())
+    }
+    fn file32(&mut self, id: u32) -> Result<Zeroizing<[u8; 32]>, Error> {
+        let mut data = [0; 14];
+        data[..6].copy_from_slice(&id_tlv(id));
+        data[6..].copy_from_slice(&[0x42, 2, 0, 0, 0x43, 2, 0, 32]);
+        let mut out = Zeroizing::new([0; 40]);
+        let n = self.raw(2, 0, 0, &data, &mut out[..])?;
+        if n != 34 || out[..2] != [0x41, 32] {
+            return Err(Error::Schema);
+        }
+        let mut value = Zeroizing::new([0; 32]);
+        value.copy_from_slice(&out[2..34]);
+        Ok(value)
     }
     fn counter(&mut self, id: u32) -> Result<u64, Error> {
         let mut out = [0; 16];
@@ -462,7 +491,7 @@ impl<X: Exchange, P: PowerCut, S: PrivateState, C: FnMut() -> u64> PrivatePort<'
             .check(self.execution.request(), self.state, &mut self.clock)
             .map_err(|_| Error::Authorization)?;
         self.state
-            .check_private_request(self.execution.request())
+            .check_private_request(self.execution.request(), &self.pin.owner)
             .map_err(|_| Error::Authorization)?;
         // A role/link callback can block, cancel or change generation too.
         self.execution

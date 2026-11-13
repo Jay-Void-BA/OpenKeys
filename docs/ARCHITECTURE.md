@@ -24,9 +24,9 @@ flowchart LR
 
 ## 授权与执行
 
-首次配置要求真实工厂空白生命周期、六位本地 PIN 输入两遍、每设备唯一随机 SCP03 / 配对 / vault 密钥、最后写有效标记。原生 PIN v3 使用 SE UserID；旧 HKDF v2 的 pepper / salt 不是本版 PIN 验证器。缺失、损坏或半写的对象不能被当成空白。配置接口目前只有策略与契约，真实 commissioning 服务未实现。
+首次配置要求真实工厂空白生命周期、六位本地 PIN 输入两遍、每设备唯一随机 SCP03 / 配对 / vault 密钥、最后写有效标记。原生 PIN v4 使用 SE UserID，并将不可改写的 SE 用户代际与受认证 Root journal 匹配；旧 HKDF v2 不是本版 PIN 验证器。缺失、损坏或半写的对象不能被当成空白。已提供实际 PIN 命名空间安装及日志连接；完整设备 commissioning、安全 Flash / HUK 适配与生产启动仍未实现。
 
-完成六位猜测后先持久预扣，再由[原生 PIN v3 后端](NATIVE_PIN_RUNTIME_R05.md)创建并验证 SE UserID 会话；只有验证后的原生会话能增加 credit 和访问受限私钥。旧 HKDF / MCU 比较实现保留为历史回归，不能用于原生私钥授权。取消半次输入不扣预算。第十一次错误或改 PIN 先持久锁存 ERASE_PENDING；所有入口必须拒绝直到完整销毁与受控重新初始化。现有后端实现锁存，尚未实现全部命名空间的销毁。
+完成六位猜测后先持久预扣，再由[原生 PIN v4 后端](NATIVE_PIN_RUNTIME_R05.md)创建并验证 SE UserID 会话；只有验证后的原生会话能增加 credit 和访问受限私钥。旧 HKDF / MCU 比较实现保留为历史回归，不能用于原生私钥授权。取消半次输入不扣预算。第十一次错误或改 PIN 先持久锁存 ERASE_PENDING；所有入口必须拒绝直到完整销毁与受控重新初始化。现有后端实现锁存，尚未实现全部命名空间的销毁。
 
 [session Gate](../crates/device-policy/src/session.rs)把硬件 PIN、协议角色、配对对端、认证通道及物理连接场次绑定；30 秒空闲、保活不续期、断连撤权。完整请求每次在设备审阅，协议 PIN 权限在确认前后与执行前复查。旧 R04 生物识别 Gate 和四键 PIN 只保留历史测试，不能注册成 R05 备用解锁路径。
 

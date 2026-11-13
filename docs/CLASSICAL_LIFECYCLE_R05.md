@@ -6,6 +6,10 @@
 完整 DeleteAll / 恢复协调器、应用初始化及 USB / NFC 实机接线仍未完成。** 这些组件不能
 将设备标为全清空、正式可用或理论上安全。
 
+后续已加入[生命周期 journal 内核与 PIN 安装连接](../crates/root-journal/README.md)，
+提供写前计划、提交末写、损坏不回退 Ready、分阶段恢复及每次清空的新用户代际。
+真实内部安全 Flash / HUK / 启动适配仍未提供，所以上面的整机阻塞没有解除。
+
 ## 本地 PIN 安装
 
 [`commissioning::Installer`](../crates/se-state/src/commissioning.rs)实现六位本地设置策略的
@@ -17,10 +21,11 @@
    所见对象现学，也不能由管理器传入。
 3. 首先持久写入并读回 Installing，再允许第一条 SE 写命令。不确定应答维持非空白，
    同一安装器关闭，不能覆盖对象、补写后假定可用或恢复默认 PIN。
-4. 固定 APDU 显式使用 `INS_AUTH_OBJECT`、六字节 ASCII 和 `maxAttempts=11`，禁止
+4. 从已提交的 Installing 日志取得32字节新用户代际，先写不可改写 / 删除的 SE
+   owner 对象。固定 PIN APDU 显式使用 `INS_AUTH_OBJECT`、六字节 ASCII 和 `maxAttempts=11`，禁止
    PIN 对象的读出、更新和删除重建；credit 仅 PIN AuthID 可写，其他用户只能读。
 5. 三个计数器分别创建后读取，必须为零。不可写 / 删的 marker 最后创建。
-6. 经现有 `NativePin` 后端重新读取类型 / 大小 / marker，预扣一次并验证刚设置的 PIN，
+6. 经现有 `NativePin` 后端重新读取类型 / 大小 / marker 和 owner，与 Root 日志代际一致后，预扣一次并验证刚设置的 PIN，
    确认 credit，明确撤权并请求物理断电后才提交 PIN 命名空间这一阶段。
 
 PIN 这一阶段不是全设备 Ready。SCP03 唯一配对、vault / Noise 根、应用与目录、OTA /

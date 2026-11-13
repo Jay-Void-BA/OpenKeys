@@ -82,7 +82,7 @@ PCB 商常以 5 块起板，而贴装数量可以另谈；以实际报价为准�
 | 启动 / 更新 / 调试 | 错签名、旧版本、截断更新、复位中断、SWD 重新接入和备用域掉电；不能回到可读取旧秘密的开放模式 |
 | 平台互通 | macOS / Linux / Windows 分别实测管理；iPhone / Android 分别测 FIDO 与 NFC 管理 AID，不能用网页支持 FIDO 代替管理 App 验收 |
 
-SE 对象注入、owner PIN 设置和调试关闭应在审计后的受控流程中进行。每台 SCP03 / 配对 / vault 密钥及认证器私钥分别随机生成；本地 PIN 使用[原生 UserID v3 布局](se-native-pin-layout-r05.json)，不沿用旧 HKDF v2 的 pepper / salt 验证器。工厂只能收到公开 schema，不能收到你的真实 PIN / recovery codes。若 PIN 遗失，应使用已经验证的完整销毁 / 重新注册流程，不提供读取旧数据的备用门。
+SE 对象注入、owner PIN 设置和调试关闭应在审计后的受控流程中进行。每台 SCP03 / 配对 / vault 密钥及认证器私钥分别随机生成；本地 PIN 使用[原生 UserID v4 布局](se-native-pin-layout-r05.json)，不沿用旧 HKDF v2 的 pepper / salt 验证器。工厂只能收到公开 schema，不能收到你的真实 PIN / recovery codes。若 PIN 遗失，应使用已经验证的完整销毁 / 重新注册流程，不提供读取旧数据的备用门。
 
 ## 8. 抗干扰、硬件攻击与实验室项目
 

@@ -4,7 +4,7 @@
 当前经典版已改选 SE051C2 / OEF A8FA / Applet 7.2；本页旧 E2 / 通用 SE05x API 研究不能视为新实片资格证明。见[选型与待验项目](CLASSICAL_SE_POWER_R05.md)。
 [当前复查](SECURITY_REVIEW_R05.md) · [会话规则](PIN_SESSIONS_R05.md)
 
-**整机尚未接通或通过实片验证。** 已新增[原生 PIN v3 后端](NATIVE_PIN_RUNTIME_R05.md)
+**整机尚未接通或通过实片验证。** 已新增[原生 PIN v4 后端](NATIVE_PIN_RUNTIME_R05.md)
 与密封私钥接口；旧 `pin_only` 的 HKDF / MCU 比较后端继续保留用于历史与回归，
 不能充当原生私钥权限。SE_EN 不是 PIN 验证器，本页不能作为整机硬件强制的证明。
 

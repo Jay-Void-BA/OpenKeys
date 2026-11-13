@@ -1,10 +1,11 @@
 {
   "schema": 1,
   "revision": "0.5",
-  "native_pin_profile": 3,
+  "native_pin_profile": 4,
   "status": "CANDIDATE_NOT_COMMISSIONED_NOT_QUALIFIED",
   "production_root_integrated": false,
   "commissioner_implemented": false,
+  "pin_namespace_installer_implemented": true,
   "all_data_erasure_implemented": false,
   "programming_performed": false,
   "contains_production_secrets": false,
@@ -16,6 +17,13 @@
       "id": "4F4B0801",
       "kind": "userid",
       "bytes": 6,
+      "persistent": true
+    },
+    {
+      "role": "OWNER",
+      "id": "4F4B0802",
+      "kind": "binary",
+      "bytes": 32,
       "persistent": true
     },
     {
@@ -47,10 +55,11 @@
       "persistent": true
     }
   ],
-  "marker_sha256": "ba65388a90faa904cd64b2c297ee2648947e281f5dd98f8c4bc6b8d11bc34583",
+  "marker_sha256": "9c864b82dd3331505fabdedefbb975d394109a3e19514259c167a4e30d165334",
   "signing_owner_policy_tlv_hex": "1112084f4b080110260000080000000020000000",
   "required_acl": {
     "PIN": "Explicit auth flag + maxAttempts11; immutable/no delete or rebind; full platform SCP03",
+    "OWNER": "Immutable/no delete or rewrite; compare fresh SE nonce with authenticated Root journal before verification and every private request; fresh random nonce each full wipe",
     "SPENT": "Monotonic precharge; no decrement/reset/delete",
     "CREDIT": "Only PIN-authenticated native session may WRITE; platform may READ only",
     "ERASE": "Monotonic nonzero latch refuses ordinary access; survives until qualified ALL-DATA wipe",
@@ -59,10 +68,10 @@
   },
   "native_userid_counter_readback": "Not a retry counter: AN12413 3.2.4.4 says UserID reports zero",
   "userid_read_size": "Not supported; never used as a length/PIN-strength proof",
-  "migration": "No automatic migration from legacy HKDF v2; full verified destruction first",
+  "migration": "No automatic migration from legacy HKDF v2 or native v3; full verified destruction first",
   "physical_results": "NOT_RUN",
   "source_sha256": {
-    "crates/se-state/src/native_pin.rs": "f17f6caf565e9a28b5bf24bd256bf0b35a3680682e6167014d42add2c66763cd",
+    "crates/se-state/src/native_pin.rs": "54bbd9e876b2429afc756b73d3884fd2e20841fa7fef60b38d4c5751b619489b",
     "crates/se-state/src/pin_only.rs": "6b7497a8436d74c270b27c1daedc98121b8054f8369bbf5dd81a39858c2cb205"
   }
 }
