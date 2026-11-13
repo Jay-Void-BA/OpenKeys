@@ -79,11 +79,13 @@ impl<E: Platform> Processor<E> {
         self.binding = None;
         self.state.revoke_authorizations(&mut self.env);
     }
+    /// Root orchestration only. This is not a serialized host authorization.
+    pub fn authorization_generation(&self) -> u64 {
+        self.env.authorization_generation()
+    }
     fn bind(&mut self, request: &Prepared) -> Result<(), Error> {
         let binding = (request.binding, request.channel);
         if self.binding.is_some_and(|old| old != binding) {
-            self.lock();
-            self.binding = Some(binding);
             return Err(Error::Authorization);
         }
         self.binding = Some(binding);
@@ -115,6 +117,13 @@ impl<E: Platform> Processor<E> {
         ))
     }
     pub fn public(&mut self, request: Prepared) -> Result<Zeroizing<Vec<u8>>, Error> {
+        let result = self.public_inner(request);
+        if result.is_err() {
+            self.lock();
+        }
+        result
+    }
+    fn public_inner(&mut self, request: Prepared) -> Result<Zeroizing<Vec<u8>>, Error> {
         if request.request.is_some() {
             return Err(Error::Authorization);
         }
@@ -138,6 +147,21 @@ impl<E: Platform> Processor<E> {
         Ok(response)
     }
     pub fn authorized(
+        &mut self,
+        request: Prepared,
+        authorization: Authorization,
+        clock: impl FnMut() -> u64,
+    ) -> Result<Zeroizing<Vec<u8>>, Error> {
+        let result = self.authorized_inner(request, authorization, clock);
+        // Failed live PIN, clock, generation, boot or scope checks revoke
+        // BOTH PIN layers and ECDH/token state. Merely ending the execution
+        // would leave an earlier host-PIN token alive after device re-unlock.
+        if result.is_err() {
+            self.lock();
+        }
+        result
+    }
+    fn authorized_inner(
         &mut self,
         request: Prepared,
         authorization: Authorization,
@@ -358,6 +382,16 @@ impl<E: Platform> Processor<E> {
                 .state
                 .process_legacy_protected(&mut self.env, &request.bytes),
         })
+    }
+}
+
+impl<E: Platform> Drop for Processor<E> {
+    fn drop(&mut self) {
+        // Revocation cannot depend on new entropy, a host ACK or transport
+        // teardown succeeding. Owned cryptographic fields then zeroize/drop.
+        self.env.revoke_session();
+        self.continuation = None;
+        self.binding = None;
     }
 }
 

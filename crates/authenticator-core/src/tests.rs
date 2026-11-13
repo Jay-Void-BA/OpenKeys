@@ -186,9 +186,6 @@ impl opensk::env::LocalPin for Model {
         }
     }
 }
-fn authority(r: &Request) -> Authorization {
-    authority_at(r, 0)
-}
 fn authority_at(r: &Request, generation: u64) -> Authorization {
     let mut gate = Gate::new(Verifier);
     for _ in 0..generation {
@@ -224,7 +221,7 @@ fn get_assertion(hash: u8) -> Vec<u8> {
 }
 fn run(core: &mut Processor<Model>, bytes: &[u8]) -> Vec<u8> {
     let prepared = prepare_ctap2(bytes, BINDING, CHANNEL).unwrap();
-    let auth = authority(prepared.request().unwrap());
+    let auth = authority_at(prepared.request().unwrap(), core.authorization_generation());
     core.authorized(prepared, auth, || 10).unwrap().to_vec()
 }
 fn response_map(bytes: &[u8]) -> Vec<(Value, Value)> {
@@ -267,9 +264,9 @@ fn next_assertions_need_fresh_bound_authority_and_cannot_replay_a_consumed_curso
     );
     let next = core.prepare(&[8], BINDING, CHANNEL, 10).unwrap();
     let stale = core.prepare(&[8], BINDING, CHANNEL, 10).unwrap();
-    let stale_authority = authority(stale.request().unwrap());
+    let stale_authority = authority_at(stale.request().unwrap(), core.authorization_generation());
     assert!(matches!(next.review(),Review::Website(site) if site=="example.com"));
-    let auth = authority(next.request().unwrap());
+    let auth = authority_at(next.request().unwrap(), core.authorization_generation());
     assert_eq!(core.authorized(next, auth, || 10).unwrap()[0], 0);
     assert!(matches!(
         core.authorized(stale, stale_authority, || 10),
@@ -320,7 +317,7 @@ fn u2f_authentication_is_local_pin_gated_and_signature_verifies() {
     assert!(matches!(request.review(),Review::ApplicationHash(hash) if hash==&app));
     assert!(core.public(request).is_err());
     let request = prepare_u2f(&apdu, BINDING, CHANNEL).unwrap();
-    let auth = authority(request.request().unwrap());
+    let auth = authority_at(request.request().unwrap(), core.authorization_generation());
     let response = core.authorized(request, auth, || 10).unwrap();
     assert_eq!(&response[response.len() - 2..], &[0x90, 0]);
     assert_eq!(response[0], 1);
@@ -373,7 +370,7 @@ fn real_make_credential_and_assertion_have_forced_uv_and_a_verifiable_signature(
     let mut core = Processor::new(env);
     let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
     assert!(matches!(prepared.review(),Review::Website(s) if s=="example.com"));
-    let auth = authority(prepared.request().unwrap());
+    let auth = authority_at(prepared.request().unwrap(), core.authorization_generation());
     let make = core.authorized(prepared, auth, || 10).unwrap();
     let make = response_map(&make);
     let auth_data = get(&make, 2).extract_byte_string().unwrap();
@@ -416,7 +413,7 @@ fn reset_dispatch_cannot_partially_reset_shared_persistence_via_upstream_fallbac
     let mut core = Processor::new(env);
     assert_eq!(run(&mut core, &make_credential())[0], 0);
     let reset = prepare_ctap2(&[7], BINDING, CHANNEL).unwrap();
-    let authorization = authority(reset.request().unwrap());
+    let authorization = authority_at(reset.request().unwrap(), core.authorization_generation());
     assert!(matches!(
         core.authorized(reset, authorization, || 10),
         Err(Error::Unsupported)
@@ -446,7 +443,7 @@ fn multi_account_limit_uses_the_trusted_platform_capacity_instead_of_a_smaller_m
     let map = response_map(&response);
     assert_eq!(get(&map, 5).extract_unsigned(), Some(101));
     let next = core.prepare(&[8], BINDING, CHANNEL, 11).unwrap();
-    let authorization = authority(next.request().unwrap());
+    let authorization = authority_at(next.request().unwrap(), core.authorization_generation());
     assert_eq!(core.authorized(next, authorization, || 11).unwrap()[0], 0);
 }
 
@@ -601,20 +598,20 @@ fn changed_payload_channel_or_expired_authority_never_enters_crypto_scope() {
     let (env, stats) = Model::new();
     let mut core = Processor::new(env);
     let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
-    let auth = authority(prepared.request().unwrap());
+    let auth = authority_at(prepared.request().unwrap(), core.authorization_generation());
     let other = prepare_ctap2(&get_assertion(3), BINDING, CHANNEL).unwrap();
     assert!(matches!(
         core.authorized(other, auth, || 10),
         Err(Error::Authorization)
     ));
     let prepared = prepare_ctap2(&make_credential(), [1; 32], CHANNEL).unwrap();
-    let auth = authority(prepared.request().unwrap());
+    let auth = authority_at(prepared.request().unwrap(), core.authorization_generation());
     assert!(matches!(
         core.authorized(prepared, auth, || 10),
         Err(Error::State)
     ));
     let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
-    let auth = authority(prepared.request().unwrap());
+    let auth = authority_at(prepared.request().unwrap(), core.authorization_generation());
     assert!(matches!(
         core.authorized(prepared, auth, || 60_010),
         Err(Error::Time)
@@ -627,7 +624,7 @@ fn rollback_or_late_platform_fault_erases_the_response_and_ends_scope() {
         let (env, stats) = Model::new();
         let mut core = Processor::new(env);
         let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
-        let auth = authority(prepared.request().unwrap());
+        let auth = authority_at(prepared.request().unwrap(), core.authorization_generation());
         if fail {
             stats.borrow_mut().fail_check = Some(3);
         }
@@ -647,7 +644,8 @@ fn stale_generation_before_activation_or_during_dispatch_never_releases_a_respon
         let (env, stats) = Model::new();
         let mut core = Processor::new(env);
         let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
-        let authorization = authority(prepared.request().unwrap());
+        let authorization =
+            authority_at(prepared.request().unwrap(), core.authorization_generation());
         if mode == 0 {
             stats.borrow_mut().generation = 1;
         } else if mode == 2 {
@@ -673,7 +671,7 @@ fn rollback_after_the_last_activation_check_prevents_the_first_private_operation
     let (env, stats) = Model::new();
     let mut core = Processor::new(env);
     let prepared = prepare_ctap2(&make_credential(), BINDING, CHANNEL).unwrap();
-    let authorization = authority(prepared.request().unwrap());
+    let authorization = authority_at(prepared.request().unwrap(), core.authorization_generation());
     let mut ticks = [10, 20, 25, 24, 26].into_iter();
     assert!(matches!(
         core.authorized(prepared, authorization, || ticks.next().unwrap()),

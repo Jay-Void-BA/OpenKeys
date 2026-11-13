@@ -76,6 +76,11 @@ visible clearing across temperature and received modules. Measure drop and
 capacitance rather than assuming the bounds above. Injected fast faults,
 backfeed and side channels remain separate lab tests.
 
+The current diagnostic cold start includes two500ms off holds,500ms release
+wait and200ms POR wait before initialization traffic. Measure total startup
+and the watchdog's earliest timeout across actual clocks and temperature;
+repeated watchdog resets are a failed bring-up, not a successful display test.
+
 Primary references: [TI TPS63031](https://www.ti.com/lit/ds/symlink/tps63031.pdf),
 [TPS3700](https://www.ti.com/lit/ds/symlink/tps3700.pdf),
 [TPS3808](https://www.ti.com/lit/ds/symlink/tps3808.pdf),

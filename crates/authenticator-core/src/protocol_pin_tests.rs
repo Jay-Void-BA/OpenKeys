@@ -182,13 +182,29 @@ fn independent_host_pin_requires_both_proofs_and_v1_v2_tokens_work() {
         let credential = client.credential(&token);
         stats.borrow_mut().deny_local_pin = true;
         let prepared = prepare_ctap2(&credential, BINDING, CHANNEL).unwrap();
-        let auth = authority(prepared.request().unwrap());
+        let auth = authority_at(prepared.request().unwrap(), core.authorization_generation());
         assert!(matches!(
             core.authorized(prepared, auth, || 10),
             Err(Error::Authorization)
         ));
         assert!(!stats.borrow().active);
         stats.borrow_mut().deny_local_pin = false;
+        // A failed live hardware-PIN check must also revoke the earlier host
+        // token. A new hardware proof cannot silently revive the other layer.
+        assert_eq!(
+            private(&mut core, &client.assertion(&token), &stats),
+            [Status::CTAP2_ERR_PIN_AUTH_INVALID as u8]
+        );
+        let client = HostPin::new(&mut core, protocol);
+        let response = private(&mut core, &client.token(HOST_PIN), &stats);
+        let token: [u8; 32] = client
+            .decrypt(
+                &get(&response_map(&response), 2)
+                    .extract_byte_string()
+                    .unwrap(),
+            )
+            .try_into()
+            .unwrap();
         // Setting the HOST protocol PIN must not erase an existing credential
         // or mutate the separate hardware-PIN namespace.
         assert_eq!(private(&mut core, &client.assertion(&token), &stats)[0], 0);
@@ -476,4 +492,14 @@ fn native_channel_change_revokes_protocol_tokens_before_new_dispatch() {
         .public(prepare_ctap2(&[4], BINDING, changed).unwrap())
         .unwrap();
     assert_eq!(info[0], 0);
+}
+
+#[test]
+fn destroying_the_processor_revokes_the_root_session() {
+    let (env, stats) = Model::new();
+    let core = Processor::new(env);
+    let before = stats.borrow().generation;
+    drop(core);
+    assert_eq!(stats.borrow().generation, before + 1);
+    assert!(!stats.borrow().active);
 }

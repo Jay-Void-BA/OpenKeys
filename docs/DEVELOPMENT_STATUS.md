@@ -17,6 +17,7 @@ RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD
 | 本地六位 PIN | 6+6 首次设置策略、独立十键、持久预扣 / 擦除锁存；新增[原生 PIN v3 后端](NATIVE_PIN_RUNTIME_R05.md)、原生会话内 credit、密封私钥接口；新签名对象 ACL 限定 PIN AuthID | 真实首次初始化器、完整 ALL-DATA 擦除事务、生产 Root 接线、SE profile / 真实 ACL / 原生限次资格验证；标记摘要不证明 ACL，锁存不等于全部删除 |
 | PIN 缓存 | 配对会话、对端、USB/NFC 生命周期绑定；硬件及六个协议角色独立 30 秒；不接受保活续期；实体确认、一次执行、撤权与回放测试；[Noise XX 与 AEAD 通道内核](../crates/secure-channel/README.md)及 CCID / NFC 共用分片编码 | 可信时间、射频离场 IRQ、USB reset / suspend、原生 PIN 会话撤权及各协议实际验证状态的 Root 接线；真实 OS 连接 / 配对存储与通道集成 |
 | LCD / 十键 / 诊断 | 独立 Rust 驱动、版本明确、断电故障锁存、按键去抖 / 组合键拒绝；真实 R05 引脚构建约束 | 生产 Secure 归属、板上时序与故障响应；ARM 诊断没有认证功能 |
+| 电量 / 电源 UI | USB / 电池供电候选电路、充电禁止的诊断边界 | 实际电量采集 / 校准 / UI、USB 无电池与低电量工作验证；不得用充电状态伪报电量百分比 |
 | SE / MCU 密码 | T=1、SCP03、HKDF / 签名 / 持久计数、OTP MACOneShot 候选；H573 SAES / RNG 与受限 MMIO | 实片身份、唯一配对、profile / ACL、容量与耗尽、掉电原子性、KAT 和时钟 / DMA / GTZC / 调试配置 |
 | CanoKey 传统兼容（SM2 除外） | 固定上游参考；已选 C2 全功能 profile 候选，纠正 E2 不支持 RSA 的限制；本版不引入 PQC | 确切到货身份与逐算法矩阵、原生 PIN / ACL、[有界长 APDU 编码已补](CLASSICAL_APDU_R05.md)，实际驱动 / RSA / 传统协议集成仍待完成，不能用主控软件私钥运算绕过硬件保护 |
 | FIDO | 已固定并修改的 OpenSK 子集、注册 / 登录 / U2F / hmac-secret 网关；[本地 PIN / 独立主机 PIN](CLASSICAL_FIDO_PIN_R05.md)、指纹入口关闭、token / ECDH 撤权、v1 / v2 互通与重放测试 | 真实 H573 Env / 原生 PIN / 硬件密钥、CTAPHID / NFC、完整 Root dispatcher、租约 / token 生命周期与端到端验收 |
