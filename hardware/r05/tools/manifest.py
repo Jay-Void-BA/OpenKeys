@@ -47,7 +47,7 @@ def main():
     files.extend(ROOT / 'review' / name for name in (
         'erc.json', 'routed-drc.json', 'netlist-check.json', 'board-check.json',
         'simulation.json', 'protection-calculations.json', 'display-power-model.json', 'ground-fanout.json',
-        'lcd-voltage-window.json'))
+        'lcd-voltage-window.json', 'backup-tamper-model.json'))
     report = {
         'schema': 1, 'revision': '0.5', 'status': 'CAD_CANDIDATE',
         'routing_complete': True, 'electrical_checks_passed': True,

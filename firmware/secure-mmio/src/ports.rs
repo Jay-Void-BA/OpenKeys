@@ -24,6 +24,7 @@ pub(super) struct Aliases {
     pub(super) flash: pac::flash::Flash,
     sbs: pac::syscfg::Syscfg,
     tamp: pac::tamp::Tamp,
+    pwr: pac::pwr::Pwr,
     pub(super) icache: pac::icache::Icache,
     pub(super) dcache: pac::dcache::Dcache,
 }
@@ -49,6 +50,7 @@ pub(super) fn aliases() -> Aliases {
             flash: pac::flash::Flash::from_ptr(0x5002_2000 as *mut ()),
             sbs: pac::syscfg::Syscfg::from_ptr(0x5400_0400 as *mut ()),
             tamp: pac::tamp::Tamp::from_ptr(0x5400_7c00 as *mut ()),
+            pwr: pac::pwr::Pwr::from_ptr(0x5402_0800 as *mut ()),
             icache: pac::icache::Icache::from_ptr(0x5003_0400 as *mut ()),
             dcache: pac::dcache::Dcache::from_ptr(0x5003_1400 as *mut ()),
         }
@@ -346,6 +348,21 @@ impl Aliases {
             tamper_privilege: a.tamp.privcfgr().read().0,
             tamper_filter: a.tamp.fltcr().read().0,
             tamper_active: a.tamp.atcr1().read().0,
+            tamper_active_outputs: a.tamp.atcr2().read().0,
+            tamper_active_state: a.tamp.ator().read().0,
+            tamper_options: a.tamp.or().read().0,
+            tamper_resources: a.tamp.rpcfgr().read().0,
+            backup_anchor: core::array::from_fn(|index| {
+                a.tamp
+                    .bkpr(openkeys_h573_crypto::device_key::BACKUP_ANCHOR_FIRST + index)
+                    .read()
+            }),
+            backup_power: a.pwr.bdcr().read().0,
+            backup_clock: a.rcc.bdcr().read().0,
+            power_security: a.pwr.seccfgr().read().0,
+            power_privilege: a.pwr.privcfgr().read().0,
+            clock_security: a.rcc.seccfgr().read().0,
+            clock_privilege: a.rcc.privcfgr().read().0,
             tamper_status: a.tamp.sr().read().0,
             crypto_security: a.gtzc.seccfgr3().read().0,
             crypto_privilege: a.gtzc.privcfgr3().read().0,

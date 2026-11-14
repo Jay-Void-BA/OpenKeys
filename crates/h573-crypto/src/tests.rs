@@ -411,6 +411,42 @@ fn dhuk_load_output_clear_faults_and_key_timeout_poison_and_erase() {
 }
 
 #[test]
+fn actual_owner_check_rejects_epoch_replacement_and_faults_without_reviving_crypto() {
+    let (mut aes, port) = dhuk_engine();
+    aes.verify_backup_owner(&[0x46; 32]).unwrap();
+    assert_erased(&port);
+    port.0
+        .borrow_mut()
+        .device_context
+        .as_mut()
+        .unwrap()
+        .backup_anchor = device_key::encode_backup_owner(&[0x47; 32]).unwrap();
+    assert_eq!(aes.verify_backup_owner(&[0x47; 32]), Err(Error::Hardware));
+    assert_eq!(aes.verify_backup_owner(&[0x46; 32]), Err(Error::Faulted));
+    let mut out = [0x55; 16];
+    assert_eq!(aes.dhuk_cmac(b"old journal", &mut out), Err(Error::Faulted));
+    assert_eq!(out, [0; 16]);
+    assert_erased(&port);
+
+    let (mut baseline, model) = dhuk_engine();
+    baseline.verify_backup_owner(&[0x46; 32]).unwrap();
+    let checks = model.0.borrow().context_checks;
+    assert!(checks >= 3);
+    for at in 1..=checks {
+        let (mut aes, model) = dhuk_engine();
+        model.0.borrow_mut().context_fault_at = Some(at);
+        assert!(aes.verify_backup_owner(&[0x46; 32]).is_err());
+        assert_eq!(aes.dhuk_cmac(b"journal", &mut out), Err(Error::Faulted));
+        assert_eq!(out, [0; 16]);
+        assert_erased(&model);
+    }
+    let (mut wrong, model) = dhuk_engine();
+    assert_eq!(wrong.verify_backup_owner(&[0x47; 32]), Err(Error::Hardware));
+    assert_eq!(wrong.verify_backup_owner(&[0x46; 32]), Err(Error::Faulted));
+    assert_erased(&model);
+}
+
+#[test]
 fn ecb_key_order_and_nist_known_answer() {
     let (mut aes, port) = engine();
     let mut output = [0; 16];

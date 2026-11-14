@@ -61,7 +61,24 @@ fn main() {
         ("LCD_HOST_SDA", "PC9", "40", "I2C3_SDA AF4"),
         ("SE_ENABLE_REQUEST", "PC8", "39", "power / GPIO / dedicated"),
         ("CHARGE_ENABLE", "PB4", "56", "power / GPIO / dedicated"),
-        ("CASE_CLOSED", "PC13", "2", "TAMP_IN1 dedicated/VBAT"),
+        (
+            "CASE_TAMP_RETURN",
+            "PC13",
+            "2",
+            "TAMP_IN1 dedicated/VBAT; active loop from OUT4",
+        ),
+        (
+            "TAMP_DRIVE_RAW",
+            "PA1",
+            "15",
+            "TAMP_OUT4 dedicated/VBAT; no GPIO waveform",
+        ),
+        (
+            "BATTERY_SENSE",
+            "PA0",
+            "14",
+            "ADC1_INP0 analog; main cell voltage only",
+        ),
         ("USB_GUARD_FAULT_N", "PC0", "8", "power / GPIO / dedicated"),
         ("FLASH_CS_N", "PB12", "33", "power / GPIO / dedicated"),
         ("FLASH_SCK", "PB13", "34", "SPI2_SCK AF5"),
@@ -80,6 +97,10 @@ fn main() {
         assert_eq!(matching[0][3], function);
     }
     assert!(!csv.contains("FP_") && !csv.contains("LCD_RESET_N"));
+    assert!(
+        rows.iter().all(|row| row[1] != "PC1"),
+        "PC1 is unused, not backup tamper"
+    );
     if env::var_os("CARGO_FEATURE_R05_DIAGNOSTICS").is_none() {
         return;
     }

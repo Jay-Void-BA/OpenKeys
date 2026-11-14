@@ -99,9 +99,41 @@
   ],
   "hole_diameter": 2.2,
   "lid_contact": [
-    93.0,
-    105.0
+    89.0,
+    105.5
   ],
+  "active_lid_contacts": [
+    [
+      84.25,
+      52.0
+    ],
+    [
+      36.0,
+      103.0
+    ],
+    [
+      80.0,
+      108.0
+    ]
+  ],
+  "backup_cell": {
+    "part": "Panasonic CR-2032/HFN, pre-tabbed primary",
+    "body_centre": [
+      85,
+      103
+    ],
+    "nominal_body": [
+      20,
+      3.2
+    ],
+    "nominal_z": 7.2,
+    "polarity_pad": [
+      74.75,
+      103.0
+    ],
+    "charging_allowed": false,
+    "retention": "Insulated internal retention; inspect exact tab/body height and sample; do not compress cell"
+  },
   "mechanical_power_switch": [
     98.0,
     68.0

@@ -1,0 +1,16 @@
+OpenKeys active-loop skew RC - ideal stimulus only
+Vdiff diff 0 PULSE(0 3.333 1m 1n 1n 1u 3m)
+R66 diff filtered 4653.0
+C62 filtered 0 9.000000000000001e-09
+
+.control
+set noaskquit
+set wr_singlescale
+set wr_vecnames
+tran 20n 1.5m
+
+meas tran skew_peak MAX v(filtered) FROM=1m TO=1.01m
+wrdata tamper-skew-transient.txt v(filtered) v(diff)
+quit
+.endc
+.end

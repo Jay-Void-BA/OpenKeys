@@ -117,6 +117,11 @@ impl<P: Registers, S: Source> Service<P, S> {
         }
         result
     }
+    /// Root uses the owner from the MAC-verified selected journal head, then
+    /// separately checks the immutable SE epoch. Not an enrollment / reset API.
+    pub fn verify_backup_owner(&self, owner: &[u8; 32]) -> Result<(), Error> {
+        self.with_aes(|aes| aes.verify_backup_owner(owner))
+    }
     pub fn cbc<const N: usize>(
         &self,
         key: &[u8; N],

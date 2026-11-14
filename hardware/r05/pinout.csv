@@ -1,15 +1,16 @@
 pin,gpio,net,function
-1,VBAT,TAMP_3V0,power / GPIO / dedicated
-2,PC13,CASE_CLOSED,TAMP_IN1 dedicated/VBAT
+1,VBAT,VBAT_BACKUP,power / GPIO / dedicated
+2,PC13,CASE_TAMP_RETURN,TAMP_IN1 dedicated/VBAT; active loop from OUT4
 3,PC14,LSE_IN,power / GPIO / dedicated
 4,PC15,LSE_OUT,power / GPIO / dedicated
 7,NRST,NRST,power / GPIO / dedicated
 8,PC0,USB_GUARD_FAULT_N,power / GPIO / dedicated
-9,PC1,NRST,TAMP_IN3 dedicated
 10,PC2,FLASH_MISO,SPI2_MISO AF5
 11,PC3,LCD_RELEASE,power / GPIO / dedicated
 12,VSSA,GND,power / GPIO / dedicated
 13,VDDA,VDDA,power / GPIO / dedicated
+14,PA0,BATTERY_SENSE,ADC1_INP0 analog; main cell voltage only
+15,PA1,TAMP_DRIVE_RAW,TAMP_OUT4 dedicated/VBAT; no GPIO waveform
 16,PA2,CHG_STAT1_N,power / GPIO / dedicated
 17,PA3,CHG_STAT2_N,power / GPIO / dedicated
 18,VSS,GND,power / GPIO / dedicated

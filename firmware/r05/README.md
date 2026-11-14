@@ -1,7 +1,7 @@
 # R05 STM32H573 target
 
 The active PCB uses a device PIN and ten decimal keys. U5 is the SE051C2
-full-feature candidate; [selection and SYS backup corrections](../../docs/CLASSICAL_SE_POWER_R05.md)
+full-feature candidate; [selection and independent backup](../../docs/CLASSICAL_SE_POWER_R05.md)
 require Applet 7.2/native-PIN qualification before any private service is enabled. No fingerprint sensor,
 default PIN, or host hardware-PIN entry exists in this profile. TOTP/HOTP
 and OpenPGP/PIV/SSH are production integration targets, not diagnostic features.
@@ -34,6 +34,13 @@ disabled, and has no USB/NFC protocol, private records or PIN verification.
 Key display is a public wiring test: never enter a real PIN into diagnostics.
 Case/guard faults cut the display and latch the diagnostic; watchdog/panic reset
 does not intentionally restore a prior frame. Actual fault timing remains untested.
+SW12 and the active-loop mismatch circuit assert hardware NRST. PC13 is a
+random active-tamper return, not a static case-closed GPIO; this diagnostic
+leaves PC13/PA1/PA0 unconfigured and does not poll or bit-bang that loop.
+It does not initialize/qualify the active engine, continuity anchor, battery
+measurement or a production owner. Run only on a blank OPEN device: HAL clock
+initialization is not a promise to preserve an already provisioned backup
+domain. The closed-profile readback code is a separate component.
 The frozen PCB now includes a TPS3808 hardware reset hold. LCD initialization
 waits500ms after releasing MR before a new arm edge, then200ms before I2C;
 see the [power/reset bounds and bench requirements](../../docs/CLASSICAL_LCD_POWER_R05.md).

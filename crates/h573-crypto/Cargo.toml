@@ -6,6 +6,7 @@ license.workspace = true
 
 [dependencies]
 zeroize = { version = "1.9", default-features = false }
+subtle = { version = "=2.6.1", default-features = false }
 
 [dev-dependencies]
 aes = "=0.8.4"

@@ -31,6 +31,16 @@ LIB['SCHMITT']=library('74xGxx','74LVC1G17')
 LIB['LEVEL']=custom('TCA9517A_DGK',[(1,'VCCA','power_in'),(2,'SCLA','bidirectional'),(3,'SDAA','bidirectional'),(4,'GND','power_in'),(5,'EN','input'),(6,'SDAB','bidirectional'),(7,'SCLB','bidirectional'),(8,'VCCB','power_in')])
 LIB['WINDOW']=custom('TPS3700_DDC',[(1,'OUTA','open_collector'),(2,'GND','power_in'),(3,'INA+','input'),(4,'INB-','input'),(5,'VDD','power_in'),(6,'OUTB','open_collector')])
 LIB['RESETDELAY']=custom('TPS3808G33_DBV',[(1,'RESET_N','open_collector'),(2,'GND','power_in'),(3,'MR_N','input'),(4,'CT','input'),(5,'SENSE','input'),(6,'VDD','power_in')])
+# This instance does not use ST as a signal. TI explicitly requires grounding
+# the unused open-drain pin; model that documented unused mode as passive.
+# The independent netlist checker also requires pin5=GND (no ERC exclusion).
+LIB['BACKUP']=custom('LM66100_DCK',[(1,'VIN','power_in'),(2,'GND','power_in'),(3,'CE','input'),(4,'NC','no_connect'),(5,'ST_UNUSED_GND','passive'),(6,'VOUT','power_out')])
+LIB['CELL']=library('Device','Battery_Cell')
+LIB['XORCFG']=custom('SN74AUP1G99_DCU',[(1,'OE_N','input'),(2,'A','input'),(3,'B','input'),(4,'GND','power_in'),(5,'C','input'),(6,'D','input'),(7,'Y','output'),(8,'VCC','power_in')])
+LIB['SCHINV']=library('74xGxx','74LVC1G14')
+LIB['SCHDUAL']=custom('SN74AUP2G17_DCK',[(1,'1A','input'),(2,'GND','power_in'),(3,'2A','input'),(4,'2Y','output'),(5,'VCC','power_in'),(6,'1Y','output')])
+# Analog switch terminals are passive ohmic paths, not digital output drivers.
+LIB['ADCISOLATE']=custom('TMUX1511_RWB',[(1,'GND','power_in'),(2,'VDD','power_in'),(3,'S1','passive'),(4,'D1','passive'),(5,'S2','passive'),(6,'D2','passive'),(7,'SEL1','input'),(8,'SEL2','input'),(9,'D4','passive'),(10,'S4','passive'),(11,'D3','passive'),(12,'S3','passive')])
 
 def named(k,d):return {num:d.get(name) for num,name in pmap(k).items()}
 def usb():
@@ -68,10 +78,10 @@ def mcu():
  pm={num:name.split('(')[0] for num,name in pmap('MCU').items()};pn={v:k for k,v in pm.items()};nets={}
  for num,name in pm.items():
   if name=='VDD':nets[num]='+3V3'
-  elif name=='VBAT':nets[num]='TAMP_3V0'
+  elif name=='VBAT':nets[num]='VBAT_BACKUP'
   elif name=='VDDA':nets[num]='VDDA'
   elif name in ('VSS','VSSA'):nets[num]='GND'
- signals={'NRST':'NRST','BOOT0':'BOOT0','PA2':'CHG_STAT1_N','PA3':'CHG_STAT2_N','PA4':'NFC_CS_N','PA5':'NFC_SCK','PA6':'NFC_MISO','PA7':'NFC_MOSI','PA8':'LCD_HOST_SCL','PA11':'USB_DM','PA12':'USB_DP','PA13':'SWDIO','PA14':'SWCLK','PA15':'BTN7_N','PB0':'BTN1_N','PB1':'BTN2_N','PB2':'BTN3_N','PB3':'SWO','PB4':'CHARGE_ENABLE','PB5':'BTN4_N','PB6':'SE_SCL','PB7':'SE_SDA','PB10':'NFC_IRQ_N','PB12':'FLASH_CS_N','PB13':'FLASH_SCK','PB15':'FLASH_MOSI','PC0':'USB_GUARD_FAULT_N','PC1':'NRST','PC2':'FLASH_MISO','PC3':'LCD_RELEASE','PC4':'LCD_ARM_CLK','PC5':'VBUS_PRESENT_N','PC6':'BTN5_N','PC7':'BTN6_N','PC8':'SE_ENABLE_REQUEST','PC9':'LCD_HOST_SDA','PC10':'BTN8_N','PC11':'BTN9_N','PC12':'BTN0_N','PC13':'CASE_CLOSED','PC14':'LSE_IN','PC15':'LSE_OUT'}
+ signals={'NRST':'NRST','BOOT0':'BOOT0','PA0':'BATTERY_SENSE','PA1':'TAMP_DRIVE_RAW','PA2':'CHG_STAT1_N','PA3':'CHG_STAT2_N','PA4':'NFC_CS_N','PA5':'NFC_SCK','PA6':'NFC_MISO','PA7':'NFC_MOSI','PA8':'LCD_HOST_SCL','PA11':'USB_DM','PA12':'USB_DP','PA13':'SWDIO','PA14':'SWCLK','PA15':'BTN7_N','PB0':'BTN1_N','PB1':'BTN2_N','PB2':'BTN3_N','PB3':'SWO','PB4':'CHARGE_ENABLE','PB5':'BTN4_N','PB6':'SE_SCL','PB7':'SE_SDA','PB10':'NFC_IRQ_N','PB12':'FLASH_CS_N','PB13':'FLASH_SCK','PB15':'FLASH_MOSI','PC0':'USB_GUARD_FAULT_N','PC2':'FLASH_MISO','PC3':'LCD_RELEASE','PC4':'LCD_ARM_CLK','PC5':'VBUS_PRESENT_N','PC6':'BTN5_N','PC7':'BTN6_N','PC8':'SE_ENABLE_REQUEST','PC9':'LCD_HOST_SDA','PC10':'BTN8_N','PC11':'BTN9_N','PC12':'BTN0_N','PC13':'CASE_TAMP_RETURN','PC14':'LSE_IN','PC15':'LSE_OUT'}
  for pin,net in signals.items():nets[pn[pin]]=net
  nets['30']='VCAP1';nets['62']='VCAP2'
  s.comp('MCU','U4','STM32H573RIT6',160.02,142.24,nets,note='H573 pin62=VCAP2, no PB9; SE PB6/PB7; LCD PA8/PC9. Recheck complete alternate functions before firmware target release')
@@ -82,7 +92,7 @@ def mcu():
  passive(s,'C','9pF C0G - tune',363.22,185.42,'LSE_IN','GND');passive(s,'C','9pF C0G - tune',398.78,185.42,'LSE_OUT','GND')
  s.comp('PWR','#FLG6','PWR_FLAG',381,91.44,{'1':'VDDA'})
  s.text('STiRoT must verify protected firmware. TrustZone/GTZC must deny\nnonsecure access to SE, LCD, ten keys, timers, DMA and key memory.\nNo raw cryptography or arbitrary display commands at secure gateway.\nSE_EN is a fault interlock, not proof of a correct PIN.\nSeparate2.2uF on VCAP1/2; no external load on VCAP.',129,258)
- af={'PA5':'SPI1_SCK AF5','PA6':'SPI1_MISO AF5','PA7':'SPI1_MOSI AF5','PB13':'SPI2_SCK AF5','PC2':'SPI2_MISO AF5','PB15':'SPI2_MOSI AF5','PB6':'I2C1_SCL AF4','PB7':'I2C1_SDA AF4','PA8':'I2C3_SCL AF4','PC9':'I2C3_SDA AF4','PA11':'USB_DM AF10','PA12':'USB_DP AF10','PC1':'TAMP_IN3 dedicated','PC13':'TAMP_IN1 dedicated/VBAT'}
+ af={'PA0':'ADC1_INP0 analog; main cell voltage only','PA1':'TAMP_OUT4 dedicated/VBAT; no GPIO waveform','PA5':'SPI1_SCK AF5','PA6':'SPI1_MISO AF5','PA7':'SPI1_MOSI AF5','PB13':'SPI2_SCK AF5','PC2':'SPI2_MISO AF5','PB15':'SPI2_MOSI AF5','PB6':'I2C1_SCL AF4','PB7':'I2C1_SDA AF4','PA8':'I2C3_SCL AF4','PC9':'I2C3_SDA AF4','PA11':'USB_DM AF10','PA12':'USB_DP AF10','PC13':'TAMP_IN1 dedicated/VBAT; active loop from OUT4'}
  with (ROOT/'pinout.csv').open('w') as f:
   w=csv.writer(f,lineterminator='\n');w.writerow(['pin','gpio','net','function'])
   for num,net in sorted(nets.items(),key=lambda p:int(p[0])):w.writerow([num,pm[num],net,af.get(pm[num],'power / GPIO / dedicated')])
@@ -111,18 +121,50 @@ def trusted_ui():
   passive(s,'R','47k',xx,yy+20.32,'+3V3',net);passive(s,'C','10nF',xx+25.4,yy+20.32,net,'GND')
  s.text('ENGLISH 16x2, blue background / white text. No fingerprint parts.\nPIN:6 decimal digits, masked. Hold9=erase; hold0=cancel.\nReview:2=previous,8=next,5=confirm,0=cancel. New release required.\nPrivate operations require a valid paired30s local PIN grant and exact review.\nNo PIN from USB/NFC/desktop. No factory/default unlock PIN.',195,283,1.1)
 def fault_tamper():
- s=sheet('07-fault-tamper','Independent reset, battery-backed case tamper and SE interlock')
- s.comp('AON','U13','MCP1700T-3002E/TT',337.82,40.64,named('AON',{'VI':'SYS','VO':'TAMP_3V0','GND':'GND'}),note='Always-on3.0V from charger SYS: USB or battery, independent of main switch. SYS must stay within MCP1700 6V maximum. Qualify reverse injection and source transitions')
- caps(s,[('4.7uF 10V X7R','SYS','GND'),('4.7uF 10V X7R','TAMP_3V0','GND')],335.28,96.52)
- s.comp('C','C56','100nF X7R 16V',393.7,40.64,{'1':'TAMP_3V0','2':'GND'},'Capacitor_SMD:C_0603_1608Metric',note='Local U4.1 VBAT decoupling, separate from U13 output capacitor. Both U13 capacitors must retain effective capacitance >=1uF across bias/temperature/tolerance')
+ s=sheet('07-fault-tamper','Independent backup cell, active case loop, reset and SE interlock')
+ s.comp('CELL','BT1','Panasonic CR-2032/HFN',43.18,40.64,{'1':'BACKUP_CELL','2':'GND'},'Battery:Battery_Panasonic_CR2032-HFN_Horizontal_CircularHoles',note='Independent nonrechargeable3V primary backup, nominal225mAh; exact current datasheet/traceability and retention need qualification. Pre-tabbed part only; never solder directly to an ordinary coin. Insulate metal body; no NFC overlap')
+ s.comp('R','R61','10k 1%',99.06,40.64,{'1':'BACKUP_CELL','2':'BACKUP_LIMITED'},'Resistor_SMD:R_0603_1608Metric',note='Backup short/inrush limiter, not a rechargeable-cell charger')
+ s.comp('BACKUP','U13','LM66100DCKR',175.26,40.64,{'1':'BACKUP_LIMITED','2':'GND','3':'VBAT_BACKUP','4':None,'5':'GND','6':'VBAT_BACKUP'},'Package_TO_SOT_SMD:SOT-363_SC-70-6',note='TI SLVSEZ8A pin table: CE=VOUT is REQUIRED for reverse-current blocking; CE must NOT be tied low. ST unused tied GND. Internal MCU VDD/VBAT switch powers RTC from VDD when present. No intentional charge path; MCU VBE must remain disabled; qualify reverse leakage/transition pulses')
+ # Preserve C40/C41 references when replacing the old SYS-only backup LDO.
+ caps(s,[('100nF X7R 16V','BACKUP_LIMITED','GND'),('4.7uF 10V X7R','VBAT_BACKUP','GND')],246.38,40.64)
+ s.comp('PWR','#FLG_BACKUP','PWR_FLAG',368.3,73.66,{'1':'BACKUP_LIMITED'})
+ s.comp('C','C56','100nF X7R 16V',363.22,40.64,{'1':'VBAT_BACKUP','2':'GND'},'Capacitor_SMD:C_0603_1608Metric',note='Local U4.1 VBAT decoupling. C41 bulk and C56 must be local, isolated from SYS and main cell')
  s.comp('SUP','U10','TPS3702CX33DDCR',99.06,78.74,named('SUP',{'SENSE':'+3V3','SET':'+3V3','VDD':'SYS','GND':'GND','UV':'NRST','OV':'NRST'}),'Package_TO_SOT_SMD:TSOT-23-6',note='SET high: nominal UV3.17V/OV3.43V; open-drain reset independent of ADC/software. Not nanosecond fault protection')
- s.comp('SW','SW12','LID CLOSED contact',246.38,68.58,{'1':'TAMP_3V0','2':'CASE_CLOSED'},'Button_Switch_SMD:SW_SPST_TL3342',note='Lid actuator closes contact; open wire pulls low => independent reset. Travel/contact reliability unvalidated')
+ s.comp('SW','SW12','LID RESET contact',246.38,68.58,{'1':'+3V3','2':'CASE_CLOSED'},'Button_Switch_SMD:SW_SPST_TL3342',note='Separate main-powered contact; open wire pulls low => independent reset/SE disable. Does not drain the primary backup cell. Travel/contact reliability unvalidated')
  passive(s,'R','100k',292.1,68.58,'CASE_CLOSED','GND')
  s.comp('BUF','U11','SN74LVC1G07DCKR',246.38,124.46,{'1':None,'2':'CASE_CLOSED','3':'GND','4':'NRST','5':'+3V3'},'Package_TO_SOT_SMD:SOT-353_SC-70-5',note='Open-drain case-open reset; cannot drive reset high against supervisor')
  s.comp('AND','U12','SN74LVC1G08DCKR',99.06,172.72,{'1':'NRST','2':'SE_ENABLE_REQUEST','3':'GND','4':'SE_EN','5':'+3V3'},'Package_TO_SOT_SMD:SOT-353_SC-70-5',note='Fault/reset disables SE_EN independently of request. Fault interlock only; not a PIN authorization gate')
  passive(s,'R','100k',154.94,172.72,'SE_ENABLE_REQUEST','GND')
  caps(s,[('100nF 10V','SYS','GND'),('100nF','+3V3','GND'),('100nF','+3V3','GND')],246.38,177.8)
- s.text('Reset invalidates volatile grants; reboot must verify firmware and require fresh device PIN.\nPC13=case input; PC1/TAMP_IN3 observes reset/fault line.\nInternal BOR/PVD, clock checks and persistent precharged attempts also required.\nProduction debug lifecycle closed; no populated external debug connector.\nVBAT+LSE must retain tamper with main OFF; full backup loss must lock, not initialize.\nMeasure reset/ENA latency, leakage and injection before security release.',187,255)
+ s.comp('R','R63','1k 1%',43.18,223.52,{'1':'TAMP_DRIVE_RAW','2':'TAMP_DRIVE'},'Resistor_SMD:R_0603_1608Metric',note='Local PA1 damping; with C68 provides intentional RF filtering. Output is hardware TAMP_OUT4, not GPIO bit banging. Qualify total loop capacitance/skew and backup switching current')
+ for ref,x,a,b in [('SW13',116.84,'TAMP_DRIVE','TAMP_LID_MID1'),('SW14',190.5,'TAMP_LID_MID1','TAMP_LID_MID2'),('SW15',264.16,'TAMP_LID_MID2','CASE_TAMP_RETURN')]:
+  s.comp('SW',ref,'ACTIVE LID '+ref[-1],x,223.52,{'1':a,'2':b},'Button_Switch_SMD:SW_SPST_TL3342',note='Internal lid actuator, series random-pattern loop; not a user PIN key. Distributed noncollinear positions. Exact low-force MPN/travel and case preload require DFM/qualification')
+ s.comp('R','R62','470k 1%',337.82,223.52,{'1':'CASE_TAMP_RETURN','2':'GND'},'Resistor_SMD:R_0603_1608Metric',note='Defines opened loop against MCU + XOR input leakage; include closed-loop drain in backup budget. Qualify board cleanliness, humidity and leakage')
+ s.comp('C','C68','100pF C0G 50V 5%',363.22,177.8,{'1':'CASE_TAMP_RETURN','2':'GND'},'Capacitor_SMD:C_0603_1608Metric',note='Local return-node RF shunt. Together with R63 nominal100ns; limits capacitive RF pickup. Verify active TAMP margins; not a certified EMC filter')
+ s.text('PA1=TAMP_OUT4 -> three lid contacts -> PC13=TAMP_IN1; hardware active shared output4.\nSeparate SW12 asynchronously resets MCU/LCD and disables SE while main power is present.\nPC1 is NOT tied to NRST: it is not a VBAT-capable input and a reset is not a lid event.\nBackup register anchor + active engine continuity must be checked; loss/flag => quarantine, never factory blank.\nNo automatic flag clear/reseed on normal boot. No proof against bridging, probing, SCA or all glitches.\nQualify backup life, reverse current, RF, reset latency, mechanics and injection before release.',195,268,1.05)
+
+def power_measurement():
+ s=sheet('11-power-measurement','Protected main-cell voltage measurement; no invented battery percentage')
+ s.comp('R','R64','330k 1%',91.44,58.42,{'1':'BAT','2':'BATTERY_DIVIDER'},'Resistor_SMD:R_0603_1608Metric',note='Protected pack output, not bare cell. Include off-state divider drain and on-state R68 loading in voltage conversion')
+ s.comp('R','R65','330k 1%',195.58,58.42,{'1':'BATTERY_DIVIDER','2':'GND'},'Resistor_SMD:R_0603_1608Metric')
+ s.comp('C','C61','10nF X7R 16V',299.72,58.42,{'1':'BATTERY_DIVIDER','2':'GND'},'Capacitor_SMD:C_0603_1608Metric',note='Settling/noise reservoir BEFORE powered-off isolation, never stored battery voltage directly on an unpowered MCU ADC')
+ s.comp('ADCISOLATE','U28','TMUX1511RWBR',119.38,137.16,{'1':'GND','2':'+3V3','3':'BATTERY_DIVIDER','4':'BATTERY_SENSE','5':'GND','6':'GND','7':'NRST','8':'GND','9':'GND','10':'GND','11':'GND','12':'GND'},'Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm',note='TI SCDS390B RWB0012A: powered-off analog protection up to3.6V (including VDD<1.5V). SEL1=NRST, no software bypass. Shared spare channel3 grounded; SEL2=0 and all spare analog pads grounded. Do not substitute TMUX1101/TS5A3166: their control fail-safe alone is not signal-path powered-off protection')
+ s.comp('R','R68','100k 1%',251.46,137.16,{'1':'BATTERY_SENSE','2':'GND'},'Resistor_SMD:R_0603_1608Metric',note='After isolation: max2uA IPOFF x101k=0.202V allocation; qualify aggregate leakage and all power ramps. On-state loads divider: nominal Vadc/Vbat=100/530, not1/2')
+ s.comp('C','C67','100nF X7R 16V',335.28,137.16,{'1':'+3V3','2':'GND'},'Capacitor_SMD:C_0603_1608Metric')
+ s.text('PA0=ADC1_INP0 analog only. Read VREFINT/calibration; use long sample time and settled bounded samples.\n330k/330k divider +100k output bias: nominal Vadc/Vbat=100/530 when U28 is on.\nReservoir is upstream of U28. NRST low disconnects ADC; powered-off path must not backfeed main rail.\nVoltage/charging is not a fuel gauge; no precise percentage without qualified pack curve.\nNo raw ADC/high-rate power telemetry to host; no sampling/return during private cryptography.\nStatus never renews PIN leases. Internal VBAT charger must stay disabled. Power ramps/leakage NOT tested.',195,255,1.1)
+def active_reset():
+ s=sheet('12-active-reset','Independent active-loop mismatch reset; no software arm or override')
+ s.comp('XORCFG','U24','SN74AUP1G99DCUR',83.82,78.74,{'1':'GND','2':'GND','3':'+3V3','4':'GND','5':'TAMP_DRIVE_CLEAN','6':'TAMP_RETURN_CLEAN','7':'TAMP_DIFF','8':'+3V3'},'Package_SO:VSSOP-8_2.3x2mm_P0.5mm',note='TI SCES594C pp1/6/9: OE=0,A=0,B=1 => Y=C XOR D. U27 provides fast input edges; do not attach the slow lid pull-down node directly. Main-powered only')
+ s.comp('R','R66','4.7k 1%',172.72,78.74,{'1':'TAMP_DIFF','2':'TAMP_DIFF_FILTER'},'Resistor_SMD:R_0603_1608Metric')
+ s.comp('C','C62','10nF X7R 16V 10%',236.22,78.74,{'1':'TAMP_DIFF_FILTER','2':'GND'},'Capacitor_SMD:C_0603_1608Metric',note='47us nominal RC rejects normal loop edge skew. Not a guaranteed whole-system attack-detection time; use Schmitt input, never an ordinary inverter')
+ s.comp('SCHINV','U25','SN74LVC1G14DCKR',149.86,154.94,{'1':None,'2':'TAMP_DIFF_FILTER','3':'GND','4':'TAMP_MATCH_N','5':'+3V3'},'Package_TO_SOT_SMD:SOT-353_SC-70-5',note='Schmitt inverter accepts filtered slow transition. Mismatch high => output low')
+ s.comp('BUF','U26','SN74LVC1G07DCKR',279.4,154.94,{'1':None,'2':'TAMP_MATCH_N','3':'GND','4':'NRST','5':'+3V3'},'Package_TO_SOT_SMD:SOT-353_SC-70-5',note='Open-drain output joins NRST fault bus; cannot oppose another reset driver. Low match signal => hardware reset, SE_EN off and LCD latch cleared')
+ s.comp('R','R67','1M 1%',353.06,78.74,{'1':'TAMP_DRIVE_RAW','2':'GND'},'Resistor_SMD:R_0603_1608Metric',note='Defines disabled active output at first commissioning; worst XOR input leakage must remain below low threshold. Include active-output backup drain')
+ s.comp('R','R69','47k 1%',353.06,177.8,{'1':'+3V3','2':'GND'},'Resistor_SMD:R_0603_1608Metric',note='Defined main-rail discharge path:4uA aggregate off-feed allocation x47.47k=0.18988V. Avoid a floating main rail charged by finite input/off-switch leakage. Allocation including NFC and all power ramps must be measured')
+ s.comp('SCHDUAL','U27','SN74AUP2G17DCKR',83.82,177.8,{'1':'TAMP_DRIVE_RAW','2':'GND','3':'CASE_TAMP_RETURN','4':'TAMP_RETURN_CLEAN','5':'+3V3','6':'TAMP_DRIVE_CLEAN'},'Package_TO_SOT_SMD:SOT-363_SC-70-6',note='TI SCES750A pp1/4/5: dual Schmitt buffer with no maximum input-transition time; each VBAT-live input has Ioff max0.6uA with main VCC=0. Prevents slow open-loop transitions reaching U24. Qualify leakage and partial-supply backfeed')
+ for ref,x in [('C63',43.18),('C64',137.16),('C65',231.14),('C66',325.12)]:
+  s.comp('C',ref,'100nF X7R 16V',x,233.68,{'1':'+3V3','2':'GND'},'Capacitor_SMD:C_0603_1608Metric')
+ s.text('Closed loop: C=D => no reset. Open/stuck/grounded loop: mismatch pulses feed RC and hard reset.\nU24 OE and function straps are fixed copper, not GPIO. No host bypass or software mask.\nU27 Ioff limits feed into unpowered main logic; leakage is not zero. No maximum input slew at U27/U25.\nActive TAMP hardware, backup anchor and fresh secure readback remain mandatory; XOR alone is insufficient.\nProbe bridging, matched waveform injection and short glitches are residual risks requiring lab tests.\nPowered/unpowered transitions, input thresholds, reset propagation and backup life NOT qualified.',195,278,1.05)
 def input_guard():
  s=sheet('08-input-guard','Independent VBUS overvoltage cutoff, reverse blocking and limited inrush')
  s.comp('EFUSE','U14','TPS259470LRPWR',144.78,86.36,named('EFUSE',{'EN_UVLO':'USB_GUARD_EN','OVLO':'USB_GUARD_OV','AUXOFF':None,'FLT_N':'USB_GUARD_FAULT_N','IN':'VBUS_FUSED','OUT':'USB_5V','DVDT':'USB_GUARD_DVDT','GND':'GND','ILM':'USB_GUARD_ILM','ITIMER':None}),'OpenKeys:TPS25947_RPW0010A',note='Adjustable OVLO, latch-off variant for latched faults, true reverse-current blocking. Follow datasheet fault-specific recovery; do not infer all OV events latch. Input abs28V is not a system surge rating.')
@@ -185,4 +227,4 @@ def save():
  (ROOT/'review/connections.json').write_text(json.dumps(comps,indent=2)+'\n')
  print(f'R0.5: {len(S)+1} sheets, {len(comps)} BOM positions')
 if __name__=='__main__':
- usb();power();mcu();storage();nfc();trusted_ui();fault_tamper();input_guard();lcd_guard();supply_window();save()
+ usb();power();mcu();storage();nfc();trusted_ui();fault_tamper();input_guard();lcd_guard();supply_window();power_measurement();active_reset();save()

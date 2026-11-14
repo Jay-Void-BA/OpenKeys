@@ -52,6 +52,7 @@ cargo run -p openkeys-manager --features gui --locked
 ```sh
 python3 hardware/r05/tools/manifest.py --check
 python3 scripts/freeze-r05-board.py --check
+python3 scripts/export-r05-native-pin-layout.py --check
 python3 scripts/export-r05-pin-layout.py --check
 python3 scripts/check-r05-diagnostic.py
 python3 scripts/check-diagnostic-manifest.py
@@ -60,6 +61,7 @@ python3 scripts/check-opensk-vendor.py
 ```
 
 Windows 如使用 Python Launcher，可将 `python3` 换成 `py -3`。需要 Python 3.9 或更新版本。
+原生 UserID v4 是当前 PIN 布局候选；旧 v2 布局检查仅用于历史回归，均不会配置真实设备。
 
 - 看图：[原理图 PDF](../hardware/r05/exports/OpenKeys-schematic.pdf)、[尺寸 PDF](../hardware/r05/exports/OpenKeys-dimensions.pdf)。
 - 编辑 / 重导出：[R0.5 工具与文件说明](../hardware/r05/README.md)。需要指定版本的 KiCad、pcbnew、OpenSCAD 等环境。

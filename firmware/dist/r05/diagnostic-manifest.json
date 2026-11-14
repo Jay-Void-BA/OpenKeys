@@ -18,11 +18,11 @@
   "fingerprint_hardware": false,
   "physical_test_result": "NOT_RUN",
   "hardware_sha256": {
-    "hardware/r05/kicad/OpenKeys.kicad_pcb": "8e9d3e61d21afd76e613611d21ebfb939d797c794edf4927300f5d9421142efd",
-    "hardware/r05/pinout.csv": "193e41123500e1d14e853004f86404a986fca6b5f81c620643de85144c7c1599"
+    "hardware/r05/kicad/OpenKeys.kicad_pcb": "80cd8d3fa79ab74808ddac003fc392ea0f37e4f02eb95cfd66738cd68d3adeba",
+    "hardware/r05/pinout.csv": "dbb7b8b4ed1296bf4834e4fd8913a333887ffd600f1d6d0193a8b56f26b9d7f3"
   },
   "source_sha256": {
-    "Cargo.lock": "f273468a7aa9f71540b8023cd0b395394ad8291b3a074b2db576164bfbefe43f",
+    "Cargo.lock": "e40b421d840ab02fd4310b349fc333678d66ec427e316e4bd1f76f7a9bfc6b74",
     "Cargo.toml": "f6647646503a308bc1ba45a5850e66f6d58dfb89fbec4e59603fc184ee3a6399",
     "crates/device-policy/Cargo.toml": "3543984e4fb9c36d6cb9e47396c18726998f11cbba4958ade3417d29c1de6d6f",
     "crates/device-policy/src/biometric.rs": "2b5200740724ef7b47516cfc5ff8aecfddcd29e721084234907ed77c70b6cd64",
@@ -72,11 +72,11 @@
     "firmware/board/tests/r05_pin_ui.rs": "331e4b24568b8a97c32392c5a8f90d1820d9c0c7858dceef002682fc61b57c13",
     "firmware/board/tests/se_i2c.rs": "5ec0d55595f367de48cf39da0aa8afc70178995175c68881f8fb7ada74d87227",
     "firmware/r05/Cargo.toml": "7e3c52010717adaaf0d4b83f31aa29242058bba883f37a680ae0a558d016de5c",
-    "firmware/r05/README.md": "33046209b6533e3d96bbcbf259f2203663a3f87a8b641e2ab3aaf81eeee61b77",
-    "firmware/r05/board-contract.sha256": "2966744c4d0bd3d783b5eb7e16f808d89d603b45f8f61714c30a28f18dcf19cf",
-    "firmware/r05/build.rs": "546cf2e4a53f5205b32d2a141265d0c7dee20d6587e0b089b83b3eb38ec9dd7e",
+    "firmware/r05/README.md": "c07ed11fb26c5e8a7dc37b601cba48b252a3355e48d3184b8faf1048130636e4",
+    "firmware/r05/board-contract.sha256": "ad1e9c10cb6482d5fe3ed867953769627a2f0770028096630064fcacc3e37127",
+    "firmware/r05/build.rs": "a7eb4cf54f02f1f51da8d1139e34329a5caaa05167bd3561e878bb326272b254",
     "firmware/r05/src/lib.rs": "b6ce7e55b55e3a48cc261adedf44e732feea0e81c5ba7d9df7589c6bde1b22e3",
-    "firmware/r05/src/main.rs": "23b60cd699ea4e939c8f5b3a38af1578900595be7741d67d0cd1419715193161",
+    "firmware/r05/src/main.rs": "ec7a7299ec7cafcdc7155da620d7282678dfdcdca2d89e1bd86f973551e9101b",
     "firmware/vendor/cortex-m/CHANGELOG.md": "67f37cfd6cb96dfe78c30c843da690747688b7ec78fc01d1553e3c9f790c5773",
     "firmware/vendor/cortex-m/Cargo.toml": "9a2d2deb063d0fb466d3ccd4088ab7c90affb37fc836a157520c462e4a327fdc",
     "firmware/vendor/cortex-m/Cargo.toml.orig": "935c7c2d519e2a84c57d8c3fad14f9ecfa2a237eac039768c8467e69a8be6962",
@@ -136,24 +136,24 @@
       "lcd_revision": "v1-1",
       "backlight_address": 107,
       "features": "r05-diagnostics",
-      "binary_bytes": 26880,
+      "binary_bytes": 27224,
       "initial_stack": "0x20040000",
       "reset_vector": "0x8000251",
       "artifacts": {
-        "openkeys-r05-diagnostics-v1-1.elf": "4ec68245bcb0b298d58cf9c1214d8cce882684e30ca4c15be91376466c18ace5",
-        "openkeys-r05-diagnostics-v1-1.bin": "f22bd27387d86d5901e27c34be1eea153d8babaf5f0349657a5f6107bb2191d1"
+        "openkeys-r05-diagnostics-v1-1.elf": "6b60c54d60252d34afd5f840ef88d31995a6ca7bf6264cf2b7d2dbd75b206947",
+        "openkeys-r05-diagnostics-v1-1.bin": "81b852c1e2017c49ef3a7e387612b2b951bcb8ae79a39548eb30ed5100178bed"
       }
     },
     {
       "lcd_revision": "v1-0",
       "backlight_address": 96,
       "features": "r05-diagnostics,lcd-v1-0",
-      "binary_bytes": 26880,
+      "binary_bytes": 27224,
       "initial_stack": "0x20040000",
       "reset_vector": "0x8000251",
       "artifacts": {
-        "openkeys-r05-diagnostics-v1-0.elf": "a27df76553e0ebff2013553d23d1698c48a3b4dfa27f7db6dc632725396d388b",
-        "openkeys-r05-diagnostics-v1-0.bin": "6ae8079f62e6b3c6fec6f2bb8064e59553da5f8a649022c64055f35d3a7da928"
+        "openkeys-r05-diagnostics-v1-0.elf": "15ba074462e4e325712d859c594977964f8d26fca63e57f84253c86449c4a7f6",
+        "openkeys-r05-diagnostics-v1-0.bin": "a34a39ae3445b003f54b10ed9261ccc8acca1adca55e6f1846030a83d4235d46"
       }
     }
   ]

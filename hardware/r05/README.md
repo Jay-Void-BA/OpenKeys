@@ -11,18 +11,20 @@
 | 内容 | 入口 |
 |---|---|
 | 整机尺寸与真实 PCB 线条 | [装配图 PDF](exports/OpenKeys-dimensions.pdf)、[PNG](exports/OpenKeys-dimensions.png)、[坐标 JSON](mechanical/dimensions.json) |
-| 电路 | [11 页原理图 PDF](exports/OpenKeys-schematic.pdf)、[KiCad 源](kicad/OpenKeys.kicad_sch)、[网表](exports/OpenKeys-netlist.xml) |
+| 电路 | [13 页原理图 PDF](exports/OpenKeys-schematic.pdf)、[KiCad 源](kicad/OpenKeys.kicad_sch)、[网表](exports/OpenKeys-netlist.xml) |
 | PCB | [四层板源](kicad/OpenKeys.kicad_pcb)、[正面](exports/OpenKeys-PCB-front.svg)、[背面](exports/OpenKeys-PCB-back.svg) |
 | 工程打样资料 | [Gerber / 钻孔](exports/OpenKeys-fabrication.zip)、[BOM](BOM.csv)、[贴片坐标](exports/OpenKeys-SMD-position.csv)、[引脚表](pinout.csv) |
 | 结构 | [OpenSCAD](mechanical/enclosure.scad)、[板体 STEP](exports/OpenKeys-PCB.step)、[结构导出](exports) |
 | 检查 | [ERC](review/erc.json)、[DRC](review/routed-drc.json)、[独立网表核对](review/netlist-check.json)、[板网核对](review/board-check.json)、[摘要](review/cad-manifest.json) |
-| 模拟范围 | [天线 / 复位 RC](review/simulation.json)、[输入保护直流角落](review/protection-calculations.json)、[LCD 电压静态角落](review/lcd-voltage-window.json)、[LCD 断电假设模型](review/display-power-model.json) |
+| 模拟范围 | [天线 / 复位 RC](review/simulation.json)、[输入保护直流角落](review/protection-calculations.json)、[LCD 电压静态角落](review/lcd-voltage-window.json)、[LCD 断电假设模型](review/display-power-model.json)、[备份 / 主动防拆 / ADC 模型](review/backup-tamper-model.json) |
 
 硬件 PIN 与协议 PIN 分别按[同一认证会话的 30 秒规则](../../docs/PIN_SESSIONS_R05.md)缓存；断连 / NFC 离场立即锁定。改硬件 PIN 或第 11 次完整错误须清空全部数据；当前仅擦除锁存，完整销毁服务待集成。
 
 ## 经典版 SE 与辅助电源
 
-U5 为 SE051C2HQ1/Z01XDZ / OEF A8FA / Applet 7.2 候选，保留 H573 单 SE 架构，纠正原 E2 不支持 RSA 的限制。U13 / C40 改接 SYS，C41 与 C56 分别为 LDO 输出和 MCU VBAT 就近去耦；[完整依据、采购与测试](../../docs/CLASSICAL_SE_POWER_R05.md)。原生 PIN / RSA 仍需实际集成。LCD 供电与复位的本轮修订见[电路依据与实测条件](../../docs/CLASSICAL_LCD_POWER_R05.md)。
+U5 为 SE051C2HQ1/Z01XDZ / OEF A8FA / Applet 7.2 候选，保留 H573 单 SE 架构，纠正原 E2 不支持 RSA 的限制。VBAT 改用独立预焊脚 CR-2032/HFN，经 10k 限流和 LM66100 反向阻断；CE 必须接 VOUT，不能接地。C41 / C56 在 MCU VBAT 就近去耦。PA1 的硬件 TAMP_OUT4 经三个分散的内部壳体触点返回 PC13 / TAMP_IN1；另一触点 SW12 独立复位。U27 / U24 / U25 / U26 对主动回路失配进行整形、比较、滤波和硬件复位，没有软件使能旁路。备份 SRAM 关闭，连续性锚点使用备份寄存器；Root 连续性集成与实片验证仍是交付条件。
+
+电量采样的 330k / 330k 分压器与储能电容在 TMUX1511 的隔离侧，ADC 侧有 100k 下拉；硬复位切断采样通路。计入下拉负载，正常采样比例为 **100/530**。这些改动增加 26 个器件位，总数 195；仍不能把电量电压当成已校准百分比。[电源依据与采购](../../docs/CLASSICAL_SE_POWER_R05.md)、[备份防拆与采样测试](../../manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md)。原生 PIN / RSA、生产 Root 和全数据销毁仍需实际集成；LCD 修订见[电路依据与实测条件](../../docs/CLASSICAL_LCD_POWER_R05.md)。
 
 ## LCD 采购与兼容性
 
@@ -58,5 +60,7 @@ J7 是内部 LCD 线束，J2/J6 为内部电池 / NTC；J3 为生产 DNP 的内�
 ## 重建与核对
 
 使用 KiCad 9、Python 3 / pcbnew，附加导出使用 CairoSVG、OpenSCAD、ngspice 47。日常检查运行 `tools/export.sh`，核对**保存的已布线板**；不要默认重建 / 自动布线。`board.py` 无参数会覆盖布局，只有修改硬件并另行评审时使用。自动路由器不是 CI 的组成部分。
+
+电路或模型修改后，先用 `python3 tools/simulate.py` 与 `python3 tools/calculate_backup.py` 明确重跑被动模拟，再导出。后者保存器件 / 语义网表 / 模型源码摘要；`--check` 和 CAD CI 只核对这些绑定，不声称重新执行 SPICE。所有模型中假定的耗流、容量、漏电、延迟和阈值须按实测更新。
 
 许可：[CERN-OHL-S-2.0](../LICENSE-CERN-OHL-S-2.0.txt)。模型和图纸均标为工程候选；尺寸试装、DFM、EMC / ESD、故障注入和侧信道的实物结果仍为 NOT_RUN。

@@ -1,11 +1,11 @@
 # H573 secure MMIO boundary
 
 This is an explicit exception to `forbid(unsafe_code)` in the other own-code
-crates. Its `aliases()` function contains eleven fixed-address PAC handle
+crates. Its `aliases()` function contains twelve fixed-address PAC handle
 constructors, with no caller-selected pointer, memory slice, allocator, data
 conversion or foreign code. No C/C++ is compiled. The constructors map the
 documented Secure aliases of RNG, SAES, RCC, GTZC, RNG_NSCR, I2C1, FLASH,
-SBS, TAMP, ICACHE and DCACHE. Hardware-key qualification uses readbacks only.
+SBS, TAMP, PWR, ICACHE and DCACHE. Hardware-key qualification uses readbacks only.
 The exclusive journal port also writes FLASH secure control/key/EOP registers,
 but never option bytes, HDPL/epoch selection or tamper/error/ECC flags. The selected
 metapac21.0.0 has Non-secure constants and omits RNG_NSCR and SAES GTZC fields.
@@ -51,6 +51,16 @@ RNG profile/clock or changing context rejects the result. This code never
 clears a flag to regain a key. These readbacks cannot prove the running image
 was authenticated, a sensor is functional or SAU/MPU/DMA attribution is correct;
 the protected Root and real STiRoT/provisioning integration remain mandatory.
+
+The independent-backup R05 profile additionally reads the actual PWR/RCC
+security/privilege and backup-clock registers, active OUT4/IN1 mapping,
+initialization/seed status, resource erasure and BKP8..25 continuity words.
+PWR MONEN must be on, BREN and primary-cell charging off. All32 backup
+registers must be Secure and privileged. Only live PRNG bits and LSIRDY are
+normalised before lifetime comparisons; their configuration and fault bits
+remain checked. Missing/corrupt continuity words and the old passive-IN1/IN3
+profile deny hardware-key use. No initialization, reseeding, flag clearing or
+backup write is implemented by this read boundary.
 
 UM3125's STiRoT path authenticates the secure image then hands off at HDPL2
 (encoded0x8A). This candidate Root profile remains at that level, without a

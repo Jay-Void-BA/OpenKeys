@@ -429,7 +429,7 @@
     "footprint": "Package_QFP:LQFP-64_10x10mm_P0.5mm",
     "sheet": "03-mcu",
     "nets": {
-      "1": "TAMP_3V0",
+      "1": "VBAT_BACKUP",
       "19": "+3V3",
       "32": "+3V3",
       "18": "GND",
@@ -442,6 +442,8 @@
       "13": "VDDA",
       "7": "NRST",
       "60": "BOOT0",
+      "14": "BATTERY_SENSE",
+      "15": "TAMP_DRIVE_RAW",
       "16": "CHG_STAT1_N",
       "17": "CHG_STAT2_N",
       "20": "NFC_CS_N",
@@ -467,7 +469,6 @@
       "34": "FLASH_SCK",
       "36": "FLASH_MOSI",
       "8": "USB_GUARD_FAULT_N",
-      "9": "NRST",
       "10": "FLASH_MISO",
       "11": "LCD_RELEASE",
       "24": "LCD_ARM_CLK",
@@ -479,7 +480,7 @@
       "51": "BTN8_N",
       "52": "BTN9_N",
       "53": "BTN0_N",
-      "2": "CASE_CLOSED",
+      "2": "CASE_TAMP_RETURN",
       "3": "LSE_IN",
       "4": "LSE_OUT",
       "30": "VCAP1",
@@ -1399,25 +1400,52 @@
     "dnp": false
   },
   {
-    "ref": "U13",
-    "value": "MCP1700T-3002E/TT",
-    "footprint": "Package_TO_SOT_SMD:SOT-23",
+    "ref": "BT1",
+    "value": "Panasonic CR-2032/HFN",
+    "footprint": "Battery:Battery_Panasonic_CR2032-HFN_Horizontal_CircularHoles",
     "sheet": "07-fault-tamper",
     "nets": {
-      "3": "SYS",
-      "1": "GND",
-      "2": "TAMP_3V0"
+      "1": "BACKUP_CELL",
+      "2": "GND"
     },
-    "note": "Always-on3.0V from charger SYS: USB or battery, independent of main switch. SYS must stay within MCP1700 6V maximum. Qualify reverse injection and source transitions",
+    "note": "Independent nonrechargeable3V primary backup, nominal225mAh; exact current datasheet/traceability and retention need qualification. Pre-tabbed part only; never solder directly to an ordinary coin. Insulate metal body; no NFC overlap",
+    "dnp": false
+  },
+  {
+    "ref": "R61",
+    "value": "10k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "BACKUP_CELL",
+      "2": "BACKUP_LIMITED"
+    },
+    "note": "Backup short/inrush limiter, not a rechargeable-cell charger",
+    "dnp": false
+  },
+  {
+    "ref": "U13",
+    "value": "LM66100DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "BACKUP_LIMITED",
+      "2": "GND",
+      "3": "VBAT_BACKUP",
+      "4": null,
+      "5": "GND",
+      "6": "VBAT_BACKUP"
+    },
+    "note": "TI SLVSEZ8A pin table: CE=VOUT is REQUIRED for reverse-current blocking; CE must NOT be tied low. ST unused tied GND. Internal MCU VDD/VBAT switch powers RTC from VDD when present. No intentional charge path; MCU VBE must remain disabled; qualify reverse leakage/transition pulses",
     "dnp": false
   },
   {
     "ref": "C40",
-    "value": "4.7uF 10V X7R",
-    "footprint": "Capacitor_SMD:C_0805_2012Metric",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
     "sheet": "07-fault-tamper",
     "nets": {
-      "1": "SYS",
+      "1": "BACKUP_LIMITED",
       "2": "GND"
     },
     "note": "",
@@ -1429,7 +1457,7 @@
     "footprint": "Capacitor_SMD:C_0805_2012Metric",
     "sheet": "07-fault-tamper",
     "nets": {
-      "1": "TAMP_3V0",
+      "1": "VBAT_BACKUP",
       "2": "GND"
     },
     "note": "",
@@ -1441,10 +1469,10 @@
     "footprint": "Capacitor_SMD:C_0603_1608Metric",
     "sheet": "07-fault-tamper",
     "nets": {
-      "1": "TAMP_3V0",
+      "1": "VBAT_BACKUP",
       "2": "GND"
     },
-    "note": "Local U4.1 VBAT decoupling, separate from U13 output capacitor. Both U13 capacitors must retain effective capacitance >=1uF across bias/temperature/tolerance",
+    "note": "Local U4.1 VBAT decoupling. C41 bulk and C56 must be local, isolated from SYS and main cell",
     "dnp": false
   },
   {
@@ -1465,14 +1493,14 @@
   },
   {
     "ref": "SW12",
-    "value": "LID CLOSED contact",
+    "value": "LID RESET contact",
     "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
     "sheet": "07-fault-tamper",
     "nets": {
-      "1": "TAMP_3V0",
+      "1": "+3V3",
       "2": "CASE_CLOSED"
     },
-    "note": "Lid actuator closes contact; open wire pulls low => independent reset. Travel/contact reliability unvalidated",
+    "note": "Separate main-powered contact; open wire pulls low => independent reset/SE disable. Does not drain the primary backup cell. Travel/contact reliability unvalidated",
     "dnp": false
   },
   {
@@ -1563,6 +1591,78 @@
       "2": "GND"
     },
     "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R63",
+    "value": "1k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "TAMP_DRIVE_RAW",
+      "2": "TAMP_DRIVE"
+    },
+    "note": "Local PA1 damping; with C68 provides intentional RF filtering. Output is hardware TAMP_OUT4, not GPIO bit banging. Qualify total loop capacitance/skew and backup switching current",
+    "dnp": false
+  },
+  {
+    "ref": "SW13",
+    "value": "ACTIVE LID 3",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "TAMP_DRIVE",
+      "2": "TAMP_LID_MID1"
+    },
+    "note": "Internal lid actuator, series random-pattern loop; not a user PIN key. Distributed noncollinear positions. Exact low-force MPN/travel and case preload require DFM/qualification",
+    "dnp": false
+  },
+  {
+    "ref": "SW14",
+    "value": "ACTIVE LID 4",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "TAMP_LID_MID1",
+      "2": "TAMP_LID_MID2"
+    },
+    "note": "Internal lid actuator, series random-pattern loop; not a user PIN key. Distributed noncollinear positions. Exact low-force MPN/travel and case preload require DFM/qualification",
+    "dnp": false
+  },
+  {
+    "ref": "SW15",
+    "value": "ACTIVE LID 5",
+    "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "TAMP_LID_MID2",
+      "2": "CASE_TAMP_RETURN"
+    },
+    "note": "Internal lid actuator, series random-pattern loop; not a user PIN key. Distributed noncollinear positions. Exact low-force MPN/travel and case preload require DFM/qualification",
+    "dnp": false
+  },
+  {
+    "ref": "R62",
+    "value": "470k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "CASE_TAMP_RETURN",
+      "2": "GND"
+    },
+    "note": "Defines opened loop against MCU + XOR input leakage; include closed-loop drain in backup budget. Qualify board cleanliness, humidity and leakage",
+    "dnp": false
+  },
+  {
+    "ref": "C68",
+    "value": "100pF C0G 50V 5%",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "07-fault-tamper",
+    "nets": {
+      "1": "CASE_TAMP_RETURN",
+      "2": "GND"
+    },
+    "note": "Local return-node RF shunt. Together with R63 nominal100ns; limits capacitive RF pickup. Verify active TAMP margins; not a certified EMC filter",
     "dnp": false
   },
   {
@@ -2202,6 +2302,248 @@
     "value": "100nF X7R 16V 10%",
     "footprint": "Capacitor_SMD:C_0603_1608Metric",
     "sheet": "10-sys-window",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R64",
+    "value": "330k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "11-power-measurement",
+    "nets": {
+      "1": "BAT",
+      "2": "BATTERY_DIVIDER"
+    },
+    "note": "Protected pack output, not bare cell. Include off-state divider drain and on-state R68 loading in voltage conversion",
+    "dnp": false
+  },
+  {
+    "ref": "R65",
+    "value": "330k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "11-power-measurement",
+    "nets": {
+      "1": "BATTERY_DIVIDER",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C61",
+    "value": "10nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "11-power-measurement",
+    "nets": {
+      "1": "BATTERY_DIVIDER",
+      "2": "GND"
+    },
+    "note": "Settling/noise reservoir BEFORE powered-off isolation, never stored battery voltage directly on an unpowered MCU ADC",
+    "dnp": false
+  },
+  {
+    "ref": "U28",
+    "value": "TMUX1511RWBR",
+    "footprint": "Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm",
+    "sheet": "11-power-measurement",
+    "nets": {
+      "1": "GND",
+      "2": "+3V3",
+      "3": "BATTERY_DIVIDER",
+      "4": "BATTERY_SENSE",
+      "5": "GND",
+      "6": "GND",
+      "7": "NRST",
+      "8": "GND",
+      "9": "GND",
+      "10": "GND",
+      "11": "GND",
+      "12": "GND"
+    },
+    "note": "TI SCDS390B RWB0012A: powered-off analog protection up to3.6V (including VDD<1.5V). SEL1=NRST, no software bypass. Shared spare channel3 grounded; SEL2=0 and all spare analog pads grounded. Do not substitute TMUX1101/TS5A3166: their control fail-safe alone is not signal-path powered-off protection",
+    "dnp": false
+  },
+  {
+    "ref": "R68",
+    "value": "100k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "11-power-measurement",
+    "nets": {
+      "1": "BATTERY_SENSE",
+      "2": "GND"
+    },
+    "note": "After isolation: max2uA IPOFF x101k=0.202V allocation; qualify aggregate leakage and all power ramps. On-state loads divider: nominal Vadc/Vbat=100/530, not1/2",
+    "dnp": false
+  },
+  {
+    "ref": "C67",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "11-power-measurement",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U24",
+    "value": "SN74AUP1G99DCUR",
+    "footprint": "Package_SO:VSSOP-8_2.3x2mm_P0.5mm",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "GND",
+      "2": "GND",
+      "3": "+3V3",
+      "4": "GND",
+      "5": "TAMP_DRIVE_CLEAN",
+      "6": "TAMP_RETURN_CLEAN",
+      "7": "TAMP_DIFF",
+      "8": "+3V3"
+    },
+    "note": "TI SCES594C pp1/6/9: OE=0,A=0,B=1 => Y=C XOR D. U27 provides fast input edges; do not attach the slow lid pull-down node directly. Main-powered only",
+    "dnp": false
+  },
+  {
+    "ref": "R66",
+    "value": "4.7k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "TAMP_DIFF",
+      "2": "TAMP_DIFF_FILTER"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C62",
+    "value": "10nF X7R 16V 10%",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "TAMP_DIFF_FILTER",
+      "2": "GND"
+    },
+    "note": "47us nominal RC rejects normal loop edge skew. Not a guaranteed whole-system attack-detection time; use Schmitt input, never an ordinary inverter",
+    "dnp": false
+  },
+  {
+    "ref": "U25",
+    "value": "SN74LVC1G14DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": null,
+      "2": "TAMP_DIFF_FILTER",
+      "3": "GND",
+      "4": "TAMP_MATCH_N",
+      "5": "+3V3"
+    },
+    "note": "Schmitt inverter accepts filtered slow transition. Mismatch high => output low",
+    "dnp": false
+  },
+  {
+    "ref": "U26",
+    "value": "SN74LVC1G07DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-353_SC-70-5",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": null,
+      "2": "TAMP_MATCH_N",
+      "3": "GND",
+      "4": "NRST",
+      "5": "+3V3"
+    },
+    "note": "Open-drain output joins NRST fault bus; cannot oppose another reset driver. Low match signal => hardware reset, SE_EN off and LCD latch cleared",
+    "dnp": false
+  },
+  {
+    "ref": "R67",
+    "value": "1M 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "TAMP_DRIVE_RAW",
+      "2": "GND"
+    },
+    "note": "Defines disabled active output at first commissioning; worst XOR input leakage must remain below low threshold. Include active-output backup drain",
+    "dnp": false
+  },
+  {
+    "ref": "R69",
+    "value": "47k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "Defined main-rail discharge path:4uA aggregate off-feed allocation x47.47k=0.18988V. Avoid a floating main rail charged by finite input/off-switch leakage. Allocation including NFC and all power ramps must be measured",
+    "dnp": false
+  },
+  {
+    "ref": "U27",
+    "value": "SN74AUP2G17DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "TAMP_DRIVE_RAW",
+      "2": "GND",
+      "3": "CASE_TAMP_RETURN",
+      "4": "TAMP_RETURN_CLEAN",
+      "5": "+3V3",
+      "6": "TAMP_DRIVE_CLEAN"
+    },
+    "note": "TI SCES750A pp1/4/5: dual Schmitt buffer with no maximum input-transition time; each VBAT-live input has Ioff max0.6uA with main VCC=0. Prevents slow open-loop transitions reaching U24. Qualify leakage and partial-supply backfeed",
+    "dnp": false
+  },
+  {
+    "ref": "C63",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C64",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C65",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "12-active-reset",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C66",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "12-active-reset",
     "nets": {
       "1": "+3V3",
       "2": "GND"

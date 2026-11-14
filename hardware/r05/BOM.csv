@@ -105,12 +105,14 @@ C38,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
 SW11,KEY 0,Button_Switch_SMD:SW_SPST_TL3342,06-trusted-ui,False,Independent GPIO; physical release events only. No matrix and no host key injection.
 R34,47k,Resistor_SMD:R_0603_1608Metric,06-trusted-ui,False,
 C39,10nF,Capacitor_SMD:C_0603_1608Metric,06-trusted-ui,False,
-U13,MCP1700T-3002E/TT,Package_TO_SOT_SMD:SOT-23,07-fault-tamper,False,"Always-on3.0V from charger SYS: USB or battery, independent of main switch. SYS must stay within MCP1700 6V maximum. Qualify reverse injection and source transitions"
-C40,4.7uF 10V X7R,Capacitor_SMD:C_0805_2012Metric,07-fault-tamper,False,
+BT1,Panasonic CR-2032/HFN,Battery:Battery_Panasonic_CR2032-HFN_Horizontal_CircularHoles,07-fault-tamper,False,"Independent nonrechargeable3V primary backup, nominal225mAh; exact current datasheet/traceability and retention need qualification. Pre-tabbed part only; never solder directly to an ordinary coin. Insulate metal body; no NFC overlap"
+R61,10k 1%,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,"Backup short/inrush limiter, not a rechargeable-cell charger"
+U13,LM66100DCKR,Package_TO_SOT_SMD:SOT-363_SC-70-6,07-fault-tamper,False,TI SLVSEZ8A pin table: CE=VOUT is REQUIRED for reverse-current blocking; CE must NOT be tied low. ST unused tied GND. Internal MCU VDD/VBAT switch powers RTC from VDD when present. No intentional charge path; MCU VBE must remain disabled; qualify reverse leakage/transition pulses
+C40,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
 C41,4.7uF 10V X7R,Capacitor_SMD:C_0805_2012Metric,07-fault-tamper,False,
-C56,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,"Local U4.1 VBAT decoupling, separate from U13 output capacitor. Both U13 capacitors must retain effective capacitance >=1uF across bias/temperature/tolerance"
+C56,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,"Local U4.1 VBAT decoupling. C41 bulk and C56 must be local, isolated from SYS and main cell"
 U10,TPS3702CX33DDCR,Package_TO_SOT_SMD:TSOT-23-6,07-fault-tamper,False,SET high: nominal UV3.17V/OV3.43V; open-drain reset independent of ADC/software. Not nanosecond fault protection
-SW12,LID CLOSED contact,Button_Switch_SMD:SW_SPST_TL3342,07-fault-tamper,False,Lid actuator closes contact; open wire pulls low => independent reset. Travel/contact reliability unvalidated
+SW12,LID RESET contact,Button_Switch_SMD:SW_SPST_TL3342,07-fault-tamper,False,Separate main-powered contact; open wire pulls low => independent reset/SE disable. Does not drain the primary backup cell. Travel/contact reliability unvalidated
 R35,100k,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,
 U11,SN74LVC1G07DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,07-fault-tamper,False,Open-drain case-open reset; cannot drive reset high against supervisor
 U12,SN74LVC1G08DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,07-fault-tamper,False,Fault/reset disables SE_EN independently of request. Fault interlock only; not a PIN authorization gate
@@ -118,6 +120,12 @@ R36,100k,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,
 C42,100nF 10V,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
 C43,100nF,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
 C44,100nF,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,
+R63,1k 1%,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,"Local PA1 damping; with C68 provides intentional RF filtering. Output is hardware TAMP_OUT4, not GPIO bit banging. Qualify total loop capacitance/skew and backup switching current"
+SW13,ACTIVE LID 3,Button_Switch_SMD:SW_SPST_TL3342,07-fault-tamper,False,"Internal lid actuator, series random-pattern loop; not a user PIN key. Distributed noncollinear positions. Exact low-force MPN/travel and case preload require DFM/qualification"
+SW14,ACTIVE LID 4,Button_Switch_SMD:SW_SPST_TL3342,07-fault-tamper,False,"Internal lid actuator, series random-pattern loop; not a user PIN key. Distributed noncollinear positions. Exact low-force MPN/travel and case preload require DFM/qualification"
+SW15,ACTIVE LID 5,Button_Switch_SMD:SW_SPST_TL3342,07-fault-tamper,False,"Internal lid actuator, series random-pattern loop; not a user PIN key. Distributed noncollinear positions. Exact low-force MPN/travel and case preload require DFM/qualification"
+R62,470k 1%,Resistor_SMD:R_0603_1608Metric,07-fault-tamper,False,"Defines opened loop against MCU + XOR input leakage; include closed-loop drain in backup budget. Qualify board cleanliness, humidity and leakage"
+C68,100pF C0G 50V 5%,Capacitor_SMD:C_0603_1608Metric,07-fault-tamper,False,Local return-node RF shunt. Together with R63 nominal100ns; limits capacitive RF pickup. Verify active TAMP margins; not a certified EMC filter
 U14,TPS259470LRPWR,OpenKeys:TPS25947_RPW0010A,08-input-guard,False,"Adjustable OVLO, latch-off variant for latched faults, true reverse-current blocking. Follow datasheet fault-specific recovery; do not infer all OV events latch. Input abs28V is not a system surge rating."
 R37,22.1k 1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
 R38,10k 1%,Resistor_SMD:R_0603_1608Metric,08-input-guard,False,
@@ -168,3 +176,21 @@ R57,10k 1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,"TPS3808 open-drai
 R58,100k 1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,CT requires40k..200k to VDD for fixed300ms mode. Do not short CT directly to VDD or fit a timing capacitor.
 R59,10k 1%,Resistor_SMD:R_0603_1608Metric,10-sys-window,False,Forces TPS22919 ON low when latch/main supply is unpowered; defeats back-charge from CONNECT_DELAY through220k
 C60,100nF X7R 16V 10%,Capacitor_SMD:C_0603_1608Metric,10-sys-window,False,
+R64,330k 1%,Resistor_SMD:R_0603_1608Metric,11-power-measurement,False,"Protected pack output, not bare cell. Include off-state divider drain and on-state R68 loading in voltage conversion"
+R65,330k 1%,Resistor_SMD:R_0603_1608Metric,11-power-measurement,False,
+C61,10nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,11-power-measurement,False,"Settling/noise reservoir BEFORE powered-off isolation, never stored battery voltage directly on an unpowered MCU ADC"
+U28,TMUX1511RWBR,Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm,11-power-measurement,False,"TI SCDS390B RWB0012A: powered-off analog protection up to3.6V (including VDD<1.5V). SEL1=NRST, no software bypass. Shared spare channel3 grounded; SEL2=0 and all spare analog pads grounded. Do not substitute TMUX1101/TS5A3166: their control fail-safe alone is not signal-path powered-off protection"
+R68,100k 1%,Resistor_SMD:R_0603_1608Metric,11-power-measurement,False,"After isolation: max2uA IPOFF x101k=0.202V allocation; qualify aggregate leakage and all power ramps. On-state loads divider: nominal Vadc/Vbat=100/530, not1/2"
+C67,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,11-power-measurement,False,
+U24,SN74AUP1G99DCUR,Package_SO:VSSOP-8_2.3x2mm_P0.5mm,12-active-reset,False,"TI SCES594C pp1/6/9: OE=0,A=0,B=1 => Y=C XOR D. U27 provides fast input edges; do not attach the slow lid pull-down node directly. Main-powered only"
+R66,4.7k 1%,Resistor_SMD:R_0603_1608Metric,12-active-reset,False,
+C62,10nF X7R 16V 10%,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,"47us nominal RC rejects normal loop edge skew. Not a guaranteed whole-system attack-detection time; use Schmitt input, never an ordinary inverter"
+U25,SN74LVC1G14DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,12-active-reset,False,Schmitt inverter accepts filtered slow transition. Mismatch high => output low
+U26,SN74LVC1G07DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,12-active-reset,False,"Open-drain output joins NRST fault bus; cannot oppose another reset driver. Low match signal => hardware reset, SE_EN off and LCD latch cleared"
+R67,1M 1%,Resistor_SMD:R_0603_1608Metric,12-active-reset,False,Defines disabled active output at first commissioning; worst XOR input leakage must remain below low threshold. Include active-output backup drain
+R69,47k 1%,Resistor_SMD:R_0603_1608Metric,12-active-reset,False,Defined main-rail discharge path:4uA aggregate off-feed allocation x47.47k=0.18988V. Avoid a floating main rail charged by finite input/off-switch leakage. Allocation including NFC and all power ramps must be measured
+U27,SN74AUP2G17DCKR,Package_TO_SOT_SMD:SOT-363_SC-70-6,12-active-reset,False,TI SCES750A pp1/4/5: dual Schmitt buffer with no maximum input-transition time; each VBAT-live input has Ioff max0.6uA with main VCC=0. Prevents slow open-loop transitions reaching U24. Qualify leakage and partial-supply backfeed
+C63,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,
+C64,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,
+C65,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,
+C66,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,

@@ -40,6 +40,24 @@ model substitutes a synthetic AES key only under `cfg(test)` and checks
 CMAC with an independent RustCrypto oracle. It does **not** emulate or qualify
 the silicon KDF. On-chip qualification is still required.
 
+The current R05 uses active PC13/IN1 from PA1/OUT4, independent primary backup
+and voltage/temperature monitoring. The readback gate rejects the old passive
+IN1/IN3 profile, missing seed initialization, altered clock/output mapping,
+potential/no-erase modes, missing register privilege, disabled monitoring and
+enabled VBAT charging. Normal PRNG output and LSIRDY changes do not create a
+new device identity; all configuration, fault and owner words stay pinned.
+
+BKP0..7 remain reserved for the optional BHK. BKP8..15 contain the32-byte owner
+nonce,16..23 its wordwise complement,24 the public `OKB1` tag and25 its inverse.
+`encode_backup_owner` only encodes nonsecret metadata; it neither writes
+hardware nor authorizes enrollment. `Service::verify_backup_owner` performs
+fresh readbacks before/after matching the **authenticated selected journal
+owner** and cleanup. Any mismatch or readback fault permanently poisons that
+service. The Root must also validate the independent immutable SE owner epoch,
+and must control destructive factory/owner transitions and cold reboot.
+That production coordinator is still missing; structural anchor validation
+alone is not proof against replay, or permission to recreate a missing journal.
+
 Checked entropy discards a baseline, checks consecutive32-bit repetitions,
 retains the comparison across requests and erases partial output on failure.
 Its source checks silicon current/latched clock/seed errors before/after DR;

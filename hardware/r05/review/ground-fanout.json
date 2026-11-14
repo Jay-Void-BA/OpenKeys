@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "revision": "0.5",
-  "board_sha256": "8e9d3e61d21afd76e613611d21ebfb939d797c794edf4927300f5d9421142efd",
-  "smd_ground_pads": 147,
-  "saved_ground_vias": 152,
+  "board_sha256": "80cd8d3fa79ab74808ddac003fc392ea0f37e4f02eb95cfd66738cd68d3adeba",
+  "smd_ground_pads": 175,
+  "saved_ground_vias": 159,
   "meaning": "Actual saved pad/via positions. Nearest via is geometric, not a routed length, a proof of direct attachment, impedance or physical qualification. Use the independent KiCad DRC for logical connectivity.",
   "connections": [
     {
@@ -322,14 +322,14 @@
       "ref": "C32",
       "pad": "2",
       "pad_mm": [
-        78.775,
-        52.0
+        76.0,
+        59.775000000000006
       ],
       "nearest_via_mm": [
-        79.65299999999999,
-        52.363
+        80.96199999999999,
+        58.877999999999986
       ],
-      "straight_distance_mm": 0.950081
+      "straight_distance_mm": 5.042425
     },
     {
       "ref": "C33",
@@ -439,12 +439,12 @@
       "ref": "C40",
       "pad": "2",
       "pad_mm": [
-        12.950000000000003,
-        31.0
+        38.25,
+        36.025000000000006
       ],
       "nearest_via_mm": [
-        13.950000000000003,
-        31.0
+        37.269215,
+        36.22009
       ],
       "straight_distance_mm": 1.0
     },
@@ -452,14 +452,14 @@
       "ref": "C41",
       "pad": "2",
       "pad_mm": [
-        3.049999999999997,
-        30.0
+        42.0,
+        32.2
       ],
       "nearest_via_mm": [
-        2.049999999999997,
-        30.0
+        40.614000000000004,
+        30.694000000000003
       ],
-      "straight_distance_mm": 1.0
+      "straight_distance_mm": 2.046712
     },
     {
       "ref": "C42",
@@ -735,6 +735,110 @@
       "straight_distance_mm": 3.648612
     },
     {
+      "ref": "C61",
+      "pad": "2",
+      "pad_mm": [
+        37.525000000000006,
+        28.75
+      ],
+      "nearest_via_mm": [
+        40.614000000000004,
+        30.694000000000003
+      ],
+      "straight_distance_mm": 3.649802
+    },
+    {
+      "ref": "C62",
+      "pad": "2",
+      "pad_mm": [
+        60.275000000000006,
+        106.0
+      ],
+      "nearest_via_mm": [
+        61.275000000000006,
+        106.0
+      ],
+      "straight_distance_mm": 1.0
+    },
+    {
+      "ref": "C63",
+      "pad": "2",
+      "pad_mm": [
+        56.775000000000006,
+        102.25
+      ],
+      "nearest_via_mm": [
+        52.150000000000006,
+        102.85
+      ],
+      "straight_distance_mm": 4.663757
+    },
+    {
+      "ref": "C64",
+      "pad": "2",
+      "pad_mm": [
+        64.275,
+        102.35
+      ],
+      "nearest_via_mm": [
+        61.275000000000006,
+        106.0
+      ],
+      "straight_distance_mm": 4.724669
+    },
+    {
+      "ref": "C65",
+      "pad": "2",
+      "pad_mm": [
+        69.525,
+        100.25
+      ],
+      "nearest_via_mm": [
+        61.65299999999999,
+        94.364
+      ],
+      "straight_distance_mm": 9.829211
+    },
+    {
+      "ref": "C66",
+      "pad": "2",
+      "pad_mm": [
+        47.275000000000006,
+        100.5
+      ],
+      "nearest_via_mm": [
+        52.150000000000006,
+        102.85
+      ],
+      "straight_distance_mm": 5.41185
+    },
+    {
+      "ref": "C67",
+      "pad": "2",
+      "pad_mm": [
+        36.5,
+        21.474999999999994
+      ],
+      "nearest_via_mm": [
+        40.41399999999999,
+        22.628
+      ],
+      "straight_distance_mm": 4.080295
+    },
+    {
+      "ref": "C68",
+      "pad": "2",
+      "pad_mm": [
+        46.0,
+        31.025000000000006
+      ],
+      "nearest_via_mm": [
+        45.0,
+        31.025000000000006
+      ],
+      "straight_distance_mm": 1.0
+    },
+    {
       "ref": "C7",
       "pad": "2",
       "pad_mm": [
@@ -894,14 +998,14 @@
       "ref": "J6",
       "pad": "2",
       "pad_mm": [
-        79.5,
-        89.0
+        85.0,
+        74.25
       ],
       "nearest_via_mm": [
-        78.62200000000001,
-        89.364
+        84.843928,
+        73.465372
       ],
-      "straight_distance_mm": 0.950463
+      "straight_distance_mm": 0.8
     },
     {
       "ref": "Q1",
@@ -1188,6 +1292,71 @@
         22.364000000000004
       ],
       "straight_distance_mm": 0.950463
+    },
+    {
+      "ref": "R62",
+      "pad": "2",
+      "pad_mm": [
+        43.32499999999999,
+        28.25
+      ],
+      "nearest_via_mm": [
+        41.072,
+        26.364000000000004
+      ],
+      "straight_distance_mm": 2.938198
+    },
+    {
+      "ref": "R65",
+      "pad": "2",
+      "pad_mm": [
+        34.82499999999999,
+        25.25
+      ],
+      "nearest_via_mm": [
+        34.442317,
+        26.173879999999997
+      ],
+      "straight_distance_mm": 1.0
+    },
+    {
+      "ref": "R67",
+      "pad": "2",
+      "pad_mm": [
+        45.32499999999999,
+        14.75
+      ],
+      "nearest_via_mm": [
+        46.372000000000014,
+        14.186499999999995
+      ],
+      "straight_distance_mm": 1.189009
+    },
+    {
+      "ref": "R68",
+      "pad": "2",
+      "pad_mm": [
+        41.92500000000001,
+        23.75
+      ],
+      "nearest_via_mm": [
+        42.638000000000005,
+        24.878
+      ],
+      "straight_distance_mm": 1.334449
+    },
+    {
+      "ref": "R69",
+      "pad": "2",
+      "pad_mm": [
+        40.0,
+        103.17500000000001
+      ],
+      "nearest_via_mm": [
+        52.150000000000006,
+        102.85
+      ],
+      "straight_distance_mm": 12.154346
     },
     {
       "ref": "R7",
@@ -1542,16 +1711,29 @@
     },
     {
       "ref": "U13",
-      "pad": "1",
+      "pad": "2",
       "pad_mm": [
-        7.0625,
-        31.950000000000003
+        40.80000000000001,
+        34.75
       ],
       "nearest_via_mm": [
-        7.426000000000002,
-        32.828
+        39.924999000000014,
+        33.25
       ],
-      "straight_distance_mm": 0.950272
+      "straight_distance_mm": 1.736556
+    },
+    {
+      "ref": "U13",
+      "pad": "5",
+      "pad_mm": [
+        42.69999999999999,
+        34.75
+      ],
+      "nearest_via_mm": [
+        39.924999000000014,
+        33.25
+      ],
+      "straight_distance_mm": 3.154462
     },
     {
       "ref": "U14",
@@ -1708,6 +1890,188 @@
         34.55
       ],
       "straight_distance_mm": 0.8
+    },
+    {
+      "ref": "U24",
+      "pad": "1",
+      "pad_mm": [
+        50.599999999999994,
+        102.25
+      ],
+      "nearest_via_mm": [
+        52.150000000000006,
+        102.85
+      ],
+      "straight_distance_mm": 1.662077
+    },
+    {
+      "ref": "U24",
+      "pad": "2",
+      "pad_mm": [
+        50.599999999999994,
+        102.75
+      ],
+      "nearest_via_mm": [
+        52.150000000000006,
+        102.85
+      ],
+      "straight_distance_mm": 1.553222
+    },
+    {
+      "ref": "U24",
+      "pad": "4",
+      "pad_mm": [
+        50.599999999999994,
+        103.75
+      ],
+      "nearest_via_mm": [
+        52.150000000000006,
+        102.85
+      ],
+      "straight_distance_mm": 1.792345
+    },
+    {
+      "ref": "U25",
+      "pad": "3",
+      "pad_mm": [
+        59.05000000000001,
+        103.65
+      ],
+      "nearest_via_mm": [
+        61.275000000000006,
+        106.0
+      ],
+      "straight_distance_mm": 3.236221
+    },
+    {
+      "ref": "U26",
+      "pad": "3",
+      "pad_mm": [
+        67.05000000000001,
+        103.65
+      ],
+      "nearest_via_mm": [
+        61.275000000000006,
+        106.0
+      ],
+      "straight_distance_mm": 6.234832
+    },
+    {
+      "ref": "U27",
+      "pad": "2",
+      "pad_mm": [
+        44.05000000000001,
+        103.0
+      ],
+      "nearest_via_mm": [
+        52.150000000000006,
+        102.85
+      ],
+      "straight_distance_mm": 8.101389
+    },
+    {
+      "ref": "U28",
+      "pad": "1",
+      "pad_mm": [
+        37.44999999999999,
+        25.525000000000006
+      ],
+      "nearest_via_mm": [
+        34.442317,
+        26.173879999999997
+      ],
+      "straight_distance_mm": 3.076882
+    },
+    {
+      "ref": "U28",
+      "pad": "5",
+      "pad_mm": [
+        36.42500000000001,
+        26.450000000000003
+      ],
+      "nearest_via_mm": [
+        34.442317,
+        26.173879999999997
+      ],
+      "straight_distance_mm": 2.001818
+    },
+    {
+      "ref": "U28",
+      "pad": "6",
+      "pad_mm": [
+        36.42500000000001,
+        26.849999999999994
+      ],
+      "nearest_via_mm": [
+        34.442317,
+        26.173879999999997
+      ],
+      "straight_distance_mm": 2.094796
+    },
+    {
+      "ref": "U28",
+      "pad": "8",
+      "pad_mm": [
+        37.44999999999999,
+        26.974999999999994
+      ],
+      "nearest_via_mm": [
+        34.442317,
+        26.173879999999997
+      ],
+      "straight_distance_mm": 3.112547
+    },
+    {
+      "ref": "U28",
+      "pad": "9",
+      "pad_mm": [
+        38.07499999999999,
+        26.849999999999994
+      ],
+      "nearest_via_mm": [
+        41.072,
+        26.364000000000004
+      ],
+      "straight_distance_mm": 3.03615
+    },
+    {
+      "ref": "U28",
+      "pad": "10",
+      "pad_mm": [
+        38.07499999999999,
+        26.450000000000003
+      ],
+      "nearest_via_mm": [
+        41.072,
+        26.364000000000004
+      ],
+      "straight_distance_mm": 2.998234
+    },
+    {
+      "ref": "U28",
+      "pad": "11",
+      "pad_mm": [
+        38.07499999999999,
+        26.049999999999997
+      ],
+      "nearest_via_mm": [
+        41.072,
+        26.364000000000004
+      ],
+      "straight_distance_mm": 3.013404
+    },
+    {
+      "ref": "U28",
+      "pad": "12",
+      "pad_mm": [
+        38.07499999999999,
+        25.650000000000006
+      ],
+      "nearest_via_mm": [
+        41.072,
+        26.364000000000004
+      ],
+      "straight_distance_mm": 3.080877
     },
     {
       "ref": "U3",

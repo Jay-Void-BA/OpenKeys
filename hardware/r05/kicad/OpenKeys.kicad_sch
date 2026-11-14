@@ -369,6 +369,76 @@
       )
     )
   )
+  (sheet
+    (at 148 218)
+    (size 115 31)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "a6edb10f-4ac1-507f-9198-30230ade31af")
+    (property "Sheetname" "11-power-measurement"
+      (at 148 217 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "11-power-measurement.kicad_sch"
+      (at 148 251 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "12")
+        )
+      )
+    )
+  )
+  (sheet
+    (at 276 218)
+    (size 115 31)
+    (stroke
+      (width 0.1524)
+      (type default)
+    )
+    (fill
+      (color 0 0 0 0)
+    )
+    (uuid "6a9cdf9a-529a-5011-a73a-ab9a3aeed845")
+    (property "Sheetname" "12-active-reset"
+      (at 276 217 0)
+      (effects
+        (font
+          (size 1.5 1.5)
+        )
+      )
+    )
+    (property "Sheetfile" "12-active-reset.kicad_sch"
+      (at 276 251 0)
+      (effects
+        (font
+          (size 1.0 1.0)
+        )
+      )
+    )
+    (instances
+      (project "OpenKeys"
+        (path "/d0923185-2fdb-574b-930d-f52d526642e2"
+          (page "13")
+        )
+      )
+    )
+  )
   (sheet_instances
     (path "/"
       (page "1")

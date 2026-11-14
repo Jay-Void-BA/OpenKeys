@@ -11,6 +11,7 @@
 | 审核安全 / PIN 缓存 | [R05 安全复查](SECURITY_REVIEW_R05.md)、[会话规则与测试映射](PIN_SESSIONS_R05.md)、[SE 原生 PIN 候选](SE_NATIVE_PIN_FEASIBILITY_R05.md)、[样板会话探针](NATIVE_UID_QUALIFICATION_R05.md) |
 | 电路、板子与固件 | [经典 SE / 无电池供电修订](CLASSICAL_SE_POWER_R05.md)、[长 APDU 边界](CLASSICAL_APDU_R05.md)、[R05 硬件](../hardware/r05/README.md)、[固件导航](../firmware/README.md)、[R05 目标](../firmware/r05/README.md) |
 | 从原材料到打样、代焊和测试 | [R05 制作手册](../manufacturing/BUILD_R05_ZH.md)、[制造入口](../manufacturing/README.md) |
+| 独立备份、防拆与 Root 实板验收 | [备份 / 主动回路 / 采样](../manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md)、[Root 存储 / DHUK](../manufacturing/ROOT_STORAGE_TESTS_R05_ZH.md)；均为未执行规程 |
 | 境内供应与个人小批量 | [料号与渠道](../manufacturing/MAINLAND_COMPONENT_CHANNELS.md)、[机构筛选](../manufacturing/MAINLAND_SUPPLIERS_AND_LABS.md)、[委托确认](../manufacturing/REQUEST_FOR_CONFIRMATION.md) |
 | 管理器 / 手机 | [GPUI](../apps/manager-gpui/README.md)、[移动平台约束](../apps/mobile/README.md)、[现有 notes 导入格式](IMPORT_FORMAT.md) |
 | 上游方案与许可 | [四类仓库研究](UPSTREAM_REVIEW_R05.md)、[锁定版本](../references-r05.lock.json)、[DFR0555 来源](DFR0555_SOURCE.md)、[第三方说明](THIRD_PARTY_NOTICES.txt) |

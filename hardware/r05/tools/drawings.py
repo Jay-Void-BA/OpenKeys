@@ -15,13 +15,21 @@ keys = [case('SW'+str(i)) for i in range(2,12)]
 holes = [case('H'+str(i)) for i in range(1,5)]
 assert keys == [[39,53],[57,53],[75,53],[39,67],[57,67],[75,67],
                 [39,81],[57,81],[75,81],[57,95]]
-assert case('SW12') == [93,105] and case('SW1') == [98,68]
+assert case('SW12') == [89,105.5] and case('SW1') == [98,68]
+active_contacts=[case(ref) for ref in ['SW13','SW14','SW15']]
+assert active_contacts==[[84.25,52],[36,103],[80,108]]
 data = {
     'revision':'0.5','units':'mm','case':[102,118,30], 'wall':1.8,
     'floor':1.6,'lid':1.6,'pcb_offset':[3,3,11], 'pcb_body':[96,112,1],
     'pcb_envelope':[96,114.5,1], 'usb_tab_y_min':-2.5,
     'keys':keys, 'key_labels':[1,2,3,4,5,6,7,8,9,0],
     'mount_holes':holes,'hole_diameter':2.2,'lid_contact':case('SW12'),
+    'active_lid_contacts':active_contacts,
+    'backup_cell':{'part':'Panasonic CR-2032/HFN, pre-tabbed primary',
+                   'body_centre':[85,103], 'nominal_body':[20,3.2],
+                   'nominal_z':7.2,'polarity_pad':case('BT1'),
+                   'charging_allowed':False,
+                   'retention':'Insulated internal retention; inspect exact tab/body height and sample; do not compress cell'},
     'mechanical_power_switch':case('SW1'),
     'lcd':{'part':'DFRobot DFR0555 V1.1','module_origin':[7.5,11,15],
            'module_envelope':[87,32,13], 'window':[8,11.5,86,31],
@@ -72,7 +80,7 @@ for yy,title,detail in [
     (54,'Ten independent contacts','0-9 direct GPIO; no keyboard matrix'),
     (77,'Contextual controls','PIN: hold 9 erase; hold 0 cancel'),
     (94,'Request review','2 previous / 8 next / 5 confirm / 0 cancel'),
-    (111,'Case contact + sealed seam','Tamper response and preload need testing')]:
+    (111,'Four lid contacts + backup cell','Active loop and separate hard reset; test preload')]:
     line((x+102,y+yy),(135,y+yy));text(139,y+yy-1,title,3)
     text(139,y+yy+4,detail,2.3)
 xx,yy=268,43
@@ -86,9 +94,14 @@ for z in fps['J4'].GraphicalItems():
     if z.GetLayer()==p.F_Cu:
         a,c=loc(z.GetStart()),loc(z.GetEnd())
         line((xx+a[0],yy+a[1]),(xx+c[0],yy+c[1]),'#b78325',.5)
-for ref in ['U4','U5','U6','U7','U16','U17','U18','U21','U22','J7']:
+for ref in ['U4','U5','U6','U7','U16','U17','U18','U21','U22','U24','U27','J7']:
     px,py=loc(fps[ref].GetPosition());text(xx+px,yy+py,ref,1.9,'middle')
 rect(xx+4.5,yy+8,87,32,'none','#677e8d')
+circle(xx+82,yy+100,10,'#d3d9df')
+text(xx+82,yy+96,'BACKUP CELL',1.9,'middle')
+text(xx+82,yy+98,'BACK SIDE',1.5,'middle')
+for ref in ['SW12','SW13','SW14','SW15']:
+    px,py=loc(fps[ref].GetPosition());circle(xx+px,yy+py,1.5,'#b95042');text(xx+px,yy+py-2,ref,1.7,'middle')
 text(xx+48,yy+24,'LCD ABOVE',2.7,'middle')
 text(xx+48,yy+120,'ACTUAL PCB COPPER LINEWORK',2.7,'middle')
 text(xx+48,yy+126,'4 layers / 1.0 mm / integral NFC loop',2.3,'middle')
@@ -98,6 +111,7 @@ rect(x+1.8,y+1.6,114.4,26.8,'#f3f6fa')
 rect(x+3,y+18,112,1,'#548768')
 rect(x+11,y+2,32,13,'#bec9d6')
 rect(x+53,y+23.45,36,4.75,'#a9b8c6')
+rect(x+93,y+19.6,20,3.2,'#d3d9df')
 text(x+59,y+38,'SECTION / 30.0 DEPTH / PCB Z=11',3,'middle')
 text(160,190,'ASSEMBLY AND SECURITY LIMITS',3.8)
 for i,s in enumerate([

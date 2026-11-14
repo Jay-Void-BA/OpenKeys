@@ -347,6 +347,29 @@ impl<P: Registers> MaskedAes<P> {
             }
         }
     }
+    /// Fresh actual backup continuity check for an authenticated selected Root
+    /// journal owner, not a host-supplied owner assertion. An epoch mismatch
+    /// poisons this peripheral lifetime; recovery cannot reuse its authority.
+    pub fn verify_backup_owner(&mut self, owner: &[u8; 32]) -> Result<(), Error> {
+        if self.faulted {
+            return Err(Error::Faulted);
+        }
+        let result = (|| {
+            self.check_device_context()?;
+            self.device_key
+                .as_ref()
+                .ok_or(Error::Hardware)?
+                .verify_backup_owner(owner)?;
+            self.check_device_context()
+        })();
+        let result = self
+            .finish(result)
+            .and_then(|()| self.check_device_context());
+        if result.is_err() {
+            self.faulted = true;
+        }
+        result
+    }
     fn start_dhuk(&mut self) -> Result<(), Error> {
         self.check_device_context()?;
         self.status()?;

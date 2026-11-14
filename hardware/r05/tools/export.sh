@@ -15,6 +15,7 @@ openkeys_schematic="$openkeys_r05/kicad/OpenKeys.kicad_sch"
 kicad-cli sch erc --format json --severity-all --output "$openkeys_r05/review/erc.json" "$openkeys_schematic"
 kicad-cli sch export netlist --format kicadxml --output "$openkeys_r05/exports/OpenKeys-netlist.xml" "$openkeys_schematic"
 python3 "$openkeys_r05/tools/check_netlist.py"
+python3 "$openkeys_r05/tools/calculate_backup.py" --check
 kicad-cli pcb drc --format json --severity-all --output "$openkeys_r05/review/routed-drc.json" "$openkeys_board"
 /usr/bin/python3 "$openkeys_r05/tools/check_board.py"
 /usr/bin/python3 "$openkeys_r05/tools/ground_report.py"

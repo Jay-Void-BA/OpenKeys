@@ -2956,36 +2956,9 @@
       )
     )
   )
-  (wire
-    (pts
-      (xy 134.62 129.54)
-      (xy 129.54 129.54)
-    )
-    (stroke
-      (width 0)
-      (type default)
-    )
-    (uuid "4e5615c2-3daa-531f-945b-65544a06245b")
-  )
-  (global_label "NRST"
-    (shape input)
-    (at 129.54 129.54 180)
-    (effects
-      (font
-        (size 0.9 0.9)
-      )
-      (justify right)
-    )
-    (uuid "2cf2b671-6ec2-5da6-97e4-6945ac6eb50b")
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 129.54 129.54 180)
-      (effects
-        (font
-          (size 0.8 0.8)
-        )
-        (hide yes)
-      )
-    )
+  (no_connect
+    (at 134.62 129.54)
+    (uuid "8f9834f5-cbda-5f1e-a9db-032324561abe")
   )
   (wire
     (pts
@@ -3339,7 +3312,7 @@
     )
     (uuid "0c0c9938-6c56-5d0b-a70c-373443bd89dc")
   )
-  (global_label "CASE_CLOSED"
+  (global_label "CASE_TAMP_RETURN"
     (shape input)
     (at 129.54 160.02 180)
     (effects
@@ -3494,7 +3467,7 @@
     )
     (uuid "7eb1a5ef-b1fb-5e8f-87e3-394e43223898")
   )
-  (global_label "TAMP_3V0"
+  (global_label "VBAT_BACKUP"
     (shape input)
     (at 154.94 91.44 90)
     (effects
@@ -3824,13 +3797,67 @@
       )
     )
   )
-  (no_connect
-    (at 185.42 104.14)
-    (uuid "1fd1ca46-d485-504d-9a55-03e7984f8c15")
+  (wire
+    (pts
+      (xy 185.42 104.14)
+      (xy 190.5 104.14)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "2b46c2b3-bdce-5465-b73b-fe0daa187bfc")
   )
-  (no_connect
-    (at 185.42 106.68)
-    (uuid "1b3a254c-27dc-50b8-b8da-3d62f332e985")
+  (global_label "BATTERY_SENSE"
+    (shape input)
+    (at 190.5 104.14 0)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify left)
+    )
+    (uuid "4af360f4-ce93-5fb5-a211-9e68253d3b8c")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 104.14 0)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
+  )
+  (wire
+    (pts
+      (xy 185.42 106.68)
+      (xy 190.5 106.68)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "21dccbee-a76b-5c9b-a3e2-b42159b673fb")
+  )
+  (global_label "TAMP_DRIVE_RAW"
+    (shape input)
+    (at 190.5 106.68 0)
+    (effects
+      (font
+        (size 0.9 0.9)
+      )
+      (justify left)
+    )
+    (uuid "af210fd0-357c-51f3-a7d1-c0afcda15a54")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 106.68 0)
+      (effects
+        (font
+          (size 0.8 0.8)
+        )
+        (hide yes)
+      )
+    )
   )
   (wire
     (pts

@@ -29,10 +29,18 @@ def pad_position(ref,number):
  return next(pad.GetPosition() for pad in fps[ref].Pads() if pad.GetNumber()==str(number))
 def pin_distance(first,second):
  return p.ToMM((pad_position(*first)-pad_position(*second)).EuclideanNorm())
-require('Backup LDO input decoupling within 3mm of VI',pin_distance(('U13',3),('C40',1))<=3)
-require('Backup LDO output decoupling within 3mm of VO',pin_distance(('U13',2),('C41',1))<=3)
+require('Backup reverse blocker input decoupling within 3mm of VIN',pin_distance(('U13',1),('C40',1))<=3)
+require('Backup bulk capacitance within 3.5mm of MCU VBAT',pin_distance(('U4',1),('C41',1))<=3.5)
 require('MCU VBAT has separate decoupling within 3mm',pin_distance(('U4',1),('C56',1))<=3)
-require('Backup decouplers use the component copper side',all(fps[cap].GetLayer()==fps[owner].GetLayer() for cap,owner in [('C40','U13'),('C41','U13'),('C56','U4')]))
+require('Backup decouplers use the component copper side',all(fps[cap].GetLayer()==fps[owner].GetLayer() for cap,owner in [('C40','U13'),('C41','U4'),('C56','U4')]))
+require('Independent backup cell limiter is local to positive terminal',pin_distance(('BT1',1),('R61',1))<5 and fps['R61'].GetLayer()==fps['BT1'].GetLayer())
+require('Active output damping and return bias are local to MCU pins',pin_distance(('U4',15),('R63',1))<=3.5 and pin_distance(('U4',2),('R62',1))<=3)
+require('Active return RF shunt is local to backup-capable PC13',pin_distance(('U4',2),('C68',1))<=3)
+require('Main-cell ADC output bias is local to PA0',pin_distance(('U4',14),('R68',1))<=3)
+require('Main-cell reservoir is local to powered-off switch input',pin_distance(('U28',3),('C61',1))<=3.5)
+require('Main-cell isolation switch is locally decoupled',pin_distance(('U28',2),('C67',1))<=3 and fps['C67'].GetLayer()==fps['U28'].GetLayer())
+for cap,owner,pin in [('C63','U24',8),('C64','U25',5),('C65','U26',5),('C66','U27',5)]:
+ require('Local mismatch detector decoupling '+cap,pin_distance((cap,1),(owner,pin))<=3 and fps[cap].GetLayer()==fps[owner].GetLayer())
 for cap,owner,pin in [('C49','U18',1),('C55','U21',1),('C57','U21',8),('C58','U23',5),('C59','U22',5),('C60','U17',6)]:
  require('Local display/window decoupling '+cap,pin_distance((cap,1),(owner,pin))<=3 and fps[cap].GetLayer()==fps[owner].GetLayer())
 zones=list(b.Zones())
@@ -64,6 +72,17 @@ require('NFC antenna is integral copper, excluded from bought parts',fps['J4'].I
 keys=[(36,50),(54,50),(72,50),(36,64),(54,64),(72,64),(36,78),(54,78),(72,78),(54,92)]
 require('Exact ten-key mechanical positions',all((round(p.ToMM(fps['SW'+str(i+2)].GetPosition().x)-100,4),round(p.ToMM(fps['SW'+str(i+2)].GetPosition().y)-80,4))==point for i,point in enumerate(keys)))
 require('No fingerprint footprint placed',all(ref not in fps for ref in ['J5','U8','U9','Q3']))
+def local_position(ref):
+ a=fps[ref].GetPosition();return (p.ToMM(a.x)-100,p.ToMM(a.y)-80)
+lid=[local_position(ref) for ref in ['SW13','SW14','SW15']]
+area=abs(sum(a[0]*c[1]-c[0]*a[1] for a,c in zip(lid,lid[1:]+lid[:1])))/2
+require('Three active lid contacts are dispersed and noncollinear',area>500 and all(math.dist(a,c)>30 for i,a in enumerate(lid) for c in lid[i+1:]))
+require('Main reset and active-loop contacts retain exact enclosure coordinates',all(local_position(ref)==point for ref,point in [('SW12',(86,102.5)),('SW13',(81.25,49)),('SW14',(33,100)),('SW15',(77,105))]))
+require('Primary backup cell uses exact qualified-layout footprint orientation',local_position('BT1')==(71.75,100) and fps['BT1'].GetLayer()==p.B_Cu and fps['BT1'].GetOrientationDegrees()==0)
+# The KiCad HFN land pattern places the 20mm body centre +10.25mm from
+# positive terminal 1 after this backside placement. Include 0.25mm margin.
+coin=(local_position('BT1')[0]+10.25,local_position('BT1')[1]);radius=10.25
+require('Primary coin body is inside board away from RF and pouch keepouts',coin[0]-radius>68 and coin[0]+radius<95.35 and coin[1]-radius>43 and coin[1]+radius<111.35)
 require('No unreviewed DRC exclusions',not json.loads((R/'kicad/OpenKeys.kicad_pro').read_text())['board']['design_settings']['drc_exclusions'])
 report={'revision':'0.5','board_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'checks':checks,'components':len(bom),'segments':len(segments),'vias':len(vias),'short_power_net_lengths_mm':switch_lengths,'drc_violations':0,'unconnected':0,'pcb_to_schematic_parity':True,'manufacturing_security_release':False,'physical_qualification':False}
 (R/'review/board-check.json').write_text(json.dumps(report,indent=2)+'\n')

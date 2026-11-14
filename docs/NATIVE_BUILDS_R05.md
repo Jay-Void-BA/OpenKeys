@@ -4,7 +4,9 @@
 
 这些是工程开发产物，**没有真实认证设备后端**。GPUI 可以查看英文界面，设备操作明确拒绝；不能导入真实 OTP / notes 或解锁安全密钥。没有正式签名、安装包或移动 App。
 
-源码提交 `60f0e601fb41986e18a2ee1d4d2207f63d1c26df`：[三平台 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43414654181)通过。各平台362项测试（356项 workspace / 文档及6项默认关闭探针）；完整日志与注释中 warning 为0。文件 / 编译 / 模型结果不能证明实物安全。
+**以下下载仅归档先前的 169 位硬件版本，不能用于当前 195 位改板。** 当前已重新绑定的诊断镜像见 [firmware/dist/r05](../firmware/dist/r05)，新提交的三平台 CI 与下载信息尚待归档。
+
+先前源码提交 `60f0e601fb41986e18a2ee1d4d2207f63d1c26df`：[三平台 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43414654181)通过。各平台362项测试（356项 workspace / 文档及6项默认关闭探针）；完整日志与注释中 warning 为0。文件 / 编译 / 模型结果不能证明实物安全。
 
 下表 ZIP 摘要来自 GitHub API。逐包下载结果见[构建元数据](native-builds-r05.json)，未执行这些二进制；此前本地 Linux 界面观察不等于当前发布包或三系统设备互通验收。
 

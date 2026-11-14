@@ -22,22 +22,25 @@ def edge(b, a,c):
 KEYS={str(i+2):(x,y) for i,(x,y) in enumerate([(36,50),(54,50),(72,50),(36,64),(54,64),(72,64),(36,78),(54,78),(72,78),(54,92)])}
 PLACEMENT={
  'J1':(48,.5,180,'F'),'J2':(81,45,0,'B'),'J3':(90,9,0,'B'),
- 'J4':(20,46,-90,'F'),'J6':(80,91,180,'B'),'J7':(90,43,0,'F'),
+ 'J4':(20,46,-90,'F'),'J6':(83.0,74.75,90,'B'),'J7':(90,43,0,'F'),
  'U1':(49,9,0,'B'),'U2':(8,17,0,'B'),'U3':(20,25,0,'B'),
  'U4':(50,24,0,'B'),'U5':(84,55,0,'F'),'U6':(84,81,0,'F'),
  'U7':(25,51,-90,'F'),'U10':(65,16,0,'B'),'U11':(72,18,0,'B'),
- 'U12':(71,26,0,'B'),'U13':(8,31,0,'B'),'U14':(21,8,0,'B'),
+ 'U12':(71,26,0,'B'),'U13':(41.75,34.75,0,'B'),'U14':(21,8,0,'B'),
  'U15':(76,31,0,'B'),'U16':(83,20,0,'B'),'U17':(76.25,23,0,'B'),
  'U18':(83,28,0,'B'),'U19':(82,35,0,'B'),'U20':(90,28,0,'B'),'U21':(91,20,0,'B'),
  'Q1':(59,9,0,'B'),'Q2':(8,24,0,'B'),
  'D1':(36,10,90,'B'),'D2':(44,8,90,'B'),'D3':(52,8,90,'B'),
  'D4':(16,8,90,'B'),'D5':(26,5,90,'B'),'F1':(34,5,0,'B'),
  'L1':(15.5,25,-90,'B'),'Y1':(60,22.5,90,'B'),'SW1':(95,65,90,'F'),
- 'SW12':(90,102,0,'F'),'FB1':(40,16,90,'B'),
+ 'SW12':(86,102.5,0,'F'),'FB1':(40,16,90,'B'),
+ 'SW13':(81.25,49,0,'F'),'SW14':(33,100,0,'F'),'SW15':(77,105,0,'F'),
+ 'BT1':(71.75,100,0,'B'),
  'C29':(29,47,0,'F'),'R21':(29,54,0,'F'),
  'R37':(25,10,0,'B'),'R1':(43,12,0,'B'),'R2':(46,12.5,0,'B'),
- # Backup LDO needs local input/output capacitance; MCU VBAT has its own cap.
- 'C40':(12,31,0,'B'),'C41':(4,30,180,'B'),'C56':(41.5,28,180,'B'),
+ # Independent primary backup through a reverse-blocking ideal diode.
+ 'C40':(38.25,35.25,270.0,'B'),'C41':(42.0,31.25,270.0,'B'),'C56':(41.5,28.0,180.0,'B'),
+ 'C32':(76.0,59.0,270.0,'F'),
  'R43':(86.5,28,0,'B'),
  'C49':(79.5,28.5,180,'B'),
  'R12':(38.75,30,0,'B'),
@@ -51,6 +54,16 @@ PLACEMENT={
  'R47':(88,41,0,'B'),'R48':(87.5,35.75,180,'B'),
  'R57':(77.75,25,0,'F'),'R58':(75.25,20.25,0,'B'),
  'R59':(86,17.75,0,'B'),'C60':(79.25,23,90,'B'),
+ 'R61':(68.75,98,180,'B'),'R62':(42.5,28.25,0,'F'),
+ 'R63':(46.5, 17.25, 90, 'F'),
+ 'R64':(34.5,22.5,90,'F'),'R65':(34.0,25.25,0,'F'),'C61':(36.75,28.75,0,'F'),
+ 'U24':(52,103,0,'F'),'U25':(60,103,0,'F'),'U26':(68,103,0,'F'),
+ 'R66':(56,106,0,'F'),'C62':(59.5,106,0,'F'),'R67':(44.5,14.75,0,'F'),
+ 'C63':(56,102.25,0,'F'),'C64':(63.5,102.35,0,'F'),'C65':(68.75,100.25,0,'F'),
+ 'U27':(45,103,0,'F'),'C66':(46.5,100.5,0,'F'),
+ 'U28':(37.25,26.25,270.0,'F'),'R68':(42.75,23.75,180,'F'),'C67':(36.5,22.25,90,'F'),
+ 'R69':(40,104,90,'F'),
+ 'C68':(46.0,30.25,270.0,'F'),
 }
 PLACEMENT.update({'SW'+ref:(x,y,0,'F') for ref,(x,y) in KEYS.items()})
 def courtyard(f):
@@ -72,7 +85,7 @@ def pack_passives(b,fps):
  Courts remain real library courtyards. This is placement assistance, not a
  DRC waiver: the final KiCad DRC is run independently after routing.
  """
- fixed=[f for f in b.GetFootprints() if f.GetReference().startswith(('U','J','SW','H','L','Y','Q','D','F')) or f.GetReference() in ('C29','R21','R37','R1','R2','R12','C40','C41','C49','C55','C56','C57','C58','C59','C60','R43','R47','R48','R49','R50','R51','R52','R53','R54','R55','R56','R57','R58','R59')]
+ fixed=[f for f in b.GetFootprints() if f.GetReference().startswith(('U','J','SW','H','L','Y','Q','D','F','BT')) or f.GetReference() in ('C29','R21','R37','R1','R2','R12','C40','C41','C49','C55','C56','C57','C58','C59','C60','C61','R43','R47','R48','R49','R50','R51','R52','R53','R54','R55','R56','R57','R58','R59','R61','R62','R63','R64','R65','R66','R67','C62','C63','C64','C65','C66','C67','C68','R68','R69')]
  fixed=[f for f in fixed if f.GetReference() not in ('J4',) and not f.GetReference().startswith('FB')]
  movable=[f for f in fps.values() if f not in fixed and f.GetReference()!='J4']
  priority=['C15','C16','C9','C10','C11','C12','C13','C17','C18','C20','C21','C2','C3','C4','C5','C6','C7','C8','C45','C46']
@@ -118,7 +131,7 @@ def build():
   z=p.NETINFO_ITEM(b,name);b.Add(z);nets[name]=z
   for node in n.findall('node'):pin_net[(node.attrib['ref'],node.attrib['pin'])]=name
  comps=list(csv.DictReader((R/'BOM.csv').open()));fps={}
- groups={'01-usb':(49,8,'B'),'02-power':(13,20,'B'),'03-mcu':(50,24,'B'),'04-se-storage':(84,58,'F'),'05-nfc':(27,51,'F'),'06-trusted-ui':(60,18,'B'),'07-fault-tamper':(69,24,'B'),'08-input-guard':(21,8,'B'),'09-display-power':(82,28,'B'),'10-sys-window':(25,38,'B')}
+ groups={'01-usb':(49,8,'B'),'02-power':(13,20,'B'),'03-mcu':(50,24,'B'),'04-se-storage':(84,58,'F'),'05-nfc':(27,51,'F'),'06-trusted-ui':(60,18,'B'),'07-fault-tamper':(69,24,'B'),'08-input-guard':(21,8,'B'),'09-display-power':(82,28,'B'),'10-sys-window':(25,38,'B'),'11-power-measurement':(40.5,23.5,'F'),'12-active-reset':(72,32,'F')}
  def place(f,x,y,angle,side):
   if side=='B' and f.GetLayer()==p.F_Cu:f.Flip(f.GetPosition(),p.FLIP_DIRECTION_LEFT_RIGHT)
   f.SetOrientationDegrees(angle);f.SetPosition(v(x,y))
@@ -231,7 +244,9 @@ def export_dsn():
  polygon=[(0,0),(42,0),(42,-2.5),(54,-2.5),(54,0),(96,0),(96,112),(19,112),(19,43),(0,43),(0,0)]
  for a,c in zip(polygon,polygon[1:]):edge(b,a,c)
  for z in list(b.GetTracks()):
-  if z.GetNetname()=='ANT2':b.RemoveNative(z)
+  # Keep the existing in-core chip feed. Only the winding underpass crosses
+  # the excluded RF region and is restored separately on SES import.
+  if z.GetNetname()=='ANT2' and min(mm(z.GetStart())[0],mm(z.GetEnd())[0])<19:b.RemoveNative(z)
  for z in list(b.Zones()):
   if z.GetLayer()==p.In2_Cu:b.RemoveNative(z)
  rf=next(f for f in b.GetFootprints() if f.GetReference()=='J4')
@@ -246,6 +261,18 @@ def export_dsn():
   elif mm(z.GetPosition())[0]<19:rf.RemoveNative(z)
  if not p.ExportSpecctraDSN(b,str(R/'review/OpenKeys-core.dsn')):raise RuntimeError('DSN export failed')
  path=R/'review/OpenKeys-core.dsn';text=path.read_text().replace('(layer In1.Cu\n      (type signal)','(layer In1.Cu\n      (type power)')
+ # Freerouting Wiring.calcFixed accepts "normal" as UNFIXED; KiCad's
+ # "route" token falls through to USER_FIXED. Preserve critical copper and
+ # ground fanout, but let ordinary routes move around a new component ECO.
+ # The result is always rechecked in KiCad; this is not a DRC exemption.
+ protected={'ANT1','ANT2','SW_L1','SW_L2','VCAP1','VCAP2','USB_DP','USB_DM','VDDA','LSE_IN','LSE_OUT'}
+ lines=[]
+ for line in text.splitlines():
+  if '(type route)' in line:
+   fixed=any('(net '+net+')' in line for net in protected) or ('(via ' in line and '(net GND)' in line)
+   line=line.replace('(type route)','(type fix)' if fixed else '(type normal)')
+  lines.append(line)
+ text='\n'.join(lines)+'\n'
  settings='    (autoroute_settings (fanout off) (autoroute on) (postroute off) (vias on) (via_costs 50) (plane_via_costs 5) (start_ripup_costs 100) (start_pass_no 1)\n'
  for layer,direction in [('F.Cu','vertical'),('In1.Cu','vertical'),('In2.Cu','horizontal'),('B.Cu','vertical')]:settings+='      (layer_rule '+layer+' (active '+('off' if layer=='In1.Cu' else 'on')+') (preferred_direction '+direction+') (preferred_direction_trace_costs 1) (against_preferred_direction_trace_costs 2.2))\n'
  settings+='    )\n';path.write_text(text.replace('    (boundary\n',settings+'    (boundary\n',1))

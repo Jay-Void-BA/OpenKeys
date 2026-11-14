@@ -45,6 +45,7 @@ jobs:
           kicad-cli sch erc --format json --severity-all --output hardware/r05/review/erc.json hardware/r05/kicad/OpenKeys.kicad_sch
           kicad-cli sch export netlist --format kicadxml --output hardware/r05/exports/OpenKeys-netlist.xml hardware/r05/kicad/OpenKeys.kicad_sch
           python3 hardware/r05/tools/check_netlist.py
+          python3 hardware/r05/tools/calculate_backup.py --check
           kicad-cli pcb drc --format json --severity-all --output hardware/r05/review/routed-drc.json hardware/r05/kicad/OpenKeys.kicad_pcb
           /usr/bin/python3 hardware/r05/tools/check_board.py
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
@@ -59,4 +60,5 @@ jobs:
             hardware/r05/review/netlist-check.json
             hardware/r05/review/routed-drc.json
             hardware/r05/review/board-check.json
+            hardware/r05/review/backup-tamper-model.json
           if-no-files-found: error

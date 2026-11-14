@@ -1,0 +1,270 @@
+{
+  "schema": 1,
+  "revision": "0.5",
+  "status": "ALLOCATIONS_AND_PASSIVE_MODELS_ONLY",
+  "netlist_sha256": "341be8f944f6c6940885167a7a5d7428828ad3480c36bd4e868acf5c621a004e",
+  "electrical_input_sha256": "a1df0fb3c2ef51aef431b0ca7ff619616bd4e22b123bb4abcb36f2f6d05f12cc",
+  "model_source_sha256": "ef9651ed3341df5f9aed0aec6dede794f272ba0cb1617e5716d052f1baff2219",
+  "selected_parts": {
+    "U13": "LM66100DCKR",
+    "U24": "SN74AUP1G99DCUR",
+    "U25": "SN74LVC1G14DCKR",
+    "U26": "SN74LVC1G07DCKR",
+    "U27": "SN74AUP2G17DCKR",
+    "U28": "TMUX1511RWBR",
+    "BT1": "Panasonic CR-2032/HFN",
+    "R61": "10k 1%",
+    "R62": "470k 1%",
+    "R63": "1k 1%",
+    "R64": "330k 1%",
+    "R65": "330k 1%",
+    "R66": "4.7k 1%",
+    "R67": "1M 1%",
+    "R68": "100k 1%",
+    "R69": "47k 1%",
+    "C61": "10nF X7R 16V",
+    "C62": "10nF X7R 16V 10%",
+    "C68": "100pF C0G 50V 5%"
+  },
+  "primary_references": [
+    {
+      "url": "https://www.st.com/resource/en/datasheet/stm32h573ri.pdf",
+      "revision": "DS14121 Rev5",
+      "used": "VBAT1.2..3.6V; backup-SRAM-off RTC bounds; VBAT-capable pin map"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
+      "revision": "SLVSEZ8A",
+      "used": "pinout; CE=VOUT; 300nA IQ max; -250mV on-comparator corner; reverse leakage is nonzero"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/sn74aup2g17.pdf",
+      "revision": "SCES750A",
+      "used": "dual Schmitt; Ioff0.6uA per live input, II0.5uA; -40..85C"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/sn74aup1g99.pdf",
+      "revision": "SCES594C",
+      "used": "hard-strapped XOR truth table; fast conditioned inputs required"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g14.pdf",
+      "revision": "SCES218AA",
+      "used": "Schmitt RC receiver; threshold across actual rail requires qualification"
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/tmux1511.pdf",
+      "revision": "SCDS390B",
+      "used": "RWB0012A; source/drain protected below1.5V; IPOFF max2uA; no control-only substitution"
+    }
+  ],
+  "backup": {
+    "vbat_operating_v": [
+      1.2,
+      3.6
+    ],
+    "backup_sram_enabled": false,
+    "primary_charge_allowed": false,
+    "mcu_vbe_must_be_zero": true,
+    "rtc25c_max_a": 1.2e-06,
+    "rtc85c_max_a": 3.65e-06,
+    "backup_voltage_temperature_monitor_required": true,
+    "sensor_buffer_bound_a": 6.5e-06,
+    "extra_active_engine_current_allocation_a": 1e-05,
+    "board_leakage_allocation_a": 1e-06,
+    "path_headroom_allocation_v": 0.25,
+    "corners": [
+      {
+        "cell_v": 2.0,
+        "rtc_bound_a": 1.2e-06,
+        "high_duty_allocation": 0.5,
+        "vbat_v": 1.5217024201250837,
+        "cell_current_a": 2.2603720779694685e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 207.37736258938673
+      },
+      {
+        "cell_v": 2.0,
+        "rtc_bound_a": 1.2e-06,
+        "high_duty_allocation": 1.0,
+        "vbat_v": 1.4981755462389643,
+        "cell_current_a": 2.493311423376591e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 188.00298895883245
+      },
+      {
+        "cell_v": 2.0,
+        "rtc_bound_a": 3.65e-06,
+        "high_duty_allocation": 0.5,
+        "vbat_v": 1.4973460077614082,
+        "cell_current_a": 2.501524675629623e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 187.3857190243457
+      },
+      {
+        "cell_v": 2.0,
+        "rtc_bound_a": 3.65e-06,
+        "high_duty_allocation": 1.0,
+        "vbat_v": 1.4741957056901323,
+        "cell_current_a": 2.730735587226412e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 171.65704442153842
+      },
+      {
+        "cell_v": 2.4,
+        "rtc_bound_a": 1.2e-06,
+        "high_duty_allocation": 0.5,
+        "vbat_v": 1.9154209469171726,
+        "cell_current_a": 2.322564882008193e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 201.82428643056804
+      },
+      {
+        "cell_v": 2.4,
+        "rtc_bound_a": 1.2e-06,
+        "high_duty_allocation": 1.0,
+        "vbat_v": 1.8858068341570393,
+        "cell_current_a": 2.6157739192372338e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 179.2012668039326
+      },
+      {
+        "cell_v": 2.4,
+        "rtc_bound_a": 3.65e-06,
+        "high_duty_allocation": 0.5,
+        "vbat_v": 1.8910645345534969,
+        "cell_current_a": 2.5637174796683474e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 182.83995944071003
+      },
+      {
+        "cell_v": 2.4,
+        "rtc_bound_a": 3.65e-06,
+        "high_duty_allocation": 1.0,
+        "vbat_v": 1.8618269936082072,
+        "cell_current_a": 2.8531980830870548e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 164.28932949962936
+      },
+      {
+        "cell_v": 3.0,
+        "rtc_bound_a": 1.2e-06,
+        "high_duty_allocation": 0.5,
+        "vbat_v": 2.505998737105306,
+        "cell_current_a": 2.4158540880662797e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 194.03075803108675
+      },
+      {
+        "cell_v": 3.0,
+        "rtc_bound_a": 1.2e-06,
+        "high_duty_allocation": 1.0,
+        "vbat_v": 2.467253766034152,
+        "cell_current_a": 2.799467663028198e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 167.44254852115378
+      },
+      {
+        "cell_v": 3.0,
+        "rtc_bound_a": 3.65e-06,
+        "high_duty_allocation": 0.5,
+        "vbat_v": 2.4816423247416304,
+        "cell_current_a": 2.6570066857264345e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 176.42033138950953
+      },
+      {
+        "cell_v": 3.0,
+        "rtc_bound_a": 3.65e-06,
+        "high_duty_allocation": 1.0,
+        "vbat_v": 2.44327392548532,
+        "cell_current_a": 3.0368918268780186e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 154.3518922377567
+      },
+      {
+        "cell_v": 3.3,
+        "rtc_bound_a": 1.2e-06,
+        "high_duty_allocation": 0.5,
+        "vbat_v": 2.8012876321993727,
+        "cell_current_a": 2.4624986910953232e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 190.3554311297925
+      },
+      {
+        "cell_v": 3.3,
+        "rtc_bound_a": 1.2e-06,
+        "high_duty_allocation": 1.0,
+        "vbat_v": 2.7579772319727085,
+        "cell_current_a": 2.8913145349236796e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 162.12348893143627
+      },
+      {
+        "cell_v": 3.3,
+        "rtc_bound_a": 3.65e-06,
+        "high_duty_allocation": 0.5,
+        "vbat_v": 2.7769312198356966,
+        "cell_current_a": 2.7036512887554777e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 173.3766488117523
+      },
+      {
+        "cell_v": 3.3,
+        "rtc_bound_a": 3.65e-06,
+        "high_duty_allocation": 1.0,
+        "vbat_v": 2.733997391423876,
+        "cell_current_a": 3.128738698773501e-05,
+        "allocated_capacity_mah": 112.5,
+        "illustrative_continuous_backup_days": 149.8207569023757
+      }
+    ],
+    "capacity_and_active_current_qualified": false,
+    "guaranteed_service_life": false
+  },
+  "loop": {
+    "return_low_allocation_v": 0.7120500000000001,
+    "drive_low_allocation_v": 0.707,
+    "powered_schmitt_3v_negative_threshold_min_v": 0.88,
+    "rc_nominal_s": 4.7000000000000004e-05,
+    "assumed_closed_skew_s": 1e-06,
+    "intentional_return_rc_nominal_s": 1.0000000000000001e-07,
+    "ideal_filter_13_56mhz_attenuation_db": -18.143083371533134,
+    "additional_loop_capacitance_allocation_f": 3e-10,
+    "skew_peak_v": 0.0787242,
+    "assumed_trip_v": 2.2,
+    "one_mismatch_bit_s": 0.000244140625,
+    "passive_crossing_s": 0.00010737000000000008,
+    "stimulus_limits": {
+      "open_to_ground_nonzero_8bit_patterns": 255,
+      "stuck_high_not_all_ones_8bit_patterns": 255,
+      "all_zero_pattern_no_mismatch": 1,
+      "matched_waveform_bridge_detected": false,
+      "guaranteed_end_to_end_detection_latency": false
+    }
+  },
+  "adc": {
+    "on_nominal_ratio": 0.18867924528301888,
+    "on_1percent_corners": [
+      0.18563660228764295,
+      0.19176001518891211
+    ],
+    "max_measured_pack_allocation_v": 4.3,
+    "powered_off_switch_bound_a": 2e-06,
+    "extra_off_leakage_allocation_a": 1e-07,
+    "powered_off_adc_allocation_v": 0.21209999999999998,
+    "aggregate_main_off_feed_allocation_a": 4e-06,
+    "main_off_bleed_allocation_v": 0.18988,
+    "reservoir_upstream_of_isolation": true,
+    "accurate_soc_percentage_qualified": false
+  },
+  "unmodeled": [
+    "primary capacity/age/cold discharge and reverse charge acceptance",
+    "active TAMP/LSE startup and current; PRNG runs; backup switching",
+    "VDD/VBAT ramps, partial power, wet surfaces, off leakage and transient injection",
+    "actual gate thresholds/delays, logic skew, reset fanout, tamper-contact mechanics",
+    "matched injection, probe bridging, EM/voltage/clock faults and side channels"
+  ],
+  "physical_qualification": false,
+  "production_release": false
+}

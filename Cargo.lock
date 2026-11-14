@@ -5064,6 +5064,7 @@ dependencies = [
  "aes 0.8.4",
  "aes-gcm",
  "cmac",
+ "subtle",
  "zeroize",
 ]
 

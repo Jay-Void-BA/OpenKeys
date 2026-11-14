@@ -20,7 +20,7 @@
     "pinout": "015f236a2066e38bd63a31aea3ea134474402bfe2becfdf4af9b7557d0dacac5"
   },
   "source_sha256": {
-    "Cargo.lock": "f273468a7aa9f71540b8023cd0b395394ad8291b3a074b2db576164bfbefe43f",
+    "Cargo.lock": "e40b421d840ab02fd4310b349fc333678d66ec427e316e4bd1f76f7a9bfc6b74",
     "Cargo.toml": "f6647646503a308bc1ba45a5850e66f6d58dfb89fbec4e59603fc184ee3a6399",
     "crates/device-policy/Cargo.toml": "3543984e4fb9c36d6cb9e47396c18726998f11cbba4958ade3417d29c1de6d6f",
     "crates/device-policy/src/biometric.rs": "2b5200740724ef7b47516cfc5ff8aecfddcd29e721084234907ed77c70b6cd64",
@@ -38,19 +38,19 @@
     "crates/device-vault/README.md": "4785655baf8ab23f5decf75640aaadde45a4f2eb1cf2be13eb218a72e6de5494",
     "crates/device-vault/src/lib.rs": "0a4264a6955df5412ff84174e881eb6485f97f1a4e70cc2eea2fa053fb1934ee",
     "crates/device-vault/tests/snapshots.rs": "e39f654aa56af5cfd56c89bdf5112b7a70c79f62205ed943a9fd286e9103f2ec",
-    "crates/h573-crypto/Cargo.toml": "9226bb0cbe64584a653e1a7dc8b68ebf954797630bb814b6d4cff1d1ffdd0297",
-    "crates/h573-crypto/README.md": "8c3aee4e61028ff741973efb3e0bc4b0d162ec515ac94f83edf8934ff7683ebb",
-    "crates/h573-crypto/src/device_key.rs": "681d2e125501e1480eec37c74ede67800b6d9f4855e00c762a18d4f856eb45f2",
+    "crates/h573-crypto/Cargo.toml": "6fad3d3041daa3875ad0774b3dc27b28b564dd448c08c1a839c9e05e293d57c0",
+    "crates/h573-crypto/README.md": "3d453668cee18609295e4edd60e9140b9a64b6f9feeea6fcd7991d8bbf0f6572",
+    "crates/h573-crypto/src/device_key.rs": "7426397c18f37fb2327a794932e0d18dfc0e4cc140936d5b105b5e6abc59dc4d",
     "crates/h573-crypto/src/entropy.rs": "600187c8de527862195f973f2fcdd216ef7a40d70ed5f33daca6794955146115",
-    "crates/h573-crypto/src/lib.rs": "fd430cfc3b27a256b47a181a730f63d2cca6305f94d4f0d347e7f20308b1ac5c",
-    "crates/h573-crypto/src/shared.rs": "5778a342fbad003295ee7dd0f6a250de5b92f90388bf38f37c621589a179e0fe",
-    "crates/h573-crypto/src/tests.rs": "bde3f6eaeff3fc3ed5dd3a3b3814cd4989372d8ccd1b75dcc2b2de8fe09c4c57",
+    "crates/h573-crypto/src/lib.rs": "51d05f3b096932d93e996946590d337dba61a6ad198a084b7fae9f2388908e76",
+    "crates/h573-crypto/src/shared.rs": "56cb16b9978876c7b8f3d2d2c805e7c393f2a59283e5965e37a7d11b3068225d",
+    "crates/h573-crypto/src/tests.rs": "3db2af06be3f974a0bdf096c9f2a64c66acbd3d824171e89da3e9a0417aa3a10",
     "crates/otp-format/Cargo.toml": "ec70942731e7a057cf5366e9982b25304f5c145af85420bdc228e1d36d32cc55",
     "crates/otp-format/src/lib.rs": "abb42c3d4c53894d3038b8ee75e89666b09abcc0b92f59ef76fa2c8be3bce8fa",
     "crates/root-flash/Cargo.toml": "4c013148c955c98348a192465b161687ad88eac04ebfd769f3eba29f16f47ebd",
     "crates/root-flash/README.md": "d785fea8422fee4803706a93a79eb99c503fb9de44c27ed23c1b603768853670",
     "crates/root-flash/src/lib.rs": "faf493b5054a221cd3bc3d2a93f0ed7a48f7e7432241d689c8d6a16b0c76a4f2",
-    "crates/root-flash/src/tests.rs": "70d88e1b2807964b63342c4db4557227d289425e3d22a738fccf14cd9808a891",
+    "crates/root-flash/src/tests.rs": "1bf93eead69793600390b426cc9cfd9f3b165b1061489596d011f9085ed7ecc2",
     "crates/root-journal/Cargo.toml": "5bfb4289a5e1d2c9c93e7d786ac4f053f308734fe95b0f6ebcbda576054d635e",
     "crates/root-journal/README.md": "49f87d7979d63d918b8698706243aa063bad9f7e01279401f753b9993427355d",
     "crates/root-journal/src/lib.rs": "bfe6b65771b956ac1145c84dce011f60a7758321c24d1de7f03bb06dd27fc1ee",
@@ -119,9 +119,9 @@
     "firmware/board/tests/r05_pin_ui.rs": "331e4b24568b8a97c32392c5a8f90d1820d9c0c7858dceef002682fc61b57c13",
     "firmware/board/tests/se_i2c.rs": "5ec0d55595f367de48cf39da0aa8afc70178995175c68881f8fb7ada74d87227",
     "firmware/secure-mmio/Cargo.toml": "622b5b838dd62141644dd4ce24d1613af1c9a98f28fb6aa5acf3b86b2152fecc",
-    "firmware/secure-mmio/README.md": "b4198d6ac4cdc8e4eb7262de7340ca7ddcbe668e90eb67025172b9d3d3f46e61",
-    "firmware/secure-mmio/src/lib.rs": "d7600983aabea10ce7e24b4eca5d93e41e6e09e484184efb2adce02be2bc0402",
-    "firmware/secure-mmio/src/ports.rs": "b5c8160ffd5ea54b4aebf1fae1ca548f3e596ccd150107895ccd9f4cad5c4567",
+    "firmware/secure-mmio/README.md": "a960dab1d8ee758c319cc70c7bec7eafc9a6175f15aa2362b07338bcd5b51343",
+    "firmware/secure-mmio/src/lib.rs": "da1529ed187ed34fd8f6a3e84108d45050aa423e0b9b300dede5ee0e3414eb16",
+    "firmware/secure-mmio/src/ports.rs": "16698debbd318142141a728b46ed65fdc0fe5c46133b196b1bf835668c851e17",
     "firmware/secure-mmio/src/root_flash.rs": "b25585df96d46f508fdf9af2482ff78871ad39e0a11f7b99fe9c4223677de0a8",
     "firmware/target/Cargo.toml": "8429a2b3f18f33180122e7b4add272a55bc76845b7063567a64d442be953bba3",
     "firmware/target/README.md": "f436f131b28e64d3670d16007e6bd61d8e1e8dac4d5146f8cef5b9a66242890b",
@@ -190,7 +190,7 @@
     "scripts/export-se-state-layout.py": "0fdcc09b56c31c6d5b1e627679fb87da184c40c2258369fbdf0bd5bc55c2a7ef"
   },
   "artifacts": {
-    "openkeys-r04-diagnostics.elf": "d1134fbcd0b0d3874f3bce50a3b2e3a247c4bc72c75afefd01e0a9284e8e1908",
+    "openkeys-r04-diagnostics.elf": "a0612fb0e0bcb033b94c619526c5371eb0349baea9bce6890e2d8c9aa6af195a",
     "openkeys-r04-diagnostics.bin": "41015865321164b5d972bbb370d473749ca2d79b0671bb194ff794dd367e52fb"
   }
 }

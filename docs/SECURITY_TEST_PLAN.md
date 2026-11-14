@@ -1,4 +1,10 @@
-# OpenKeys：三把设备的安全验收方法
+# R04 历史安全验收：指纹 / 四键
+
+**本文件对应旧 R04，不能作为当前 R05 十键 / PIN 版的接线或通过标准。**
+R05 使用[制作与功能验收](../manufacturing/BUILD_R05_ZH.md)、
+[独立备份 / 主动防拆 / 采样测试](../manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md)、
+[Root 存储测试](../manufacturing/ROOT_STORAGE_TESTS_R05_ZH.md)及
+[PIN 会话规则](PIN_SESSIONS_R05.md)。下文的指纹、四键、旧电源网络和显示复位仅保留历史追溯。
 
 这是一份可执行的验收方案，不是认证证书。PCB 的 ERC/DRC、软件测试和仿真通过，都不能代替下面的实物验证。先使用没有真实账户、私钥和恢复码的测试设备；未通过的设备不要登记为唯一登录方式。
 

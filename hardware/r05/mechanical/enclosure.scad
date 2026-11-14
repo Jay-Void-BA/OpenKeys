@@ -7,6 +7,7 @@ holes=[[6,6],[96,6],[30,111],[96,111]];
 keys=[[39,53],[57,53],[75,53],[39,67],[57,67],[75,67],
       [39,81],[57,81],[75,81],[57,95]];
 labels=[1,2,3,4,5,6,7,8,9,0];
+lid_contacts=[[89,105.5],[84.25,52],[36,103],[80,108]];
 tip=14.64; // nominal TL3342 top=14.54; jig-adjust real travel/stop
 module rr(w,h,r,z){hull(){for(x=[r,w-r])for(y=[r,h-r])translate([x,y,0])cylinder(r=r,h=z);}}
 module board(){linear_extrude(1)polygon([[0,0],[42,0],[42,-2.5],[54,-2.5],[54,0],[96,0],[96,112],[0,112]]);}
@@ -29,8 +30,9 @@ module lid(){difference(){union(){
  translate([2.05,2.05,D-lid_t-1.2])difference(){rr(W-4.1,H-4.1,3,1.4);translate([1,1,-.1])rr(W-6.1,H-6.1,2,1.6);}
  for(p=holes)translate([p[0],p[1],board_z+1])cylinder(d=4.6,h=D-lid_t-board_z-1);
  for(p=keys)translate([p[0],p[1],15.1])difference(){cylinder(d=4.4,h=13.5);translate([0,0,-.1])cylinder(d=2.7,h=14);}
- // Lid-open contact, blind adjustable insulating M2 actuator at SW12.
- translate([93,105,15.1])cylinder(d=5.2,h=13.3);
+ // Four blind adjustable insulating M2 actuators: separate reset + active
+ // loop contacts. No additional external button or access hole.
+ for(p=lid_contacts)translate([p[0],p[1],15.1])cylinder(d=5.2,h=13.3);
  // Insulating rails support the module's edge, not assumed screw holes.
  for(x=[4.4,94.7])translate([x,11,15])cube([2.8,32,13.4]);
  }
@@ -41,7 +43,7 @@ module lid(){difference(){union(){
   translate([p[0],p[1],28.6])cylinder(d=7.2,h=1);
  }
  for(p=holes){translate([p[0],p[1],11.9])cylinder(d=2.4,h=19);translate([p[0],p[1],28.8])cylinder(d=4.3,h=2);}
- translate([93,105,14.9])cylinder(d=1.6,h=13.8);
+ for(p=lid_contacts)translate([p[0],p[1],14.9])cylinder(d=1.6,h=13.3);
  for(x=[6,96])for(y=[16,38])translate([x,y,14.9])cylinder(d=1.2,h=8);
 }}
 module lcd_retainer(){difference(){
@@ -61,6 +63,9 @@ module plunger(label){difference(){union(){
 module components(){
  color("seagreen")translate([3,3,board_z])board();
  color("silver")translate([39,53,1.8])cube([29,36,4.75]);
+ // Pre-tabbed primary backup, separate from the protected rechargeable pack.
+ // Envelope only: sample tab height, insulation and retention need checking.
+ color("silver")translate([85,103,7.2])cylinder(d=20,h=3.2);
  color("navy")translate([7.5,11,15])cube([87,32,13]);
  color([.8,.9,.95,.45])translate([6.5,10,29.2])cube([89,34,.8]);
  color("silver")translate([46.53,-.15,12])cube([8.94,7.35,3.16]);

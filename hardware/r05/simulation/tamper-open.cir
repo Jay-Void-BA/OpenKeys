@@ -1,0 +1,17 @@
+OpenKeys active-loop mismatch RC - ideal stimulus only
+Vdiff diff 0 PULSE(0 2.55 1m 1n 1n 0.000244140625 3m)
+R66 diff filtered 4747.0
+C62 filtered 0 1.1000000000000001e-08
+Iinput filtered 0 5u
+
+.control
+set noaskquit
+set wr_singlescale
+set wr_vecnames
+tran 20n 1.5m
+
+meas tran mismatch_cross WHEN v(filtered)=2.2 RISE=1
+wrdata tamper-open-transient.txt v(filtered) v(diff)
+quit
+.endc
+.end

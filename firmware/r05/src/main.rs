@@ -45,7 +45,12 @@ fn main() -> ! {
     let _charging_disabled = Output::new(p.PB4, Level::Low, Speed::Low);
     let lcd_reset = OutputOpenDrain::new(p.PC3, Level::Low, Speed::Low);
     let light = Output::new(p.PC4, Level::Low, Speed::Low);
-    let case = Input::new(p.PC13, Pull::None);
+    // PC13 is a hardware active-TAMP return, not a static "case closed"
+    // level. Never poll its random waveform as a GPIO lid switch or drive
+    // PA1 in this diagnostic. SW12 and mismatch logic assert real NRST.
+    let _tamper_return = p.PC13;
+    let _tamper_drive = p.PA1;
+    let _battery_analog = p.PA0;
     let guard = Input::new(p.PC0, Pull::None);
     let buttons = [
         Input::new(p.PB0, Pull::None),
@@ -77,7 +82,7 @@ fn main() -> ! {
     )
     .unwrap();
     lcd.initialize().unwrap();
-    if case.is_low() || guard.is_low() {
+    if guard.is_low() {
         lcd.lock().unwrap();
         loop {
             watchdog.pet();
@@ -111,7 +116,7 @@ fn main() -> ! {
     // Keep the exact hardware identity visible to the compiler/artifact.
     assert_eq!(openkeys_h573_r05::BOARD_REVISION, "0.5");
     loop {
-        if case.is_low() || guard.is_low() {
+        if guard.is_low() {
             lcd.lock().unwrap();
             loop {
                 watchdog.pet();
