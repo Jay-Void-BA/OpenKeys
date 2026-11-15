@@ -1,33 +1,49 @@
 //! Connects the real native-PIN installer to authenticated lifecycle phases.
 //! The caller still supplies protected MCU flash, hardware MAC and boot/scene
 //! guard. It is not a production hardware implementation of those interfaces.
-use crate::{Error, Guard, Journal, Mac, Phase, State, Storage};
+use crate::{ContinuityGuard, Error, Journal, Mac, Phase, State, Storage};
 use openkeys_se_state::{Error as SeError, commissioning::Root};
 use subtle::ConstantTimeEq;
 
 /// Exclusive setup-scene borrow. It cannot be used as a normal private-operation
 /// State, PIN lease, or host-supplied blank assertion.
-pub struct PinRoot<'a, S: Storage, M: Mac, G: Guard> {
+pub struct PinRoot<'a, S: Storage, M: Mac, G: ContinuityGuard> {
     journal: &'a mut Journal<S, M>,
     guard: &'a mut G,
+    closed: bool,
 }
-impl<'a, S: Storage, M: Mac, G: Guard> PinRoot<'a, S, M, G> {
+impl<'a, S: Storage, M: Mac, G: ContinuityGuard> PinRoot<'a, S, M, G> {
     pub fn new(journal: &'a mut Journal<S, M>, guard: &'a mut G) -> Self {
-        Self { journal, guard }
+        Self {
+            journal,
+            guard,
+            closed: false,
+        }
     }
     fn state(&mut self) -> Result<State, SeError> {
-        self.guard.check().map_err(map)?;
-        let state = self.journal.state().map_err(map)?;
-        if !matches!(
-            state.phase,
-            Phase::FactoryBlank | Phase::PinInstalling | Phase::PinInstalled
-        ) {
-            return Err(SeError::Authorization);
+        if self.closed {
+            return Err(SeError::Closed);
         }
-        Ok(state)
+        let result = (|| {
+            self.guard.check()?;
+            let state = self.journal.state()?;
+            if !matches!(
+                state.phase,
+                Phase::FactoryBlank | Phase::PinInstalling | Phase::PinInstalled
+            ) {
+                return Err(Error::Authorization);
+            }
+            self.guard.verify_backup_owner(&state.owner)?;
+            self.guard.check()?;
+            Ok(state)
+        })();
+        if result.is_err() {
+            self.closed = true;
+        }
+        result.map_err(map)
     }
 }
-impl<S: Storage, M: Mac, G: Guard> Root for PinRoot<'_, S, M, G> {
+impl<S: Storage, M: Mac, G: ContinuityGuard> Root for PinRoot<'_, S, M, G> {
     fn check(&mut self) -> Result<(), SeError> {
         self.state().map(|_| ())
     }

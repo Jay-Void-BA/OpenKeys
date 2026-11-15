@@ -13,6 +13,14 @@
 并将日志内核与控制器组合测试。生产链接 / STiRoT / OTA 预留和 Root 接线仍未完成，
 所以上面的整机阻塞没有解除；不能只凭组件存在启用真实密钥。
 
+现又补了[日志 / 备份 / 请求权限组合适配](../crates/root-journal/src/private_state.rs)：
+PIN 安装必须使用 `ContinuityGuard`，私钥端口的 `PrivateRoot` 只接受已认证的 `Ready`
+日志和独立的请求检查器；在回调前后比较同一 owner，失败后不复活该适配器。
+[H573 硬件包装](../firmware/target/src/root_mac.rs)实际调用 SAES 服务的备份 owner 检查。
+它不代替 SE 不可改写 owner、原生 PIN ACL、真实租约 / IRQ / 时钟，也不代表这些适配器
+已经接进生产 dispatcher。备份初始化 / owner 切换和异常销毁的持久顺序仍未完成，
+不能为取得 DHUK 或读取旧胶囊而自动清 TAMP 标志、重播种或重建锚点。
+
 ## 本地 PIN 安装
 
 [`commissioning::Installer`](../crates/se-state/src/commissioning.rs)实现六位本地设置策略的

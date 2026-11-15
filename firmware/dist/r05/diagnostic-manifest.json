@@ -22,7 +22,7 @@
     "hardware/r05/pinout.csv": "dbb7b8b4ed1296bf4834e4fd8913a333887ffd600f1d6d0193a8b56f26b9d7f3"
   },
   "source_sha256": {
-    "Cargo.lock": "e40b421d840ab02fd4310b349fc333678d66ec427e316e4bd1f76f7a9bfc6b74",
+    "Cargo.lock": "4ef59072e29a168b97e26843bdce2e78208d4c48264c1fb2674253cb3dc002e6",
     "Cargo.toml": "f6647646503a308bc1ba45a5850e66f6d58dfb89fbec4e59603fc184ee3a6399",
     "crates/device-policy/Cargo.toml": "3543984e4fb9c36d6cb9e47396c18726998f11cbba4958ade3417d29c1de6d6f",
     "crates/device-policy/src/biometric.rs": "2b5200740724ef7b47516cfc5ff8aecfddcd29e721084234907ed77c70b6cd64",

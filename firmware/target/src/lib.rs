@@ -1,6 +1,6 @@
 #![no_std]
 #![forbid(unsafe_code)]
-//! Hardware adapters for the R04 protected runtime. A compiled adapter is not
+//! Shared H573 hardware adapters for the R04/R05 protected runtime. A compiled adapter is not
 //! proof that secure boot, TrustZone attribution or provisioning is deployed.
 
 #[cfg(target_arch = "arm")]

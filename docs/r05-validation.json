@@ -7,12 +7,12 @@
   "production_authenticator_image": false,
   "physical_test_result": "NOT_RUN",
   "source_commit": null,
-  "checked_date_utc": "2026-11-14",
-  "workspace_tests_passed": 359,
+  "checked_date_utc": "2026-11-15",
+  "workspace_tests_passed": 366,
   "authenticator_core_tests_passed": 30,
   "authenticator_core_tests_included_in_workspace_count": true,
   "native_tests_per_platform": null,
-  "native_test_count_explanation": "Locally359 workspace/doc tests (including one compile-fail and30 FIDO cases) plus six feature-gated native-UID probe tests; three-platform verification for this new source is pending.",
+  "native_test_count_explanation": "Locally366 workspace/doc tests (including two compile-fail and30 FIDO cases) plus six feature-gated native-UID probe tests; three-platform verification of the new continuity adapters is pending.",
   "additional_linux_wire_tests": 2,
   "additional_macos_abi_tests": 2,
   "strict_clippy": "PASSED_LOCAL: workspace/all-targets, default-off native-UID probe, actual secure-MMIO ARM target, R04 diagnostic and both R05 ARM LCD profiles",
@@ -30,7 +30,7 @@
     "local_advisories_loaded": 1509
   },
   "r05_cad": {
-    "source_commit": null,
+    "source_commit": "8008ec217030ab00697976a1254ea950c989c5a6",
     "board_sha256": "80cd8d3fa79ab74808ddac003fc392ea0f37e4f02eb95cfd66738cd68d3adeba",
     "schematic_pages": 13,
     "bom_positions": 195,
@@ -72,7 +72,7 @@
   },
   "ci_evidence": "docs/ci-evidence-r05.json",
   "limits": "Source, file hashes, synthetic models and compiler/CI results only. Not a claim of complete firmware, theoretical security, certification or resistance to every software/hardware attack.",
-  "root_journal_tests_included": 10,
+  "root_journal_tests_included": 16,
   "root_flash_tests_included": 11,
   "h573_crypto_tests_included": 20,
   "se_reset_tests_included": 7,
@@ -83,7 +83,10 @@
     "physical_qualification": "NOT_RUN",
     "backup_profile_readback_component": true,
     "backup_owner_compare_component": true,
-    "production_backup_init_and_epoch_binding": false
+    "production_backup_init_and_epoch_binding": false,
+    "pin_setup_backup_binding_component": true,
+    "private_journal_backup_request_binding_component": true,
+    "actual_h573_continuity_guard_component": true
   },
   "se_reset": {
     "fixed_deleteall_request": true,
@@ -92,9 +95,9 @@
     "factory_blank_authority": false
   },
   "source_commit_status": "LOCAL_CANDIDATE: record the exact new source commit after its CI completes; prior60f evidence is historical only",
-  "local_native_tests_passed": 365,
-  "expected_native_tests_per_platform": 365,
-  "ci_evidence_scope": "docs/ci-evidence-r05.json and development ZIP links currently archive the previous60f/169-position source; refresh after the new run",
+  "local_native_tests_passed": 372,
+  "expected_native_tests_per_platform": 372,
+  "ci_evidence_scope": "The independently checked8008 source has365 native tests per OS and the same195-position CAD; it does not cover the following new continuity-adapter changes.",
   "backup_tamper": {
     "passive_models_passed": true,
     "board_routing_complete": true,
@@ -106,5 +109,6 @@
     "physical_tests": "NOT_RUN",
     "model": "hardware/r05/review/backup-tamper-model.json",
     "test_procedure": "manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md"
-  }
+  },
+  "last_verified_ci_source_commit": "8008ec217030ab00697976a1254ea950c989c5a6"
 }

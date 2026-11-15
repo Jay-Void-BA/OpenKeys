@@ -125,6 +125,7 @@ struct Root {
     deny_factory: bool,
     deny_transition: bool,
     nonce: u8,
+    backup_override: Option<Rc<Cell<[u8; 32]>>>,
 }
 impl Default for Root {
     fn default() -> Self {
@@ -134,6 +135,7 @@ impl Default for Root {
             deny_factory: false,
             deny_transition: false,
             nonce: 0x50,
+            backup_override: None,
         }
     }
 }
@@ -162,6 +164,19 @@ impl Guard for Root {
             Err(Error::Authorization)
         } else {
             Ok(())
+        }
+    }
+}
+impl ContinuityGuard for Root {
+    fn verify_backup_owner(&mut self, owner: &[u8; 32]) -> Result<(), Error> {
+        let observed = self
+            .backup_override
+            .as_ref()
+            .map_or([self.nonce; 32], |c| c.get());
+        if *owner == observed {
+            Ok(())
+        } else {
+            Err(Error::Authorization)
         }
     }
 }
@@ -476,4 +491,229 @@ fn a_whole_old_snapshot_still_needs_independent_se_owner_matching() {
     let replayed = reopen(&m, &mut guard).unwrap().state().unwrap();
     assert_eq!(replayed.phase, Phase::Ready);
     assert_ne!(replayed.owner, next);
+}
+
+#[derive(Default)]
+struct ProtocolState {
+    checks: Rc<Cell<usize>>,
+    requests: Rc<Cell<usize>>,
+    armed: Rc<Cell<bool>>,
+    change_backup: Option<Rc<Cell<[u8; 32]>>>,
+    change_on_private: bool,
+    deny_private: bool,
+}
+impl device_policy::execution::State for ProtocolState {
+    fn generation(&self) -> u64 {
+        7
+    }
+    fn check_security_state(&mut self) -> Result<(), device_policy::Error> {
+        self.checks.set(self.checks.get() + 1);
+        if self.armed.get()
+            && !self.change_on_private
+            && let Some(owner) = &self.change_backup
+        {
+            owner.set([0x91; 32]);
+        }
+        Ok(())
+    }
+}
+impl openkeys_se_state::native_pin::PrivateState for ProtocolState {
+    fn check_private_request(
+        &mut self,
+        _: &device_policy::Request,
+        _: &[u8; 32],
+    ) -> Result<(), device_policy::Error> {
+        self.requests.set(self.requests.get() + 1);
+        if self.armed.get()
+            && self.change_on_private
+            && let Some(owner) = &self.change_backup
+        {
+            owner.set([0x91; 32]);
+        }
+        if self.deny_private {
+            Err(device_policy::Error::Locked)
+        } else {
+            Ok(())
+        }
+    }
+}
+fn private_request() -> device_policy::Request {
+    device_policy::Request {
+        operation: device_policy::Operation::FidoSign,
+        digest: [3; 32],
+        channel: [4; 32],
+    }
+}
+
+#[test]
+fn pin_setup_checks_backup_before_install_and_does_not_revive_after_fault() {
+    use openkeys_se_state::commissioning::Root as _;
+    let (m, mut journal, mut guard) = seed(Phase::FactoryBlank);
+    let owner = journal.state().unwrap().owner;
+    let backup = Rc::new(Cell::new([0x88; 32]));
+    guard.backup_override = Some(backup.clone());
+    let mut root = crate::pin::PinRoot::new(&mut journal, &mut guard);
+    assert_eq!(
+        root.begin_pin_install(&context().profile, &[1; 32]),
+        Err(openkeys_se_state::Error::Authorization)
+    );
+    assert!(m.borrow().events.is_empty());
+    backup.set(owner);
+    assert_eq!(root.check(), Err(openkeys_se_state::Error::Closed));
+    assert_eq!(journal.state().unwrap().phase, Phase::FactoryBlank);
+}
+
+#[test]
+fn private_root_requires_ready_backup_and_same_native_owner() {
+    use device_policy::execution::State as _;
+    use openkeys_se_state::native_pin::PrivateState as _;
+    for phase in [
+        Phase::FactoryBlank,
+        Phase::PinInstalling,
+        Phase::PinInstalled,
+        Phase::ApplicationsInstalling,
+    ] {
+        let (_, journal, mut guard) = seed(phase);
+        let mut inner = ProtocolState::default();
+        let calls = inner.checks.clone();
+        assert!(crate::private_state::PrivateRoot::new(&journal, &mut guard, &mut inner).is_err());
+        assert_eq!(calls.get(), 0);
+    }
+    let (_, journal, mut guard) = seed(Phase::Ready);
+    let owner = journal.state().unwrap().owner;
+    let mut inner = ProtocolState::default();
+    let calls = inner.requests.clone();
+    let mut root =
+        crate::private_state::PrivateRoot::new(&journal, &mut guard, &mut inner).unwrap();
+    root.check_private_request(&private_request(), &owner)
+        .unwrap();
+    assert_eq!(calls.get(), 1);
+    assert_eq!(
+        root.check_private_request(&private_request(), &[0x92; 32]),
+        Err(device_policy::Error::Rejected)
+    );
+    assert_eq!(root.generation(), u64::MAX);
+    assert!(
+        root.check_private_request(&private_request(), &owner)
+            .is_err()
+    );
+    assert_eq!(calls.get(), 1);
+}
+
+#[test]
+fn backup_switch_during_either_callback_poisoned_state_cannot_reopen() {
+    use device_policy::execution::State as _;
+    use openkeys_se_state::native_pin::PrivateState as _;
+    for private in [false, true] {
+        let (_, journal, mut guard) = seed(Phase::Ready);
+        let owner = journal.state().unwrap().owner;
+        let backup = Rc::new(Cell::new(owner));
+        guard.backup_override = Some(backup.clone());
+        let mut inner = ProtocolState {
+            change_backup: Some(backup.clone()),
+            change_on_private: private,
+            ..ProtocolState::default()
+        };
+        let armed = inner.armed.clone();
+        let calls = inner.requests.clone();
+        let mut root =
+            crate::private_state::PrivateRoot::new(&journal, &mut guard, &mut inner).unwrap();
+        armed.set(true);
+        let result = if private {
+            root.check_private_request(&private_request(), &owner)
+        } else {
+            root.check_security_state()
+        };
+        assert_eq!(result, Err(device_policy::Error::HardwareFault));
+        backup.set(owner);
+        armed.set(false);
+        assert_eq!(root.generation(), u64::MAX);
+        assert!(root.check_security_state().is_err());
+        assert!(
+            root.check_private_request(&private_request(), &owner)
+                .is_err()
+        );
+        assert_eq!(calls.get(), usize::from(private));
+    }
+}
+
+#[test]
+fn healthy_backup_cannot_bypass_protocol_denial_or_boot_fault() {
+    use device_policy::execution::State as _;
+    use openkeys_se_state::native_pin::PrivateState as _;
+    for denied_check in 1..=4 {
+        let (_, journal, mut guard) = seed(Phase::Ready);
+        guard.checks = 0;
+        guard.deny_check = Some(denied_check);
+        let mut inner = ProtocolState::default();
+        assert!(crate::private_state::PrivateRoot::new(&journal, &mut guard, &mut inner).is_err());
+        assert_eq!(inner.requests.get(), 0);
+    }
+    let (_, journal, mut guard) = seed(Phase::Ready);
+    let owner = journal.state().unwrap().owner;
+    let mut inner = ProtocolState {
+        deny_private: true,
+        ..ProtocolState::default()
+    };
+    let mut root =
+        crate::private_state::PrivateRoot::new(&journal, &mut guard, &mut inner).unwrap();
+    assert_eq!(
+        root.check_private_request(&private_request(), &owner),
+        Err(device_policy::Error::Locked)
+    );
+    assert_eq!(root.generation(), u64::MAX);
+}
+
+#[test]
+fn old_authenticated_ready_snapshot_or_pending_erase_never_grants_private_use() {
+    let (m, mut journal, mut guard) = seed(Phase::Ready);
+    let snapshot = m.borrow().pages.clone();
+    journal.advance(Phase::ErasePending, &mut guard).unwrap();
+    let mut inner = ProtocolState::default();
+    assert!(crate::private_state::PrivateRoot::new(&journal, &mut guard, &mut inner).is_err());
+    m.borrow_mut().pages = snapshot;
+    let replayed = reopen(&m, &mut guard).unwrap();
+    assert_eq!(replayed.state().unwrap().phase, Phase::Ready);
+    assert!(crate::private_state::PrivateRoot::new(&replayed, &mut guard, &mut inner).is_err());
+    assert_eq!(inner.checks.get(), 0);
+}
+
+#[test]
+fn all_ones_owner_is_rejected_on_rng_transition_and_authenticated_decode() {
+    let m = Shared::default();
+    let mut guard = Root {
+        nonce: 0xfe,
+        ..Root::default()
+    };
+    assert!(matches!(
+        Journal::factory_initialize(Flash(m.clone()), ModelMac::default(), context(), &mut guard),
+        Err(Error::Crypto)
+    ));
+    assert!(m.borrow().events.is_empty());
+    let invalid = State {
+        sequence: 1,
+        generation: 1,
+        phase: Phase::FactoryBlank,
+        owner: [0xff; 32],
+    };
+    let wire = encode(
+        &context(),
+        0,
+        invalid,
+        [0; 32],
+        false,
+        &mut ModelMac::default(),
+    )
+    .unwrap();
+    assert!(matches!(
+        decode(&context(), 0, &wire.wire, false, &mut ModelMac::default()),
+        Err(Error::Integrity)
+    ));
+    let (m, mut journal, mut guard) = seed(Phase::Ready);
+    guard.nonce = 0xfe;
+    assert_eq!(
+        journal.advance(Phase::ErasePending, &mut guard),
+        Err(Error::State)
+    );
+    assert!(m.borrow().events.is_empty());
 }

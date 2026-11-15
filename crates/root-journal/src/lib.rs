@@ -8,6 +8,7 @@ use sha2::{Digest, Sha256};
 use subtle::ConstantTimeEq;
 use zeroize::Zeroizing;
 pub mod pin;
+pub mod private_state;
 
 pub const SECTOR_BYTES: usize = 8192;
 pub const PHRASE_BYTES: usize = 16;
@@ -116,6 +117,18 @@ pub trait Guard {
     /// Missing/corrupt journal by itself is explicitly NOT that evidence.
     fn authorize_factory_initialize(&mut self, context: &Context) -> Result<(), Error>;
 }
+/// Fresh protected backup-domain comparison against the MAC-verified selected
+/// journal owner. Never learn the expected owner from an observed SE, a host
+/// message, an unverified journal or a constant magic. The H573 adapter calls
+/// the actual SAES service's continuity check; this method must not initialize,
+/// clear tamper flags, reseed or repair a missing backup domain.
+pub trait ContinuityGuard: Guard {
+    fn verify_backup_owner(&mut self, owner: &[u8; 32]) -> Result<(), Error>;
+}
+
+fn valid_owner(owner: &[u8; 32]) -> bool {
+    *owner != [0; 32] && *owner != [0xff; 32]
+}
 #[derive(Clone)]
 struct Record {
     slot: u8,
@@ -139,7 +152,7 @@ fn transition(current: &State, target: &State) -> bool {
     if current.sequence.checked_add(1) != Some(target.sequence)
         || target.sequence == u64::MAX
         || target.generation == 0
-        || target.owner == [0; 32]
+        || !valid_owner(&target.owner)
     {
         return false;
     }
@@ -233,7 +246,7 @@ fn decode(
     if state.sequence == 0
         || state.sequence == u64::MAX
         || state.generation == 0
-        || state.owner == [0; 32]
+        || !valid_owner(&state.owner)
     {
         return Err(Error::Integrity);
     }
@@ -359,7 +372,7 @@ impl<S: Storage, M: Mac> Journal<S, M> {
             }
         }
         let owner = guard.fresh_owner_nonce()?;
-        if owner == [0; 32] {
+        if !valid_owner(&owner) {
             return Err(Error::Crypto);
         }
         let head = encode(
@@ -378,6 +391,9 @@ impl<S: Storage, M: Mac> Journal<S, M> {
         program_record(&mut storage, guard, 0, 0, &head)?;
         Self::open(storage, mac, context, guard)
     }
+    /// Authenticated cached metadata, not permission to perform private work.
+    /// Use the checked private-state adapter and an independent native SE owner
+    /// match; a valid MAC alone cannot detect an entire old-journal replay.
     pub fn state(&self) -> Result<State, Error> {
         if self.closed {
             return Err(Error::Closed);

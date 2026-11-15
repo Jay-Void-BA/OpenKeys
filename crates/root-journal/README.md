@@ -30,6 +30,28 @@ committed phases. The installer gets its nonce only from `PinInstalling`; its
 success commits `PinInstalled`, not whole-device `Ready`. It cannot call back
 into a previous blank state or replace an initialized PIN namespace.
 
+Both setup and private use now require `ContinuityGuard`, separately from the
+ordinary boot/maintenance guard. `PinRoot` compares the selected journal owner
+with actual backup state before and after setup checks, and latches a failure.
+It never creates or repairs an anchor. All-zero and all-one owner nonces are
+rejected on initialization, transitions and authenticated decoding.
+
+[`private_state::PrivateRoot`](src/private_state.rs) borrows the selected
+`Ready` journal, the continuity guard and an independent request/lease checker.
+It compares the current lifecycle/owner before and after each delegated check;
+the native PIN object's owner must match that same selected owner. A fault,
+protocol denial or owner change closes the view for its lifetime. It cannot
+mutate the journal while borrowed, mint an Execution or replace the native SE
+owner/ACL checks. A compile-fail test rejects a boot-only guard. The actual
+[H573 guard wrapper](../../firmware/target/src/root_mac.rs) delegates continuity
+to `Service::verify_backup_owner`, rather than a host assertion.
+
+These are composed adapters, not a deployed dispatcher. Signed boot, a real
+boot/maintenance guard, physical link/time/lease handling, controlled backup
+initialization/owner transitions and complete destruction remain required.
+In particular, ordinary boot cannot clear TAMP/reseed/recreate an anchor to
+make old journal/capsule data readable after backup loss.
+
 ## Independent SE epoch binding
 
 A MAC alone cannot detect replay of **both** old internal sectors. Production

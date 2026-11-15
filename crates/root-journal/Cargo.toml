@@ -9,6 +9,7 @@ sha2 = { version = "=0.10.9", default-features = false }
 subtle = { version = "=2.6.1", default-features = false }
 zeroize = { version = "1.9", default-features = false }
 openkeys-se-state = { path = "../se-state" }
+device-policy = { path = "../device-policy" }
 
 [dev-dependencies]
 hmac = { version = "=0.12.1", default-features = false }

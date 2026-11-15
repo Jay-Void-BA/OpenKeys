@@ -5115,6 +5115,7 @@ dependencies = [
 name = "openkeys-root-journal"
 version = "0.1.0"
 dependencies = [
+ "device-policy",
  "hmac 0.12.1",
  "openkeys-se-state",
  "sha2 0.10.9",

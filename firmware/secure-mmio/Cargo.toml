@@ -13,7 +13,7 @@ openkeys-se-transport = { path = "../../crates/se-transport" }
 openkeys-root-flash = { path = "../../crates/root-flash" }
 openkeys-root-journal = { path = "../../crates/root-journal" }
 
-# This is the sole own-code exception: eleven fixed MMIO handle constructors
+# This is the sole own-code exception: twelve fixed MMIO handle constructors
 # and aligned words within two fixed secure-flash sectors, explained in README.
 # It never accepts a caller pointer/arbitrary address or host programmer request.
 [lints.rust]
