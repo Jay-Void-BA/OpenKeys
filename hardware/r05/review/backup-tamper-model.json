@@ -2,9 +2,9 @@
   "schema": 1,
   "revision": "0.5",
   "status": "ALLOCATIONS_AND_PASSIVE_MODELS_ONLY",
-  "netlist_sha256": "341be8f944f6c6940885167a7a5d7428828ad3480c36bd4e868acf5c621a004e",
-  "electrical_input_sha256": "a1df0fb3c2ef51aef431b0ca7ff619616bd4e22b123bb4abcb36f2f6d05f12cc",
-  "model_source_sha256": "ef9651ed3341df5f9aed0aec6dede794f272ba0cb1617e5716d052f1baff2219",
+  "netlist_sha256": "7c33af96359f736197a0689b31a281fc86577a965e1bb0c4739367daffcd8ac4",
+  "electrical_input_sha256": "a635ca179551099a47f4b23c6bce6ff81f24f642de7b946e657e3bd078880fd3",
+  "model_source_sha256": "6adcea7cd345bfd2b714f6675095c40c53ae1e41dfd07e0595854f57ddbcf9ea",
   "selected_parts": {
     "U13": "LM66100DCKR",
     "U24": "SN74AUP1G99DCUR",
@@ -12,6 +12,9 @@
     "U26": "SN74LVC1G07DCKR",
     "U27": "SN74AUP2G17DCKR",
     "U28": "TMUX1511RWBR",
+    "U29": "TMUX1511RWBR",
+    "U30": "TMUX1511RWBR",
+    "U31": "LM66100DCKR",
     "BT1": "Panasonic CR-2032/HFN",
     "R61": "10k 1%",
     "R62": "470k 1%",
@@ -21,10 +24,18 @@
     "R66": "4.7k 1%",
     "R67": "1M 1%",
     "R68": "100k 1%",
-    "R69": "47k 1%",
+    "R69": "9.1k 1%",
     "C61": "10nF X7R 16V",
     "C62": "10nF X7R 16V 10%",
-    "C68": "100pF C0G 50V 5%"
+    "C68": "100pF C0G 50V 5%",
+    "R70": "330R 1%",
+    "R71": "330R 1%",
+    "R72": "330R 1%",
+    "R73": "330R 1%",
+    "R74": "330R 1%",
+    "R75": "100k 1%",
+    "R76": "100k 1%",
+    "R77": "100k 1%"
   },
   "primary_references": [
     {
@@ -56,6 +67,11 @@
       "url": "https://www.ti.com/lit/ds/symlink/tmux1511.pdf",
       "revision": "SCDS390B",
       "used": "RWB0012A; source/drain protected below1.5V; IPOFF max2uA; no control-only substitution"
+    },
+    {
+      "url": "https://wiki.nfc.im/attachments/7",
+      "revision": "FM11NC08 v1.0 brief 2014",
+      "used": "RF-powered VOUT and SPI pin roles; no complete powered-off I/O electrical table, no assumed isolation"
     }
   ],
   "backup": {
@@ -253,15 +269,46 @@
     "powered_off_switch_bound_a": 2e-06,
     "extra_off_leakage_allocation_a": 1e-07,
     "powered_off_adc_allocation_v": 0.21209999999999998,
-    "aggregate_main_off_feed_allocation_a": 4e-06,
-    "main_off_bleed_allocation_v": 0.18988,
+    "aggregate_main_off_feed_allocation_a": 2e-05,
+    "main_off_bleed_allocation_v": 0.18382,
     "reservoir_upstream_of_isolation": true,
     "accurate_soc_percentage_qualified": false
+  },
+  "nfc": {
+    "isolated_signals": [
+      "CS_N",
+      "SCK",
+      "MOSI",
+      "MISO",
+      "IRQ_N"
+    ],
+    "physical_enable": "NRST",
+    "switch_channel_ipoff_bound_at_vdd_zero_a": 2e-06,
+    "active_channels": 5,
+    "reverse_supply_leakage_allocation_a": 3e-06,
+    "reverse_supply_allocation_temperature_c": [
+      -40,
+      85
+    ],
+    "other_paths_allocation_a": 4e-06,
+    "off_feed_margin_a": 3e-06,
+    "signal_voltage_limit_below_1v5_supply_v": [
+      0,
+      3.6
+    ],
+    "all_rf_terminal_voltages_qualified": false,
+    "partial_power_bound_qualified": false,
+    "series_ohms": 330,
+    "initial_spi_rate_limit_hz": 2000000,
+    "spi_timing_qualified": false,
+    "bleed_main_on_nominal_current_a": 0.0003626373626373626,
+    "reverse_transient_pulses_qualified": false
   },
   "unmodeled": [
     "primary capacity/age/cold discharge and reverse charge acceptance",
     "active TAMP/LSE startup and current; PRNG runs; backup switching",
     "VDD/VBAT ramps, partial power, wet surfaces, off leakage and transient injection",
+    "FM11 RF-powered terminal voltage, excessive field, switch IPOFF away from VDD=0, NFC timing",
     "actual gate thresholds/delays, logic skew, reset fanout, tamper-contact mechanics",
     "matched injection, probe bridging, EM/voltage/clock faults and side channels"
   ],

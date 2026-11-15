@@ -64,7 +64,7 @@ C22,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
 C23,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
 C24,1uF,Capacitor_SMD:C_0805_2012Metric,04-se-storage,False,
 C25,100nF,Capacitor_SMD:C_0603_1608Metric,04-se-storage,False,
-U7,FM11NC08S (DFN10 + EP),OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4,05-nfc,False,"Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM"
+U7,FM11NC08S (DFN10 + EP),OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4,05-nfc,False,"Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM. All five host signals and VCC cross independent isolation on sheet13; VOUT remains local"
 J4,Integral 13.56MHz PCB loop,OpenKeys:NFC_PCB_Loop_4T_62x15,05-nfc,False,Integral copper4-turn coil; no purchased connector. Separate RF-only region. Initial matching model must be measured in assembled shell.
 C26,100nF,Capacitor_SMD:C_0603_1608Metric,05-nfc,False,
 C27,1uF,Capacitor_SMD:C_0805_2012Metric,05-nfc,False,
@@ -188,9 +188,23 @@ C62,10nF X7R 16V 10%,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,"47us
 U25,SN74LVC1G14DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,12-active-reset,False,Schmitt inverter accepts filtered slow transition. Mismatch high => output low
 U26,SN74LVC1G07DCKR,Package_TO_SOT_SMD:SOT-353_SC-70-5,12-active-reset,False,"Open-drain output joins NRST fault bus; cannot oppose another reset driver. Low match signal => hardware reset, SE_EN off and LCD latch cleared"
 R67,1M 1%,Resistor_SMD:R_0603_1608Metric,12-active-reset,False,Defines disabled active output at first commissioning; worst XOR input leakage must remain below low threshold. Include active-output backup drain
-R69,47k 1%,Resistor_SMD:R_0603_1608Metric,12-active-reset,False,Defined main-rail discharge path:4uA aggregate off-feed allocation x47.47k=0.18988V. Avoid a floating main rail charged by finite input/off-switch leakage. Allocation including NFC and all power ramps must be measured
+R69,9.1k 1%,Resistor_SMD:R_0603_1608Metric,12-active-reset,False,Defined main-rail discharge path:20uA aggregate off-feed allocation x9.191k=0.18382V. Includes five NFC switch channels and reverse-block leakage allocation; not a guaranteed partial-power bound. Measure every ramp and RF condition; main-on cost about0.363mA at3.3V
 U27,SN74AUP2G17DCKR,Package_TO_SOT_SMD:SOT-363_SC-70-6,12-active-reset,False,TI SCES750A pp1/4/5: dual Schmitt buffer with no maximum input-transition time; each VBAT-live input has Ioff max0.6uA with main VCC=0. Prevents slow open-loop transitions reaching U24. Qualify leakage and partial-supply backfeed
 C63,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,
 C64,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,
 C65,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,
 C66,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,12-active-reset,False,
+U29,TMUX1511RWBR,Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm,13-nfc-isolation,False,"TI SCDS390B RWB0012A pin table. All channels enabled only by physical NRST high. Powered-off protection applies to SIGNAL terminals, not just SEL. VDD<1.5V: signals0..3.6V; IPOFF max2uA at VDD=0 only. No control-only fail-safe substitute"
+U30,TMUX1511RWBR,Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm,13-nfc-isolation,False,IRQ crosses one powered-off-protected channel. Spare signal pins fixed to GND. Both RWB shared select pins are copper-strapped to NRST; no firmware bypass. No blanket guarantee during intermediate VDD
+R70,330R 1%,Resistor_SMD:R_0603_1608Metric,13-nfc-isolation,False,RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification
+R71,330R 1%,Resistor_SMD:R_0603_1608Metric,13-nfc-isolation,False,RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification
+R72,330R 1%,Resistor_SMD:R_0603_1608Metric,13-nfc-isolation,False,RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification
+R73,330R 1%,Resistor_SMD:R_0603_1608Metric,13-nfc-isolation,False,RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification
+R74,330R 1%,Resistor_SMD:R_0603_1608Metric,13-nfc-isolation,False,RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification
+U31,LM66100DCKR,Package_TO_SOT_SMD:SOT-363_SC-70-6,13-nfc-isolation,False,"CE=VOUT mandatory for reverse blocking, unused ST grounded. Reduces RF-domain backfeed through VCC. Allocate3uA static reverse leakage, not zero; reverse comparator turn-off pulses and partial rails require measurement"
+R75,100k 1%,Resistor_SMD:R_0603_1608Metric,13-nfc-isolation,False,
+R76,100k 1%,Resistor_SMD:R_0603_1608Metric,13-nfc-isolation,False,
+R77,100k 1%,Resistor_SMD:R_0603_1608Metric,13-nfc-isolation,False,
+C69,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,13-nfc-isolation,False,"Local main-domain decoupling; C69 U29, C70 U30, C71 U31 VIN"
+C70,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,13-nfc-isolation,False,"Local main-domain decoupling; C69 U29, C70 U30, C71 U31 VIN"
+C71,100nF X7R 16V,Capacitor_SMD:C_0603_1608Metric,13-nfc-isolation,False,"Local main-domain decoupling; C69 U29, C70 U30, C71 U31 VIN"

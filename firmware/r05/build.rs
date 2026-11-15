@@ -42,8 +42,9 @@ fn main() {
         .skip(1)
         .map(|r| r.split(',').collect())
         .collect();
-    // Independent required-function list. Source code below uses these same
-    // typed HAL pins; the CSV is generated from the actual MCU schematic.
+    // Independent required-function list for the diagnostic and reserved NFC
+    // interface. The CSV comes from the actual MCU schematic. NFC protocol
+    // operation is still disabled; checking its pins does not implement it.
     for (signal, gpio, pin, function) in [
         ("BTN1_N", "PB0", "26", "power / GPIO / dedicated"),
         ("BTN2_N", "PB1", "27", "power / GPIO / dedicated"),
@@ -85,6 +86,10 @@ fn main() {
         ("FLASH_MOSI", "PB15", "36", "SPI2_MOSI AF5"),
         ("FLASH_MISO", "PC2", "10", "SPI2_MISO AF5"),
         ("NFC_CS_N", "PA4", "20", "power / GPIO / dedicated"),
+        ("NFC_SCK", "PA5", "21", "SPI1_SCK AF5"),
+        ("NFC_MISO", "PA6", "22", "SPI1_MISO AF5"),
+        ("NFC_MOSI", "PA7", "23", "SPI1_MOSI AF5"),
+        ("NFC_IRQ_N", "PB10", "29", "power / GPIO / dedicated"),
     ] {
         let matching: Vec<_> = rows.iter().filter(|r| r[2] == signal).collect();
         assert_eq!(

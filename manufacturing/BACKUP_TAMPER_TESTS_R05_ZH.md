@@ -2,7 +2,8 @@
 
 [制作手册](BUILD_R05_ZH.md) · [电源依据](../docs/CLASSICAL_SE_POWER_R05.md) · [模型](../hardware/r05/review/backup-tamper-model.json) · [Root 存储测试](ROOT_STORAGE_TESTS_R05_ZH.md)
 
-本规程对应独立 CR-2032/HFN、LM66100、三个主动回路触点及 TMUX1511 的 195 位 BOM。
+本规程对应独立 CR-2032/HFN、LM66100、三个主动回路触点及 TMUX1511 的 209 位 BOM；
+新增 NFC 隔离另见[断电反灌专项规程](NFC_ISOLATION_TESTS_R05_ZH.md)。
 结果全部为 **NOT_RUN**。电路 ERC / DRC、理想脉冲 RC 模型和寄存器模型均不是实板通过记录。
 生产 Root 的连续性锚点 / 主动防拆初始化与受控销毁尚未完整接通，诊断镜像不能执行下表所有项目。
 

@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/erc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-14T13:56:36+0000",
+    "date": "2026-11-15T03:20:12+0000",
     "kicad_version": "9.0.2",
     "sheets": [
         {
@@ -67,6 +67,11 @@
         {
             "path": "/12-active-reset/",
             "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/6a9cdf9a-529a-5011-a73a-ab9a3aeed845",
+            "violations": []
+        },
+        {
+            "path": "/13-nfc-isolation/",
+            "uuid_path": "/d0923185-2fdb-574b-930d-f52d526642e2/eadfca04-2d47-552f-8a5e-9995c10276bb",
             "violations": []
         }
     ],

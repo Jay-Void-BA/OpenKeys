@@ -902,19 +902,19 @@
     "footprint": "OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4",
     "sheet": "05-nfc",
     "nets": {
-      "1": "+3V3",
+      "1": "NFC_VCC",
       "2": "NFC_VOUT",
       "3": "ANT1",
       "4": "ANT2",
       "5": "GND",
-      "6": "NFC_CS_N",
-      "7": "NFC_SCK",
-      "8": "NFC_MOSI",
-      "9": "NFC_MISO",
-      "10": "NFC_IRQ_N",
+      "6": "NFC_RF_CS_N",
+      "7": "NFC_RF_SCK",
+      "8": "NFC_RF_MOSI",
+      "9": "NFC_RF_MISO",
+      "10": "NFC_RF_IRQ_N",
       "11": "GND"
     },
-    "note": "Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM",
+    "note": "Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM. All five host signals and VCC cross independent isolation on sheet13; VOUT remains local",
     "dnp": false
   },
   {
@@ -935,7 +935,7 @@
     "footprint": "Capacitor_SMD:C_0603_1608Metric",
     "sheet": "05-nfc",
     "nets": {
-      "1": "+3V3",
+      "1": "NFC_VCC",
       "2": "GND"
     },
     "note": "",
@@ -947,7 +947,7 @@
     "footprint": "Capacitor_SMD:C_0805_2012Metric",
     "sheet": "05-nfc",
     "nets": {
-      "1": "+3V3",
+      "1": "NFC_VCC",
       "2": "GND"
     },
     "note": "",
@@ -2477,14 +2477,14 @@
   },
   {
     "ref": "R69",
-    "value": "47k 1%",
+    "value": "9.1k 1%",
     "footprint": "Resistor_SMD:R_0603_1608Metric",
     "sheet": "12-active-reset",
     "nets": {
       "1": "+3V3",
       "2": "GND"
     },
-    "note": "Defined main-rail discharge path:4uA aggregate off-feed allocation x47.47k=0.18988V. Avoid a floating main rail charged by finite input/off-switch leakage. Allocation including NFC and all power ramps must be measured",
+    "note": "Defined main-rail discharge path:20uA aggregate off-feed allocation x9.191k=0.18382V. Includes five NFC switch channels and reverse-block leakage allocation; not a guaranteed partial-power bound. Measure every ramp and RF condition; main-on cost about0.363mA at3.3V",
     "dnp": false
   },
   {
@@ -2549,6 +2549,198 @@
       "2": "GND"
     },
     "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "U29",
+    "value": "TMUX1511RWBR",
+    "footprint": "Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "GND",
+      "2": "+3V3",
+      "3": "NFC_CS_N",
+      "4": "NFC_CS_ISO",
+      "5": "NFC_SCK",
+      "6": "NFC_SCK_ISO",
+      "7": "NRST",
+      "8": "NRST",
+      "9": "NFC_MISO_ISO",
+      "10": "NFC_MISO",
+      "11": "NFC_MOSI_ISO",
+      "12": "NFC_MOSI"
+    },
+    "note": "TI SCDS390B RWB0012A pin table. All channels enabled only by physical NRST high. Powered-off protection applies to SIGNAL terminals, not just SEL. VDD<1.5V: signals0..3.6V; IPOFF max2uA at VDD=0 only. No control-only fail-safe substitute",
+    "dnp": false
+  },
+  {
+    "ref": "U30",
+    "value": "TMUX1511RWBR",
+    "footprint": "Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "GND",
+      "2": "+3V3",
+      "3": "NFC_IRQ_N",
+      "4": "NFC_IRQ_ISO",
+      "5": "GND",
+      "6": "GND",
+      "7": "NRST",
+      "8": "NRST",
+      "9": "GND",
+      "10": "GND",
+      "11": "GND",
+      "12": "GND"
+    },
+    "note": "IRQ crosses one powered-off-protected channel. Spare signal pins fixed to GND. Both RWB shared select pins are copper-strapped to NRST; no firmware bypass. No blanket guarantee during intermediate VDD",
+    "dnp": false
+  },
+  {
+    "ref": "R70",
+    "value": "330R 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "NFC_CS_ISO",
+      "2": "NFC_RF_CS_N"
+    },
+    "note": "RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification",
+    "dnp": false
+  },
+  {
+    "ref": "R71",
+    "value": "330R 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "NFC_SCK_ISO",
+      "2": "NFC_RF_SCK"
+    },
+    "note": "RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification",
+    "dnp": false
+  },
+  {
+    "ref": "R72",
+    "value": "330R 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "NFC_MOSI_ISO",
+      "2": "NFC_RF_MOSI"
+    },
+    "note": "RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification",
+    "dnp": false
+  },
+  {
+    "ref": "R73",
+    "value": "330R 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "NFC_MISO_ISO",
+      "2": "NFC_RF_MISO"
+    },
+    "note": "RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification",
+    "dnp": false
+  },
+  {
+    "ref": "R74",
+    "value": "330R 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "NFC_IRQ_ISO",
+      "2": "NFC_RF_IRQ_N"
+    },
+    "note": "RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification",
+    "dnp": false
+  },
+  {
+    "ref": "U31",
+    "value": "LM66100DCKR",
+    "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND",
+      "3": "NFC_VCC",
+      "4": null,
+      "5": "GND",
+      "6": "NFC_VCC"
+    },
+    "note": "CE=VOUT mandatory for reverse blocking, unused ST grounded. Reduces RF-domain backfeed through VCC. Allocate3uA static reverse leakage, not zero; reverse comparator turn-off pulses and partial rails require measurement",
+    "dnp": false
+  },
+  {
+    "ref": "R75",
+    "value": "100k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "NFC_VCC",
+      "2": "NFC_RF_CS_N"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R76",
+    "value": "100k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "NFC_RF_SCK",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "R77",
+    "value": "100k 1%",
+    "footprint": "Resistor_SMD:R_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "NFC_RF_MOSI",
+      "2": "GND"
+    },
+    "note": "",
+    "dnp": false
+  },
+  {
+    "ref": "C69",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "Local main-domain decoupling; C69 U29, C70 U30, C71 U31 VIN",
+    "dnp": false
+  },
+  {
+    "ref": "C70",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "Local main-domain decoupling; C69 U29, C70 U30, C71 U31 VIN",
+    "dnp": false
+  },
+  {
+    "ref": "C71",
+    "value": "100nF X7R 16V",
+    "footprint": "Capacitor_SMD:C_0603_1608Metric",
+    "sheet": "13-nfc-isolation",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "note": "Local main-domain decoupling; C69 U29, C70 U30, C71 U31 VIN",
     "dnp": false
   }
 ]

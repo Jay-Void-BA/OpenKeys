@@ -69,9 +69,12 @@ The main-cell ADC input is isolated by **TMUX1511RWBR** with SEL1=NRST. Its
 330k/330k divider and 10nF reservoir are upstream; the ADC-side 100k bias gives
 normal ratio **100/530**, rather than 1/2. Unused channels are grounded. A
 control-pin fail-safe switch without analog powered-off protection is not a
-substitute. R69 47k provides a passive main-rail discharge path against finite
-off-state leakage; the 4uA aggregate allocation and partial-power ramps need
-measurement, including NFC. Measured voltage is not an accurate state-of-charge percentage.
+substitute. R69 is now **9.1k**; the aggregate off-feed allocation is **20µA**
+after adding the five NFC isolation channels and supply reverse blocker.
+That is a conditional static allocation, not a bound during partial-power
+ramps. See the [NFC boundary](CLASSICAL_NFC_ISOLATION_R05.md) and its
+[bench tests](../manufacturing/NFC_ISOLATION_TESTS_R05_ZH.md).
+Measured voltage is not an accurate state-of-charge percentage.
 
 See the [netlist-bound allocations and passive models](../hardware/r05/review/backup-tamper-model.json)
 and [bench procedure](../manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md).

@@ -11,7 +11,7 @@
 | 内容 | 入口 |
 |---|---|
 | 整机尺寸与真实 PCB 线条 | [装配图 PDF](exports/OpenKeys-dimensions.pdf)、[PNG](exports/OpenKeys-dimensions.png)、[坐标 JSON](mechanical/dimensions.json) |
-| 电路 | [13 页原理图 PDF](exports/OpenKeys-schematic.pdf)、[KiCad 源](kicad/OpenKeys.kicad_sch)、[网表](exports/OpenKeys-netlist.xml) |
+| 电路 | [14 页原理图 PDF](exports/OpenKeys-schematic.pdf)、[KiCad 源](kicad/OpenKeys.kicad_sch)、[网表](exports/OpenKeys-netlist.xml) |
 | PCB | [四层板源](kicad/OpenKeys.kicad_pcb)、[正面](exports/OpenKeys-PCB-front.svg)、[背面](exports/OpenKeys-PCB-back.svg) |
 | 工程打样资料 | [Gerber / 钻孔](exports/OpenKeys-fabrication.zip)、[BOM](BOM.csv)、[贴片坐标](exports/OpenKeys-SMD-position.csv)、[引脚表](pinout.csv) |
 | 结构 | [OpenSCAD](mechanical/enclosure.scad)、[板体 STEP](exports/OpenKeys-PCB.step)、[结构导出](exports) |
@@ -24,7 +24,9 @@
 
 U5 为 SE051C2HQ1/Z01XDZ / OEF A8FA / Applet 7.2 候选，保留 H573 单 SE 架构，纠正原 E2 不支持 RSA 的限制。VBAT 改用独立预焊脚 CR-2032/HFN，经 10k 限流和 LM66100 反向阻断；CE 必须接 VOUT，不能接地。C41 / C56 在 MCU VBAT 就近去耦。PA1 的硬件 TAMP_OUT4 经三个分散的内部壳体触点返回 PC13 / TAMP_IN1；另一触点 SW12 独立复位。U27 / U24 / U25 / U26 对主动回路失配进行整形、比较、滤波和硬件复位，没有软件使能旁路。备份 SRAM 关闭，连续性锚点使用备份寄存器；Root 连续性集成与实片验证仍是交付条件。
 
-电量采样的 330k / 330k 分压器与储能电容在 TMUX1511 的隔离侧，ADC 侧有 100k 下拉；硬复位切断采样通路。计入下拉负载，正常采样比例为 **100/530**。这些改动增加 26 个器件位，总数 195；仍不能把电量电压当成已校准百分比。[电源依据与采购](../../docs/CLASSICAL_SE_POWER_R05.md)、[备份防拆与采样测试](../../manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md)。原生 PIN / RSA、生产 Root 和全数据销毁仍需实际集成；LCD 修订见[电路依据与实测条件](../../docs/CLASSICAL_LCD_POWER_R05.md)。
+电量采样的 330k / 330k 分压器与储能电容在 TMUX1511 的隔离侧，ADC 侧有 100k 下拉；硬复位切断采样通路。计入下拉负载，正常采样比例为 **100/530**，仍不能把电量电压当成已校准百分比。[电源依据与采购](../../docs/CLASSICAL_SE_POWER_R05.md)、[备份防拆与采样测试](../../manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md)。
+
+NFC 另增加五路 TMUX1511 信号隔离和 LM66100 VCC 反向阻断，主轨 R69 改 9.1k 泄放；总数 **209 个 BOM 位置**。全部信号隔离的使能硬接 NRST，RF 侧与主机侧不共用铜线。20µA 反灌分配和 <=2MHz 初始 SPI 限制尚待实测，不能外推 ±2µA 的零供电指标到任意电源爬升或强场；见[电路依据](../../docs/CLASSICAL_NFC_ISOLATION_R05.md)、[实板规程](../../manufacturing/NFC_ISOLATION_TESTS_R05_ZH.md)。原生 PIN / RSA、生产 Root 和全数据销毁仍需实际集成；LCD 修订见[电路依据与实测条件](../../docs/CLASSICAL_LCD_POWER_R05.md)。
 
 ## LCD 采购与兼容性
 

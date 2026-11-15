@@ -25,6 +25,10 @@ for c in bom:
   if key in expected:observed[key]=name
 require('No schematic pin omitted from PCB',observed==expected)
 require('Four-layer1.0mm board',b.GetCopperLayerCount()==4 and b.GetDesignSettings().GetBoardThickness()==p.FromMM(1))
+project=json.loads((R/'kicad/OpenKeys.kicad_pro').read_text())
+rules=project['board']['design_settings']['rules']
+require('Reviewed manufacturing rule floors are retained exactly',all(rules[name]==value for name,value in {'min_clearance':.15,'min_track_width':.15,'min_via_diameter':.6,'min_through_hole_diameter':.3,'min_hole_clearance':.25,'min_copper_edge_clearance':.3}.items()))
+require('Default netclass clearance is the reviewed150um without extra netclass overrides',len(project['net_settings']['classes'])==1 and project['net_settings']['classes'][0]['name']=='Default' and project['net_settings']['classes'][0]['clearance']==.15 and not project['net_settings'].get('netclass_patterns'))
 def pad_position(ref,number):
  return next(pad.GetPosition() for pad in fps[ref].Pads() if pad.GetNumber()==str(number))
 def pin_distance(first,second):
@@ -39,6 +43,9 @@ require('Active return RF shunt is local to backup-capable PC13',pin_distance(('
 require('Main-cell ADC output bias is local to PA0',pin_distance(('U4',14),('R68',1))<=3)
 require('Main-cell reservoir is local to powered-off switch input',pin_distance(('U28',3),('C61',1))<=3.5)
 require('Main-cell isolation switch is locally decoupled',pin_distance(('U28',2),('C67',1))<=3 and fps['C67'].GetLayer()==fps['U28'].GetLayer())
+for cap,owner,pin in [('C69','U29',2),('C70','U30',2),('C71','U31',1)]:
+ require('Local NFC boundary decoupling '+cap,pin_distance((cap,1),(owner,pin))<=3 and fps[cap].GetLayer()==fps[owner].GetLayer())
+require('NFC RF-side series parts remain local to the NFC IC',all(pin_distance((ref,2),('U7',pin))<=18 and fps[ref].GetLayer()==fps['U7'].GetLayer() for ref,pin in [('R70',6),('R71',7),('R72',8),('R73',9),('R74',10)]))
 for cap,owner,pin in [('C63','U24',8),('C64','U25',5),('C65','U26',5),('C66','U27',5)]:
  require('Local mismatch detector decoupling '+cap,pin_distance((cap,1),(owner,pin))<=3 and fps[cap].GetLayer()==fps[owner].GetLayer())
 for cap,owner,pin in [('C49','U18',1),('C55','U21',1),('C57','U21',8),('C58','U23',5),('C59','U22',5),('C60','U17',6)]:

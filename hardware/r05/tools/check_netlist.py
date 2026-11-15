@@ -59,6 +59,14 @@ require('TCA both supplies and SYS comparator locally decoupled in schematic',sa
 require('Removed fingerprint and old LCD parts absent',all(ref not in components for ref in ['J5','U8','U9','Q3']) and not any('FPC2534' in value(ref) for ref in components))
 require('NFC exposed pad uses ground and the documented package',net('U7',11)=='GND' and components['U7'].findtext('footprint')=='OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4')
 require('NFC VOUT isolated from main/battery',net('U7',2) not in {net('U3',1),net('U2',1),net('J2',1)})
+require('NFC VCC has independent CE-to-VOUT reverse blocking and local-only RF decouplers',value('U31')=='LM66100DCKR' and net('U31',1)=='+3V3' and net('U31',2)==net('U31',5)=='GND' and net('U31',4).startswith('unconnected-') and ns[net('U7',1)]=={('U7','1'),('U31','3'),('U31','6'),('C26','1'),('C27','1'),('R75','1')} and net('C26',2)==net('C27',2)=='GND')
+nfc_channels=[('U29',3,4,20,6,'R70'),('U29',5,6,21,7,'R71'),('U29',12,11,23,8,'R72'),('U29',10,9,22,9,'R73'),('U30',3,4,29,10,'R74')]
+require('All five NFC signals cross a powered-off protected channel and RF-side330ohm resistor',all(value(ref)=='TMUX1511RWBR' and same((ref,host),('U4',mcu)) and same((ref,rf),(res,1)) and same((res,2),('U7',nfc)) and len({net(ref,host),net(ref,rf),net(res,2)})==3 and value(res)=='330R 1%' for ref,host,rf,mcu,nfc,res in nfc_channels))
+require('NFC switch RWB package and both shared enables are physically tied to reset',all(components[ref].findtext('footprint')=='Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm' and net(ref,1)=='GND' and net(ref,2)=='+3V3' and same((ref,7),(ref,8),('U4',7)) for ref in ('U29','U30')))
+require('NFC unused isolation channels are copper-grounded',all(net('U30',pin)=='GND' for pin in (5,6,9,10,11,12)))
+require('RF-side defaults are independent of host pullups',value('R75')==value('R76')==value('R77')=='100k 1%' and same(('R75',1),('U7',1)) and same(('R75',2),('U7',6)) and same(('R76',1),('U7',7)) and same(('R77',1),('U7',8)) and net('R76',2)==net('R77',2)=='GND' and net('R21',1)==net('R22',1)=='+3V3' and same(('R21',2),('U30',3)) and same(('R22',2),('U29',3)))
+require('No NFC signal has a copper bypass around the isolation boundary',all(ns[net(ref,rf)]=={(ref,str(rf)),(res,'1')} and ns[net(res,2)]=={('U7',str(nfc)),(res,'2'),*({('R75','2')} if nfc==6 else {('R76','1')} if nfc==7 else {('R77','1')} if nfc==8 else set())} for ref,host,rf,mcu,nfc,res in nfc_channels))
+require('NFC isolation supply is main-only with three independent local decouplers',all(same((cap,1),(owner,pin)) and net(cap,1)=='+3V3' and net(cap,2)=='GND' for cap,owner,pin in [('C69','U29',2),('C70','U30',2),('C71','U31',1)]))
 require('UV and OV directly drive reset',same(('U10',1),('U10',6),('U4',7),('U11',4),('U12',1)))
 require('Supervisor monitors3.3V, powered from SYS',same(('U10',3),('U3',1),('U10',4)) and same(('U10',5),('U2',1)))
 require('SE interlock cannot bypass reset',same(('U12',4),('U5',11)) and same(('U12',2),('U4',39)))
@@ -81,7 +89,7 @@ require('Protected main cell divider reservoir is upstream of powered-off isolat
 require('ADC switch uses exact powered-off protected RWB pinout and hard reset enable',value('U28')=='TMUX1511RWBR' and components['U28'].findtext('footprint')=='Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm' and net('U28',2)=='+3V3' and same(('U28',7),('U4',7)) and all(net('U28',pin)=='GND' for pin in (1,5,6,8,9,10,11,12)))
 require('PA0 output bias limits powered-off leakage and no intentional reservoir reaches ADC',same(('U28',4),('U4',14),('R68',1)) and net('R68',2)=='GND' and value('R68')=='100k 1%' and ns[net('U4',14)]=={('U4','14'),('U28','4'),('R68','1')})
 require('ADC isolation switch has local main-only supply decoupling in schematic',same(('C67',1),('U28',2)) and net('C67',2)=='GND')
-require('Main rail has defined passive discharge despite finite off-state leakage',net('R69',1)=='+3V3' and net('R69',2)=='GND' and value('R69')=='47k 1%')
+require('Main rail has defined passive discharge despite finite off-state leakage',net('R69',1)=='+3V3' and net('R69',2)=='GND' and value('R69')=='9.1k 1%')
 require('LSE connected to PC14/15',same(('Y1',1),('U4',3)) and same(('Y1',2),('U4',4)))
 key_pins=[26,27,28,57,37,38,50,51,52,53]
 require('Ten physical decimal buttons have exact independent GPIO',len({net('SW'+str(n),1) for n in range(2,12)})==10 and all(same(('SW'+str(i+2),1),('U4',pin)) and net('SW'+str(i+2),2)=='GND' for i,pin in enumerate(key_pins)))

@@ -64,6 +64,21 @@ PLACEMENT={
  'U28':(37.25,26.25,270.0,'F'),'R68':(42.75,23.75,180,'F'),'C67':(36.5,22.25,90,'F'),
  'R69':(40,104,90,'F'),
  'C68':(46.0,30.25,270.0,'F'),
+ # RF-domain isolation; keep each new local decoupler fixed with its IC.
+ 'U29':(28.0, 61.0, 0, 'F'),
+ 'U30':(28.0, 69.0, 0, 'F'),
+ 'U31':(28.0, 75.0, 0, 'F'),
+ 'C69':(25, 60.5, 180, 'F'),
+ 'C70':(29.25, 66.5, 0, 'F'),
+ 'C71':(24.5, 75, 180, 'F'),
+ 'R70':(23.5, 59.0, 0, 'F'),
+ 'R71':(24.0, 62.0, 0, 'F'),
+ 'R72':(24.0, 65.0, 0, 'F'),
+ 'R73':(23.75, 57.25, 0, 'F'),
+ 'R74':(24.0, 68.0, 0, 'F'),
+ 'R75':(25.25, 42.0, 0, 'F'),
+ 'R76':(25, 80, 0, 'F'),
+ 'R77':(25, 85, 0, 'F'),
 }
 PLACEMENT.update({'SW'+ref:(x,y,0,'F') for ref,(x,y) in KEYS.items()})
 def courtyard(f):
@@ -85,7 +100,7 @@ def pack_passives(b,fps):
  Courts remain real library courtyards. This is placement assistance, not a
  DRC waiver: the final KiCad DRC is run independently after routing.
  """
- fixed=[f for f in b.GetFootprints() if f.GetReference().startswith(('U','J','SW','H','L','Y','Q','D','F','BT')) or f.GetReference() in ('C29','R21','R37','R1','R2','R12','C40','C41','C49','C55','C56','C57','C58','C59','C60','C61','R43','R47','R48','R49','R50','R51','R52','R53','R54','R55','R56','R57','R58','R59','R61','R62','R63','R64','R65','R66','R67','C62','C63','C64','C65','C66','C67','C68','R68','R69')]
+ fixed=[f for f in b.GetFootprints() if f.GetReference().startswith(('U','J','SW','H','L','Y','Q','D','F','BT')) or f.GetReference() in ('C29','R21','R37','R1','R2','R12','C40','C41','C49','C55','C56','C57','C58','C59','C60','C61','R43','R47','R48','R49','R50','R51','R52','R53','R54','R55','R56','R57','R58','R59','R61','R62','R63','R64','R65','R66','R67','C62','C63','C64','C65','C66','C67','C68','R68','R69','C69','C70','C71','R70','R71','R72','R73','R74','R75','R76','R77')]
  fixed=[f for f in fixed if f.GetReference() not in ('J4',) and not f.GetReference().startswith('FB')]
  movable=[f for f in fps.values() if f not in fixed and f.GetReference()!='J4']
  priority=['C15','C16','C9','C10','C11','C12','C13','C17','C18','C20','C21','C2','C3','C4','C5','C6','C7','C8','C45','C46']
@@ -131,7 +146,7 @@ def build():
   z=p.NETINFO_ITEM(b,name);b.Add(z);nets[name]=z
   for node in n.findall('node'):pin_net[(node.attrib['ref'],node.attrib['pin'])]=name
  comps=list(csv.DictReader((R/'BOM.csv').open()));fps={}
- groups={'01-usb':(49,8,'B'),'02-power':(13,20,'B'),'03-mcu':(50,24,'B'),'04-se-storage':(84,58,'F'),'05-nfc':(27,51,'F'),'06-trusted-ui':(60,18,'B'),'07-fault-tamper':(69,24,'B'),'08-input-guard':(21,8,'B'),'09-display-power':(82,28,'B'),'10-sys-window':(25,38,'B'),'11-power-measurement':(40.5,23.5,'F'),'12-active-reset':(72,32,'F')}
+ groups={'01-usb':(49,8,'B'),'02-power':(13,20,'B'),'03-mcu':(50,24,'B'),'04-se-storage':(84,58,'F'),'05-nfc':(27,51,'F'),'06-trusted-ui':(60,18,'B'),'07-fault-tamper':(69,24,'B'),'08-input-guard':(21,8,'B'),'09-display-power':(82,28,'B'),'10-sys-window':(25,38,'B'),'11-power-measurement':(40.5,23.5,'F'),'12-active-reset':(72,32,'F'),'13-nfc-isolation':(28,61,'F')}
  def place(f,x,y,angle,side):
   if side=='B' and f.GetLayer()==p.F_Cu:f.Flip(f.GetPosition(),p.FLIP_DIRECTION_LEFT_RIGHT)
   f.SetOrientationDegrees(angle);f.SetPosition(v(x,y))
@@ -204,7 +219,7 @@ def build():
   ('USB_GUARD_ILM','U14',9,(23.3,8.225),p.B_Cu),
   ('SE_CORE','U5',18,(84,52),p.F_Cu),
   ('SE_CORE','U5',15,(87,54.2),p.F_Cu),
-  ('NFC_MOSI','U7',8,(25,54.2),p.F_Cu),
+  ('NFC_RF_MOSI','U7',8,(25,54.2),p.F_Cu),
   ('VBUS_RAW','J1','A4',(50.45,6),p.F_Cu),
   ('VBUS_RAW','J1','A9',(45.55,6),p.F_Cu),
   ('BTN5_N','U4',37,(57.3,22.25),p.B_Cu),
@@ -226,6 +241,35 @@ def build():
  ]:
   assert math.dist(pin('U7',n),path[0])<.001
   trace(net,path,.15,p.F_Cu);via(net,path[-1])
+ # Reserve all fine-pitch NFC isolation exits before ordinary routing.
+ # Routing an outer terminal across an entire row can cage adjacent pads
+ # while still passing clearance. Stagger real through-vias instead.
+ nfc_exits={
+  'U29':{
+   3:[(27.4,62.45),(26.7,63.15)],
+   4:[(27.8,63),(27.5,63.3),(27.5,64.1)],
+   5:[(28.2,63),(28.6,63.4),(28.6,64.1)],
+   6:[(28.6,62.45),(29.3,63.15)],
+   12:[(27.4,59.55),(26.7,58.85)],
+   11:[(27.8,59),(27.5,58.7),(27.5,57.9)],
+   10:[(28.2,59),(28.6,58.6),(28.6,57.9)],
+   9:[(28.6,59.55),(29.3,58.85)],
+   1:[(26.55,60.8),(26.55,60.05),(26,59.5)],
+   2:[(26.55,61.2),(26,61.75),(26,62)],
+   7:[(30,61.2),(30,61)]},
+  'U30':{
+   3:[(27.4,70.45),(26.7,71.15)],
+   4:[(27.8,71),(27.8,72)],
+   2:[(26.55,69.2),(26,69.75),(26,70)],
+   1:[(26,68.8),(25.75,68.55)],
+   7:[(30,69.2),(30,69)]},
+  'U31':{1:[(26.25,74.35)],6:[(28.15,74.35)]}}
+ for ref,exits in nfc_exits.items():
+  for number,path in exits.items():
+   net=pin_net[(ref,str(number))]
+   trace(net,[pin(ref,number),*path],.15,p.F_Cu);via(net,path[-1])
+ for ref in ('U29','U30'):
+  trace('NRST',[pin(ref,8),pin(ref,7)],.15,p.F_Cu)
  project=json.loads((CAD/'OpenKeys.kicad_pro').read_text());project['board']['design_settings']['rules']={'min_clearance':.15,'min_track_width':.15,'min_via_diameter':.6,'min_via_annular_width':.15,'min_through_hole_diameter':.3,'min_hole_clearance':.25,'min_copper_edge_clearance':.3,'solder_mask_to_copper_clearance':0.0}
  project['board']['design_settings']['drc_exclusions']=[]
  project['net_settings']={'meta':{'version':4},'classes':[{'name':'Default','clearance':.15,'track_width':.2,'via_diameter':.6,'via_drill':.3,'diff_pair_width':.15,'diff_pair_gap':.15,'diff_pair_via_gap':.25,'bus_width':12,'wire_width':6}],'netclass_patterns':[]}

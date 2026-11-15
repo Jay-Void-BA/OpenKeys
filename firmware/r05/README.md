@@ -44,6 +44,12 @@ domain. The closed-profile readback code is a separate component.
 The frozen PCB now includes a TPS3808 hardware reset hold. LCD initialization
 waits500ms after releasing MR before a new arm edge, then200ms before I2C;
 see the [power/reset bounds and bench requirements](../../docs/CLASSICAL_LCD_POWER_R05.md).
+The NFC pins also cross [five reset-controlled powered-off-protected channels
+and a separate VCC reverse blocker](../../docs/CLASSICAL_NFC_ISOLATION_R05.md).
+That circuit does not enable NFC in this diagnostic or provide a PIN result.
+Production SPI must initially stay at or below2MHz until real timing is
+qualified; production Root/IRQ/time integration and power-ramp measurements
+remain open.
 
 ## PIN candidate modules
 

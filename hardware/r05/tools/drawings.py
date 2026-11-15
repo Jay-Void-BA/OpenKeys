@@ -94,7 +94,7 @@ for z in fps['J4'].GraphicalItems():
     if z.GetLayer()==p.F_Cu:
         a,c=loc(z.GetStart()),loc(z.GetEnd())
         line((xx+a[0],yy+a[1]),(xx+c[0],yy+c[1]),'#b78325',.5)
-for ref in ['U4','U5','U6','U7','U16','U17','U18','U21','U22','U24','U27','J7']:
+for ref in ['U4','U5','U6','U7','U16','U17','U18','U21','U22','U24','U27','U29','U30','U31','J7']:
     px,py=loc(fps[ref].GetPosition());text(xx+px,yy+py,ref,1.9,'middle')
 rect(xx+4.5,yy+8,87,32,'none','#677e8d')
 circle(xx+82,yy+100,10,'#d3d9df')

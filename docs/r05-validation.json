@@ -30,25 +30,26 @@
     "local_advisories_loaded": 1509
   },
   "r05_cad": {
-    "source_commit": "8008ec217030ab00697976a1254ea950c989c5a6",
-    "board_sha256": "80cd8d3fa79ab74808ddac003fc392ea0f37e4f02eb95cfd66738cd68d3adeba",
-    "schematic_pages": 13,
-    "bom_positions": 195,
-    "netlist_checks": 67,
-    "independent_checks": 1101,
+    "source_commit": null,
+    "board_sha256": "700516f23e3c1fd4b5b9100891b515b082787a2b0ea15e687b94186cf295627c",
+    "schematic_pages": 14,
+    "bom_positions": 209,
+    "netlist_checks": 74,
+    "independent_checks": 1187,
     "erc_errors": 0,
     "erc_warnings": 0,
     "drc_violations": 0,
     "unconnected": 0,
-    "verified_manifest_artifacts": 106,
+    "verified_manifest_artifacts": 108,
     "cad_manifest": "hardware/r05/review/cad-manifest.json",
-    "physical_qualification": "NOT_RUN"
+    "physical_qualification": "NOT_RUN",
+    "source_commit_status": "PENDING_NEW_CAD_CI"
   },
   "r05_diagnostics": "firmware/dist/r05/diagnostic-manifest.json",
   "gui_forks_reconstructed_from_original_archives": 12,
-  "ci_result": "PENDING_NEW_SOURCE: local software/CAD/format/audit checks passed without warnings; prior separately bound CI must not be reused",
+  "ci_result": "PENDING_NEW_SOURCE: local software/CAD/format checks and source-bound ARM diagnostics; the new209-position board requires new same-source CI and complete log/annotation review",
   "critical_open_items": [
-    "Independent primary backup and active-tamper circuit now has complete195-position CAD; qualify primary reverse leakage/endurance and active engine, integrate real Root backup initialization/continuity/quarantine/destructive recovery; battery-free USB authentication still requires production software and physical tests",
+    "Complete209-position CAD now includes independent backup, active tamper, ADC isolation, five NFC signal switches and VCC reverse blocking. Qualify exact primary-cell and FM11 full electrical limits, leakage/ramp/strong-RF/timing and reverse transients; integrate real Root initialization/continuity/quarantine/destruction and battery-free USB authentication.",
     "Production H573 secure Root/STiRoT authenticated image, signed update/antirollback, secure-memory/SAU/MPU/GTZC/DMA/debug/watchdog and trusted time/RTC; reserve journal sectors in all linker/boot/OTA layouts",
     "Received exact SE051C2/OEF A8FA/Applet7.2 identity, native PIN/ACL/attempt semantics, unique SCP and reset-only credential commissioning/storage, algorithm KAT and capacity",
     "Complete first-boot all-root commissioner and recoverable SE+NOR+Root capsule/protocol/pairing/catalog/staging destruction; Pending/Observation and erase receipts are not whole-device Blank",
@@ -97,7 +98,7 @@
   "source_commit_status": "LOCAL_CANDIDATE: record the exact new source commit after its CI completes; prior60f evidence is historical only",
   "local_native_tests_passed": 372,
   "expected_native_tests_per_platform": 372,
-  "ci_evidence_scope": "The independently checked8008 source has365 native tests per OS and the same195-position CAD; it does not cover the following new continuity-adapter changes.",
+  "ci_evidence_scope": "Separately reviewed335380d software CI has372 native tests per OS and unchanged195-position hardware; it does not cover this209-position NFC ECO, rule-floor checker and diagnostic binding. Published older records remain historical until refresh.",
   "backup_tamper": {
     "passive_models_passed": true,
     "board_routing_complete": true,
@@ -110,5 +111,24 @@
     "model": "hardware/r05/review/backup-tamper-model.json",
     "test_procedure": "manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md"
   },
-  "last_verified_ci_source_commit": "8008ec217030ab00697976a1254ea950c989c5a6"
+  "last_verified_ci_source_commit": "335380dd4e1275a9612a3cc8ae69661ef7254dc0",
+  "nfc_isolation": {
+    "signals": [
+      "CS_N",
+      "SCK",
+      "MOSI",
+      "MISO",
+      "IRQ_N"
+    ],
+    "reset_controlled": true,
+    "signal_path_powered_off_protection": true,
+    "vcc_reverse_blocker": true,
+    "main_bleed_ohms": 9100,
+    "aggregate_off_feed_allocation_a": 2e-05,
+    "partial_power_and_rf_voltage_qualified": false,
+    "production_spi_driver": false,
+    "initial_spi_limit_hz": 2000000,
+    "physical_tests": "NOT_RUN",
+    "test_procedure": "manufacturing/NFC_ISOLATION_TESTS_R05_ZH.md"
+  }
 }

@@ -105,12 +105,12 @@ def storage():
  s.text('Private operations: valid local six-digit PIN grant + per-request confirmation.\nNo biometric path. SE-native PIN ACLs and durable retries must be qualified; Root owns keypad.\nPrecharge attempts durably; uncertain writes deny. AEAD does not alone prevent rollback.\nSE certification does not certify MCU, PCB, PIN execution path or complete product.',184,264)
 def nfc():
  s=sheet('05-nfc','NFC Type4 card interface - battery-powered local PIN UI')
- s.comp('NFC','U7','FM11NC08S (DFN10 + EP)',114.3,91.44,{'1':'+3V3','2':'NFC_VOUT','3':'ANT1','4':'ANT2','5':'GND','6':'NFC_CS_N','7':'NFC_SCK','8':'NFC_MOSI','9':'NFC_MISO','10':'NFC_IRQ_N','11':'GND'},'OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4',note='Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM')
+ s.comp('NFC','U7','FM11NC08S (DFN10 + EP)',114.3,91.44,{'1':'NFC_VCC','2':'NFC_VOUT','3':'ANT1','4':'ANT2','5':'GND','6':'NFC_RF_CS_N','7':'NFC_RF_SCK','8':'NFC_RF_MOSI','9':'NFC_RF_MISO','10':'NFC_RF_IRQ_N','11':'GND'},'OpenKeys:FM11NC08S_DFN10_3x3_EP1.7x2.4',note='Original candidate lands from Fudan v1.0 p9: package3x3,pitch0.5,EP rotated1.7x2.4; confirm supplier revision, sample orientation, paste and DFM. All five host signals and VCC cross independent isolation on sheet13; VOUT remains local')
  s.comp('CONN2','J4','Integral 13.56MHz PCB loop',287.02,76.2,{'1':'ANT1','2':'ANT2'},'OpenKeys:NFC_PCB_Loop_4T_62x15',note='Integral copper4-turn coil; no purchased connector. Separate RF-only region. Initial matching model must be measured in assembled shell.')
- caps(s,[('100nF','+3V3','GND'),('1uF','+3V3','GND'),('100nF 10V','NFC_VOUT','GND')],53.34,172.72)
+ caps(s,[('100nF','NFC_VCC','GND'),('1uF','NFC_VCC','GND'),('100nF 10V','NFC_VOUT','GND')],53.34,172.72)
  passive(s,'C','56pF C0G 50V initial match',154.94,172.72,'ANT1','ANT2')
  passive(s,'R','47k',226.06,172.72,'+3V3','NFC_IRQ_N');passive(s,'R','47k',264.16,172.72,'+3V3','NFC_CS_N')
- s.text('NFC VOUT isolated from SYS/BAT/+3V3. No assumed RF-powered full device.\nLCD/PIN/CTAP NFC require charged battery and device ON.\nRF region: tuned coil only, no cell, metal shield or ground planes.\nMobile management needs authenticated APDUs and native OS integration.\nPhone biometrics or a tap never replace device PIN verification.',190,241)
+ s.text('NFC VOUT local only; NFC_VCC has reverse blocking. See sheet13 for all SPI/IRQ isolation.\nNo assumed RF-powered full device. LCD/PIN/NFC require charged battery and device ON.\nRF region: tuned coil only, no cell, metal shield or ground planes.\nMobile management needs authenticated APDUs and native OS integration.\nPhone biometrics or a tap never replace device PIN verification.',190,241)
 def trusted_ui():
  s=sheet('06-trusted-ui','DFR0555 blue 16x2 LCD and ten independent PIN keys')
  s.comp('CONN4','J7','DFR0555 V1.1 - OFFBOARD MODULE',88.9,71.12,{'1':'LCD_VCC_SW','2':'GND','3':'LCD_SCL','4':'LCD_SDA'},'Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical',note='Internal keyed harness must follow VCC/GND/SCL/SDA; no external second data port. Module87x32x13mm. Qualify actual supply tolerance and revision.')
@@ -160,7 +160,7 @@ def active_reset():
  s.comp('SCHINV','U25','SN74LVC1G14DCKR',149.86,154.94,{'1':None,'2':'TAMP_DIFF_FILTER','3':'GND','4':'TAMP_MATCH_N','5':'+3V3'},'Package_TO_SOT_SMD:SOT-353_SC-70-5',note='Schmitt inverter accepts filtered slow transition. Mismatch high => output low')
  s.comp('BUF','U26','SN74LVC1G07DCKR',279.4,154.94,{'1':None,'2':'TAMP_MATCH_N','3':'GND','4':'NRST','5':'+3V3'},'Package_TO_SOT_SMD:SOT-353_SC-70-5',note='Open-drain output joins NRST fault bus; cannot oppose another reset driver. Low match signal => hardware reset, SE_EN off and LCD latch cleared')
  s.comp('R','R67','1M 1%',353.06,78.74,{'1':'TAMP_DRIVE_RAW','2':'GND'},'Resistor_SMD:R_0603_1608Metric',note='Defines disabled active output at first commissioning; worst XOR input leakage must remain below low threshold. Include active-output backup drain')
- s.comp('R','R69','47k 1%',353.06,177.8,{'1':'+3V3','2':'GND'},'Resistor_SMD:R_0603_1608Metric',note='Defined main-rail discharge path:4uA aggregate off-feed allocation x47.47k=0.18988V. Avoid a floating main rail charged by finite input/off-switch leakage. Allocation including NFC and all power ramps must be measured')
+ s.comp('R','R69','9.1k 1%',353.06,177.8,{'1':'+3V3','2':'GND'},'Resistor_SMD:R_0603_1608Metric',note='Defined main-rail discharge path:20uA aggregate off-feed allocation x9.191k=0.18382V. Includes five NFC switch channels and reverse-block leakage allocation; not a guaranteed partial-power bound. Measure every ramp and RF condition; main-on cost about0.363mA at3.3V')
  s.comp('SCHDUAL','U27','SN74AUP2G17DCKR',83.82,177.8,{'1':'TAMP_DRIVE_RAW','2':'GND','3':'CASE_TAMP_RETURN','4':'TAMP_RETURN_CLEAN','5':'+3V3','6':'TAMP_DRIVE_CLEAN'},'Package_TO_SOT_SMD:SOT-363_SC-70-6',note='TI SCES750A pp1/4/5: dual Schmitt buffer with no maximum input-transition time; each VBAT-live input has Ioff max0.6uA with main VCC=0. Prevents slow open-loop transitions reaching U24. Qualify leakage and partial-supply backfeed')
  for ref,x in [('C63',43.18),('C64',137.16),('C65',231.14),('C66',325.12)]:
   s.comp('C',ref,'100nF X7R 16V',x,233.68,{'1':'+3V3','2':'GND'},'Capacitor_SMD:C_0603_1608Metric')
@@ -204,12 +204,26 @@ def supply_window():
  passive(s,'R','10k 1%',139.7,198.12,'POWER_LATCH','GND',note='Forces TPS22919 ON low when latch/main supply is unpowered; defeats back-charge from CONNECT_DELAY through220k')
  caps(s,[('100nF X7R 16V 10%','+3V3','GND')],182.88,236.22)
  s.text('TPS3700 reference: positive396..404mV; negative387..400mV.\nInclude0.1percent divider errors and +/-25nA input bias.\nStatic SYS UV fall min3.4246V; OV rise max4.8596V.\nWith ASSUMED switch+harness drop<=50mV: LCD>=3.3746V.\nMain3.3V fixed PWM:3.267..3.333V; no ripple/transient guarantee.\nTCA sideA=main3.3V; sideB=switched SYS. Off I2C must stay high-Z.\nEN high follows switched VCCB through U23, R53/R54.\nLCD total C<=100uF and aggregate off injection<=20uA MUST be measured.\nHardware hold180ms minus ASSUMED turn-off<=5ms permits discharge.\nServices stay locked during startup, undervoltage and all faults.\nFast pulses, backfeed, input budget, temperature and RF remain unqualified.',195,112,1.3)
+def nfc_isolation():
+ s=sheet('13-nfc-isolation','NFC RF domain - physical SPI/IRQ isolation and VCC reverse blocking')
+ s.comp('ADCISOLATE','U29','TMUX1511RWBR',91.44,76.2,{'1':'GND','2':'+3V3','3':'NFC_CS_N','4':'NFC_CS_ISO','5':'NFC_SCK','6':'NFC_SCK_ISO','7':'NRST','8':'NRST','9':'NFC_MISO_ISO','10':'NFC_MISO','11':'NFC_MOSI_ISO','12':'NFC_MOSI'},'Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm',note='TI SCDS390B RWB0012A pin table. All channels enabled only by physical NRST high. Powered-off protection applies to SIGNAL terminals, not just SEL. VDD<1.5V: signals0..3.6V; IPOFF max2uA at VDD=0 only. No control-only fail-safe substitute')
+ s.comp('ADCISOLATE','U30','TMUX1511RWBR',284.48,76.2,{'1':'GND','2':'+3V3','3':'NFC_IRQ_N','4':'NFC_IRQ_ISO','5':'GND','6':'GND','7':'NRST','8':'NRST','9':'GND','10':'GND','11':'GND','12':'GND'},'Package_DFN_QFN:Texas_X2QFN-12_1.6x1.6mm_P0.4mm',note='IRQ crosses one powered-off-protected channel. Spare signal pins fixed to GND. Both RWB shared select pins are copper-strapped to NRST; no firmware bypass. No blanket guarantee during intermediate VDD')
+ for ref,host,rf,x in [('R70','NFC_CS_ISO','NFC_RF_CS_N',33.02),('R71','NFC_SCK_ISO','NFC_RF_SCK',106.68),('R72','NFC_MOSI_ISO','NFC_RF_MOSI',180.34),('R73','NFC_MISO_ISO','NFC_RF_MISO',254),('R74','NFC_IRQ_ISO','NFC_RF_IRQ_N',327.66)]:
+  s.comp('R',ref,'330R 1%',x,144.78,{'1':host,'2':rf},'Resistor_SMD:R_0603_1608Metric',note='RF-side series current/edge limiting. Not a voltage clamp or invasive-attack barrier. SPI must stay <=2MHz until complete edge/latency qualification')
+ s.comp('BACKUP','U31','LM66100DCKR',91.44,210.82,{'1':'+3V3','2':'GND','3':'NFC_VCC','4':None,'5':'GND','6':'NFC_VCC'},'Package_TO_SOT_SMD:SOT-363_SC-70-6',note='CE=VOUT mandatory for reverse blocking, unused ST grounded. Reduces RF-domain backfeed through VCC. Allocate3uA static reverse leakage, not zero; reverse comparator turn-off pulses and partial rails require measurement')
+ for ref,a,b,value,x in [('R75','NFC_VCC','NFC_RF_CS_N','100k 1%',180.34),('R76','NFC_RF_SCK','GND','100k 1%',254),('R77','NFC_RF_MOSI','GND','100k 1%',327.66)]:
+  s.comp('R',ref,value,x,210.82,{'1':a,'2':b},'Resistor_SMD:R_0603_1608Metric')
+ for ref,x in [('C69',91.44),('C70',236.22),('C71',347.98)]:
+  s.comp('C',ref,'100nF X7R 16V',x,238.76 if ref=='C71' else 251.46,{'1':'+3V3','2':'GND'},'Capacitor_SMD:C_0603_1608Metric',note='Local main-domain decoupling; C69 U29, C70 U30, C71 U31 VIN')
+ s.text('RF can power U7 while main3.3V is absent. VOUT isolation alone does not bound signal backfeed.\nFive TMUX1511 channels interrupt CS/SCK/MOSI/MISO/IRQ on reset and main-power loss.\nHost pullups remain main-side; RF-side CS high and SCK/MOSI low have local passive defaults.\nThe3.6V off-terminal rating is a LIMIT; excessive RF, faults, negative transients and ramps need tests.\nR69 uses a20uA aggregate off-feed allocation, not an assumed guarantee from the FM11 brief.\nNo security service is enabled by RF field, IRQ or reset release. Production Root still required.',205,275,1.05)
+
 def save():
  for ss in S:ss.save()
  root=['kicad_sch',['version',20250114],['generator',q('eeschema')],['uuid',q(nuid('OpenKeys'))],['paper',q('A3')],['title_block',['title',q('OpenKeys R0.5 - Engineering review')],['date',q('2026-11-13')],['rev',q('0.5')],['company',q('Jay-Void-BA')]],['lib_symbols']]
  root.append(['text',q('OPENKEYS R0.5 - ONE USB-C + NFC / BLUE 16x2 LCD\nDevice PIN mandatory / TEN DECIMAL KEYS / NO FINGERPRINT\nPCB candidate; qualification required before secret provisioning'),['at',190,28,0],effects(2),['uuid',q(nuid('root/title'))]])
  for i,ss in enumerate(S):
-  x=20+(i%3)*128;y=65+(i//3)*51
+  x=20+(i%3)*128;y=65+(i//3)*(42 if len(S)>12 else 51)
+  assert x+115<=410 and y+33<=285,'Hierarchy sheet exceeds the printable frame'
   root.append(['sheet',['at',x,y],['size',115,31],['stroke',['width',0.1524],['type','default']],['fill',['color',0,0,0,0]],['uuid',q(ss.uid)],['property',q('Sheetname'),q(ss.name),['at',x,y-1,0],effects(1.5)],['property',q('Sheetfile'),q(ss.name+'.kicad_sch'),['at',x,y+33,0],effects()],['instances',['project',q('OpenKeys'),['path',q('/'+nuid('OpenKeys')),['page',q(str(i+2))]]]]])
  root.append(['sheet_instances',['path',q('/'),['page',q('1')]]])
  (CAD/'OpenKeys.kicad_sch').write_text(pretty(root)+'\n')
@@ -227,4 +241,4 @@ def save():
  (ROOT/'review/connections.json').write_text(json.dumps(comps,indent=2)+'\n')
  print(f'R0.5: {len(S)+1} sheets, {len(comps)} BOM positions')
 if __name__=='__main__':
- usb();power();mcu();storage();nfc();trusted_ui();fault_tamper();input_guard();lcd_guard();supply_window();power_measurement();active_reset();save()
+ usb();power();mcu();storage();nfc();trusted_ui();fault_tamper();input_guard();lcd_guard();supply_window();power_measurement();active_reset();nfc_isolation();save()

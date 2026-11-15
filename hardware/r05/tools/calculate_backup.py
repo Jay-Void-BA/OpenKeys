@@ -29,11 +29,14 @@ def main():
     expected = {'U13':'LM66100DCKR', 'U24':'SN74AUP1G99DCUR',
                 'U25':'SN74LVC1G14DCKR', 'U26':'SN74LVC1G07DCKR',
                 'U27':'SN74AUP2G17DCKR', 'U28':'TMUX1511RWBR',
+                'U29':'TMUX1511RWBR', 'U30':'TMUX1511RWBR', 'U31':'LM66100DCKR',
                 'BT1':'Panasonic CR-2032/HFN', 'R61':'10k 1%',
                 'R62':'470k 1%', 'R63':'1k 1%', 'R64':'330k 1%',
                 'R65':'330k 1%', 'R66':'4.7k 1%', 'R67':'1M 1%',
-                'R68':'100k 1%', 'R69':'47k 1%', 'C61':'10nF X7R 16V',
+                'R68':'100k 1%', 'R69':'9.1k 1%', 'C61':'10nF X7R 16V',
                 'C62':'10nF X7R 16V 10%', 'C68':'100pF C0G 50V 5%'}
+    expected.update({f'R{n}':'330R 1%' for n in range(70,75)})
+    expected.update({f'R{n}':'100k 1%' for n in range(75,78)})
     assert all(bom[ref]['value']==value for ref,value in expected.items())
     xml = ROOT/'exports/OpenKeys-netlist.xml'
     doc = ET.parse(xml).getroot()
@@ -89,7 +92,14 @@ def main():
     assert 4.3*(330e3*1.01)/(330e3*.99+330e3*1.01)<3.6
     off_adc=(2e-6+.1e-6)*100e3*1.01
     assert off_adc<.3
-    main_off=4e-6*47e3*1.01
+    # VDD=0 vendor limits do NOT guarantee intermediate-rail behaviour.
+    # Allocate five RF-live channels * 2uA, 3uA reverse-block leakage,
+    # prior 4uA for ADC/tamper/board paths, plus 3uA margin. Full RF-pin
+    # electrical limits are missing from the FM11 brief: require 0..3.6V
+    # at switch terminals and measure every partial-power transition.
+    off_feed=20e-6
+    assert 5*2e-6+3e-6+4e-6+3e-6<=off_feed+1e-15
+    main_off=off_feed*9.1e3*1.01
     assert main_off<.2
     # Piecewise ideal comparison pulses; these are stimuli, not a vendor XOR
     # model. Two independent RC corners check normal edge skew vs one mismatch
@@ -168,6 +178,8 @@ quit
              'revision':'SCES218AA','used':'Schmitt RC receiver; threshold across actual rail requires qualification'},
             {'url':'https://www.ti.com/lit/ds/symlink/tmux1511.pdf',
              'revision':'SCDS390B','used':'RWB0012A; source/drain protected below1.5V; IPOFF max2uA; no control-only substitution'},
+            {'url':'https://wiki.nfc.im/attachments/7',
+             'revision':'FM11NC08 v1.0 brief 2014','used':'RF-powered VOUT and SPI pin roles; no complete powered-off I/O electrical table, no assumed isolation'},
         ],
         'backup':{'vbat_operating_v':[1.2,3.6], 'backup_sram_enabled':False,
                   'primary_charge_allowed':False,'mcu_vbe_must_be_zero':True,
@@ -193,13 +205,26 @@ quit
                'powered_off_switch_bound_a':2e-6,
                'extra_off_leakage_allocation_a':.1e-6,
                'powered_off_adc_allocation_v':off_adc,
-               'aggregate_main_off_feed_allocation_a':4e-6,
+               'aggregate_main_off_feed_allocation_a':off_feed,
                'main_off_bleed_allocation_v':main_off,
                'reservoir_upstream_of_isolation':True,
                'accurate_soc_percentage_qualified':False},
+        'nfc':{'isolated_signals':['CS_N','SCK','MOSI','MISO','IRQ_N'],
+               'physical_enable':'NRST','switch_channel_ipoff_bound_at_vdd_zero_a':2e-6,
+               'active_channels':5,'reverse_supply_leakage_allocation_a':3e-6,
+               'reverse_supply_allocation_temperature_c':[-40,85],
+               'other_paths_allocation_a':4e-6,'off_feed_margin_a':3e-6,
+               'signal_voltage_limit_below_1v5_supply_v':[0,3.6],
+               'all_rf_terminal_voltages_qualified':False,
+               'partial_power_bound_qualified':False,
+               'series_ohms':330,'initial_spi_rate_limit_hz':2000000,
+               'spi_timing_qualified':False,
+               'bleed_main_on_nominal_current_a':3.3/9.1e3,
+               'reverse_transient_pulses_qualified':False},
         'unmodeled':['primary capacity/age/cold discharge and reverse charge acceptance',
                     'active TAMP/LSE startup and current; PRNG runs; backup switching',
                     'VDD/VBAT ramps, partial power, wet surfaces, off leakage and transient injection',
+                    'FM11 RF-powered terminal voltage, excessive field, switch IPOFF away from VDD=0, NFC timing',
                     'actual gate thresholds/delays, logic skew, reset fanout, tamper-contact mechanics',
                     'matched injection, probe bridging, EM/voltage/clock faults and side channels'],
         'physical_qualification':False,'production_release':False}
