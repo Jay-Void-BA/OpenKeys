@@ -32,14 +32,12 @@ RSA 与 USB 认证仍待集成。[LCD 供电 / 硬件延时修订](CLASSICAL_LCD
 
 ## 证据范围
 
-- 当前 CAD：[板网报告](../hardware/r05/review/board-check.json)、[CAD 摘要](../hardware/r05/review/cad-manifest.json)。
-- 本轮本地检查：366 项 workspace / 文档测试、6 项默认关闭探针；20 项 H573 密码和16项 Root journal 测试已包含在前述总数中，另包含两个编译失败安全边界用例。实际 ARM 编译与严格 Clippy、依赖审计通过。14 页 / 209 位 CAD 的 74 项网表检查、1187 项板级核对及 108 项文件摘要通过，ERC / DRC / 未连接均为零。本次 NFC 改板、固定规则检查和诊断重新绑定的三平台 / CAD CI 仍须单独归档。
-- `335380d` 的[三平台 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43668455168)与[文档 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43668455183)均通过；完整日志与全部注释页零 warning、两个 notice，每平台372项测试。该提交覆盖备份连续性组合适配，硬件仍为195位，不能覆盖本轮209位NFC隔离和新的诊断绑定。
-- `8008ec2` 的[三平台 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43603529834)、[CAD CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43603529838)和[文档 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43603529897)均通过；完整日志与注释零 warning，另有两个 notice。每平台365项测试只对应该提交，不能覆盖此后的组合适配修改；195 位硬件目录未修改时可复用 CAD 文件检查。
-- 已发布的软件证据：[R05 本地验证记录](r05-validation.json)、[GitHub CI 记录](ci-evidence-r05.json)均注明对应提交；后续修改不得借用旧提交的通过结果。新内核须重新完成全仓库 / ARM / 三平台 CI 和日志核对。
-- 先前归档的软件提交 `60f0e60`：[三平台 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43414654181)中，356 项 workspace / 文档测试（包含一个编译失败用例和 30 项 FIDO 内核测试）及 6 项默认关闭的原生 UserID 探针测试，在 Linux / macOS / Windows 各通过 362 项；不是 1086 个不同测试。完整日志和所有注释页已核对，零 warning；另有两个 notice。新增 HUK / 内部 Flash / 清空观察组件包含在该提交中。该记录的 169 位 CAD 对应 `0beebf7`；不能覆盖本轮 209 位改板和新增的连续性组合检查，须重新运行并归档 CI。
-- 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[原生 PIN v4 SE 布局](../manufacturing/se-native-pin-layout-r05.json)。旧 HKDF v2 布局仅供历史回归，不用于生产授权。
-- 诊断用途：[R05 目标说明](../firmware/r05/README.md)；公开 LCD / 键 / Flash ID，不验证真实 PIN，不启用充电或 USB/NFC 协议。
-- 旧 R04 的 [CI](ci-evidence-r04.json)、[手册](../manufacturing/BUILD_MANUAL_ZH.md)及 [预检](../manufacturing/readiness-report.json)仅供历史追溯，不能充当 R05 放行证据。
+- 当前检查源码为 `3a942d3ed2741ff67866985b6e0d73f1efadd3a4`：[三平台软件 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43672147314)、[CAD CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43672147340)、[文档 CI](https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43672147338)均通过；完整日志与全部注释页零 warning，软件 CI 另有2条 notice。
+- Linux / macOS / Windows 各372项测试：366项 workspace / 文档（包含两项编译失败边界、30项 FIDO、20项 H573 密码、16项 Root journal）加6项默认关闭探针；三平台重复不是1116个不同用例。另有 Linux wire / macOS ABI 各2项 GUI 测试。
+- 当前14页 / 209位 CAD：74项网表检查、1187项板级核对、108项文件摘要；ERC / DRC / 未连接均为零。PCB 摘要和范围见[板网报告](../hardware/r05/review/board-check.json)、[CAD 清单](../hardware/r05/review/cad-manifest.json)。新版增加五路 NFC 隔离、VCC 反向阻断，并固定核对制造规则；不等于实物抗反灌、故障或侧信道资格。
+- 两种 R05 ARM 诊断已重新构建、严格 Clippy 检查并绑定新版PCB和引脚；[源码 / 产物清单](../firmware/dist/r05/diagnostic-manifest.json)和[开发包](NATIVE_BUILDS_R05.md)注明用途。诊断只测公开 LCD / 十键 / Flash ID，不验证真实 PIN，不启用充电或 USB/NFC 协议。
+- [验证记录](r05-validation.json)、[GitHub 证据](ci-evidence-r05.json)绑定确切提交。后续证据整理只修改文档，不能用该结果覆盖新的硬件或运行代码。原生 PIN / ACL、生产 Root、全销毁和端到端管理仍未完成。
+- 历史 `335380d` / `8008ec2` 使用195位硬件，`60f0e60` 使用169位硬件；其原有软件 / CAD CI 只证明各自提交，不作为新版通过依据。历史文件仍可从 Git 记录追溯。
+- 当前 PIN 规则：[会话与测试映射](PIN_SESSIONS_R05.md)、[原生 PIN v4 SE 布局](../manufacturing/se-native-pin-layout-r05.json)。旧 HKDF v2 布局及 R04 的[CI](ci-evidence-r04.json)、[手册](../manufacturing/BUILD_MANUAL_ZH.md)与[预检](../manufacturing/readiness-report.json)仅供历史追溯，不用于本版放行。
 
 生产前须完成上述缺口、合成数据负向测试、独立实物审查、修复复测，再分别验收 K01 / K02 / K03。当前不应把诊断镜像刷进三把最终密钥并存入真实秘密。

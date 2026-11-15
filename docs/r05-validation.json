@@ -6,16 +6,16 @@
   "production_release": false,
   "production_authenticator_image": false,
   "physical_test_result": "NOT_RUN",
-  "source_commit": null,
+  "source_commit": "3a942d3ed2741ff67866985b6e0d73f1efadd3a4",
   "checked_date_utc": "2026-11-15",
   "workspace_tests_passed": 366,
   "authenticator_core_tests_passed": 30,
   "authenticator_core_tests_included_in_workspace_count": true,
-  "native_tests_per_platform": null,
-  "native_test_count_explanation": "Locally366 workspace/doc tests (including two compile-fail and30 FIDO cases) plus six feature-gated native-UID probe tests; three-platform verification of the new continuity adapters is pending.",
+  "native_tests_per_platform": 372,
+  "native_test_count_explanation": "366 workspace/doc tests including two compile-fail checks and30 FIDO cases, plus six feature-gated synthetic native-UID probes;372 per Linux/macOS/Windows repetition, not1116 distinct cases.",
   "additional_linux_wire_tests": 2,
   "additional_macos_abi_tests": 2,
-  "strict_clippy": "PASSED_LOCAL: workspace/all-targets, default-off native-UID probe, actual secure-MMIO ARM target, R04 diagnostic and both R05 ARM LCD profiles",
+  "strict_clippy": "PASSED: workspace/all-targets and default-off native-UID probe on three OSes; R04 diagnostic and both R05 ARM LCD profiles in Linux CI",
   "arm_library_checks": "PASSED: thumbv8m.main-none-eabihf; not a production Root or private-key firmware image",
   "classical_opensk_features": [
     "ctap1",
@@ -24,13 +24,13 @@
   "dependency_audit": {
     "cargo_audit": "0.22.2",
     "deny_warnings": true,
-    "result": "PASSED_LOCAL",
-    "ci_run": null,
+    "result": "PASSED_LOCAL_AND_CI",
+    "ci_run": "https://github.com/Jay-Void-BA/OpenKeys/actions/runs/43672147314",
     "scope": "Known advisory and maintenance checks at this CI execution; not an exhaustive vulnerability assessment",
     "local_advisories_loaded": 1509
   },
   "r05_cad": {
-    "source_commit": null,
+    "source_commit": "3a942d3ed2741ff67866985b6e0d73f1efadd3a4",
     "board_sha256": "700516f23e3c1fd4b5b9100891b515b082787a2b0ea15e687b94186cf295627c",
     "schematic_pages": 14,
     "bom_positions": 209,
@@ -43,11 +43,11 @@
     "verified_manifest_artifacts": 108,
     "cad_manifest": "hardware/r05/review/cad-manifest.json",
     "physical_qualification": "NOT_RUN",
-    "source_commit_status": "PENDING_NEW_CAD_CI"
+    "source_commit_status": "VERIFIED_SAME_SOURCE_GITHUB_CI"
   },
   "r05_diagnostics": "firmware/dist/r05/diagnostic-manifest.json",
   "gui_forks_reconstructed_from_original_archives": 12,
-  "ci_result": "PENDING_NEW_SOURCE: local software/CAD/format checks and source-bound ARM diagnostics; the new209-position board requires new same-source CI and complete log/annotation review",
+  "ci_result": "PASSED: seven development jobs, same-source CAD and documentation; complete logs/all annotation pages reviewed, zero warning lines or annotations.",
   "critical_open_items": [
     "Complete209-position CAD now includes independent backup, active tamper, ADC isolation, five NFC signal switches and VCC reverse blocking. Qualify exact primary-cell and FM11 full electrical limits, leakage/ramp/strong-RF/timing and reverse transients; integrate real Root initialization/continuity/quarantine/destruction and battery-free USB authentication.",
     "Production H573 secure Root/STiRoT authenticated image, signed update/antirollback, secure-memory/SAU/MPU/GTZC/DMA/debug/watchdog and trusted time/RTC; reserve journal sectors in all linker/boot/OTA layouts",
@@ -69,7 +69,7 @@
     "strict_clippy": "PASSED",
     "profile_or_acl_qualification": "NOT_RUN",
     "physical_tests": "NOT_RUN",
-    "ci_source_commit": null
+    "ci_source_commit": "3a942d3ed2741ff67866985b6e0d73f1efadd3a4"
   },
   "ci_evidence": "docs/ci-evidence-r05.json",
   "limits": "Source, file hashes, synthetic models and compiler/CI results only. Not a claim of complete firmware, theoretical security, certification or resistance to every software/hardware attack.",
@@ -95,10 +95,10 @@
     "whole_device_all_data_coordinator": false,
     "factory_blank_authority": false
   },
-  "source_commit_status": "LOCAL_CANDIDATE: record the exact new source commit after its CI completes; prior60f evidence is historical only",
+  "source_commit_status": "VERIFIED_SOURCE: subsequent evidence-only documentation updates do not alter the checked hardware or runtime sources.",
   "local_native_tests_passed": 372,
   "expected_native_tests_per_platform": 372,
-  "ci_evidence_scope": "Separately reviewed335380d software CI has372 native tests per OS and unchanged195-position hardware; it does not cover this209-position NFC ECO, rule-floor checker and diagnostic binding. Published older records remain historical until refresh.",
+  "ci_evidence_scope": "Same-source software,209-position CAD and documentation CI; model/file/compiler evidence only. Production integration and every physical qualification remain separate blockers.",
   "backup_tamper": {
     "passive_models_passed": true,
     "board_routing_complete": true,
@@ -111,7 +111,7 @@
     "model": "hardware/r05/review/backup-tamper-model.json",
     "test_procedure": "manufacturing/BACKUP_TAMPER_TESTS_R05_ZH.md"
   },
-  "last_verified_ci_source_commit": "335380dd4e1275a9612a3cc8ae69661ef7254dc0",
+  "last_verified_ci_source_commit": "3a942d3ed2741ff67866985b6e0d73f1efadd3a4",
   "nfc_isolation": {
     "signals": [
       "CS_N",
